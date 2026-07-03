@@ -1457,8 +1457,8 @@ public class Bcm {
         //ChargeType
 
         //Options 5
-        Label option5Label = new Label("Option 5");
-        option5Label.getStyleClass().add("titled-address-label");
+        Label option6Label = new Label("Option 5");
+        option6Label.getStyleClass().add("titled-address-label");
 
 
         CheckBox unknown21HDC = new CheckBox("Unknown 21");
@@ -1501,24 +1501,24 @@ public class Bcm {
         });
 
 
-        VBox option5Box = new VBox(2,unknown21HDC,unknown22HDC,unknown23HDC,unknown24HDC);
+        VBox option6Box = new VBox(2,unknown21HDC,unknown22HDC,unknown23HDC,unknown24HDC);
 
-        VBox borderContainerOption5 = new VBox(option5Box);
-        borderContainerOption5.getStyleClass().add("titled-address-box");
-        borderContainerOption5.setPadding(new Insets(12, 0, 0, 0));
+        VBox borderContainerOption6 = new VBox(option6Box);
+        borderContainerOption6.getStyleClass().add("titled-address-box");
+        borderContainerOption6.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane option5BoxStackPane = new StackPane();
-        option5BoxStackPane.getChildren().addAll(borderContainerOption5, option5Label);
+        StackPane option6BoxStackPane = new StackPane();
+        option6BoxStackPane.getChildren().addAll(borderContainerOption6, option6Label);
 
-        StackPane.setAlignment(option5Label, Pos.TOP_LEFT);
-        option5Label.setTranslateY(-8); 
-        option5Label.setTranslateX(10);
-        holdDownConditionsGridPane.add(option5BoxStackPane,1,1);
-        //Options 5
-
+        StackPane.setAlignment(option6Label, Pos.TOP_LEFT);
+        option6Label.setTranslateY(-8); 
+        option6Label.setTranslateX(10);
+        holdDownConditionsGridPane.add(option6BoxStackPane,1,1);
         //Options 6
-        Label option6Label = new Label("Option 6");
-        option6Label.getStyleClass().add("titled-address-label");
+
+        //Options 7
+        Label option7Label = new Label("Option 7");
+        option7Label.getStyleClass().add("titled-address-label");
 
 
         CheckBox unknown25HDC = new CheckBox("Unknown 25");
@@ -1560,24 +1560,24 @@ public class Bcm {
             }
         });
 
-        VBox option6Box = new VBox(2,unknown25HDC,unknown26HDC,unknown27HDC,unknown28HDC);
+        VBox option7Box = new VBox(2,unknown25HDC,unknown26HDC,unknown27HDC,unknown28HDC);
 
-        VBox borderContainerOption6 = new VBox(option6Box);
-        borderContainerOption6.getStyleClass().add("titled-address-box");
-        borderContainerOption6.setPadding(new Insets(12, 0, 0, 0));
+        VBox borderContainerOption7 = new VBox(option7Box);
+        borderContainerOption7.getStyleClass().add("titled-address-box");
+        borderContainerOption7.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane option6BoxStackPane = new StackPane();
-        option6BoxStackPane.getChildren().addAll(borderContainerOption6, option6Label);
+        StackPane option7BoxStackPane = new StackPane();
+        option7BoxStackPane.getChildren().addAll(borderContainerOption7, option7Label);
 
-        StackPane.setAlignment(option6Label, Pos.TOP_LEFT);
-        option6Label.setTranslateY(-8); 
-        option6Label.setTranslateX(10);
-        holdDownConditionsGridPane.add(option6BoxStackPane,2,1);
-        //Options 6
-
+        StackPane.setAlignment(option7Label, Pos.TOP_LEFT);
+        option7Label.setTranslateY(-8); 
+        option7Label.setTranslateX(10);
+        holdDownConditionsGridPane.add(option7BoxStackPane,2,1);
         //Options 7
-        Label option7Label = new Label("Option 7");
-        option7Label.getStyleClass().add("titled-address-label");
+
+        //Options 8
+        Label option8Label = new Label("Option 8");
+        option8Label.getStyleClass().add("titled-address-label");
 
         CheckBox unknown29HDC = new CheckBox("Unknown 29");
         CheckBox unknown30HDC = new CheckBox("Unknown 30");
@@ -1618,20 +1618,20 @@ public class Bcm {
             }
         });
 
-        VBox option7Box = new VBox(2,unknown29HDC,unknown30HDC,unknown31HDC,unknown32HDC);
+        VBox option8Box = new VBox(2,unknown29HDC,unknown30HDC,unknown31HDC,unknown32HDC);
 
-        VBox borderContainerOption7 = new VBox(option7Box);
-        borderContainerOption7.getStyleClass().add("titled-address-box");
-        borderContainerOption7.setPadding(new Insets(12, 0, 0, 0));
+        VBox borderContainerOption8 = new VBox(option8Box);
+        borderContainerOption8.getStyleClass().add("titled-address-box");
+        borderContainerOption8.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane option7BoxStackPane = new StackPane();
-        option7BoxStackPane.getChildren().addAll(borderContainerOption7, option7Label);
+        StackPane option8BoxStackPane = new StackPane();
+        option8BoxStackPane.getChildren().addAll(borderContainerOption8, option8Label);
 
-        StackPane.setAlignment(option7Label, Pos.TOP_LEFT);
-        option7Label.setTranslateY(-8); 
-        option7Label.setTranslateX(10);
-        holdDownConditionsGridPane.add(option7BoxStackPane,3,1);
-        //Options 7
+        StackPane.setAlignment(option8Label, Pos.TOP_LEFT);
+        option8Label.setTranslateY(-8); 
+        option8Label.setTranslateX(10);
+        holdDownConditionsGridPane.add(option8BoxStackPane,3,1);
+        //Options 8
 
         holdDownConditionsHBox.setAlignment(Pos.CENTER_LEFT);
         holdDownConditionsHBox.getChildren().addAll(holdDownConditionslabel,holdDownConditionsGridPane);
