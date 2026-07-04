@@ -415,76 +415,76 @@ public class Cat {
 
             allEntries=new ArrayList<>(catEntries);
             for(int i=0;i<catEntries;i++){
-                allEntries.add(new String("Entry: "+i));
+                allEntries.add(new String("Entry "+i));
                 listView.getItems().add(allEntries.get(i));
             }
 
             for(int i=0;i<catEntries;i++){
                 //reading charaid
-                channel.position(entryOffset+24*i);
+                channel.position(entryOffset+i*24);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 getCharaId.add(toUShort(shortBuffer.getShort()));
                 
                 //reading costume
-                channel.position(entryOffset+24*i+2);
+                channel.position(entryOffset+i*24+2);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 getCostume.add(toUShort(shortBuffer.getShort()));
 
                 //reding I_04
-                channel.position(entryOffset+24*i+4);
+                channel.position(entryOffset+i*24+4);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 getI04.add(toUShort(shortBuffer.getShort()));
 
                 //reading skillid2
-                channel.position(entryOffset+24*i+6);
+                channel.position(entryOffset+i*24+6);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 getSkillId2.add(toUShort(shortBuffer.getShort()));
 
                 //reading characode
-                channel.position(entryOffset+24*i+8);
+                channel.position(entryOffset+i*24+8);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 getCharaCode.add(StandardCharsets.ISO_8859_1.decode(intBuffer).toString().trim());
 
                 //reading I_12
-                channel.position(entryOffset+24*i+12);
+                channel.position(entryOffset+i*24+12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 getI12.add(intBuffer.getInt());
                 
                 //reading I_16
-                channel.position(entryOffset+24*i+16);
+                channel.position(entryOffset+i*24+16);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 getI16.add(intBuffer.getInt());
 
                 //reading I_20
-                channel.position(entryOffset+24*i+20);
+                channel.position(entryOffset+i*24+20);
                 byteBuffer.clear();
                 channel.read(byteBuffer);
                 byteBuffer.flip();
                 getI20.add(byteBuffer.get());
 
                 //reading Transformation Entry
-                channel.position(entryOffset+24*i+21);
+                channel.position(entryOffset+i*24+21);
                 byteBuffer.clear();
                 channel.read(byteBuffer);
                 byteBuffer.flip();
                 getTransformationEntry.add(byteBuffer.get());
 
                 //reading I_22
-                channel.position(entryOffset+24*i+22);
+                channel.position(entryOffset+i*24+22);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
