@@ -19,10 +19,7 @@ class Agd {
 
     VBox vBox= new VBox(5);
 
-    ArrayList<Integer> getLevel=new ArrayList<>();
-    ArrayList<Integer> getXpToNextLevel=new ArrayList<>();
-    ArrayList<Integer> getXpToThisLevel=new ArrayList<>();
-    ArrayList<Integer> getAttributePointsGained=new ArrayList<>();
+    ArrayList <AgdEntry> agdEntries = new ArrayList<>();
 
     private int entries=0;
 
@@ -45,23 +42,19 @@ class Agd {
     private ToolBar createToolBar(){
         Button insertEntry=new Button("Insert Entry");
         insertEntry.setOnAction(event->{
-            getLevel.add(0);
-            getXpToNextLevel.add(0);
-            getXpToThisLevel.add(0);
-            getAttributePointsGained.add(0);
-            createVBoxAgdData();
+            AgdEntry newEntry = new AgdEntry();
+            agdEntries.add(newEntry);
+            createVBoxAgdData(newEntry);
             entries+=1;
         });
         Button removeEntry=new Button("Remove Entry");
         removeEntry.setOnAction(event->{
             try {
-                getLevel.remove(entries-1);
-                getXpToNextLevel.remove(entries-1);
-                getXpToThisLevel.remove(entries-1);
-                getAttributePointsGained.remove(entries-1);
-                this.vBox.getChildren().remove(entries);
+                agdEntries.remove(entries-1);
+                this.vBox.getChildren().remove(entries-1);
                 entries-=1;
             } catch (IndexOutOfBoundsException e) {
+                System.out.println(removeEntry);
                 Popups.ErrorOutOfBounds();
             }
         });
@@ -72,17 +65,17 @@ class Agd {
         return toolBar;
     }
 
-    private VBox createVBoxAgdData(){
+    private VBox createVBoxAgdData(AgdEntry entry){
         HBox hBox=new HBox(30);
         Label lblLevel=new Label("Level");
-        TextField txtLevel=new TextField(String.valueOf(getLevel.getLast()));
+        TextField txtLevel=new TextField(String.valueOf(entry.level));
         txtLevel.textProperty().addListener((obs,oldText,newText)->{
             if (txtLevel.getText().contains("-")) {
                 return;
             }
             try {
-                int indexOfHBox = vBox.getChildren().indexOf(txtLevel.getParent());
-                getLevel.set(indexOfHBox, Integer.parseInt(newText));
+                //int indexOfHBox = vBox.getChildren().indexOf(txtLevel.getParent());
+                entry.level= Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -90,41 +83,41 @@ class Agd {
 
 
         Label lblXpToNextLevel=new Label("Xp To Next Level");
-        TextField txtXpToNextLevel=new TextField(String.valueOf(getXpToNextLevel.getLast()));
+        TextField txtXpToNextLevel=new TextField(String.valueOf(entry.xpToNextLevel));
         txtXpToNextLevel.textProperty().addListener((obs,oldText,newText)->{
             if (txtXpToNextLevel.getText().contains("-")) {
                 return;
             }
             try {
-                int indexOfHBox = vBox.getChildren().indexOf(txtXpToNextLevel.getParent());
-                getXpToNextLevel.set(indexOfHBox, Integer.parseInt(newText));
+                //int indexOfHBox = vBox.getChildren().indexOf(txtXpToNextLevel.getParent());
+                entry.xpToNextLevel= Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         });
         Label lblXpToThisLevel=new Label("Xp To This Level");
-        TextField txtXpToThisLevel=new TextField(String.valueOf(getXpToThisLevel.getLast()));
+        TextField txtXpToThisLevel=new TextField(String.valueOf(entry.xpToThisLevel));
         txtXpToThisLevel.textProperty().addListener((obs,oldText,newText)->{
             if (txtXpToThisLevel.getText().contains("-")) {
                 return;
             }
             try {
-                int indexOfHBox = vBox.getChildren().indexOf(txtXpToThisLevel.getParent());
-                getXpToThisLevel.set(indexOfHBox, Integer.parseInt(newText));
+                //int indexOfHBox = vBox.getChildren().indexOf(txtXpToThisLevel.getParent());
+                entry.xpToThisLevel = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         });
 
         Label lblAttributePointsGained=new Label("Attribute Points Gained");
-        TextField txtAttributePointsGained=new TextField(String.valueOf(getAttributePointsGained.getLast()));
+        TextField txtAttributePointsGained=new TextField(String.valueOf(entry.attributePointsGained));
         txtAttributePointsGained.textProperty().addListener((obs,oldText,newText)->{
             if (txtAttributePointsGained.getText().contains("-")) {
                 return;
             }
             try {
-                int indexOfHBox = vBox.getChildren().indexOf(txtAttributePointsGained.getParent());
-                getAttributePointsGained.set(indexOfHBox, Integer.parseInt(newText));
+                //int indexOfHBox = vBox.getChildren().indexOf(txtAttributePointsGained.getParent());
+                entry.attributePointsGained= Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -143,7 +136,6 @@ class Agd {
     public void agdReader(Path path){
         try(FileChannel channel=FileChannel.open(path, StandardOpenOption.READ)) {
             int offset=16;
-            
             ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
             ByteBuffer shortBuffer=ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
 
@@ -159,30 +151,33 @@ class Agd {
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                getLevel.add(intBuffer.getInt());
+                int level = intBuffer.getInt();
                 
                 //reading xptonextlevel
                 channel.position(offset*(i+1)+4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                getXpToNextLevel.add(intBuffer.getInt());
+                int xpToNextLevel = intBuffer.getInt();
                 
                 //reading xptothislevel
                 channel.position(offset*(i+1)+8);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                getXpToThisLevel.add(intBuffer.getInt());
+                int xpToThisLevel = intBuffer.getInt();
 
                 //reading attributepointsgained
                 channel.position(offset*(i+1)+12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                getAttributePointsGained.add(intBuffer.getInt());
+                int attributePointsGained = intBuffer.getInt();
 
-                createVBoxAgdData();
+                AgdEntry entry = new AgdEntry(level, xpToNextLevel, xpToThisLevel, attributePointsGained);
+                agdEntries.add(entry);
+
+                createVBoxAgdData(entry);
             }
         } catch (IOException e) {
             System.err.println(e);
@@ -193,7 +188,6 @@ class Agd {
     public void agdWriter(Path path){
         try(FileChannel channel=FileChannel.open(path, StandardOpenOption.WRITE,StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING)) {
             int offset=16;
-            
             ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
             
             channel.position(0);
@@ -215,31 +209,32 @@ class Agd {
             channel.write(ByteBuffer.wrap(new byte[]{0x10,0x00,0x00,0x00}));
 
             for(int i=0;i<entries;i++){
+                AgdEntry agdEntry = agdEntries.get(i);
                 //writing level
                 channel.position(offset*(i+1));
                 intBuffer.clear();
-                intBuffer.putInt(getLevel.get(i));
+                intBuffer.putInt(agdEntry.level);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 //writing xptonextlevel
                 channel.position(offset*(i+1)+4);
                 intBuffer.clear();
-                intBuffer.putInt(getXpToNextLevel.get(i));
+                intBuffer.putInt(agdEntry.xpToNextLevel);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 //writing xptothislevel
                 channel.position(offset*(i+1)+8);
                 intBuffer.clear();
-                intBuffer.putInt(getXpToThisLevel.get(i));
+                intBuffer.putInt(agdEntry.xpToThisLevel);
                 intBuffer.flip();
                 channel.write(intBuffer);
                 
                 //writing attributepointsgained
                 channel.position(offset*(i+1)+12);
                 intBuffer.clear();
-                intBuffer.putInt(getAttributePointsGained.get(i));
+                intBuffer.putInt(agdEntry.attributePointsGained);
                 intBuffer.flip();
                 channel.write(intBuffer);
             }
@@ -248,5 +243,26 @@ class Agd {
             System.err.println(e);
             Popups.ErrorSave(path.toFile().getName());
         }
+    }
+}
+
+class AgdEntry {
+    public int level;
+    public int xpToNextLevel;
+    public int xpToThisLevel;
+    public int attributePointsGained;
+
+    public AgdEntry() {
+        this.level = 0;
+        this.xpToNextLevel = 0;
+        this.xpToThisLevel = 0;
+        this.attributePointsGained = 0;
+    }
+
+    public AgdEntry(int level, int xpToNextLevel, int xpToThisLevel, int attributePointsGained) {
+        this.level = level;
+        this.xpToNextLevel = xpToNextLevel;
+        this.xpToThisLevel = xpToThisLevel;
+        this.attributePointsGained = attributePointsGained;
     }
 }
