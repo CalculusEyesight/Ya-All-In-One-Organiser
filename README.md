@@ -1,4 +1,4 @@
-## Ya-All-In-One
+## Ya-All-In-One Orginiser
 This tool's aim is to support editing as many files as possibles for Dragon Ball Xenoverse 2. This is an attempt to superseed the Yatools by [KyonkoYuuki](https://github.com/KyonkoYuuki) and combine
 all of their efforts in a single tool, while also attempting to add support for as many files as possible
 
