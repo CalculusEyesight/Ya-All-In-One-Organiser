@@ -350,11 +350,12 @@ public class Aur {
     }
 
     private void Copy(){
-        AurAuraEntry selected = auraEntries.get(listView.getSelectionModel().getSelectedIndex());
-        copyContainer = new AurAuraEntry(selected.i04, selected.boostStart, selected.boostLoop, selected.boostEnd, selected.kiaiCharge, selected.kiryokuMax, selected.henshinStart, selected.henshinEnd);
+        copyContainer = new AurAuraEntry(auraEntries.get(listView.getSelectionModel().getSelectedIndex()));
     }
 
     private void Paste(){
+        auraEntries.set(listView.getSelectionModel().getSelectedIndex(), new AurAuraEntry(copyContainer));
+
         auraEntries.get(listView.getSelectionModel().getSelectedIndex()).i04 = copyContainer.i04;
         auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostStart = copyContainer.boostStart;
         auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostLoop = copyContainer.boostLoop;
@@ -434,12 +435,13 @@ public class Aur {
             charaOffset=intBuffer.getInt();
 
             for(int i=0;i<auraEntriesCount;i++){
+                AurAuraEntry auraEntry = new AurAuraEntry();
                 //reading i04
                 channel.position(auraoffset+16*i+4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int i04 = intBuffer.getInt();
+                auraEntry.i04 = intBuffer.getInt();
 
                 //reading effectOffset
                 channel.position(auraoffset+16*i+12);
@@ -453,78 +455,79 @@ public class Aur {
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int boosStart = intBuffer.getInt();
+                auraEntry.boostStart = intBuffer.getInt();
 
                 //reading boostLoop
                 channel.position(effectsOffset+12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int boostLoop = intBuffer.getInt();
+                auraEntry.boostLoop = intBuffer.getInt();
 
                 //reading boostEnd
                 channel.position(effectsOffset+20);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int boostEnd = intBuffer.getInt();
+                auraEntry.boostEnd = intBuffer.getInt();
 
                 //reading kiaiCharge
                 channel.position(effectsOffset+28);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int kiaiCharge = intBuffer.getInt();
+                auraEntry.kiaiCharge = intBuffer.getInt();
 
                 //reading kiryokuMax
                 channel.position(effectsOffset+36);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int kiryokuMax = intBuffer.getInt();
+                auraEntry.kiryokuMax = intBuffer.getInt();
 
                 //reading HenshinStart
                 channel.position(effectsOffset+44);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int henshinStart = intBuffer.getInt();
+                auraEntry.henshinStart = intBuffer.getInt();
 
                 //reading HenshinEnd
                 channel.position(effectsOffset+52);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int henshinEnd = intBuffer.getInt();
+                auraEntry.henshinEnd = intBuffer.getInt();
+                auraEntries.add(auraEntry);
                 //System.out.println("looking at: "+(effectsOffset+52));
-
-                auraEntries.add(new AurAuraEntry(i04, boosStart,boostLoop,boostEnd,kiaiCharge,kiryokuMax,henshinStart,henshinEnd));
             }
             for(int i=0;i<characterEntries;i++){
+                AurCharaEntry charaEntry = new AurCharaEntry();
                 channel.position(charaOffset+16*i);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int charaId = intBuffer.getInt();
+                charaEntry.charaId = intBuffer.getInt();
     
                 channel.position(charaOffset+16*i+4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int costume = intBuffer.getInt();
+                charaEntry.costume = intBuffer.getInt();
 
                 channel.position(charaOffset+16*i+8);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int auraId = intBuffer.getInt();
+                charaEntry.auraId = intBuffer.getInt();
                 
                 channel.position(charaOffset+16*i+12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                boolean glare = (intBuffer.getInt() ==  1);
-                charaEntries.add(new AurCharaEntry(charaId,costume,auraId,glare));
+                charaEntry.glare = (intBuffer.getInt() ==  1);
+
+                charaEntries.add(charaEntry);
                 createVBoxRightCharaId(charaEntries.get(i));
             }
             
@@ -804,15 +807,15 @@ class AurAuraEntry {
 
     public AurAuraEntry() {}
 
-    public AurAuraEntry(int i04, int boostStart, int boostLoop, int boostEnd, int kiaiCharge, int kiryokuMax, int henshinStart, int henshinEnd) {
-        this.i04 = i04;
-        this.boostStart = boostStart;
-        this.boostLoop = boostLoop;
-        this.boostEnd = boostEnd;
-        this.kiaiCharge = kiaiCharge;
-        this.kiryokuMax = kiryokuMax;
-        this.henshinStart = henshinStart;
-        this.henshinEnd = henshinEnd;
+    public AurAuraEntry(AurAuraEntry other) {
+        this.i04 = other.i04;
+        this.boostStart = other.boostStart;
+        this.boostLoop = other.boostLoop;
+        this.boostEnd = other.boostEnd;
+        this.kiaiCharge = other.kiaiCharge;
+        this.kiryokuMax = other.kiryokuMax;
+        this.henshinStart = other.henshinStart;
+        this.henshinEnd = other.henshinEnd;
     }
 }
 
@@ -821,13 +824,4 @@ class AurCharaEntry {
     public int costume = 0;
     public int auraId = 0;
     public boolean glare = false;
-
-    public AurCharaEntry() {}
-
-    public AurCharaEntry(int charaId, int costume, int auraId, boolean glare) {
-        this.charaId = charaId;
-        this.costume = costume;
-        this.auraId = auraId;
-        this.glare = glare;
-    }
 }

@@ -246,18 +246,4 @@ class AgdEntry {
     public int xpToNextLevel;
     public int xpToThisLevel;
     public int attributePointsGained;
-
-    public AgdEntry() {
-        this.level = 0;
-        this.xpToNextLevel = 0;
-        this.xpToThisLevel = 0;
-        this.attributePointsGained = 0;
-    }
-
-    public AgdEntry(int level, int xpToNextLevel, int xpToThisLevel, int attributePointsGained) {
-        this.level = level;
-        this.xpToNextLevel = xpToNextLevel;
-        this.xpToThisLevel = xpToThisLevel;
-        this.attributePointsGained = attributePointsGained;
-    }
 }

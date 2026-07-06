@@ -4431,7 +4431,6 @@ class BcmEntry {
     public long unknown88;
     public long unknown104;
 
-    // Empty Constructor
     public BcmEntry() {}
 
     public BcmEntry(BcmEntry other) {
