@@ -355,15 +355,6 @@ public class Aur {
 
     private void Paste(){
         auraEntries.set(listView.getSelectionModel().getSelectedIndex(), new AurAuraEntry(copyContainer));
-
-        auraEntries.get(listView.getSelectionModel().getSelectedIndex()).i04 = copyContainer.i04;
-        auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostStart = copyContainer.boostStart;
-        auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostLoop = copyContainer.boostLoop;
-        auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostEnd = copyContainer.boostEnd;
-        auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiaiCharge = copyContainer.kiaiCharge;
-        auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiryokuMax = copyContainer.kiryokuMax;
-        auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinStart = copyContainer.henshinStart;
-        auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinEnd = copyContainer.henshinEnd;
         hBox.getChildren().remove(1);
         hBox.getChildren().set(1, createVBoxAuraId(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
     }
