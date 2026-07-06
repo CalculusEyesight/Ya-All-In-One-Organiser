@@ -28,13 +28,10 @@ public class Main extends Application {
 
     TabPane tabPane = new TabPane();
         
-
-
     Scene scene=new Scene(bPane,1280,800);
 
     MenuBar menuBar = new MenuBar();
         
-
     MenuItem loadFolder=new MenuItem("Load Folder");
     MenuItem saveFolder=new MenuItem("Save Folder");
 
@@ -127,7 +124,6 @@ public class Main extends Application {
                                         bcm.bcmReader(xv2File.toPath()); 
                                         
                                         Platform.runLater(() -> {
-              
                                             tabBcm.setContent(bcm.createSplitPane());
                                         });
 
@@ -153,8 +149,31 @@ public class Main extends Application {
                                         bdm.bdmReader(xv2File.toPath()); 
                                         
                                         Platform.runLater(() -> {
-              
                                             tabBdm.setContent(bdm.createHBox());
+                                        });
+
+                                    } catch (Exception er) {
+                                        er.printStackTrace();
+                                    }
+                                });
+                                break;
+                            case "bsa":
+                                Tab tabBsa = new Tab();
+                                tabBsa.setClosable(false);
+                                tabBsa.setText(xv2File.getName());
+
+                                tabPane.getTabs().add(tabBsa); 
+
+                                Bsa bsa = new Bsa();
+                                FileTypeRecall.put(xv2File.getAbsolutePath(), bsa);
+
+                                executorService.submit(() -> {
+                                    try {
+            
+                                        bsa.bsaReader(xv2File.toPath()); 
+                                        
+                                        Platform.runLater(() -> {
+                                            tabBsa.setContent(bsa.treeView);
                                         });
 
                                     } catch (Exception er) {
@@ -259,6 +278,13 @@ public class Main extends Application {
                             bdm.bdmWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
                         });
                         hasSaved=true;
+                        break;
+                    case "bsa":
+                        // Bsa bsa=(Bsa) FileTypeRecall.get(originalPath);
+                        // executorService.submit(()->{
+                        //     bsa.bsaWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        // });
+                        // hasSaved=true;
                         break;
                     case "cat":
                         Cat cat=(Cat) FileTypeRecall.get(originalPath);
