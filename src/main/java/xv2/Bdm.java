@@ -41,122 +41,12 @@ public class Bdm {
     }
 
     ArrayList <String> allEntries;
+    ArrayList<BdmEntry> bdmEntries = new ArrayList<>();
+
     ListView <String> listView=new ListView<>();
     TabPane mainTabPane =new TabPane();
 
-    ArrayList <int[]> getDamageType=new ArrayList<>(); 
-    ArrayList <int[]> getI02=new ArrayList<>();
-    ArrayList <int[]> getDamageAmount= new ArrayList<>();
-    ArrayList <int[]> getI06=new ArrayList<>();
-    ArrayList <double[]> getF08=new ArrayList<>();
-    ArrayList <int[]> getAcbType=new ArrayList<>();
-    ArrayList <short[]> getCueId= new ArrayList<>();
-    ArrayList <short[]> getEffect1Id=new ArrayList<>();
-    ArrayList <int[]> getEffect1SkillId= new ArrayList<>();
-    ArrayList <int[]> getEffect1EepkType =new ArrayList<>();
-    ArrayList <int[]> getI22=new ArrayList<>();
-    ArrayList <short[]> getEffect2Id=new ArrayList<>();
-    ArrayList <int[]> getEffect2SkillId= new ArrayList<>();
-    ArrayList <int[]> getEffect2EepkType =new ArrayList<>();
-    ArrayList <int[]> getI30=new ArrayList<>();
-    ArrayList <short[]> getEffect3Id=new ArrayList<>();
-    ArrayList <int[]> getEffect3SkillId= new ArrayList<>();
-    ArrayList <int[]> getEffect3EepkType =new ArrayList<>();
-    ArrayList <int[]> getI38=new ArrayList<>();
-    ArrayList <double[]> getPushbackStrength =new ArrayList<>();
-    ArrayList <double[]> getPushbackAcceleration =new ArrayList<>();
-    ArrayList <int []> getUserStunt =new ArrayList<>();
-    ArrayList <int []> getKnockbackDuration =new ArrayList<>();
-    ArrayList <int []> getKnockbackRecoveryAfterImpactTime =new ArrayList<>();
-    ArrayList <int []> getKnockbackGroundImpactTime =new ArrayList<>();
-    ArrayList <int []> getI58 =new ArrayList<>();
-    ArrayList <int []> getVictimStunt =new ArrayList<>();
-    ArrayList <double[]> getKnockbackStrengthX=new ArrayList<>();
-    ArrayList <double[]> getKnockbackStrengthY=new ArrayList<>();
-    ArrayList <double[]> getKnockbackStrengthZ=new ArrayList<>();
-    ArrayList <double[]> getKnockbackDragY=new ArrayList<>();
-    ArrayList <int[]> getI76=new ArrayList<>();
-    ArrayList <int[]> getKnockbackGravityTime=new ArrayList<>();
-    ArrayList <short[]> getVictimInvincibilityTime=new ArrayList<>();
-    ArrayList <int[]> getI82=new ArrayList<>();
-    ArrayList <int[]> getTransformationType=new ArrayList<>();
-    ArrayList <short[]> getAlimentType=new ArrayList<>();
-    ArrayList <int[]> getI88=new ArrayList<>();
-    ArrayList <int[]> getI90=new ArrayList<>();
-    ArrayList <int[]> getI92=new ArrayList<>();
-    ArrayList <int[]> getDamageSpecial= new ArrayList<>();
-    ArrayList <int[]> getDamageSpecial2= new ArrayList<>();
-    ArrayList <int[]> getDamageSpecial3= new ArrayList<>();
-    ArrayList <int[]> getStumbleType=new ArrayList<>();
-    ArrayList <int[]> getSecondaryType=new ArrayList<>();
-    ArrayList <short[]> getCameraShakeType=new ArrayList<>();
-    ArrayList <int[]> getCameraShakeTime=new ArrayList<>();
-    ArrayList <short[]> getUserBpeID=new ArrayList<>();
-    ArrayList <short[]> getVictimBpeID=new ArrayList<>();
-    ArrayList <short[]> getStaminaBrokenOverrideBdmId = new ArrayList<>();
-    ArrayList <int []> getZVanishEnableTime = new ArrayList<>();
-    ArrayList <int[]> getUserAnimationTime = new ArrayList<>();
-    ArrayList <int[]> getVictimAnimationTime=new ArrayList<>();
-    ArrayList <double[]> getUserAnimationSpeed = new ArrayList<>();
-    ArrayList <double[]> getVictimAnimationSpeed =new ArrayList<>();
-    
-    //copy containers
-    private int[] copyDamageType;
-    private int[] copyI02;
-    private int[] copyDamageAmount;
-    private int[] copyI06;
-    private double[] copyF08;
-    private int[] copyAcbType;
-    private short[] copyCueId;
-    private short[] copyEffect1Id;
-    private int[] copyEffect1SkillId;
-    private int[] copyEffect1EepkType;
-    private int[] copyI22;
-    private short[] copyEffect2Id;
-    private int[] copyEffect2SkillId;
-    private int[] copyEffect2EepkType;
-    private int[] copyI30;
-    private short[] copyEffect3Id;
-    private int[] copyEffect3SkillId;
-    private int[] copyEffect3EepkType;
-    private int[] copyI38;
-    private double[] copyPushbackStrength;
-    private double[] copyPushbackAcceleration;
-    private int[] copyUserStunt;
-    private int[] copyKnockbackDuration;
-    private int[] copyKnockbackRecoveryAfterImpactTime;
-    private int[] copyKnockbackGroundImpactTime;
-    private int[] copyI58;
-    private int[] copyVictimStunt;
-    private double[] copyKnockbackStrengthX;
-    private double[] copyKnockbackStrengthY;
-    private double[] copyKnockbackStrengthZ;
-    private double[] copyKnockbackDragY;
-    private int[] copyI76;
-    private int[] copyKnockbackGravityTime;
-    private short[] copyVictimInvincibilityTime;
-    private int[] copyI82;
-    private int[] copyTransformationType;
-    private short[] copyAlimentType;
-    private int[] copyI88;
-    private int[] copyI90;
-    private int[] copyI92;
-    private int[] copyDamageSpecial;
-    private int[] copyDamageSpecial2;
-    private int[] copyDamageSpecial3;
-    private int[] copyStumbleType;
-    private int[] copySecondaryType;
-    private short[] copyCameraShakeType;
-    private int[] copyCameraShakeTime;
-    private short[] copyUserBpeID;
-    private short[] copyVictimBpeID;
-    private short[] copyStaminaBrokenOverrideBdmId;
-    private int[] copyZVanishEnableTime;
-    private int[] copyUserAnimationTime;
-    private int[] copyVictimAnimationTime;
-    private double[] copyUserAnimationSpeed;
-    private double[] copyVictimAnimationSpeed;
-
+    private ArrayList<BdmEntry> copyContainer = new ArrayList<>();
 
     public HBox createHBox(){
         createMainTabPane();
@@ -170,7 +60,6 @@ public class Bdm {
 
     public void createMainTabPane(){
         if (mainTabPane.getTabs().isEmpty()) {
-            
             Tab defaultTab = new Tab("0: Default");
             Tab counterHitFrontTab = new Tab("1: Counter Hit (Front)");
             Tab primaryKnockbackTab = new Tab("2: Primary Knockback");
@@ -237,7 +126,7 @@ public class Bdm {
         return subTabPane;
     }
 
-    private VBox createMainVBox(int i, int j){
+    private VBox createMainVBox(BdmSubEntry subEntry){
 
         VBox mainVBox=new VBox(20);
         mainVBox.setPadding(new Insets(20,0,0,5));
@@ -320,7 +209,7 @@ public class Bdm {
         RadioButton timeStop = new RadioButton("Time Stop");
         timeStop.setToggleGroup(damageTypeToggleGroup);
         
-        switch (getDamageType.get(i)[j]) {
+        switch (subEntry.damageType) {
             case 1:  block.setSelected(true);                 break;
             case 2:  guardBreak.setSelected(true);            break;
             case 3:  standard.setSelected(true);              break;
@@ -359,38 +248,38 @@ public class Bdm {
             if (newValue != null && newValue.isSelected()) {
                 RadioButton selectedRadio = (RadioButton) newValue;
                 
-                if (selectedRadio == noEffect)                  { getDamageType.get(i)[j] = 0; }
-                else if (selectedRadio == block)                { getDamageType.get(i)[j] = 1; }
-                else if (selectedRadio == guardBreak)           { getDamageType.get(i)[j] = 2; }
-                else if (selectedRadio == standard)             { getDamageType.get(i)[j] = 3; }
-                else if (selectedRadio == heavy)                { getDamageType.get(i)[j] = 4; }
-                else if (selectedRadio == knockback)            { getDamageType.get(i)[j] = 5; }
-                else if (selectedRadio == knockback1)           { getDamageType.get(i)[j] = 6; }
-                else if (selectedRadio == knockback2)           { getDamageType.get(i)[j] = 7; }
-                else if (selectedRadio == knockback3)           { getDamageType.get(i)[j] = 8; }
-                else if (selectedRadio == knockback4)           { getDamageType.get(i)[j] = 9; }
-                else if (selectedRadio == grab)                 { getDamageType.get(i)[j] = 10; }
-                else if (selectedRadio == holdStomach)          { getDamageType.get(i)[j] = 11; }
-                else if (selectedRadio == holdEyes)             { getDamageType.get(i)[j] = 12; }
-                else if (selectedRadio == knockback5)           { getDamageType.get(i)[j] = 13; }
-                else if (selectedRadio == electric)             { getDamageType.get(i)[j] = 14; }
-                else if (selectedRadio == dazed)                { getDamageType.get(i)[j] = 15; }
-                else if (selectedRadio == paralysis)            { getDamageType.get(i)[j] = 16; }
-                else if (selectedRadio == freeze)               { getDamageType.get(i)[j] = 17; }
-                else if (selectedRadio == wildCard)             { getDamageType.get(i)[j] = 18; }
-                else if (selectedRadio == unused)               { getDamageType.get(i)[j] = 19; }
-                else if (selectedRadio == heavyStaminaBreak)    { getDamageType.get(i)[j] = 20; }
-                else if (selectedRadio == lightStaminaBreak)    { getDamageType.get(i)[j] = 21; }
-                else if (selectedRadio == giganticKiBlastPush)  { getDamageType.get(i)[j] = 22; }
-                else if (selectedRadio == brainWash)            { getDamageType.get(i)[j] = 23; }
-                else if (selectedRadio == giganticKiBlastReturn){ getDamageType.get(i)[j] = 24; }
-                else if (selectedRadio == knockback6)           { getDamageType.get(i)[j] = 25; }
-                else if (selectedRadio == knockback7)           { getDamageType.get(i)[j] = 26; }
-                else if (selectedRadio == knockback8)           { getDamageType.get(i)[j] = 27; }
-                else if (selectedRadio == knockback9)           { getDamageType.get(i)[j] = 28; }
-                else if (selectedRadio == slowOpponent)         { getDamageType.get(i)[j] = 29; }
-                else if (selectedRadio == brainWash2)           { getDamageType.get(i)[j] = 30; }
-                else if (selectedRadio == timeStop)             { getDamageType.get(i)[j] = 31; }
+                if (selectedRadio == noEffect)                   { subEntry.damageType = 0; }
+                else if (selectedRadio == block)                 { subEntry.damageType = 1; }
+                else if (selectedRadio == guardBreak)            { subEntry.damageType = 2; }
+                else if (selectedRadio == standard)              { subEntry.damageType = 3; }
+                else if (selectedRadio == heavy)                 { subEntry.damageType = 4; }
+                else if (selectedRadio == knockback)             { subEntry.damageType = 5; }
+                else if (selectedRadio == knockback1)            { subEntry.damageType = 6; }
+                else if (selectedRadio == knockback2)            { subEntry.damageType = 7; }
+                else if (selectedRadio == knockback3)            { subEntry.damageType = 8; }
+                else if (selectedRadio == knockback4)            { subEntry.damageType = 9; }
+                else if (selectedRadio == grab)                  { subEntry.damageType = 10; }
+                else if (selectedRadio == holdStomach)           { subEntry.damageType = 11; }
+                else if (selectedRadio == holdEyes)              { subEntry.damageType = 12; }
+                else if (selectedRadio == knockback5)            { subEntry.damageType = 13; }
+                else if (selectedRadio == electric)              { subEntry.damageType = 14; }
+                else if (selectedRadio == dazed)                 { subEntry.damageType = 15; }
+                else if (selectedRadio == paralysis)             { subEntry.damageType = 16; }
+                else if (selectedRadio == freeze)                { subEntry.damageType = 17; }
+                else if (selectedRadio == wildCard)              { subEntry.damageType = 18; }
+                else if (selectedRadio == unused)                { subEntry.damageType = 19; }
+                else if (selectedRadio == heavyStaminaBreak)     { subEntry.damageType = 20; }
+                else if (selectedRadio == lightStaminaBreak)     { subEntry.damageType = 21; }
+                else if (selectedRadio == giganticKiBlastPush)   { subEntry.damageType = 22; }
+                else if (selectedRadio == brainWash)             { subEntry.damageType = 23; }
+                else if (selectedRadio == giganticKiBlastReturn) { subEntry.damageType = 24; }
+                else if (selectedRadio == knockback6)            { subEntry.damageType = 25; }
+                else if (selectedRadio == knockback7)            { subEntry.damageType = 26; }
+                else if (selectedRadio == knockback8)            { subEntry.damageType = 27; }
+                else if (selectedRadio == knockback9)            { subEntry.damageType = 28; }
+                else if (selectedRadio == slowOpponent)          { subEntry.damageType = 29; }
+                else if (selectedRadio == brainWash2)            { subEntry.damageType = 30; }
+                else if (selectedRadio == timeStop)              { subEntry.damageType = 31; }
             }
         });
 
@@ -454,41 +343,41 @@ public class Bdm {
         CheckBox unknown3=new CheckBox("Unknown3");
         CheckBox unknown4= new CheckBox("Unknown4");
 
-        restoreHealth.setSelected((getSecondaryType.get(i)[j] & 1) != 0);
-        unknown2.setSelected((getSecondaryType.get(i)[j] & 2) != 0);
-        unknown3.setSelected((getSecondaryType.get(i)[j] & 4) != 0);
-        unknown4.setSelected((getSecondaryType.get(i)[j] & 8) != 0);
+        restoreHealth.setSelected((subEntry.secondaryType & 1) != 0);
+        unknown2.setSelected((subEntry.secondaryType & 2) != 0);
+        unknown3.setSelected((subEntry.secondaryType & 4) != 0);
+        unknown4.setSelected((subEntry.secondaryType & 8) != 0);
 
         restoreHealth.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=1;
+                subEntry.secondaryType|= 1;
             }
             else{
-                getSecondaryType.get(i)[j]&=~1;
+                subEntry.secondaryType &= ~1;
             }
         });
         unknown2.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=2;
+                subEntry.secondaryType |= 2;
             }
             else{
-                getSecondaryType.get(i)[j]&=~2;
+                subEntry.secondaryType &= ~2;
             }
         });
         unknown3.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=4;
+                subEntry.secondaryType |= 4;
             }
             else{
-                getSecondaryType.get(i)[j]&=~4;
+                subEntry.secondaryType &=~ 4;
             }
         });
         unknown4.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=8;
+                subEntry.secondaryType |= 8;
             }
             else{
-                getSecondaryType.get(i)[j]&=~8;
+                subEntry.secondaryType &=~ 8;
             }
         });
         VBox healthPropertiesBox = new VBox(2,restoreHealth,unknown2,unknown3,unknown4);
@@ -515,42 +404,42 @@ public class Bdm {
         CheckBox unknown8=new CheckBox("Unknown 8");
 
 
-        unknown5.setSelected((getSecondaryType.get(i)[j] & 16L) != 0);
-        unknown6.setSelected((getSecondaryType.get(i)[j] & 32L) != 0);
-        unknown7.setSelected((getSecondaryType.get(i)[j] & 64L) != 0);
-        unknown8.setSelected((getSecondaryType.get(i)[j] & 128L) != 0);
+        unknown5.setSelected((subEntry.secondaryType & 16L) != 0);
+        unknown6.setSelected((subEntry.secondaryType & 32L) != 0);
+        unknown7.setSelected((subEntry.secondaryType & 64L) != 0);
+        unknown8.setSelected((subEntry.secondaryType & 128L) != 0);
 
 
         unknown5.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=16;
+                subEntry.secondaryType |= 16;
             }
             else{
-                getSecondaryType.get(i)[j]&=~16;
+                subEntry.secondaryType &=~ 16;
             }
         });
         unknown6.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=32;
+                subEntry.secondaryType |= 32;
             }
             else{
-                getSecondaryType.get(i)[j]&=~32;
+                subEntry.secondaryType &=~ 32;
             }
         });
         unknown7.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=64;
+                subEntry.secondaryType |= 64;
             }
             else{
-                getSecondaryType.get(i)[j]&=~64;
+                subEntry.secondaryType &=~ 64;
             }
         });
         unknown8.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=128;
+                subEntry.secondaryType |= 128;
             }
             else{
-                getSecondaryType.get(i)[j]&=~128;
+                subEntry.secondaryType &=~ 128;
             }
         });
         VBox unknownVBox = new VBox(2,unknown5,unknown6,unknown7,unknown8);
@@ -577,42 +466,42 @@ public class Bdm {
         CheckBox bypassSuperArmor=new CheckBox("Bypass Super Armor");
 
 
-        disableEvasiveUsage.setSelected((getSecondaryType.get(i)[j] & 256) != 0);
-        unknown10.setSelected((getSecondaryType.get(i)[j] & 512) != 0);
-        bypassTimeStopDamage.setSelected((getSecondaryType.get(i)[j] & 1024) != 0);
-        bypassSuperArmor.setSelected((getSecondaryType.get(i)[j] & 2048) != 0);
+        disableEvasiveUsage.setSelected((subEntry.secondaryType & 256) != 0);
+        unknown10.setSelected((subEntry.secondaryType & 512) != 0);
+        bypassTimeStopDamage.setSelected((subEntry.secondaryType & 1024) != 0);
+        bypassSuperArmor.setSelected((subEntry.secondaryType & 2048) != 0);
 
 
         disableEvasiveUsage.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=256;
+                subEntry.secondaryType |= 256;
             }
             else{
-                getSecondaryType.get(i)[j]&=~256;
+                subEntry.secondaryType &=~ 256;
             }
         });
         unknown10.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=512;
+                subEntry.secondaryType |= 512;
             }
             else{
-                getSecondaryType.get(i)[j]&=~512;
+                subEntry.secondaryType &=~ 512;
             }
         });
         bypassTimeStopDamage.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=1024;
+                subEntry.secondaryType |= 1024;
             }
             else{
-                getSecondaryType.get(i)[j]&=~1024;
+                subEntry.secondaryType &=~ 1024;
             }
         });
         bypassSuperArmor.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=2048;
+                subEntry.secondaryType |= 2048;
             }
             else{
-                getSecondaryType.get(i)[j]&=~2048;
+                subEntry.secondaryType &=~ 2048;
             }
         });
         VBox damagePropertiesBox = new VBox(2,disableEvasiveUsage,unknown10,bypassTimeStopDamage,bypassSuperArmor);
@@ -639,42 +528,42 @@ public class Bdm {
         CheckBox unknown16=new CheckBox("Unknown 16");
 
 
-        faceOpponentAlways.setSelected((getSecondaryType.get(i)[j] & 4096) != 0);
-        unknown14.setSelected((getSecondaryType.get(i)[j] & 8192) != 0);
-        unknown15.setSelected((getSecondaryType.get(i)[j] & 16384) != 0);
-        unknown16.setSelected((getSecondaryType.get(i)[j] & 2048) != 0);
+        faceOpponentAlways.setSelected((subEntry.secondaryType & 4096) != 0);
+        unknown14.setSelected((subEntry.secondaryType & 8192) != 0);
+        unknown15.setSelected((subEntry.secondaryType & 16384) != 0);
+        unknown16.setSelected((subEntry.secondaryType & 2048) != 0);
 
 
         faceOpponentAlways.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=4096;
+                subEntry.secondaryType |= 4096;
             }
             else{
-                getSecondaryType.get(i)[j]&=~4096;
+                subEntry.secondaryType &=~ 4096;
             }
         });
         unknown14.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=8192;
+                subEntry.secondaryType |= 8192;
             }
             else{
-                getSecondaryType.get(i)[j]&=~8192;
+                subEntry.secondaryType &=~ 8192;
             }
         });
         unknown15.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=16384;
+                subEntry.secondaryType |= 16384;
             }
             else{
-                getSecondaryType.get(i)[j]&=~16384;
+                subEntry.secondaryType &=~ 16384;
             }
         });
         unknown16.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getSecondaryType.get(i)[j]|=32768;
+                subEntry.secondaryType |= 32768;
             }
             else{
-                getSecondaryType.get(i)[j]&=~32768;
+                subEntry.secondaryType &=~ 32768;
             }
         });
         VBox damageOrientationBox = new VBox(2,faceOpponentAlways,unknown14,unknown15,unknown16);
@@ -703,10 +592,10 @@ public class Bdm {
 
         Spinner<Integer> damageAmountSpinner=new Spinner<>(0,65535,0);
         damageAmountSpinner.setEditable(true);
-        damageAmountSpinner.getValueFactory().setValue(getDamageAmount.get(i)[j]);
+        damageAmountSpinner.getValueFactory().setValue(subEntry.damageAmount);
         damageAmountSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getDamageAmount.get(i)[j]=newValue;
+                subEntry.damageAmount = newValue;
             }
 
         });
@@ -724,10 +613,10 @@ public class Bdm {
 
         Spinner<Integer> damageSpecialSpinner=new Spinner<>(0,65535,0);
         damageSpecialSpinner.setEditable(true);
-        damageSpecialSpinner.getValueFactory().setValue(getDamageSpecial.get(i)[j]);
+        damageSpecialSpinner.getValueFactory().setValue(subEntry.damageSpecial);
         damageSpecialSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getDamageSpecial.get(i)[j]=newValue;
+                subEntry.damageSpecial = newValue;
             }
 
         });
@@ -744,10 +633,10 @@ public class Bdm {
 
         Spinner<Integer> damageSpecial2Spinner=new Spinner<>(0,65535,0);
         damageSpecial2Spinner.setEditable(true);
-        damageSpecial2Spinner.getValueFactory().setValue(getDamageSpecial2.get(i)[j]);
+        damageSpecial2Spinner.getValueFactory().setValue(subEntry.damageSpecial2);
         damageSpecial2Spinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getDamageSpecial2.get(i)[j]=newValue;
+                subEntry.damageSpecial2 = newValue;
             }
 
         });
@@ -764,10 +653,10 @@ public class Bdm {
 
         Spinner<Integer> damageSpecial3Spinner=new Spinner<>(0,65535,0);
         damageSpecial3Spinner.setEditable(true);
-        damageSpecial3Spinner.getValueFactory().setValue(getDamageSpecial3.get(i)[j]);
+        damageSpecial3Spinner.getValueFactory().setValue(subEntry.damageSpecial3);
         damageSpecial3Spinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getDamageSpecial3.get(i)[j]=newValue;
+                subEntry.damageSpecial3 = newValue;
             }
 
         });
@@ -782,7 +671,7 @@ public class Bdm {
 
     }
 
-    private VBox createAnimationVBox(int i, int j){
+    private VBox createAnimationVBox(BdmSubEntry subEntry){
         VBox animationVBox = new VBox(5);
 
         //user animation time
@@ -793,10 +682,10 @@ public class Bdm {
 
         Spinner<Integer> userAnimationTimeSpinner=new Spinner<>(0,65535,0);
         userAnimationTimeSpinner.setEditable(true);
-        userAnimationTimeSpinner.getValueFactory().setValue(getUserAnimationTime.get(i)[j]);
+        userAnimationTimeSpinner.getValueFactory().setValue(subEntry.userAnimationTime);
         userAnimationTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getUserAnimationTime.get(i)[j]=newValue;
+                subEntry.userAnimationTime = newValue;
             }
 
         });
@@ -813,10 +702,10 @@ public class Bdm {
 
         Spinner<Double> userAnimationSpeedSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
         userAnimationSpeedSpinner.setEditable(true);
-        userAnimationSpeedSpinner.getValueFactory().setValue(getUserAnimationSpeed.get(i)[j]);
+        userAnimationSpeedSpinner.getValueFactory().setValue((double)subEntry.userAnimationSpeed);
         userAnimationSpeedSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getUserAnimationSpeed.get(i)[j]=newValue;
+                subEntry.userAnimationSpeed = newValue.floatValue();
             }
         });
 
@@ -832,10 +721,10 @@ public class Bdm {
 
         Spinner<Integer> victimAnimationTimeSpinner=new Spinner<>(0,65535,0);
         victimAnimationTimeSpinner.setEditable(true);
-        victimAnimationTimeSpinner.getValueFactory().setValue(getVictimAnimationTime.get(i)[j]);
+        victimAnimationTimeSpinner.getValueFactory().setValue(subEntry.victimAnimationTime);
         victimAnimationTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getVictimAnimationTime.get(i)[j]=newValue;
+                subEntry.victimAnimationTime = newValue;
             }
 
         });
@@ -852,10 +741,10 @@ public class Bdm {
 
         Spinner<Double> victimAnimationSpeedSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
         victimAnimationSpeedSpinner.setEditable(true);
-        victimAnimationSpeedSpinner.getValueFactory().setValue(getVictimAnimationSpeed.get(i)[j]);
+        victimAnimationSpeedSpinner.getValueFactory().setValue((double)subEntry.victimAnimationSpeed);
         victimAnimationSpeedSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getVictimAnimationSpeed.get(i)[j]=newValue;
+                subEntry.victimAnimationSpeed = newValue.floatValue();
             }
         });
 
@@ -867,7 +756,8 @@ public class Bdm {
         
         return animationVBox;
     }
-    private VBox createSoundVBox(int i, int j){
+
+    private VBox createSoundVBox(BdmSubEntry subEntry){
         VBox soundVBox =new VBox(5);
 
         //sound type
@@ -892,7 +782,7 @@ public class Bdm {
         skillVOX.setToggleGroup(acbTypeToggleGroup);
 
 
-        switch (getDamageType.get(i)[j]) {
+        switch (subEntry.acbType) {
             case 2:  characterSE.setSelected(true);           break;
             case 3:  characterVOX.setSelected(true);          break;
             case 10: skillSE.setSelected(true);               break;
@@ -904,11 +794,11 @@ public class Bdm {
             if (newValue != null && newValue.isSelected()) {
                 RadioButton selectedRadio = (RadioButton) newValue;
                 
-                if (selectedRadio == common)                    { getDamageType.get(i)[j] = 0;  }
-                else if (selectedRadio == characterSE)          { getDamageType.get(i)[j] = 2;  }
-                else if (selectedRadio == characterVOX)         { getDamageType.get(i)[j] = 3;  }
-                else if (selectedRadio == skillSE)              { getDamageType.get(i)[j] = 10; }
-                else if (selectedRadio == skillVOX)             { getDamageType.get(i)[j] = 11; }
+                if (selectedRadio == common)                    { subEntry.acbType = 0;  }
+                else if (selectedRadio == characterSE)          { subEntry.acbType = 2;  }
+                else if (selectedRadio == characterVOX)         { subEntry.acbType = 3;  }
+                else if (selectedRadio == skillSE)              { subEntry.acbType = 10; }
+                else if (selectedRadio == skillVOX)             { subEntry.acbType = 11; }
             }
         });
         acbTypeRadioButtonsHBox.getChildren().addAll(common,characterSE,characterVOX,skillSE,skillVOX);
@@ -925,10 +815,10 @@ public class Bdm {
 
         Spinner<Integer> cueIdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
         cueIdSpinner.setEditable(true);
-        cueIdSpinner.getValueFactory().setValue((int)getCueId.get(i)[j]);
+        cueIdSpinner.getValueFactory().setValue((int)subEntry.cueId);
         cueIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getCueId.get(i)[j]=newValue.shortValue();
+                subEntry.cueId = newValue.shortValue();
             }
         });
 
@@ -941,7 +831,7 @@ public class Bdm {
         return soundVBox;
     }
 
-    private ScrollPane createEffectsScrollPane(int i,int j){
+    private ScrollPane createEffectsScrollPane(BdmSubEntry subEntry){
         ScrollPane effectsScrollPane = new ScrollPane();
         VBox effectsVBox = new VBox(5);
 
@@ -953,10 +843,10 @@ public class Bdm {
 
         Spinner<Integer> effect1IdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
         effect1IdSpinner.setEditable(true);
-        effect1IdSpinner.getValueFactory().setValue((int)getEffect1Id.get(i)[j]);
+        effect1IdSpinner.getValueFactory().setValue((int)subEntry.effect1Id);
         effect1IdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getEffect1Id.get(i)[j]=newValue.shortValue();
+                subEntry.effect1Id = newValue.shortValue();
             }
 
         });
@@ -973,10 +863,10 @@ public class Bdm {
 
         Spinner<Integer> effect1SkillIdSpinner=new Spinner<>(0,65535,0);
         effect1SkillIdSpinner.setEditable(true);
-        effect1SkillIdSpinner.getValueFactory().setValue(getEffect1SkillId.get(i)[j]);
+        effect1SkillIdSpinner.getValueFactory().setValue(subEntry.effect1SkillId);
         effect1SkillIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getEffect1SkillId.get(i)[j]=newValue;
+                subEntry.effect1SkillId = newValue;
             }
 
         });
@@ -1030,7 +920,7 @@ public class Bdm {
         RadioButton unknown15Effect1 = new RadioButton("Unknown 15");
         unknown15Effect1.setToggleGroup(effect1EepkTypeToggleGroup);
 
-        switch (getEffect1EepkType.get(i)[j]) {
+        switch (subEntry.effect1EepkType) {
             case 1:  stageBGEffect1.setSelected(true);       break;
             case 2:  characterEffect1.setSelected(true);     break;
             case 3:  awokenSkillEffect1.setSelected(true);   break;
@@ -1053,22 +943,22 @@ public class Bdm {
     if (newValue != null && newValue.isSelected()) {
         RadioButton selectedRadio = (RadioButton) newValue;
         
-        if (selectedRadio == commonEffect1)               { getEffect1EepkType.get(i)[j] = 0;  }
-            else if (selectedRadio == stageBGEffect1)          { getEffect1EepkType.get(i)[j] = 1;  }
-            else if (selectedRadio == characterEffect1)        { getEffect1EepkType.get(i)[j] = 2;  }
-            else if (selectedRadio == awokenSkillEffect1)      { getEffect1EepkType.get(i)[j] = 3;  }
-            else if (selectedRadio == unknown4Effect1)         { getEffect1EepkType.get(i)[j] = 4;  }
-            else if (selectedRadio == superSkillEffect1)       { getEffect1EepkType.get(i)[j] = 5;  }
-            else if (selectedRadio == ultimateSkillEffect1)    { getEffect1EepkType.get(i)[j] = 6;  }
-            else if (selectedRadio == evasiveSkillEffect1)     { getEffect1EepkType.get(i)[j] = 7;  }
-            else if (selectedRadio == unknown8Effect1)         { getEffect1EepkType.get(i)[j] = 8;  }
-            else if (selectedRadio == kiBlastSkillEffect1)     { getEffect1EepkType.get(i)[j] = 9;  }
-            else if (selectedRadio == unknown10Effect1)        { getEffect1EepkType.get(i)[j] = 10; }
-            else if (selectedRadio == stageEffect1)            { getEffect1EepkType.get(i)[j] = 11; }
-            else if (selectedRadio == unknown12Effect1)        { getEffect1EepkType.get(i)[j] = 12; }
-            else if (selectedRadio == unknown13Effect1)        { getEffect1EepkType.get(i)[j] = 13; }
-            else if (selectedRadio == unknown14Effect1)        { getEffect1EepkType.get(i)[j] = 14; }
-            else if (selectedRadio == unknown15Effect1)        { getEffect1EepkType.get(i)[j] = 15; }
+        if (selectedRadio == commonEffect1)                    { subEntry.effect1EepkType = 0;  }
+            else if (selectedRadio == stageBGEffect1)          { subEntry.effect1EepkType = 1;  }
+            else if (selectedRadio == characterEffect1)        { subEntry.effect1EepkType = 2;  }
+            else if (selectedRadio == awokenSkillEffect1)      { subEntry.effect1EepkType = 3;  }
+            else if (selectedRadio == unknown4Effect1)         { subEntry.effect1EepkType = 4;  }
+            else if (selectedRadio == superSkillEffect1)       { subEntry.effect1EepkType = 5;  }
+            else if (selectedRadio == ultimateSkillEffect1)    { subEntry.effect1EepkType = 6;  }
+            else if (selectedRadio == evasiveSkillEffect1)     { subEntry.effect1EepkType = 7;  }
+            else if (selectedRadio == unknown8Effect1)         { subEntry.effect1EepkType = 8;  }
+            else if (selectedRadio == kiBlastSkillEffect1)     { subEntry.effect1EepkType = 9;  }
+            else if (selectedRadio == unknown10Effect1)        { subEntry.effect1EepkType= 10; }
+            else if (selectedRadio == stageEffect1)            { subEntry.effect1EepkType = 11; }
+            else if (selectedRadio == unknown12Effect1)        { subEntry.effect1EepkType = 12; }
+            else if (selectedRadio == unknown13Effect1)        { subEntry.effect1EepkType = 13; }
+            else if (selectedRadio == unknown14Effect1)        { subEntry.effect1EepkType = 14; }
+            else if (selectedRadio == unknown15Effect1)        { subEntry.effect1EepkType = 15; }
         }
     });
 
@@ -1105,10 +995,10 @@ public class Bdm {
 
         Spinner<Integer> effect2IdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
         effect2IdSpinner.setEditable(true);
-        effect2IdSpinner.getValueFactory().setValue((int)getEffect2Id.get(i)[j]);
+        effect2IdSpinner.getValueFactory().setValue((int)subEntry.effect2Id);
         effect2IdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getEffect2Id.get(i)[j]=newValue.shortValue();
+                subEntry.effect2Id = newValue.shortValue();
             }
 
         });
@@ -1125,10 +1015,10 @@ public class Bdm {
 
         Spinner<Integer> effect2SkillIdSpinner=new Spinner<>(0,65535,0);
         effect2SkillIdSpinner.setEditable(true);
-        effect2SkillIdSpinner.getValueFactory().setValue(getEffect2SkillId.get(i)[j]);
+        effect2SkillIdSpinner.getValueFactory().setValue(subEntry.effect2SkillId);
         effect2SkillIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getEffect2SkillId.get(i)[j]=newValue;
+                subEntry.effect2SkillId = newValue;
             }
 
         });
@@ -1182,7 +1072,7 @@ public class Bdm {
         RadioButton unknown15Effect2 = new RadioButton("Unknown 15");
         unknown15Effect2.setToggleGroup(effect2EepkTypeToggleGroup);
 
-        switch (getEffect2EepkType.get(i)[j]) {
+        switch (subEntry.effect2EepkType) {
             case 1:  stageBGEffect2.setSelected(true);       break;
             case 2:  characterEffect2.setSelected(true);     break;
             case 3:  awokenSkillEffect2.setSelected(true);   break;
@@ -1205,22 +1095,22 @@ public class Bdm {
             if (newValue != null && newValue.isSelected()) {
                 RadioButton selectedRadio = (RadioButton) newValue;
         
-                if      (selectedRadio == commonEffect2)           { getEffect2EepkType.get(i)[j] = 0;  }
-                else if (selectedRadio == stageBGEffect2)          { getEffect2EepkType.get(i)[j] = 1;  }
-                else if (selectedRadio == characterEffect2)        { getEffect2EepkType.get(i)[j] = 2;  }
-                else if (selectedRadio == awokenSkillEffect2)      { getEffect2EepkType.get(i)[j] = 3;  }
-                else if (selectedRadio == unknown4Effect2)         { getEffect2EepkType.get(i)[j] = 4;  }
-                else if (selectedRadio == superSkillEffect2)       { getEffect2EepkType.get(i)[j] = 5;  }
-                else if (selectedRadio == ultimateSkillEffect2)    { getEffect2EepkType.get(i)[j] = 6;  }
-                else if (selectedRadio == evasiveSkillEffect2)     { getEffect2EepkType.get(i)[j] = 7;  }
-                else if (selectedRadio == unknown8Effect2)         { getEffect2EepkType.get(i)[j] = 8;  }
-                else if (selectedRadio == kiBlastSkillEffect2)     { getEffect2EepkType.get(i)[j] = 9;  }
-                else if (selectedRadio == unknown10Effect2)        { getEffect2EepkType.get(i)[j] = 10; }
-                else if (selectedRadio == stageEffect2)            { getEffect2EepkType.get(i)[j] = 11; }
-                else if (selectedRadio == unknown12Effect2)        { getEffect2EepkType.get(i)[j] = 12; }
-                else if (selectedRadio == unknown13Effect2)        { getEffect2EepkType.get(i)[j] = 13; }
-                else if (selectedRadio == unknown14Effect2)        { getEffect2EepkType.get(i)[j] = 14; }
-                else if (selectedRadio == unknown15Effect2)        { getEffect2EepkType.get(i)[j] = 15; }
+                if      (selectedRadio == commonEffect2)           { subEntry.effect2EepkType = 0;  }
+                else if (selectedRadio == stageBGEffect2)          { subEntry.effect2EepkType = 1;  }
+                else if (selectedRadio == characterEffect2)        { subEntry.effect2EepkType = 2;  }
+                else if (selectedRadio == awokenSkillEffect2)      { subEntry.effect2EepkType = 3;  }
+                else if (selectedRadio == unknown4Effect2)         { subEntry.effect2EepkType = 4;  }
+                else if (selectedRadio == superSkillEffect2)       { subEntry.effect2EepkType = 5;  }
+                else if (selectedRadio == ultimateSkillEffect2)    { subEntry.effect2EepkType = 6;  }
+                else if (selectedRadio == evasiveSkillEffect2)     { subEntry.effect2EepkType = 7;  }
+                else if (selectedRadio == unknown8Effect2)         { subEntry.effect2EepkType = 8;  }
+                else if (selectedRadio == kiBlastSkillEffect2)     { subEntry.effect2EepkType = 9;  }
+                else if (selectedRadio == unknown10Effect2)        { subEntry.effect2EepkType = 10; }
+                else if (selectedRadio == stageEffect2)            { subEntry.effect2EepkType = 11; }
+                else if (selectedRadio == unknown12Effect2)        { subEntry.effect2EepkType = 12; }
+                else if (selectedRadio == unknown13Effect2)        { subEntry.effect2EepkType = 13; }
+                else if (selectedRadio == unknown14Effect2)        { subEntry.effect2EepkType = 14; }
+                else if (selectedRadio == unknown15Effect2)        { subEntry.effect2EepkType = 15; }
             }
         });
 
@@ -1257,10 +1147,10 @@ public class Bdm {
 
         Spinner<Integer> effect3IdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
         effect3IdSpinner.setEditable(true);
-        effect3IdSpinner.getValueFactory().setValue((int)getEffect3Id.get(i)[j]);
+        effect3IdSpinner.getValueFactory().setValue((int)subEntry.effect3Id);
         effect3IdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getEffect3Id.get(i)[j]=newValue.shortValue();
+                subEntry.effect3Id = newValue.shortValue();
             }
 
         });
@@ -1277,10 +1167,10 @@ public class Bdm {
 
         Spinner<Integer> effect3SkillIdSpinner=new Spinner<>(0,65535,0);
         effect3SkillIdSpinner.setEditable(true);
-        effect3SkillIdSpinner.getValueFactory().setValue(getEffect3SkillId.get(i)[j]);
+        effect3SkillIdSpinner.getValueFactory().setValue(subEntry.effect3SkillId);
         effect3SkillIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getEffect3SkillId.get(i)[j]=newValue;
+                subEntry.effect3SkillId = newValue;
             }
 
         });
@@ -1334,7 +1224,7 @@ public class Bdm {
         RadioButton unknown15Effect3 = new RadioButton("Unknown 15");
         unknown15Effect3.setToggleGroup(effect3EepkTypeToggleGroup);
 
-        switch (getEffect3EepkType.get(i)[j]) {
+        switch (subEntry.effect3EepkType) {
             case 1:  stageBGEffect3.setSelected(true);       break;
             case 2:  characterEffect3.setSelected(true);     break;
             case 3:  awokenSkillEffect3.setSelected(true);   break;
@@ -1357,22 +1247,22 @@ public class Bdm {
             if (newValue != null && newValue.isSelected()) {
                 RadioButton selectedRadio = (RadioButton) newValue;
         
-                if      (selectedRadio == commonEffect3)           { getEffect3EepkType.get(i)[j] = 0;  }
-                else if (selectedRadio == stageBGEffect3)          { getEffect3EepkType.get(i)[j] = 1;  }
-                else if (selectedRadio == characterEffect3)        { getEffect3EepkType.get(i)[j] = 2;  }
-                else if (selectedRadio == awokenSkillEffect3)      { getEffect3EepkType.get(i)[j] = 3;  }
-                else if (selectedRadio == unknown4Effect3)         { getEffect3EepkType.get(i)[j] = 4;  }
-                else if (selectedRadio == superSkillEffect3)       { getEffect3EepkType.get(i)[j] = 5;  }
-                else if (selectedRadio == ultimateSkillEffect3)    { getEffect3EepkType.get(i)[j] = 6;  }
-                else if (selectedRadio == evasiveSkillEffect3)     { getEffect3EepkType.get(i)[j] = 7;  }
-                else if (selectedRadio == unknown8Effect3)         { getEffect3EepkType.get(i)[j] = 8;  }
-                else if (selectedRadio == kiBlastSkillEffect3)     { getEffect3EepkType.get(i)[j] = 9;  }
-                else if (selectedRadio == unknown10Effect3)        { getEffect3EepkType.get(i)[j] = 10; }
-                else if (selectedRadio == stageEffect3)            { getEffect3EepkType.get(i)[j] = 11; }
-                else if (selectedRadio == unknown12Effect3)        { getEffect3EepkType.get(i)[j] = 12; }
-                else if (selectedRadio == unknown13Effect3)        { getEffect3EepkType.get(i)[j] = 13; }
-                else if (selectedRadio == unknown14Effect3)        { getEffect3EepkType.get(i)[j] = 14; }
-                else if (selectedRadio == unknown15Effect3)        { getEffect3EepkType.get(i)[j] = 15; }
+                if      (selectedRadio == commonEffect3)           { subEntry.effect3EepkType = 0;  }
+                else if (selectedRadio == stageBGEffect3)          { subEntry.effect3EepkType = 1;  }
+                else if (selectedRadio == characterEffect3)        { subEntry.effect3EepkType = 2;  }
+                else if (selectedRadio == awokenSkillEffect3)      { subEntry.effect3EepkType = 3;  }
+                else if (selectedRadio == unknown4Effect3)         { subEntry.effect3EepkType = 4;  }
+                else if (selectedRadio == superSkillEffect3)       { subEntry.effect3EepkType = 5;  }
+                else if (selectedRadio == ultimateSkillEffect3)    { subEntry.effect3EepkType = 6;  }
+                else if (selectedRadio == evasiveSkillEffect3)     { subEntry.effect3EepkType = 7;  }
+                else if (selectedRadio == unknown8Effect3)         { subEntry.effect3EepkType = 8;  }
+                else if (selectedRadio == kiBlastSkillEffect3)     { subEntry.effect3EepkType = 9;  }
+                else if (selectedRadio == unknown10Effect3)        { subEntry.effect3EepkType= 10; }
+                else if (selectedRadio == stageEffect3)            { subEntry.effect3EepkType = 11; }
+                else if (selectedRadio == unknown12Effect3)        { subEntry.effect3EepkType = 12; }
+                else if (selectedRadio == unknown13Effect3)        { subEntry.effect3EepkType = 13; }
+                else if (selectedRadio == unknown14Effect3)        { subEntry.effect3EepkType = 14; }
+                else if (selectedRadio == unknown15Effect3)        { subEntry.effect3EepkType = 15; }
             }
         });
 
@@ -1406,7 +1296,7 @@ public class Bdm {
         return effectsScrollPane;
     }
 
-    private VBox createPushbackVBox(int i,int j){
+    private VBox createPushbackVBox(BdmSubEntry subEntry){
         VBox pushBackVBox = new VBox(5);
 
         //pushback strength
@@ -1417,10 +1307,10 @@ public class Bdm {
 
         Spinner<Double> pushbackStrengthSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
         pushbackStrengthSpinner.setEditable(true);
-        pushbackStrengthSpinner.getValueFactory().setValue(getPushbackStrength.get(i)[j]);
+        pushbackStrengthSpinner.getValueFactory().setValue((double)subEntry.pushbackStrength);
         pushbackStrengthSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getPushbackStrength.get(i)[j]=newValue;
+                subEntry.pushbackStrength = newValue.floatValue();
             }
         });
 
@@ -1436,10 +1326,10 @@ public class Bdm {
 
         Spinner<Double> pushbackAccelerationSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
         pushbackAccelerationSpinner.setEditable(true);
-        pushbackAccelerationSpinner.getValueFactory().setValue(getPushbackAcceleration.get(i)[j]);
+        pushbackAccelerationSpinner.getValueFactory().setValue((double)subEntry.pushbackAcceleration);
         pushbackAccelerationSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getPushbackAcceleration.get(i)[j]=newValue;
+                subEntry.pushbackAcceleration = newValue.floatValue();
             }
         });
 
@@ -1455,10 +1345,10 @@ public class Bdm {
 
         Spinner<Integer> userStuntSpinner=new Spinner<>(0,65535,0);
         userStuntSpinner.setEditable(true);
-        userStuntSpinner.getValueFactory().setValue(getUserStunt.get(i)[j]);
+        userStuntSpinner.getValueFactory().setValue(subEntry.userStunt);
         userStuntSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getUserStunt.get(i)[j]=newValue;
+                subEntry.userStunt = newValue;
             }
 
         });
@@ -1475,10 +1365,10 @@ public class Bdm {
 
         Spinner<Integer> victimStuntSpinner=new Spinner<>(0,65535,0);
         victimStuntSpinner.setEditable(true);
-        victimStuntSpinner.getValueFactory().setValue(getVictimStunt.get(i)[j]);
+        victimStuntSpinner.getValueFactory().setValue(subEntry.victimStunt);
         victimStuntSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getVictimStunt.get(i)[j]=newValue;
+                subEntry.victimStunt = newValue;
             }
 
         });
@@ -1496,10 +1386,10 @@ public class Bdm {
 
         Spinner<Integer> knockbackDurationSpinner=new Spinner<>(0,65535,0);
         knockbackDurationSpinner.setEditable(true);
-        knockbackDurationSpinner.getValueFactory().setValue(getKnockbackDuration.get(i)[j]);
+        knockbackDurationSpinner.getValueFactory().setValue(subEntry.knockbackDuration);
         knockbackDurationSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getKnockbackDuration.get(i)[j]=newValue;
+                subEntry.knockbackDuration = newValue;
             }
 
         });
@@ -1515,10 +1405,10 @@ public class Bdm {
 
         Spinner<Integer> knockbackGroundImpactSpinner=new Spinner<>(0,65535,0);
         knockbackGroundImpactSpinner.setEditable(true);
-        knockbackGroundImpactSpinner.getValueFactory().setValue(getKnockbackGroundImpactTime.get(i)[j]);
+        knockbackGroundImpactSpinner.getValueFactory().setValue(subEntry.knockbackGroundImpactTime);
         knockbackGroundImpactSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getKnockbackGroundImpactTime.get(i)[j]=newValue;
+               subEntry.knockbackGroundImpactTime = newValue;
             }
 
         });
@@ -1534,10 +1424,10 @@ public class Bdm {
 
         Spinner<Integer> knockbackRecoveryAfterImpactSpinner=new Spinner<>(0,65535,0);
         knockbackRecoveryAfterImpactSpinner.setEditable(true);
-        knockbackRecoveryAfterImpactSpinner.getValueFactory().setValue(getKnockbackRecoveryAfterImpactTime.get(i)[j]);
+        knockbackRecoveryAfterImpactSpinner.getValueFactory().setValue(subEntry.knockbackRecoveryAfterImpactTime);
         knockbackRecoveryAfterImpactSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getKnockbackRecoveryAfterImpactTime.get(i)[j]=newValue;
+                subEntry.knockbackRecoveryAfterImpactTime = newValue;
             }
 
         });
@@ -1553,10 +1443,10 @@ public class Bdm {
 
         Spinner<Double> knockbackStrengthXSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
         knockbackStrengthXSpinner.setEditable(true);
-        knockbackStrengthXSpinner.getValueFactory().setValue(getKnockbackStrengthX.get(i)[j]);
+        knockbackStrengthXSpinner.getValueFactory().setValue((double)subEntry.knockbackStrengthX);
         knockbackStrengthXSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getKnockbackStrengthX.get(i)[j]=newValue;
+                subEntry.knockbackStrengthX = newValue.floatValue();
             }
         });
 
@@ -1572,10 +1462,10 @@ public class Bdm {
 
         Spinner<Double> knockbackStrengthYSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
         knockbackStrengthYSpinner.setEditable(true);
-        knockbackStrengthYSpinner.getValueFactory().setValue(getKnockbackStrengthY.get(i)[j]);
+        knockbackStrengthYSpinner.getValueFactory().setValue((double)subEntry.knockbackStrengthY);
         knockbackStrengthYSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getKnockbackStrengthY.get(i)[j]=newValue;
+                subEntry.knockbackStrengthY = newValue.floatValue();
             }
         });
 
@@ -1591,10 +1481,10 @@ public class Bdm {
 
         Spinner<Double> knockbackStrengthZSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
         knockbackStrengthZSpinner.setEditable(true);
-        knockbackStrengthZSpinner.getValueFactory().setValue(getKnockbackStrengthZ.get(i)[j]);
+        knockbackStrengthZSpinner.getValueFactory().setValue((double)subEntry.knockbackStrengthZ);
         knockbackStrengthZSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getKnockbackStrengthZ.get(i)[j]=newValue;
+                subEntry.knockbackStrengthZ = newValue.floatValue();
             }
         });
 
@@ -1610,10 +1500,10 @@ public class Bdm {
 
         Spinner<Double> knockbackSDragYSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
         knockbackSDragYSpinner.setEditable(true);
-        knockbackSDragYSpinner.getValueFactory().setValue(getKnockbackDragY.get(i)[j]);
+        knockbackSDragYSpinner.getValueFactory().setValue((double)subEntry.knockbackDragY);
         knockbackSDragYSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getKnockbackDragY.get(i)[j]=newValue;
+                subEntry.knockbackDragY = newValue.floatValue();
             }
         });
 
@@ -1629,10 +1519,10 @@ public class Bdm {
 
         Spinner<Integer> knockbackGravityTimeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
         knockbackGravityTimeSpinner.setEditable(true);
-        knockbackGravityTimeSpinner.getValueFactory().setValue(getKnockbackGravityTime.get(i)[j]);
+        knockbackGravityTimeSpinner.getValueFactory().setValue(subEntry.knockbackGravityTime);
         knockbackGravityTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getKnockbackGravityTime.get(i)[j]=newValue;
+                subEntry.knockbackGravityTime = newValue;
             }
 
         });
@@ -1648,10 +1538,10 @@ public class Bdm {
 
         Spinner<Integer> victimInvincibilityTimeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
         victimInvincibilityTimeSpinner.setEditable(true);
-        victimInvincibilityTimeSpinner.getValueFactory().setValue((int)getVictimInvincibilityTime.get(i)[j]);
+        victimInvincibilityTimeSpinner.getValueFactory().setValue((int)subEntry.victimInvincibilityTime);
         victimInvincibilityTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getVictimInvincibilityTime.get(i)[j]=newValue.shortValue();
+                subEntry.victimInvincibilityTime = newValue.shortValue();
             }
 
         });
@@ -1666,7 +1556,7 @@ public class Bdm {
         return pushBackVBox;
     }
 
-    private VBox createCameraVBox(int i,int j){
+    private VBox createCameraVBox(BdmSubEntry subEntry){
         VBox cameraVBox = new VBox(5);
 
         //camera shake type
@@ -1678,10 +1568,10 @@ public class Bdm {
 
         Spinner<Integer> cameraShakeTypeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
         cameraShakeTypeSpinner.setEditable(true);
-        cameraShakeTypeSpinner.getValueFactory().setValue((int)getCameraShakeType.get(i)[j]);
+        cameraShakeTypeSpinner.getValueFactory().setValue((int)subEntry.cameraShakeType);
         cameraShakeTypeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getCameraShakeType.get(i)[j]=newValue.shortValue();
+                subEntry.cameraShakeType = newValue.shortValue();
             }
 
         });
@@ -1709,10 +1599,10 @@ public class Bdm {
 
         Spinner<Integer> cameraShakeTimeSpinner=new Spinner<>(0,65535,0);
         cameraShakeTimeSpinner.setEditable(true);
-        cameraShakeTimeSpinner.getValueFactory().setValue(getCameraShakeTime.get(i)[j]);
+        cameraShakeTimeSpinner.getValueFactory().setValue(subEntry.cameraShakeTime);
         cameraShakeTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getCameraShakeTime.get(i)[j]=newValue.shortValue();
+                subEntry.cameraShakeTime = newValue.shortValue();
             }
 
         });
@@ -1729,10 +1619,10 @@ public class Bdm {
 
         Spinner<Integer> userBpeIdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
         userBpeIdSpinner.setEditable(true);
-        userBpeIdSpinner.getValueFactory().setValue((int)getUserBpeID.get(i)[j]);
+        userBpeIdSpinner.getValueFactory().setValue((int)subEntry.userBpeID);
         userBpeIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getUserBpeID.get(i)[j]=newValue.shortValue();
+                subEntry.userBpeID = newValue.shortValue();
             }
 
         });
@@ -1749,10 +1639,10 @@ public class Bdm {
 
         Spinner<Integer> victimBpeIdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
         victimBpeIdSpinner.setEditable(true);
-        victimBpeIdSpinner.getValueFactory().setValue((int)getVictimBpeID.get(i)[j]);
+        victimBpeIdSpinner.getValueFactory().setValue((int)subEntry.victimBpeID);
         victimBpeIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getVictimBpeID.get(i)[j]=newValue.shortValue();
+                subEntry.victimBpeID = newValue.shortValue();
             }
 
         });
@@ -1766,7 +1656,7 @@ public class Bdm {
         return cameraVBox;
     }
 
-    private VBox createMiscVBox(int i,int j){
+    private VBox createMiscVBox(BdmSubEntry subEntry){
         VBox miscVBox = new VBox(5);
 
         //transformation type
@@ -1778,10 +1668,10 @@ public class Bdm {
 
         Spinner<Integer> trasnsformationTypeSpinner=new Spinner<>(0,65535,0);
         trasnsformationTypeSpinner.setEditable(true);
-        trasnsformationTypeSpinner.getValueFactory().setValue(getTransformationType.get(i)[j]);
+        trasnsformationTypeSpinner.getValueFactory().setValue(subEntry.transformationType);
         trasnsformationTypeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getTransformationType.get(i)[j]=newValue.shortValue();
+                subEntry.transformationType = newValue.shortValue();
             }
 
         });
@@ -1811,41 +1701,41 @@ public class Bdm {
         CheckBox SPD=new CheckBox("SPD");
         CheckBox target= new CheckBox("Target");
 
-        unknown1.setSelected((getAlimentType.get(i)[j] & 1) != 0);
-        HP_DEF.setSelected((getAlimentType.get(i)[j] & 2) != 0);
-        SPD.setSelected((getAlimentType.get(i)[j] & 4) != 0);
-        target.setSelected((getAlimentType.get(i)[j] & 8) != 0);
+        unknown1.setSelected((subEntry.alimentType & 1) != 0);
+        HP_DEF.setSelected((subEntry.alimentType & 2) != 0);
+        SPD.setSelected((subEntry.alimentType & 4) != 0);
+        target.setSelected((subEntry.alimentType & 8) != 0);
 
         unknown1.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getAlimentType.get(i)[j]|=1;
+                subEntry.alimentType |= 1;
             }
             else{
-                getAlimentType.get(i)[j]&= ~1;
+                subEntry.alimentType &= ~1;
             }
         });
         HP_DEF.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getAlimentType.get(i)[j]|=2;
+                subEntry.alimentType |= 2;
             }
             else{
-                getAlimentType.get(i)[j]&=~2;
+                subEntry.alimentType &=~ 2;
             }
         });
         SPD.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getAlimentType.get(i)[j]|=4;
+                subEntry.alimentType |= 4;
             }
             else{
-                getAlimentType.get(i)[j]&=~4;
+                subEntry.alimentType &=~ 4;
             }
         });
         target.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getAlimentType.get(i)[j]|=8;
+                subEntry.alimentType |= 8;
             }
             else{
-                getAlimentType.get(i)[j]&=~8;
+                subEntry.alimentType &=~ 8;
             }
         });
         VBox properties1Box = new VBox(2,unknown1,HP_DEF,SPD,target);
@@ -1871,41 +1761,41 @@ public class Bdm {
         CheckBox unknown7=new CheckBox("Unknown 7");
         CheckBox unknown8= new CheckBox("Unknown 8");
 
-        sealAwokenSkill.setSelected((getAlimentType.get(i)[j] & 16) != 0);
-        unknown6.setSelected((getAlimentType.get(i)[j] & 32) != 0);
-        unknown7.setSelected((getAlimentType.get(i)[j] & 64) != 0);
-        unknown8.setSelected((getAlimentType.get(i)[j] & 128) != 0);
+        sealAwokenSkill.setSelected((subEntry.alimentType & 16) != 0);
+        unknown6.setSelected((subEntry.alimentType & 32) != 0);
+        unknown7.setSelected((subEntry.alimentType & 64) != 0);
+        unknown8.setSelected((subEntry.alimentType & 128) != 0);
 
         sealAwokenSkill.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getAlimentType.get(i)[j]|=16;
+                subEntry.alimentType |= 16;
             }
             else{
-                getAlimentType.get(i)[j]&= ~16;
+                subEntry.alimentType &=~ 16;
             }
         });
         unknown6.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getAlimentType.get(i)[j]|=32;
+                subEntry.alimentType |= 32;
             }
             else{
-                getAlimentType.get(i)[j]&=~32;
+                subEntry.alimentType &=~ 32;
             }
         });
         unknown7.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getAlimentType.get(i)[j]|=64;
+                subEntry.alimentType |= 64;
             }
             else{
-                getAlimentType.get(i)[j]&=~64;
+                subEntry.alimentType &=~ 64;
             }
         });
         unknown8.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getAlimentType.get(i)[j]|=128;
+                subEntry.alimentType |= 128;
             }
             else{
-                getAlimentType.get(i)[j]&=~128;
+                subEntry.alimentType &=~ 128;
             }
         });
         VBox properties2Box = new VBox(2,sealAwokenSkill,unknown6,unknown7,unknown8);
@@ -1941,41 +1831,41 @@ public class Bdm {
         CheckBox stumbleSet3=new CheckBox("Stumble Set 3");
         CheckBox stumbleSet4= new CheckBox("Stumble Set 4");
 
-        stumbleSet1.setSelected((getStumbleType.get(i)[j] & 1) != 0);
-        stumbleSet2.setSelected((getStumbleType.get(i)[j] & 2) != 0);
-        stumbleSet3.setSelected((getStumbleType.get(i)[j] & 4) != 0);
-        stumbleSet4.setSelected((getStumbleType.get(i)[j] & 8) != 0);
+        stumbleSet1.setSelected((subEntry.stumbleType & 1) != 0);
+        stumbleSet2.setSelected((subEntry.stumbleType & 2) != 0);
+        stumbleSet3.setSelected((subEntry.stumbleType & 4) != 0);
+        stumbleSet4.setSelected((subEntry.stumbleType & 8) != 0);
 
         stumbleSet1.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=1;
+                subEntry.stumbleType |= 1;
             }
             else{
-                getStumbleType.get(i)[j]&=~1;
+                subEntry.stumbleType &=~ 1;
             }
         });
         stumbleSet2.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=2;
+                subEntry.stumbleType |= 2;
             }
             else{
-                getStumbleType.get(i)[j]&=~2;
+                subEntry.stumbleType &=~ 2;
             }
         });
         stumbleSet3.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=4;
+                subEntry.stumbleType |= 4;
             }
             else{
-                getStumbleType.get(i)[j]&=~4;
+                subEntry.stumbleType &=~ 4;
             }
         });
         stumbleSet4.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=8;
+                subEntry.stumbleType |= 8;
             }
             else{
-                getStumbleType.get(i)[j]&=~8;
+                subEntry.stumbleType &=~ 8;
             }
         });
         VBox stumbleGroup1Box = new VBox(2,stumbleSet1,stumbleSet2,stumbleSet3,stumbleSet4);
@@ -2001,41 +1891,41 @@ public class Bdm {
         CheckBox allStumbleSets=new CheckBox("All Stumble Sets");
         CheckBox unknown8StumbleSet= new CheckBox("Unknown 8");
 
-        stumbleSet5.setSelected((getStumbleType.get(i)[j] & 16) != 0);
-        stumbleSet6.setSelected((getStumbleType.get(i)[j] & 32) != 0);
-        allStumbleSets.setSelected((getStumbleType.get(i)[j] & 64) != 0);
-        unknown8StumbleSet.setSelected((getStumbleType.get(i)[j] & 128) != 0);
+        stumbleSet5.setSelected((subEntry.stumbleType & 16) != 0);
+        stumbleSet6.setSelected((subEntry.stumbleType & 32) != 0);
+        allStumbleSets.setSelected((subEntry.stumbleType & 64) != 0);
+        unknown8StumbleSet.setSelected((subEntry.stumbleType & 128) != 0);
 
         stumbleSet5.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=1;
+                subEntry.stumbleType |= 1;
             }
             else{
-                getStumbleType.get(i)[j]&=~1;
+                subEntry.stumbleType &=~ 1;
             }
         });
         stumbleSet6.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=2;
+                subEntry.stumbleType |= 2;
             }
             else{
-                getStumbleType.get(i)[j]&=~2;
+                subEntry.stumbleType &=~ 2;
             }
         });
         allStumbleSets.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=4;
+                subEntry.stumbleType |= 4;
             }
             else{
-                getStumbleType.get(i)[j]&=~4;
+                subEntry.stumbleType &=~ 4;
             }
         });
         unknown8StumbleSet.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=8;
+                subEntry.stumbleType |= 8;
             }
             else{
-                getStumbleType.get(i)[j]&=~8;
+                subEntry.stumbleType &=~ 8;
             }
         });
         VBox stumbleGroup2Box = new VBox(2,stumbleSet5,stumbleSet6,allStumbleSets,unknown8StumbleSet);
@@ -2061,41 +1951,41 @@ public class Bdm {
         CheckBox unknown11StumbleSets=new CheckBox("Unknown 11");
         CheckBox unknown12StumbleSet= new CheckBox("Unknown 12");
 
-        unknown9StumbleSets.setSelected((getStumbleType.get(i)[j] & 16) != 0);
-        unknown10StumbleSets.setSelected((getStumbleType.get(i)[j] & 32) != 0);
-        unknown11StumbleSets.setSelected((getStumbleType.get(i)[j] & 64) != 0);
-        unknown12StumbleSet.setSelected((getStumbleType.get(i)[j] & 128) != 0);
+        unknown9StumbleSets.setSelected((subEntry.stumbleType & 16) != 0);
+        unknown10StumbleSets.setSelected((subEntry.stumbleType & 32) != 0);
+        unknown11StumbleSets.setSelected((subEntry.stumbleType & 64) != 0);
+        unknown12StumbleSet.setSelected((subEntry.stumbleType & 128) != 0);
 
         unknown9StumbleSets.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=16;
+                subEntry.stumbleType |= 16;
             }
             else{
-                getStumbleType.get(i)[j]&=~16;
+                subEntry.stumbleType &=~ 16;
             }
         });
         unknown10StumbleSets.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=32;
+                subEntry.stumbleType |= 32;
             }
             else{
-                getStumbleType.get(i)[j]&=~32;
+                subEntry.stumbleType &=~ 32;
             }
         });
         unknown11StumbleSets.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=64;
+                subEntry.stumbleType |= 64;
             }
             else{
-                getStumbleType.get(i)[j]&=~64;
+                subEntry.stumbleType &=~ 64;
             }
         });
         unknown12StumbleSet.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=128;
+                subEntry.stumbleType |= 128;
             }
             else{
-                getStumbleType.get(i)[j]&=~128;
+                subEntry.stumbleType &=~ 128;
             }
         });
         VBox stumbleGroup3Box = new VBox(2,unknown9StumbleSets,unknown10StumbleSets,unknown11StumbleSets,unknown12StumbleSet);
@@ -2121,41 +2011,41 @@ public class Bdm {
         CheckBox unknown15StumbleSets=new CheckBox("Unknown 15");
         CheckBox unknown16StumbleSet= new CheckBox("Unknown 16");
 
-        unknown13StumbleSets.setSelected((getStumbleType.get(i)[j] & 256) != 0);
-        unknown14StumbleSets.setSelected((getStumbleType.get(i)[j] & 512) != 0);
-        unknown15StumbleSets.setSelected((getStumbleType.get(i)[j] & 1024) != 0);
-        unknown16StumbleSet.setSelected((getStumbleType.get(i)[j] & 2048) != 0);
+        unknown13StumbleSets.setSelected((subEntry.stumbleType & 256) != 0);
+        unknown14StumbleSets.setSelected((subEntry.stumbleType & 512) != 0);
+        unknown15StumbleSets.setSelected((subEntry.stumbleType & 1024) != 0);
+        unknown16StumbleSet.setSelected((subEntry.stumbleType & 2048) != 0);
 
         unknown13StumbleSets.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=256;
+                subEntry.stumbleType |= 256;
             }
             else{
-                getStumbleType.get(i)[j]&=~256;
+                subEntry.stumbleType &=~ 256;
             }
         });
         unknown14StumbleSets.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=512;
+                subEntry.stumbleType |= 512;
             }
             else{
-                getStumbleType.get(i)[j]&=~512;
+                subEntry.stumbleType &=~ 512;
             }
         });
         unknown15StumbleSets.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=1024;
+                subEntry.stumbleType |= 1024;
             }
             else{
-                getStumbleType.get(i)[j]&=~1024;
+                subEntry.stumbleType &=~ 1024;
             }
         });
         unknown16StumbleSet.selectedProperty().addListener((obs,oldValue,newValue)->{
             if(newValue){
-                getStumbleType.get(i)[j]|=2048;
+                subEntry.stumbleType |= 2048;
             }
             else{
-                getStumbleType.get(i)[j]&=~2048;
+                subEntry.stumbleType &=~ 2048;
             }
         });
         VBox stumbleGroup4Box = new VBox(2,unknown13StumbleSets,unknown14StumbleSets,unknown15StumbleSets,unknown16StumbleSet);
@@ -2184,10 +2074,10 @@ public class Bdm {
 
         Spinner<Integer> staminaBrokenOverrideBdmIdSpinner=new Spinner<>(0,65535,0);
         staminaBrokenOverrideBdmIdSpinner.setEditable(true);
-        staminaBrokenOverrideBdmIdSpinner.getValueFactory().setValue((int)getStaminaBrokenOverrideBdmId.get(i)[j]);
+        staminaBrokenOverrideBdmIdSpinner.getValueFactory().setValue((int)subEntry.staminaBrokenOverrideBdmId);
         staminaBrokenOverrideBdmIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getStaminaBrokenOverrideBdmId.get(i)[j]=newValue.shortValue();
+                subEntry.staminaBrokenOverrideBdmId = newValue.shortValue();
             }
 
         });
@@ -2204,10 +2094,10 @@ public class Bdm {
 
         Spinner<Integer> zVanishEnableTimeSpinner=new Spinner<>(0,65535,0);
         zVanishEnableTimeSpinner.setEditable(true);
-        zVanishEnableTimeSpinner.getValueFactory().setValue((int)getZVanishEnableTime.get(i)[j]);
+        zVanishEnableTimeSpinner.getValueFactory().setValue((int)subEntry.zVanishEnableTime);
         zVanishEnableTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
-                getZVanishEnableTime.get(i)[j]=newValue.shortValue();
+                subEntry.zVanishEnableTime = newValue.shortValue();
             }
 
         });
@@ -2221,7 +2111,7 @@ public class Bdm {
         return miscVBox;
     }
 
-    private VBox createUnknownVBox (int i,int j){
+    private VBox createUnknownVBox (BdmSubEntry subEntry){
         VBox unknownVBox=new VBox(15);
         unknownVBox.setPadding(new Insets(20,0,0,8));
 
@@ -2229,13 +2119,13 @@ public class Bdm {
         HBox unknown02HBox=new HBox(2);
         Label lblI02=new Label("I_02: ");
         lblI02.setPrefWidth(100);
-        TextField txtI02=new TextField(String.valueOf(getI02.get(i)[j]));
+        TextField txtI02=new TextField(String.valueOf(subEntry.i02));
         txtI02.textProperty().addListener((obs, oldText, newText) -> {
             if (txtI02.getText().contains("-")) {
                 return;
             }
             try {
-                getI02.get(i)[j]=Integer.parseInt(newText);
+                subEntry.i02 = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2249,13 +2139,13 @@ public class Bdm {
         HBox unknown06HBox=new HBox(2);
         Label lblI06=new Label("I_06: ");
         lblI06.setPrefWidth(100);
-        TextField txtI06=new TextField(String.valueOf(getI06.get(i)[j]));
+        TextField txtI06=new TextField(String.valueOf(subEntry.i06));
         txtI06.textProperty().addListener((obs, oldText, newText) -> {
             if (txtI06.getText().contains("-")) {
                 return;
             }
             try {
-                getI06.get(i)[j]=Integer.parseInt(newText);
+                subEntry.i06 = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2268,13 +2158,13 @@ public class Bdm {
         HBox unknown08HBox=new HBox(2);
         Label lblF08=new Label("F_08: ");
         lblF08.setPrefWidth(100);
-        TextField txtF08=new TextField(String.valueOf(getF08.get(i)[j]));
+        TextField txtF08=new TextField(String.valueOf(subEntry.f08));
         txtF08.textProperty().addListener((obs, oldText, newText) -> {
             if (txtF08.getText().contains("-")) {
                 return;
             }
             try {
-                getF08.get(i)[j]=Integer.parseInt(newText);
+                subEntry.f08=Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2287,13 +2177,13 @@ public class Bdm {
         HBox unknown22HBox=new HBox(2);
         Label lblI22=new Label("I_22: ");
         lblI22.setPrefWidth(100);
-        TextField txtI22=new TextField(String.valueOf(getI22.get(i)[j]));
+        TextField txtI22=new TextField(String.valueOf(subEntry.i22));
         txtI22.textProperty().addListener((obs, oldText, newText) -> {
             if (txtI22.getText().contains("-")) {
                 return;
             }
             try {
-                getI22.get(i)[j]=Integer.parseInt(newText);
+                subEntry.i22 = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2306,13 +2196,13 @@ public class Bdm {
         HBox unknown30HBox=new HBox(2);
         Label lblI30=new Label("I_30: ");
         lblI30.setPrefWidth(100);
-        TextField txtI30=new TextField(String.valueOf(getI30.get(i)[j]));
+        TextField txtI30=new TextField(String.valueOf(subEntry.i30));
         txtI30.textProperty().addListener((obs, oldText, newText) -> {
             if (txtI30.getText().contains("-")) {
                 return;
             }
             try {
-                getI30.get(i)[j]=Integer.parseInt(newText);
+                subEntry.i30 = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2325,13 +2215,13 @@ public class Bdm {
         HBox unknown38HBox=new HBox(2);
         Label lblI38=new Label("I_38: ");
         lblI38.setPrefWidth(100);
-        TextField txtI38=new TextField(String.valueOf(getI38.get(i)[j]));
+        TextField txtI38=new TextField(String.valueOf(subEntry.i38));
         txtI38.textProperty().addListener((obs, oldText, newText) -> {
             if (txtI38.getText().contains("-")) {
                 return;
             }
             try {
-                getI38.get(i)[j]=Integer.parseInt(newText);
+                subEntry.i38 = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2344,13 +2234,13 @@ public class Bdm {
         HBox unknown58HBox=new HBox(2);
         Label lblI58=new Label("I_58: ");
         lblI58.setPrefWidth(100);
-        TextField txtI58=new TextField(String.valueOf(getI58.get(i)[j]));
+        TextField txtI58=new TextField(String.valueOf(subEntry.i58));
         txtI58.textProperty().addListener((obs, oldText, newText) -> {
             if (txtI58.getText().contains("-")) {
                 return;
             }
             try {
-                getI58.get(i)[j]=Integer.parseInt(newText);
+                subEntry.i58 = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2363,13 +2253,13 @@ public class Bdm {
         HBox unknown76HBox=new HBox(2);
         Label lblI76=new Label("I_76: ");
         lblI76.setPrefWidth(100);
-        TextField txtI76=new TextField(String.valueOf(getI76.get(i)[j]));
+        TextField txtI76=new TextField(String.valueOf(subEntry.i76));
         txtI76.textProperty().addListener((obs, oldText, newText) -> {
             if (txtI76.getText().contains("-")) {
                 return;
             }
             try {
-                getI58.get(i)[j]=Integer.parseInt(newText);
+                subEntry.i76 = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2382,13 +2272,13 @@ public class Bdm {
         HBox unknown82HBox=new HBox(2);
         Label lblI82=new Label("I_82: ");
         lblI82.setPrefWidth(100);
-        TextField txtI82=new TextField(String.valueOf(getI82.get(i)[j]));
+        TextField txtI82=new TextField(String.valueOf(subEntry.i82));
         txtI82.textProperty().addListener((obs, oldText, newText) -> {
             if (txtI82.getText().contains("-")) {
                 return;
             }
             try {
-                getI82.get(i)[j]=Integer.parseInt(newText);
+                subEntry.i82 = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2401,13 +2291,13 @@ public class Bdm {
         HBox unknown88HBox=new HBox(2);
         Label lblI88=new Label("I_88: ");
         lblI88.setPrefWidth(100);
-        TextField txtI88=new TextField(String.valueOf(getI88.get(i)[j]));
+        TextField txtI88=new TextField(String.valueOf(subEntry.i88));
         txtI88.textProperty().addListener((obs, oldText, newText) -> {
             if (txtI88.getText().contains("-")) {
                 return;
             }
             try {
-                getI88.get(i)[j]=Integer.parseInt(newText);
+                subEntry.i88 = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2420,13 +2310,13 @@ public class Bdm {
         HBox unknown90HBox=new HBox(2);
         Label lblI90=new Label("I_90: ");
         lblI90.setPrefWidth(100);
-        TextField txtI90=new TextField(String.valueOf(getI90.get(i)[j]));
+        TextField txtI90=new TextField(String.valueOf(subEntry.i90));
         txtI90.textProperty().addListener((obs, oldText, newText) -> {
             if (txtI90.getText().contains("-")) {
                 return;
             }
             try {
-                getI90.get(i)[j]=Integer.parseInt(newText);
+                subEntry.i90 = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2439,13 +2329,13 @@ public class Bdm {
         HBox unknown92HBox=new HBox(2);
         Label lblI92=new Label("I_92: ");
         lblI92.setPrefWidth(100);
-        TextField txtI92=new TextField(String.valueOf(getI92.get(i)[j]));
+        TextField txtI92=new TextField(String.valueOf(subEntry.i92));
         txtI92.textProperty().addListener((obs, oldText, newText) -> {
             if (txtI92.getText().contains("-")) {
                 return;
             }
             try {
-                getI92.get(i)[j]=Integer.parseInt(newText);
+                subEntry.i92 = Integer.parseInt(newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2469,14 +2359,14 @@ public class Bdm {
                 return; 
             }
           
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(0).setContent(createMainVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(1).setContent(createAnimationVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(2).setContent(createSoundVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(3).setContent(createEffectsScrollPane(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(4).setContent(createPushbackVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(5).setContent(createCameraVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(6).setContent(createMiscVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(7).setContent(createUnknownVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(0).setContent(createMainVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(1).setContent(createAnimationVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(2).setContent(createSoundVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(3).setContent(createEffectsScrollPane(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(4).setContent(createPushbackVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(5).setContent(createCameraVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(6).setContent(createMiscVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(7).setContent(createUnknownVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
 
             
         });
@@ -2490,7 +2380,6 @@ public class Bdm {
                 MenuItem insert=new MenuItem("Insert Ctrl+I");
                 contextMenu.getItems().addAll(copy,paste,delete,append,insert);
                 listView.setContextMenu(contextMenu);
-               
                 contextMenu.setOnAction(event->{
                     if(event.getTarget()==copy){
                         Copy();
@@ -2521,14 +2410,14 @@ public class Bdm {
                 return; 
             }
 
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(0).setContent(createMainVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getTabs().indexOf(newTab)));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(1).setContent(createAnimationVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getTabs().indexOf(newTab)));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(2).setContent(createSoundVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getTabs().indexOf(newTab)));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(3).setContent(createEffectsScrollPane(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getTabs().indexOf(newTab)));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(4).setContent(createPushbackVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getTabs().indexOf(newTab)));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(5).setContent(createCameraVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getTabs().indexOf(newTab)));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(6).setContent(createMiscVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getTabs().indexOf(newTab)));
-            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(7).setContent(createUnknownVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getTabs().indexOf(newTab)));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(0).setContent(createMainVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getTabs().indexOf(newTab)]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(1).setContent(createAnimationVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getTabs().indexOf(newTab)]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(2).setContent(createSoundVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getTabs().indexOf(newTab)]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(3).setContent(createEffectsScrollPane(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getTabs().indexOf(newTab)]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(4).setContent(createPushbackVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getTabs().indexOf(newTab)]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(5).setContent(createCameraVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getTabs().indexOf(newTab)]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(6).setContent(createMiscVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getTabs().indexOf(newTab)]));
+            ((TabPane) mainTabPane.getTabs().get(mainTabPane.getTabs().indexOf(newTab)).getContent()).getTabs().get(7).setContent(createUnknownVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getTabs().indexOf(newTab)]));
             ((TabPane) newTab.getContent()).getSelectionModel().select(((TabPane) oldTab.getContent()).getSelectionModel().getSelectedIndex());
         });
     }
@@ -2555,197 +2444,29 @@ public class Bdm {
     }
 
     private void Copy() {
-
         if (listView.getSelectionModel().getSelectedIndex() < 0) return; 
-
-        copyDamageType = getDamageType.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyI02 = getI02.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyDamageAmount = getDamageAmount.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyI06 = getI06.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyF08 = getF08.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyAcbType = getAcbType.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyCueId = getCueId.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyEffect1Id = getEffect1Id.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyEffect1SkillId = getEffect1SkillId.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyEffect1EepkType = getEffect1EepkType.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyI22 = getI22.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyEffect2Id = getEffect2Id.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyEffect2SkillId = getEffect2SkillId.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyEffect2EepkType = getEffect2EepkType.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyI30 = getI30.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyEffect3Id = getEffect3Id.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyEffect3SkillId = getEffect3SkillId.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyEffect3EepkType = getEffect3EepkType.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyI38 = getI38.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyPushbackStrength = getPushbackStrength.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyPushbackAcceleration = getPushbackAcceleration.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyUserStunt = getUserStunt.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyKnockbackDuration = getKnockbackDuration.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyKnockbackRecoveryAfterImpactTime = getKnockbackRecoveryAfterImpactTime.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyKnockbackGroundImpactTime = getKnockbackGroundImpactTime.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyI58 = getI58.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyVictimStunt = getVictimStunt.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyKnockbackStrengthX = getKnockbackStrengthX.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyKnockbackStrengthY = getKnockbackStrengthY.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyKnockbackStrengthZ = getKnockbackStrengthZ.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyKnockbackDragY = getKnockbackDragY.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyI76 = getI76.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyKnockbackGravityTime = getKnockbackGravityTime.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyVictimInvincibilityTime = getVictimInvincibilityTime.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyI82 = getI82.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyTransformationType = getTransformationType.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyAlimentType = getAlimentType.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyI88 = getI88.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyI90 = getI90.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyI92 = getI92.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyDamageSpecial = getDamageSpecial.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyDamageSpecial2 = getDamageSpecial2.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyDamageSpecial3 = getDamageSpecial3.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyStumbleType = getStumbleType.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copySecondaryType = getSecondaryType.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyCameraShakeType = getCameraShakeType.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyCameraShakeTime = getCameraShakeTime.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyUserBpeID = getUserBpeID.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyVictimBpeID = getVictimBpeID.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyStaminaBrokenOverrideBdmId = getStaminaBrokenOverrideBdmId.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyZVanishEnableTime = getZVanishEnableTime.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyUserAnimationTime = getUserAnimationTime.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyVictimAnimationTime = getVictimAnimationTime.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyUserAnimationSpeed = getUserAnimationSpeed.get(listView.getSelectionModel().getSelectedIndex()).clone();
-        copyVictimAnimationSpeed = getVictimAnimationSpeed.get(listView.getSelectionModel().getSelectedIndex()).clone();
+        copyContainer.clear(); 
+        copyContainer.add(new BdmEntry(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()))); 
     }
 
     private void Paste() {
-        // Safety check to ensure an item is actually selected and something was copied
-        if (listView.getSelectionModel().getSelectedIndex() < 0 || copyDamageType == null) return; 
-
-        getDamageType.set(listView.getSelectionModel().getSelectedIndex(), copyDamageType.clone());
-        getI02.set(listView.getSelectionModel().getSelectedIndex(), copyI02.clone());
-        getDamageAmount.set(listView.getSelectionModel().getSelectedIndex(), copyDamageAmount.clone());
-        getI06.set(listView.getSelectionModel().getSelectedIndex(), copyI06.clone());
-        getF08.set(listView.getSelectionModel().getSelectedIndex(), copyF08.clone());
-        getAcbType.set(listView.getSelectionModel().getSelectedIndex(), copyAcbType.clone());
-        getCueId.set(listView.getSelectionModel().getSelectedIndex(), copyCueId.clone());
-        getEffect1Id.set(listView.getSelectionModel().getSelectedIndex(), copyEffect1Id.clone());
-        getEffect1SkillId.set(listView.getSelectionModel().getSelectedIndex(), copyEffect1SkillId.clone());
-        getEffect1EepkType.set(listView.getSelectionModel().getSelectedIndex(), copyEffect1EepkType.clone());
-        getI22.set(listView.getSelectionModel().getSelectedIndex(), copyI22.clone());
-        getEffect2Id.set(listView.getSelectionModel().getSelectedIndex(), copyEffect2Id.clone());
-        getEffect2SkillId.set(listView.getSelectionModel().getSelectedIndex(), copyEffect2SkillId.clone());
-        getEffect2EepkType.set(listView.getSelectionModel().getSelectedIndex(), copyEffect2EepkType.clone());
-        getI30.set(listView.getSelectionModel().getSelectedIndex(), copyI30.clone());
-        getEffect3Id.set(listView.getSelectionModel().getSelectedIndex(), copyEffect3Id.clone());
-        getEffect3SkillId.set(listView.getSelectionModel().getSelectedIndex(), copyEffect3SkillId.clone());
-        getEffect3EepkType.set(listView.getSelectionModel().getSelectedIndex(), copyEffect3EepkType.clone());
-        getI38.set(listView.getSelectionModel().getSelectedIndex(), copyI38.clone());
-        getPushbackStrength.set(listView.getSelectionModel().getSelectedIndex(), copyPushbackStrength.clone());
-        getPushbackAcceleration.set(listView.getSelectionModel().getSelectedIndex(), copyPushbackAcceleration.clone());
-        getUserStunt.set(listView.getSelectionModel().getSelectedIndex(), copyUserStunt.clone());
-        getKnockbackDuration.set(listView.getSelectionModel().getSelectedIndex(), copyKnockbackDuration.clone());
-        getKnockbackRecoveryAfterImpactTime.set(listView.getSelectionModel().getSelectedIndex(), copyKnockbackRecoveryAfterImpactTime.clone());
-        getKnockbackGroundImpactTime.set(listView.getSelectionModel().getSelectedIndex(), copyKnockbackGroundImpactTime.clone());
-        getI58.set(listView.getSelectionModel().getSelectedIndex(), copyI58.clone());
-        getVictimStunt.set(listView.getSelectionModel().getSelectedIndex(), copyVictimStunt.clone());
-        getKnockbackStrengthX.set(listView.getSelectionModel().getSelectedIndex(), copyKnockbackStrengthX.clone());
-        getKnockbackStrengthY.set(listView.getSelectionModel().getSelectedIndex(), copyKnockbackStrengthY.clone());
-        getKnockbackStrengthZ.set(listView.getSelectionModel().getSelectedIndex(), copyKnockbackStrengthZ.clone());
-        getKnockbackDragY.set(listView.getSelectionModel().getSelectedIndex(), copyKnockbackDragY.clone());
-        getI76.set(listView.getSelectionModel().getSelectedIndex(), copyI76.clone());
-        getKnockbackGravityTime.set(listView.getSelectionModel().getSelectedIndex(), copyKnockbackGravityTime.clone());
-        getVictimInvincibilityTime.set(listView.getSelectionModel().getSelectedIndex(), copyVictimInvincibilityTime.clone());
-        getI82.set(listView.getSelectionModel().getSelectedIndex(), copyI82.clone());
-        getTransformationType.set(listView.getSelectionModel().getSelectedIndex(), copyTransformationType.clone());
-        getAlimentType.set(listView.getSelectionModel().getSelectedIndex(), copyAlimentType.clone());
-        getI88.set(listView.getSelectionModel().getSelectedIndex(), copyI88.clone());
-        getI90.set(listView.getSelectionModel().getSelectedIndex(), copyI90.clone());
-        getI92.set(listView.getSelectionModel().getSelectedIndex(), copyI92.clone());
-        getDamageSpecial.set(listView.getSelectionModel().getSelectedIndex(), copyDamageSpecial.clone());
-        getDamageSpecial2.set(listView.getSelectionModel().getSelectedIndex(), copyDamageSpecial2.clone());
-        getDamageSpecial3.set(listView.getSelectionModel().getSelectedIndex(), copyDamageSpecial3.clone());
-        getStumbleType.set(listView.getSelectionModel().getSelectedIndex(), copyStumbleType.clone());
-        getSecondaryType.set(listView.getSelectionModel().getSelectedIndex(), copySecondaryType.clone());
-        getCameraShakeType.set(listView.getSelectionModel().getSelectedIndex(), copyCameraShakeType.clone());
-        getCameraShakeTime.set(listView.getSelectionModel().getSelectedIndex(), copyCameraShakeTime.clone());
-        getUserBpeID.set(listView.getSelectionModel().getSelectedIndex(), copyUserBpeID.clone());
-        getVictimBpeID.set(listView.getSelectionModel().getSelectedIndex(), copyVictimBpeID.clone());
-        getStaminaBrokenOverrideBdmId.set(listView.getSelectionModel().getSelectedIndex(), copyStaminaBrokenOverrideBdmId.clone());
-        getZVanishEnableTime.set(listView.getSelectionModel().getSelectedIndex(), copyZVanishEnableTime.clone());
-        getUserAnimationTime.set(listView.getSelectionModel().getSelectedIndex(), copyUserAnimationTime.clone());
-        getVictimAnimationTime.set(listView.getSelectionModel().getSelectedIndex(), copyVictimAnimationTime.clone());
-        getUserAnimationSpeed.set(listView.getSelectionModel().getSelectedIndex(), copyUserAnimationSpeed.clone());
-        getVictimAnimationSpeed.set(listView.getSelectionModel().getSelectedIndex(), copyVictimAnimationSpeed.clone());
-
-        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(0).setContent(createMainVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(1).setContent(createAnimationVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(2).setContent(createSoundVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(3).setContent(createEffectsScrollPane(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(4).setContent(createPushbackVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(5).setContent(createCameraVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(6).setContent(createMiscVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
-        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(7).setContent(createUnknownVBox(listView.getSelectionModel().getSelectedIndex(), mainTabPane.getSelectionModel().getSelectedIndex()));
+        if (copyContainer == null) return;
+        bdmEntries.set(listView.getSelectionModel().getSelectedIndex(),copyContainer.get(0));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(0).setContent(createMainVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(1).setContent(createAnimationVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(2).setContent(createSoundVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(3).setContent(createEffectsScrollPane(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(4).setContent(createPushbackVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(5).setContent(createCameraVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(6).setContent(createMiscVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(7).setContent(createUnknownVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
     }
 
     private void Delete() {
         if (listView.getSelectionModel().getSelectedIndex() < 0) return;
-
-        getDamageType.remove(listView.getSelectionModel().getSelectedIndex());
-        getI02.remove(listView.getSelectionModel().getSelectedIndex());
-        getDamageAmount.remove(listView.getSelectionModel().getSelectedIndex());
-        getI06.remove(listView.getSelectionModel().getSelectedIndex());
-        getF08.remove(listView.getSelectionModel().getSelectedIndex());
-        getAcbType.remove(listView.getSelectionModel().getSelectedIndex());
-        getCueId.remove(listView.getSelectionModel().getSelectedIndex());
-        getEffect1Id.remove(listView.getSelectionModel().getSelectedIndex());
-        getEffect1SkillId.remove(listView.getSelectionModel().getSelectedIndex());
-        getEffect1EepkType.remove(listView.getSelectionModel().getSelectedIndex());
-        getI22.remove(listView.getSelectionModel().getSelectedIndex());
-        getEffect2Id.remove(listView.getSelectionModel().getSelectedIndex());
-        getEffect2SkillId.remove(listView.getSelectionModel().getSelectedIndex());
-        getEffect2EepkType.remove(listView.getSelectionModel().getSelectedIndex());
-        getI30.remove(listView.getSelectionModel().getSelectedIndex());
-        getEffect3Id.remove(listView.getSelectionModel().getSelectedIndex());
-        getEffect3SkillId.remove(listView.getSelectionModel().getSelectedIndex());
-        getEffect3EepkType.remove(listView.getSelectionModel().getSelectedIndex());
-        getI38.remove(listView.getSelectionModel().getSelectedIndex());
-        getPushbackStrength.remove(listView.getSelectionModel().getSelectedIndex());
-        getPushbackAcceleration.remove(listView.getSelectionModel().getSelectedIndex());
-        getUserStunt.remove(listView.getSelectionModel().getSelectedIndex());
-        getKnockbackDuration.remove(listView.getSelectionModel().getSelectedIndex());
-        getKnockbackRecoveryAfterImpactTime.remove(listView.getSelectionModel().getSelectedIndex());
-        getKnockbackGroundImpactTime.remove(listView.getSelectionModel().getSelectedIndex());
-        getI58.remove(listView.getSelectionModel().getSelectedIndex());
-        getVictimStunt.remove(listView.getSelectionModel().getSelectedIndex());
-        getKnockbackStrengthX.remove(listView.getSelectionModel().getSelectedIndex());
-        getKnockbackStrengthY.remove(listView.getSelectionModel().getSelectedIndex());
-        getKnockbackStrengthZ.remove(listView.getSelectionModel().getSelectedIndex());
-        getKnockbackDragY.remove(listView.getSelectionModel().getSelectedIndex());
-        getI76.remove(listView.getSelectionModel().getSelectedIndex());
-        getKnockbackGravityTime.remove(listView.getSelectionModel().getSelectedIndex());
-        getVictimInvincibilityTime.remove(listView.getSelectionModel().getSelectedIndex());
-        getI82.remove(listView.getSelectionModel().getSelectedIndex());
-        getTransformationType.remove(listView.getSelectionModel().getSelectedIndex());
-        getAlimentType.remove(listView.getSelectionModel().getSelectedIndex());
-        getI88.remove(listView.getSelectionModel().getSelectedIndex());
-        getI90.remove(listView.getSelectionModel().getSelectedIndex());
-        getI92.remove(listView.getSelectionModel().getSelectedIndex());
-        getDamageSpecial.remove(listView.getSelectionModel().getSelectedIndex());
-        getDamageSpecial2.remove(listView.getSelectionModel().getSelectedIndex());
-        getDamageSpecial3.remove(listView.getSelectionModel().getSelectedIndex());
-        getStumbleType.remove(listView.getSelectionModel().getSelectedIndex());
-        getSecondaryType.remove(listView.getSelectionModel().getSelectedIndex());
-        getCameraShakeType.remove(listView.getSelectionModel().getSelectedIndex());
-        getCameraShakeTime.remove(listView.getSelectionModel().getSelectedIndex());
-        getUserBpeID.remove(listView.getSelectionModel().getSelectedIndex());
-        getVictimBpeID.remove(listView.getSelectionModel().getSelectedIndex());
-        getStaminaBrokenOverrideBdmId.remove(listView.getSelectionModel().getSelectedIndex());
-        getZVanishEnableTime.remove(listView.getSelectionModel().getSelectedIndex());
-        getUserAnimationTime.remove(listView.getSelectionModel().getSelectedIndex());
-        getVictimAnimationTime.remove(listView.getSelectionModel().getSelectedIndex());
-        getUserAnimationSpeed.remove(listView.getSelectionModel().getSelectedIndex());
-        getVictimAnimationSpeed.remove(listView.getSelectionModel().getSelectedIndex());
-
+        bdmEntries.remove(listView.getSelectionModel().getSelectedIndex());
+        allEntries.remove(listView.getSelectionModel().getSelectedIndex());
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
-
         for(int i=0;i<listView.getItems().size();i++){
             allEntries.set(i,new String("Entry: "+i));
             listView.getItems().set(i,allEntries.get(i));
@@ -2754,182 +2475,19 @@ public class Bdm {
 
    private void Append() {
         if (listView.getSelectionModel().getSelectedIndex() < 0) return;
-
-        getDamageType.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getI02.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getDamageAmount.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getI06.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getF08.add(listView.getSelectionModel().getSelectedIndex() + 1, new double[10]);
-        getAcbType.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getCueId.add(listView.getSelectionModel().getSelectedIndex() + 1, new short[10]);
-        getEffect1Id.add(listView.getSelectionModel().getSelectedIndex() + 1, new short[10]);
-        getEffect1SkillId.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getEffect1EepkType.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getI22.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getEffect2Id.add(listView.getSelectionModel().getSelectedIndex() + 1, new short[10]);
-        getEffect2SkillId.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getEffect2EepkType.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getI30.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getEffect3Id.add(listView.getSelectionModel().getSelectedIndex() + 1, new short[10]);
-        getEffect3SkillId.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getEffect3EepkType.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getI38.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getPushbackStrength.add(listView.getSelectionModel().getSelectedIndex() + 1, new double[10]);
-        getPushbackAcceleration.add(listView.getSelectionModel().getSelectedIndex() + 1, new double[10]);
-        getUserStunt.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getKnockbackDuration.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getKnockbackRecoveryAfterImpactTime.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getKnockbackGroundImpactTime.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getI58.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getVictimStunt.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getKnockbackStrengthX.add(listView.getSelectionModel().getSelectedIndex() + 1, new double[10]);
-        getKnockbackStrengthY.add(listView.getSelectionModel().getSelectedIndex() + 1, new double[10]);
-        getKnockbackStrengthZ.add(listView.getSelectionModel().getSelectedIndex() + 1, new double[10]);
-        getKnockbackDragY.add(listView.getSelectionModel().getSelectedIndex() + 1, new double[10]);
-        getI76.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getKnockbackGravityTime.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getVictimInvincibilityTime.add(listView.getSelectionModel().getSelectedIndex() + 1, new short[10]);
-        getI82.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getTransformationType.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getAlimentType.add(listView.getSelectionModel().getSelectedIndex() + 1, new short[10]);
-        getI88.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getI90.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getI92.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getDamageSpecial.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getDamageSpecial2.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getDamageSpecial3.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getStumbleType.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getSecondaryType.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getCameraShakeType.add(listView.getSelectionModel().getSelectedIndex() + 1, new short[10]);
-        getCameraShakeTime.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getUserBpeID.add(listView.getSelectionModel().getSelectedIndex() + 1, new short[10]);
-        getVictimBpeID.add(listView.getSelectionModel().getSelectedIndex() + 1, new short[10]);
-        getStaminaBrokenOverrideBdmId.add(listView.getSelectionModel().getSelectedIndex() + 1, new short[10]);
-        getZVanishEnableTime.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getUserAnimationTime.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getVictimAnimationTime.add(listView.getSelectionModel().getSelectedIndex() + 1, new int[10]);
-        getUserAnimationSpeed.add(listView.getSelectionModel().getSelectedIndex() + 1, new double[10]);
-        getVictimAnimationSpeed.add(listView.getSelectionModel().getSelectedIndex() + 1, new double[10]);
+        bdmEntries.add(listView.getSelectionModel().getSelectedIndex()+1,new BdmEntry());
         allEntries.add(new String("Entry: "+listView.getItems().size()));
         listView.getItems().add("Entry: " + listView.getItems().size());
     }
 
     private void Insert() {
         if (listView.getSelectionModel().getSelectedIndex() > 0) {
-            getDamageType.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getI02.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getDamageAmount.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getI06.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getF08.add(listView.getSelectionModel().getSelectedIndex() - 1, new double[10]);
-            getAcbType.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getCueId.add(listView.getSelectionModel().getSelectedIndex() - 1, new short[10]);
-            getEffect1Id.add(listView.getSelectionModel().getSelectedIndex() - 1, new short[10]);
-            getEffect1SkillId.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getEffect1EepkType.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getI22.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getEffect2Id.add(listView.getSelectionModel().getSelectedIndex() - 1, new short[10]);
-            getEffect2SkillId.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getEffect2EepkType.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getI30.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getEffect3Id.add(listView.getSelectionModel().getSelectedIndex() - 1, new short[10]);
-            getEffect3SkillId.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getEffect3EepkType.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getI38.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getPushbackStrength.add(listView.getSelectionModel().getSelectedIndex() - 1, new double[10]);
-            getPushbackAcceleration.add(listView.getSelectionModel().getSelectedIndex() - 1, new double[10]);
-            getUserStunt.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getKnockbackDuration.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getKnockbackRecoveryAfterImpactTime.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getKnockbackGroundImpactTime.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getI58.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getVictimStunt.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getKnockbackStrengthX.add(listView.getSelectionModel().getSelectedIndex() - 1, new double[10]);
-            getKnockbackStrengthY.add(listView.getSelectionModel().getSelectedIndex() - 1, new double[10]);
-            getKnockbackStrengthZ.add(listView.getSelectionModel().getSelectedIndex() - 1, new double[10]);
-            getKnockbackDragY.add(listView.getSelectionModel().getSelectedIndex() - 1, new double[10]);
-            getI76.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getKnockbackGravityTime.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getVictimInvincibilityTime.add(listView.getSelectionModel().getSelectedIndex() - 1, new short[10]);
-            getI82.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getTransformationType.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getAlimentType.add(listView.getSelectionModel().getSelectedIndex() - 1, new short[10]);
-            getI88.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getI90.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getI92.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getDamageSpecial.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getDamageSpecial2.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getDamageSpecial3.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getStumbleType.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getSecondaryType.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getCameraShakeType.add(listView.getSelectionModel().getSelectedIndex() - 1, new short[10]);
-            getCameraShakeTime.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getUserBpeID.add(listView.getSelectionModel().getSelectedIndex() - 1, new short[10]);
-            getVictimBpeID.add(listView.getSelectionModel().getSelectedIndex() - 1, new short[10]);
-            getStaminaBrokenOverrideBdmId.add(listView.getSelectionModel().getSelectedIndex() - 1, new short[10]);
-            getZVanishEnableTime.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getUserAnimationTime.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getVictimAnimationTime.add(listView.getSelectionModel().getSelectedIndex() - 1, new int[10]);
-            getUserAnimationSpeed.add(listView.getSelectionModel().getSelectedIndex() - 1, new double[10]);
-            getVictimAnimationSpeed.add(listView.getSelectionModel().getSelectedIndex() - 1, new double[10]);
+            bdmEntries.add(listView.getSelectionModel().getSelectedIndex()-1,new BdmEntry());
             allEntries.add(new String("Entry: "+listView.getItems().size()));
             listView.getItems().add("Entry: " + listView.getItems().size());
         } 
         else if (listView.getSelectionModel().getSelectedIndex() == 0) {
-            getDamageType.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getI02.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getDamageAmount.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getI06.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getF08.add(listView.getSelectionModel().getSelectedIndex(), new double[10]);
-            getAcbType.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getCueId.add(listView.getSelectionModel().getSelectedIndex(), new short[10]);
-            getEffect1Id.add(listView.getSelectionModel().getSelectedIndex(), new short[10]);
-            getEffect1SkillId.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getEffect1EepkType.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getI22.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getEffect2Id.add(listView.getSelectionModel().getSelectedIndex(), new short[10]);
-            getEffect2SkillId.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getEffect2EepkType.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getI30.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getEffect3Id.add(listView.getSelectionModel().getSelectedIndex(), new short[10]);
-            getEffect3SkillId.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getEffect3EepkType.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getI38.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getPushbackStrength.add(listView.getSelectionModel().getSelectedIndex(), new double[10]);
-            getPushbackAcceleration.add(listView.getSelectionModel().getSelectedIndex(), new double[10]);
-            getUserStunt.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getKnockbackDuration.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getKnockbackRecoveryAfterImpactTime.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getKnockbackGroundImpactTime.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getI58.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getVictimStunt.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getKnockbackStrengthX.add(listView.getSelectionModel().getSelectedIndex(), new double[10]);
-            getKnockbackStrengthY.add(listView.getSelectionModel().getSelectedIndex(), new double[10]);
-            getKnockbackStrengthZ.add(listView.getSelectionModel().getSelectedIndex(), new double[10]);
-            getKnockbackDragY.add(listView.getSelectionModel().getSelectedIndex(), new double[10]);
-            getI76.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getKnockbackGravityTime.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getVictimInvincibilityTime.add(listView.getSelectionModel().getSelectedIndex(), new short[10]);
-            getI82.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getTransformationType.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getAlimentType.add(listView.getSelectionModel().getSelectedIndex(), new short[10]);
-            getI88.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getI90.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getI92.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getDamageSpecial.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getDamageSpecial2.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getDamageSpecial3.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getStumbleType.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getSecondaryType.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getCameraShakeType.add(listView.getSelectionModel().getSelectedIndex(), new short[10]);
-            getCameraShakeTime.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getUserBpeID.add(listView.getSelectionModel().getSelectedIndex(), new short[10]);
-            getVictimBpeID.add(listView.getSelectionModel().getSelectedIndex(), new short[10]);
-            getStaminaBrokenOverrideBdmId.add(listView.getSelectionModel().getSelectedIndex(), new short[10]);
-            getZVanishEnableTime.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getUserAnimationTime.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getVictimAnimationTime.add(listView.getSelectionModel().getSelectedIndex(), new int[10]);
-            getUserAnimationSpeed.add(listView.getSelectionModel().getSelectedIndex(), new double[10]);
-            getVictimAnimationSpeed.add(listView.getSelectionModel().getSelectedIndex(), new double[10]);
+            bdmEntries.add(listView.getSelectionModel().getSelectedIndex(),new BdmEntry());
             allEntries.add(new String("Entry: "+listView.getItems().size()));
             listView.getItems().add("Entry " + listView.getItems().size());
         }
@@ -2939,407 +2497,355 @@ public class Bdm {
         try(FileChannel channel=FileChannel.open(path, StandardOpenOption.READ)) {
             ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
             ByteBuffer shortBuffer=ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
-            int bdmEntries;
+            int bdmEntriesCount;
             int entryOffset=16;
             
             channel.position(8);
             intBuffer.clear();
             channel.read(intBuffer);
             intBuffer.flip();
-            bdmEntries=intBuffer.getInt();
+            bdmEntriesCount=intBuffer.getInt();
 
-            switch ((int)((path.toFile().length()-16)/bdmEntries)) {
+            switch ((int)((path.toFile().length()-16)/bdmEntriesCount)) {
                 case 1284:
-                    allEntries=new ArrayList<>(bdmEntries);
-                    for(int i=0;i<bdmEntries;i++){
+                    allEntries=new ArrayList<>(bdmEntriesCount);
+                    for(int i=0;i<bdmEntriesCount;i++){
+                        BdmEntry entry = new BdmEntry();
                         allEntries.add(new String("Entry "+i));
                         listView.getItems().add(allEntries.get(i));
-                        getDamageType.add(new int[10]);
-                        getI02.add(new int[10]);
-                        getSecondaryType.add(new int[10]);
-                        getDamageAmount.add(new int[10]);
-                        getDamageSpecial.add(new int[10]);
-                        getDamageSpecial2.add(new int[10]);
-                        getDamageSpecial3.add(new int[10]);
-                        getUserAnimationTime.add(new int[10]);
-                        getUserAnimationSpeed.add(new double[10]);
-                        getVictimAnimationTime.add(new int[10]);
-                        getVictimAnimationSpeed.add(new double[10]);
-                        getAcbType.add(new int[10]);
-                        getCueId.add(new short[10]);
-                        getEffect1Id.add(new short[10]);
-                        getEffect1SkillId.add(new int[10]);
-                        getEffect1EepkType.add(new int[10]);
-                        getEffect2Id.add(new short[10]);
-                        getEffect2SkillId.add(new int[10]);
-                        getEffect2EepkType.add(new int[10]);
-                        getEffect3Id.add(new short[10]);
-                        getEffect3SkillId.add(new int[10]);
-                        getEffect3EepkType.add(new int[10]);
-                        getI06.add(new int[10]);
-                        getF08.add(new double[10]);
-                        getI22.add(new int[10]);
-                        getI30.add(new int[10]);
-                        getI38.add(new int[10]);
-                        getPushbackStrength.add(new double[10]);
-                        getPushbackAcceleration.add(new double[10]);
-                        getUserStunt.add(new int[10]);
-                        getKnockbackDuration.add(new int[10]);
-                        getKnockbackRecoveryAfterImpactTime.add(new int[10]);
-                        getKnockbackGroundImpactTime.add(new int[10]);
-                        getI58.add(new int[10]);
-                        getVictimStunt.add(new int[10]);
-                        getKnockbackStrengthX.add(new double[10]);
-                        getKnockbackStrengthY.add(new double[10]);
-                        getKnockbackStrengthZ.add(new double[10]);
-                        getKnockbackDragY.add(new double[10]);
-                        getI76.add(new int[10]);
-                        getKnockbackGravityTime.add(new int[10]);
-                        getVictimInvincibilityTime.add(new short[10]);
-                        getI82.add(new int[10]);
-                        getTransformationType.add(new int[10]);
-                        getAlimentType.add(new short[10]);
-                        getI88.add(new int[10]);
-                        getI90.add(new int[10]);
-                        getI92.add(new int[10]);
-                        getStumbleType.add(new int[10]);
-                        getCameraShakeType.add(new short[10]);
-                        getCameraShakeTime.add(new int[10]);
-                        getUserBpeID.add(new short[10]);
-                        getVictimBpeID.add(new short[10]);
-                        getStaminaBrokenOverrideBdmId.add(new short[10]);
-                        getZVanishEnableTime.add(new int[10]);
                         for(int j=0;j<10;j++){
+                            BdmSubEntry subEntry = entry.subEntries[j];
                             channel.position(entryOffset+4+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getDamageType.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.damageType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+6+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getI02.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.i02 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+8+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getDamageAmount.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.damageAmount = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+10+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getI06.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.i06 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+12+128*j+1284*i);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            getF08.get(i)[j]=intBuffer.getFloat();
+                            subEntry.f08 = intBuffer.getFloat();
 
                             channel.position(entryOffset+16+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getAcbType.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.acbType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+18+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getCueId.get(i)[j]=shortBuffer.getShort();
+                            subEntry.cueId = shortBuffer.getShort();
 
                             channel.position(entryOffset+20+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getEffect1Id.get(i)[j]=shortBuffer.getShort();
+                            subEntry.effect1Id = shortBuffer.getShort();
 
                             channel.position(entryOffset+22+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getEffect1SkillId.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.effect1SkillId = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+24+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getEffect1EepkType.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.effect1EepkType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+26+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getI22.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.i22 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+28+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getEffect2Id.get(i)[j]=shortBuffer.getShort();
+                            subEntry.effect2Id = shortBuffer.getShort();
 
                             channel.position(entryOffset+30+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getEffect2SkillId.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.effect2SkillId =toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+32+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getEffect2EepkType.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.effect2EepkType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+34+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getI30.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.i30 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+36+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getEffect3Id.get(i)[j]=shortBuffer.getShort();
+                            subEntry.effect3Id = shortBuffer.getShort();
 
                             channel.position(entryOffset+38+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getEffect3SkillId.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.effect3SkillId = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+40+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getEffect3EepkType.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.effect3EepkType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+42+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getI38.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.i38 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+44+128*j+1284*i);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            getPushbackStrength.get(i)[j]=(double)intBuffer.getFloat();
+                            subEntry.pushbackStrength = intBuffer.getFloat();
 
                             channel.position(entryOffset+48+128*j+1284*i);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            getPushbackAcceleration.get(i)[j]=(double)intBuffer.getFloat();
+                            subEntry.pushbackAcceleration = intBuffer.getFloat();
 
                             channel.position(entryOffset+52+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getUserStunt.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.userStunt = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+54+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getVictimStunt.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.victimStunt = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+56+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getKnockbackDuration.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.knockbackDuration = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+58+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getKnockbackRecoveryAfterImpactTime.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.knockbackRecoveryAfterImpactTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+60+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getKnockbackGroundImpactTime.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.knockbackGroundImpactTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+62+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getI58.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.i58 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+64+128*j+1284*i);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            getKnockbackStrengthX.get(i)[j]=(double)intBuffer.getFloat();
+                            subEntry.knockbackStrengthX = intBuffer.getFloat();
 
                             channel.position(entryOffset+68+128*j+1284*i);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            getKnockbackStrengthY.get(i)[j]=(double)intBuffer.getFloat();
+                            subEntry.knockbackStrengthY = intBuffer.getFloat();
 
                             channel.position(entryOffset+72+128*j+1284*i);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            getKnockbackStrengthZ.get(i)[j]=(double)intBuffer.getFloat();
+                            subEntry.knockbackStrengthZ = intBuffer.getFloat();
 
                             channel.position(entryOffset+76+128*j+1284*i);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            getKnockbackDragY.get(i)[j]=(double)intBuffer.getFloat();
+                            subEntry.knockbackDragY = intBuffer.getFloat();
 
                             channel.position(entryOffset+80+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getI76.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.i76 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+82+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getKnockbackGravityTime.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.knockbackGravityTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+84+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getVictimInvincibilityTime.get(i)[j]=shortBuffer.getShort();
+                           subEntry.victimInvincibilityTime = shortBuffer.getShort();
 
                             channel.position(entryOffset+86+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getI82.get(i)[j]=shortBuffer.getShort();
+                            subEntry.i82 = shortBuffer.getShort();
 
                             channel.position(entryOffset+88+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getTransformationType.get(i)[j]=shortBuffer.getShort();
+                            subEntry.transformationType = shortBuffer.getShort();
 
                             channel.position(entryOffset+90+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getAlimentType.get(i)[j]=shortBuffer.getShort();
+                            subEntry.alimentType = shortBuffer.getShort();
 
                             channel.position(entryOffset+92+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getI88.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.i88 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+94+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getI90.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.i90 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+96+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getI92.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.i92 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+98+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getDamageSpecial.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.damageSpecial = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+100+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getDamageSpecial2.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.damageSpecial2 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+102+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getDamageSpecial3.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.damageSpecial3 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+104+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getStumbleType.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.stumbleType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+106+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getSecondaryType.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.secondaryType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+108+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getCameraShakeType.get(i)[j]=shortBuffer.getShort();
+                            subEntry.cameraShakeType = shortBuffer.getShort();
 
                             channel.position(entryOffset+110+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getCameraShakeTime.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.cameraShakeTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+112+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getUserBpeID.get(i)[j]=shortBuffer.getShort();
+                            subEntry.userBpeID = shortBuffer.getShort();
 
                             channel.position(entryOffset+114+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getVictimBpeID.get(i)[j]=shortBuffer.getShort();
+                            subEntry.victimBpeID = shortBuffer.getShort();
 
                             channel.position(entryOffset+116+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getStaminaBrokenOverrideBdmId.get(i)[j]=shortBuffer.getShort();
+                            subEntry.staminaBrokenOverrideBdmId = shortBuffer.getShort();
 
                             channel.position(entryOffset+118+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getZVanishEnableTime.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.zVanishEnableTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+120+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getUserAnimationTime.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.userAnimationTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+122+128*j+1284*i);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            getVictimAnimationTime.get(i)[j]=toUShort(shortBuffer.getShort());
+                            subEntry.victimAnimationTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset+124+128*j+1284*i);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            getUserAnimationSpeed.get(i)[j]=(double)intBuffer.getFloat();
+                            subEntry.userAnimationSpeed = intBuffer.getFloat();
 
                             channel.position(entryOffset+128+128*j+1284*i);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            getVictimAnimationSpeed.get(i)[j]=(double)intBuffer.getFloat();
+                            subEntry.victimAnimationSpeed = intBuffer.getFloat();
                         }
+                        bdmEntries.add(entry);
                     }
                     break;
             
@@ -3379,334 +2885,341 @@ public class Bdm {
             channel.write(intBuffer);
 
             for(int i=0;i<allEntries.size();i++){
+                BdmEntry entry = bdmEntries.get(i);
+                channel.position(entryOffset+1284*i);
+                intBuffer.clear();
+                intBuffer.putInt(i);
+                intBuffer.flip();
+                channel.write(intBuffer);
                 for(int j=0;j<10;j++){
+                    BdmSubEntry subEntry = entry.subEntries[j];
                     channel.position(entryOffset+4+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getDamageType.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.damageType);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+6+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getI02.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.i02);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+8+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getDamageAmount.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.damageAmount);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+10+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getI06.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.i06);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+12+128*j+1284*i);
                     intBuffer.clear();
-                    intBuffer.putFloat((float)getF08.get(i)[j]);
+                    intBuffer.putFloat((float)subEntry.f08);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(entryOffset+16+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getAcbType.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.acbType);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+18+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort(getCueId.get(i)[j]);
+                    shortBuffer.putShort(subEntry.cueId);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+20+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort(getEffect1Id.get(i)[j]);
+                    shortBuffer.putShort(subEntry.effect1Id);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+22+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getEffect1SkillId.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.effect1SkillId);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+24+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getEffect1EepkType.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.effect1EepkType);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+26+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getI22.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.i22);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+28+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort(getEffect2Id.get(i)[j]);
+                    shortBuffer.putShort(subEntry.effect2Id);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+30+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getEffect2SkillId.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.effect2SkillId);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+32+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getEffect2EepkType.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.effect2EepkType);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+34+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getI30.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.i30);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+36+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort(getEffect3Id.get(i)[j]);
+                    shortBuffer.putShort(subEntry.effect3Id);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+38+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getEffect3SkillId.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.effect3SkillId);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+40+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getEffect3EepkType.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.effect3EepkType);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+42+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getI38.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.i38);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+44+128*j+1284*i);
                     intBuffer.clear();
-                    intBuffer.putFloat((float)getPushbackStrength.get(i)[j]);
+                    intBuffer.putFloat((float)subEntry.pushbackStrength);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(entryOffset+48+128*j+1284*i);
                     intBuffer.clear();
-                    intBuffer.putFloat((float)getPushbackAcceleration.get(i)[j]);
+                    intBuffer.putFloat((float)subEntry.pushbackAcceleration);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(entryOffset+52+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getUserStunt.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.userStunt);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+54+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getVictimStunt.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.victimStunt);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+56+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getKnockbackDuration.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.knockbackDuration);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+58+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getKnockbackRecoveryAfterImpactTime.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.knockbackRecoveryAfterImpactTime);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+60+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getKnockbackGroundImpactTime.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.knockbackGroundImpactTime);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+62+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getI58.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.i58);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+64+128*j+1284*i);
                     intBuffer.clear();
-                    intBuffer.putFloat((float)getKnockbackStrengthX.get(i)[j]);
+                    intBuffer.putFloat((float)subEntry.knockbackStrengthX);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(entryOffset+68+128*j+1284*i);
                     intBuffer.clear();
-                    intBuffer.putFloat((float)getKnockbackStrengthY.get(i)[j]);
+                    intBuffer.putFloat((float)subEntry.knockbackStrengthY);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(entryOffset+72+128*j+1284*i);
                     intBuffer.clear();
-                    intBuffer.putFloat((float)getKnockbackStrengthZ.get(i)[j]);
+                    intBuffer.putFloat((float)subEntry.knockbackStrengthZ);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(entryOffset+76+128*j+1284*i);
                     intBuffer.clear();
-                    intBuffer.putFloat((float)getKnockbackDragY.get(i)[j]);
+                    intBuffer.putFloat((float)subEntry.knockbackDragY);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(entryOffset+80+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getI76.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.i76);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+82+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getKnockbackGravityTime.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.knockbackGravityTime);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+84+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort(getVictimInvincibilityTime.get(i)[j]);
+                    shortBuffer.putShort(subEntry.victimInvincibilityTime);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+86+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getI82.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.i82);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+88+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getTransformationType.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.transformationType);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+90+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort(getAlimentType.get(i)[j]);
+                    shortBuffer.putShort(subEntry.alimentType);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+92+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getI88.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.i88);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+94+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getI90.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.i90);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+96+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getI92.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.i92);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+98+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getDamageSpecial.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.damageSpecial);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+100+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getDamageSpecial2.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.damageSpecial2);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+102+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getDamageSpecial3.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.damageSpecial3);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+104+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getStumbleType.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.stumbleType);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+106+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getSecondaryType.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.secondaryType);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+108+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort(getCameraShakeType.get(i)[j]);
+                    shortBuffer.putShort(subEntry.cameraShakeType);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+110+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getCameraShakeTime.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.cameraShakeTime);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+112+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort(getUserBpeID.get(i)[j]);
+                    shortBuffer.putShort(subEntry.userBpeID);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+114+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort(getVictimBpeID.get(i)[j]);
+                    shortBuffer.putShort(subEntry.victimBpeID);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+116+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort(getStaminaBrokenOverrideBdmId.get(i)[j]);
+                    shortBuffer.putShort(subEntry.staminaBrokenOverrideBdmId);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+118+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getZVanishEnableTime.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.zVanishEnableTime);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+120+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getUserAnimationTime.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.userAnimationTime);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+122+128*j+1284*i);
                     shortBuffer.clear();
-                    shortBuffer.putShort((short)getVictimAnimationTime.get(i)[j]);
+                    shortBuffer.putShort((short)subEntry.victimAnimationTime);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
                     channel.position(entryOffset+124+128*j+1284*i);
                     intBuffer.clear();
-                    intBuffer.putFloat((float)getUserAnimationSpeed.get(i)[j]);
+                    intBuffer.putFloat((float)subEntry.userAnimationSpeed);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(entryOffset+128+128*j+1284*i);
                     intBuffer.clear();
-                    intBuffer.putFloat((float)getVictimAnimationSpeed.get(i)[j]);
+                    intBuffer.putFloat((float)subEntry.victimAnimationSpeed);
                     intBuffer.flip();
                     channel.write(intBuffer);
                 }
@@ -3716,5 +3229,171 @@ public class Bdm {
             e.printStackTrace();
 
         }
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            return (BdmSubEntry) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return new BdmSubEntry();
+        }
+    }
+}
+
+class BdmEntry {
+    public final BdmSubEntry[] subEntries = new BdmSubEntry[10];
+
+    public BdmEntry() {
+        for (int i = 0; i < 10; i++) {
+            subEntries[i] = new BdmSubEntry();
+        }
+    }
+
+
+    public BdmEntry(BdmEntry other) {
+        for (int i = 0; i < 10; i++) {
+            // Clones each individual sub-entry into the new instance's array
+            this.subEntries[i] = other.subEntries[i].clone();
+        }
+    }
+}
+
+class BdmSubEntry implements Cloneable {
+    public int damageType = 0;
+    public int i02 = 0;
+    public int damageAmount = 0;
+    public int i06 = 0;
+    public float f08 = 0.0f;
+    public int acbType = 0;
+    public short cueId = 0;
+    public short effect1Id = 0;
+    public int effect1SkillId = 0;
+    public int effect1EepkType = 0;
+    public int i22 = 0;
+    public short effect2Id = 0;
+    public int effect2SkillId = 0;
+    public int effect2EepkType = 0;
+    public int i30 = 0;
+    public short effect3Id = 0;
+    public int effect3SkillId = 0;
+    public int effect3EepkType = 0;
+    public int i38 = 0;
+    public float pushbackStrength = 0.0f;
+    public float pushbackAcceleration = 0.0f;
+    public int userStunt = 0;
+    public int knockbackDuration = 0;
+    public int knockbackRecoveryAfterImpactTime = 0;
+    public int knockbackGroundImpactTime = 0;
+    public int i58 = 0;
+    public int victimStunt = 0;
+    public float knockbackStrengthX = 0.0f;
+    public float knockbackStrengthY = 0.0f;
+    public float knockbackStrengthZ = 0.0f;
+    public float knockbackDragY = 0.0f;
+    public int i76 = 0;
+    public int knockbackGravityTime = 0;
+    public short victimInvincibilityTime = 0;
+    public int i82 = 0;
+    public int transformationType = 0;
+    public short alimentType = 0;
+    public int i88 = 0;
+    public int i90 = 0;
+    public int i92 = 0;
+    public int damageSpecial = 0;
+    public int damageSpecial2 = 0;
+    public int damageSpecial3 = 0;
+    public int stumbleType = 0;
+    public int secondaryType = 0;
+    public short cameraShakeType = 0;
+    public int cameraShakeTime = 0;
+    public short userBpeID = 0;
+    public short victimBpeID = 0;
+    public short staminaBrokenOverrideBdmId = 0;
+    public int zVanishEnableTime = 0;
+    public int userAnimationTime = 0;
+    public int victimAnimationTime = 0;
+    public float userAnimationSpeed = 0.0f;
+    public float victimAnimationSpeed = 0.0f;
+
+    @Override
+    public BdmSubEntry clone() {
+        try {
+            return (BdmSubEntry) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    public BdmSubEntry() {}
+
+    public BdmSubEntry(int damageType, int i02, int damageAmount, int i06, float f08, int acbType, short cueId,
+                       short effect1Id, int effect1SkillId, int effect1EepkType, int i22, short effect2Id,
+                       int effect2SkillId, int effect2EepkType, int i30, short effect3Id, int effect3SkillId,
+                       int effect3EepkType, int i38, float pushbackStrength, float pushbackAcceleration,
+                       int userStunt, int knockbackDuration, int knockbackRecoveryAfterImpactTime,
+                       int knockbackGroundImpactTime, int i58, int victimStunt, float knockbackStrengthX,
+                       float knockbackStrengthY, float knockbackStrengthZ, float knockbackDragY, int i76,
+                       int knockbackGravityTime, short victimInvincibilityTime, int i82, int transformationType,
+                       short alimentType, int i88, int i90, int i92, int damageSpecial, int damageSpecial2,
+                       int damageSpecial3, int stumbleType, int secondaryType, short cameraShakeType,
+                       int cameraShakeTime, short userBpeID, short victimBpeID, short staminaBrokenOverrideBdmId,
+                       int zVanishEnableTime, int userAnimationTime, int victimAnimationTime,
+                       float userAnimationSpeed, float victimAnimationSpeed) {
+        this.damageType = damageType;
+        this.i02 = i02;
+        this.damageAmount = damageAmount;
+        this.i06 = i06;
+        this.f08 = f08;
+        this.acbType = acbType;
+        this.cueId = cueId;
+        this.effect1Id = effect1Id;
+        this.effect1SkillId = effect1SkillId;
+        this.effect1EepkType = effect1EepkType;
+        this.i22 = i22;
+        this.effect2Id = effect2Id;
+        this.effect2SkillId = effect2SkillId;
+        this.effect2EepkType = effect2EepkType;
+        this.i30 = i30;
+        this.effect3Id = effect3Id;
+        this.effect3SkillId = effect3SkillId;
+        this.effect3EepkType = effect3EepkType;
+        this.i38 = i38;
+        this.pushbackStrength = pushbackStrength;
+        this.pushbackAcceleration = pushbackAcceleration;
+        this.userStunt = userStunt;
+        this.knockbackDuration = knockbackDuration;
+        this.knockbackRecoveryAfterImpactTime = knockbackRecoveryAfterImpactTime;
+        this.knockbackGroundImpactTime = knockbackGroundImpactTime;
+        this.i58 = i58;
+        this.victimStunt = victimStunt;
+        this.knockbackStrengthX = knockbackStrengthX;
+        this.knockbackStrengthY = knockbackStrengthY;
+        this.knockbackStrengthZ = knockbackStrengthZ;
+        this.knockbackDragY = knockbackDragY;
+        this.i76 = i76;
+        this.knockbackGravityTime = knockbackGravityTime;
+        this.victimInvincibilityTime = victimInvincibilityTime;
+        this.i82 = i82;
+        this.transformationType = transformationType;
+        this.alimentType = alimentType;
+        this.i88 = i88;
+        this.i90 = i90;
+        this.i92 = i92;
+        this.damageSpecial = damageSpecial;
+        this.damageSpecial2 = damageSpecial2;
+        this.damageSpecial3 = damageSpecial3;
+        this.stumbleType = stumbleType;
+        this.secondaryType = secondaryType;
+        this.cameraShakeType = cameraShakeType;
+        this.cameraShakeTime = cameraShakeTime;
+        this.userBpeID = userBpeID;
+        this.victimBpeID = victimBpeID;
+        this.staminaBrokenOverrideBdmId = staminaBrokenOverrideBdmId;
+        this.zVanishEnableTime = zVanishEnableTime;
+        this.userAnimationTime = userAnimationTime;
+        this.victimAnimationTime = victimAnimationTime;
+        this.userAnimationSpeed = userAnimationSpeed;
+        this.victimAnimationSpeed = victimAnimationSpeed;
     }
 }
