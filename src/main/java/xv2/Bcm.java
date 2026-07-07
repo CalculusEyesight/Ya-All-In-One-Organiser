@@ -2505,7 +2505,7 @@ public class Bcm {
         //Collision and Stamina
 
         //Health
-        Label healthLabel = new Label("Users Health (One Use)");
+        Label healthLabel = new Label("Health");
         healthLabel.getStyleClass().add("titled-address-label");
 
         CheckBox usersHealth_OneUse = new CheckBox("Users Health (One Use)");
