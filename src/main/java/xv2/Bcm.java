@@ -3184,32 +3184,17 @@ public class Bcm {
         unknown9.setToggleGroup(randomFlagToggleGroup);
         none.setSelected(true);
 
-        if(entry.bacRandomFlags==1){
-            randomBACEntry.setSelected(true);
-        }
-        else if(entry.bacRandomFlags==2){
-            noTargetCorrection.setSelected(true);
-        }
-        else if(entry.bacRandomFlags==3){
-            threeInstanceSetup.setSelected(true);
-        }
-        else if(entry.bacRandomFlags==4){
-            unknown4.setSelected(true);
-        }
-        else if(entry.bacRandomFlags==5){
-            unknown5.setSelected(true);
-        }
-        else if(entry.bacRandomFlags==6){
-            unknown6.setSelected(true);
-        }
-        else if(entry.bacRandomFlags==7){
-            unknown7.setSelected(true);
-        }
-        else if(entry.bacRandomFlags==8){
-            unknown8.setSelected(true);
-        }
-        else if(entry.bacRandomFlags==9){
-            unknown9.setSelected(true);
+        switch (entry.bacRandomFlags) {
+            case 1 -> randomBACEntry.setSelected(true);
+            case 2 -> noTargetCorrection.setSelected(true);
+            case 3 -> threeInstanceSetup.setSelected(true);
+            case 4 -> unknown4.setSelected(true);
+            case 5 -> unknown5.setSelected(true);
+            case 6 -> unknown6.setSelected(true);
+            case 7 -> unknown7.setSelected(true);
+            case 8 -> unknown8.setSelected(true);
+            case 9 -> unknown9.setSelected(true);
+            default -> none.setSelected(true);
         }
 
         randomFlagToggleGroup.selectedToggleProperty().addListener((obs,oldValue,newValue)->{
@@ -3430,32 +3415,17 @@ public class Bcm {
         femaleMajinsOnly.setToggleGroup(raceGenderToggleGroup);
         allCharactersDefault.setSelected(true);
 
-        if(entry.raceGender==1){
-            rosterCharactersOnly.setSelected(true);
-        }
-        else if(entry.raceGender==2){
-            maleHumansOnly.setSelected(true);
-        }
-        else if(entry.raceGender==3){
-            femaleHumansOnly.setSelected(true);
-        }
-        else if(entry.raceGender==4){
-            maleSaiyansOnly.setSelected(true);
-        }
-        else if(entry.raceGender==5){
-            femaleSaiyansOnly.setSelected(true);
-        }
-        else if(entry.raceGender==6){
-            namekiansOnly.setSelected(true);
-        }
-        else if(entry.raceGender==7){
-           friezaRaceOnly.setSelected(true);
-        }
-        else if(entry.raceGender==8){
-            maleMajinsOnly.setSelected(true);
-        }
-        else if(entry.raceGender==9){
-            femaleMajinsOnly.setSelected(true);
+        switch ((int)entry.raceGender) {
+            case 1 -> rosterCharactersOnly.setSelected(true);
+            case 2 -> maleHumansOnly.setSelected(true);
+            case 3 -> femaleHumansOnly.setSelected(true);
+            case 4 -> maleSaiyansOnly.setSelected(true);
+            case 5 -> femaleSaiyansOnly.setSelected(true);
+            case 6 -> namekiansOnly.setSelected(true);
+            case 7 -> friezaRaceOnly.setSelected(true);
+            case 8 -> maleMajinsOnly.setSelected(true);
+            case 9 -> femaleMajinsOnly.setSelected(true);
+            default -> allCharactersDefault.setSelected(true);
         }
         raceGenderToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue.isSelected()) {
@@ -3512,9 +3482,6 @@ public class Bcm {
     }
 
     private VBox createUnknownVBox(BcmEntry entry){
-        // Tab unknown=new Tab("Unknown");
-        // unknown.setClosable(false);
-
         VBox unknownVBox=new VBox(20);
         unknownVBox.setPadding(new Insets(20,0,0,8));
 
@@ -3670,31 +3637,20 @@ public class Bcm {
     }
      
     public void entriesActionListener(){
-        treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue)->{
-
+        treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)->{
             if (newValue == null) {
                 return;
             }
-            //currentEntry=treeView.getSelectionModel().getSelectedItem();
-            currentEntry=newValue;
-            //System.out.println(treeView.getRow(currentEntry));
-            //System.out.println(getGridPanes.get(treeView.getRow(currentEntry)).getChildren()) ;
-
-
             // //input tab
-            tabPane.getTabs().get(0).setContent(createInputsVBox(bcmEntries.get(treeView.getRow(currentEntry))));
-   
+            tabPane.getTabs().get(0).setContent(createInputsVBox(bcmEntries.get(treeView.getRow(newValue))));
             // //activator tab
-            tabPane.getTabs().get(1).setContent(createActivatorScrollPane(bcmEntries.get(treeView.getRow(currentEntry))));
-
+            tabPane.getTabs().get(1).setContent(createActivatorScrollPane(bcmEntries.get(treeView.getRow(newValue))));
             // //BAC tab
-            tabPane.getTabs().get(2).setContent(createBACVBox(bcmEntries.get(treeView.getRow(currentEntry))));
-       
+            tabPane.getTabs().get(2).setContent(createBACVBox(bcmEntries.get(treeView.getRow(newValue))));
             // //misc tab
-            tabPane.getTabs().get(3).setContent(createMiscVBox(bcmEntries.get(treeView.getRow(currentEntry))));
-            
+            tabPane.getTabs().get(3).setContent(createMiscVBox(bcmEntries.get(treeView.getRow(newValue))));
             //unknown tab
-            tabPane.getTabs().get(4).setContent(createUnknownVBox(bcmEntries.get(treeView.getRow(currentEntry))));
+            tabPane.getTabs().get(4).setContent(createUnknownVBox(bcmEntries.get(treeView.getRow(newValue))));
         });
         treeView.setOnMouseClicked(e->{
             if(e.getButton()==MouseButton.SECONDARY){
