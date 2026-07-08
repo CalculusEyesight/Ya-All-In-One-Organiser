@@ -2056,9 +2056,8 @@ public class Bcm {
         Label minimumLoopDurationLabel=new Label("Minimum Loop\nConditions");
         minimumLoopDurationLabel.setPrefWidth(120);;
 
-        Spinner<Integer> minimumLoopDurationSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> minimumLoopDurationSpinner=new Spinner<>(0,65535,entry.minimumLoopDuration);
         minimumLoopDurationSpinner.setEditable(true);
-        minimumLoopDurationSpinner.getValueFactory().setValue(entry.minimumLoopDuration);
         minimumLoopDurationSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.minimumLoopDuration = newValue;
@@ -2075,9 +2074,8 @@ public class Bcm {
         Label maximumLoopDurationLabel=new Label("Maximum Loop\nConditions");
         maximumLoopDurationLabel.setPrefWidth(120);
         
-        Spinner<Integer> maximumLoopDurationSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> maximumLoopDurationSpinner=new Spinner<>(0,65535,entry.maximumLoopDuration);
         maximumLoopDurationSpinner.setEditable(true);
-        maximumLoopDurationSpinner.getValueFactory().setValue(entry.maximumLoopDuration);
         maximumLoopDurationSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.maximumLoopDuration = newValue;
@@ -3050,9 +3048,8 @@ public class Bcm {
         Label BACEntryPrimaryLabel=new Label("BAC Entry Primary");
         BACEntryPrimaryLabel.setPrefWidth(160);
         
-        Spinner<Integer> BACEntryPrimarySpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> BACEntryPrimarySpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)entry.bacEntryPrimary);
         BACEntryPrimarySpinner.setEditable(true);
-        BACEntryPrimarySpinner.getValueFactory().setValue((int)entry.bacEntryPrimary);
         BACEntryPrimarySpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.bacEntryPrimary = newValue.shortValue();
@@ -3069,9 +3066,8 @@ public class Bcm {
         Label BACEntryChargeLabel=new Label("BAC Entry Charge");
         BACEntryChargeLabel.setPrefWidth(160);
 
-        Spinner<Integer> BACEntryChargeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> BACEntryChargeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)entry.bacEntryCharge);
         BACEntryChargeSpinner.setEditable(true);
-        BACEntryChargeSpinner.getValueFactory().setValue((int)entry.bacEntryCharge);
         BACEntryChargeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.bacEntryCharge = newValue.shortValue();
@@ -3088,9 +3084,8 @@ public class Bcm {
         Label BACEntryUserConnectLabel=new Label("BAC Entry User Connect");
         BACEntryUserConnectLabel.setPrefWidth(160);
 
-        Spinner<Integer> BACEntryUserConnectSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> BACEntryUserConnectSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)entry.bacEntryUserConnect);
         BACEntryUserConnectSpinner.setEditable(true);
-        BACEntryUserConnectSpinner.getValueFactory().setValue((int)entry.bacEntryUserConnect);
         BACEntryUserConnectSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.bacEntryUserConnect = newValue.shortValue();
@@ -3107,9 +3102,8 @@ public class Bcm {
         Label BACEntryVictimConnectLabel=new Label("BAC Entry Victim Connect");
         BACEntryVictimConnectLabel.setPrefWidth(160);
         
-        Spinner<Integer> BACEntryVictimConnectSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> BACEntryVictimConnectSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)entry.bacEntryVictimConnect);
         BACEntryVictimConnectSpinner.setEditable(true);
-        BACEntryVictimConnectSpinner.getValueFactory().setValue((int)entry.bacEntryVictimConnect);
         BACEntryVictimConnectSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.bacEntryVictimConnect = newValue.shortValue();
@@ -3126,9 +3120,8 @@ public class Bcm {
         Label BACEntryAirborneLabel=new Label("BAC Entry Airborne");
         BACEntryAirborneLabel.setPrefWidth(160);
 
-        Spinner<Integer> BACEntryAirborneSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> BACEntryAirborneSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)entry.bacEntryAirborne);
         BACEntryAirborneSpinner.setEditable(true);
-        BACEntryAirborneSpinner.getValueFactory().setValue((int)entry.bacEntryAirborne);
         BACEntryAirborneSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.bacEntryAirborne = newValue.shortValue();
@@ -3145,9 +3138,8 @@ public class Bcm {
         Label BACEntryTargetingOverrideLabel=new Label("BAC Entry Targeting Override");
         BACEntryTargetingOverrideLabel.setPrefWidth(160);
 
-        Spinner<Integer> BACEntryTargetingOverrideSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> BACEntryTargetingOverrideSpinner=new Spinner<>(0,65535,entry.bacEntryTargetingOverride);
         BACEntryTargetingOverrideSpinner.setEditable(true);
-        BACEntryTargetingOverrideSpinner.getValueFactory().setValue(entry.bacEntryTargetingOverride);
         BACEntryTargetingOverrideSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.bacEntryTargetingOverride = newValue;
@@ -3285,9 +3277,8 @@ public class Bcm {
         Label kiCostLabel=new Label("Ki Cost");
         kiCostLabel.setPrefWidth(160);
 
-        Spinner<Double> kiCostSpinner=new Spinner<>(0,4294967295.0,0);
+        Spinner<Double> kiCostSpinner=new Spinner<>(0,4294967295.0,(double)entry.kiCost);
         kiCostSpinner.setEditable(true);
-        kiCostSpinner.getValueFactory().setValue((double)entry.kiCost);
         kiCostSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.kiCost = newValue.longValue();
@@ -3304,9 +3295,8 @@ public class Bcm {
         Label receiverLinkIdLabel=new Label("Receiver Link Id");
         receiverLinkIdLabel.setPrefWidth(160);
 
-        Spinner<Double> receiverLinkIdSpinner=new Spinner<>(0,4294967295.0,0);
+        Spinner<Double> receiverLinkIdSpinner=new Spinner<>(0,4294967295.0,(double)entry.receiverLinkId);
         receiverLinkIdSpinner.setEditable(true);
-        receiverLinkIdSpinner.getValueFactory().setValue((double)entry.receiverLinkId);
         receiverLinkIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.receiverLinkId = newValue.longValue();
@@ -3323,9 +3313,8 @@ public class Bcm {
         Label staminaCostLabel=new Label("Stamina Cost");
         staminaCostLabel.setPrefWidth(160);
 
-        Spinner<Double> staminaCostSpinner=new Spinner<>(0,4294967295.0,0);
+        Spinner<Double> staminaCostSpinner=new Spinner<>(0,4294967295.0,(double)entry.staminaCost);
         staminaCostSpinner.setEditable(true);
-        staminaCostSpinner.getValueFactory().setValue((double)entry.staminaCost);
         staminaCostSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.staminaCost = newValue.longValue();
@@ -3342,9 +3331,8 @@ public class Bcm {
         Label kiRequiredLabel=new Label("Ki Required");
         kiRequiredLabel.setPrefWidth(160);
 
-        Spinner<Double> kiRequiredSpinner=new Spinner<>(0,4294967295.0,0);
+        Spinner<Double> kiRequiredSpinner=new Spinner<>(0,4294967295.0,(double)entry.kiRequired);
         kiRequiredSpinner.setEditable(true);
-        kiRequiredSpinner.getValueFactory().setValue((double)entry.kiRequired);
         kiRequiredSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.kiRequired = newValue.longValue();
@@ -3361,9 +3349,8 @@ public class Bcm {
         Label healthRequiredLabel=new Label("Health Required");
         healthRequiredLabel.setPrefWidth(160);
 
-        Spinner<Double> healthRequiredSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
+        Spinner<Double> healthRequiredSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,(double)entry.healthRequired);
         healthRequiredSpinner.setEditable(true);
-        healthRequiredSpinner.getValueFactory().setValue((double)entry.healthRequired);
         healthRequiredSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.healthRequired = newValue.floatValue();
@@ -3380,9 +3367,8 @@ public class Bcm {
         Label transformationStageLabel=new Label("Transformation Stage");
         transformationStageLabel.setPrefWidth(160);
 
-        Spinner<Integer> transformationStageSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> transformationStageSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)entry.transformationStage);
         transformationStageSpinner.setEditable(true);
-        transformationStageSpinner.getValueFactory().setValue((int)entry.transformationStage);
         transformationStageSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.transformationStage = newValue.shortValue();
@@ -3399,9 +3385,8 @@ public class Bcm {
         Label cusAuraLabel=new Label("CUS Aura");
         cusAuraLabel.setPrefWidth(160);
 
-        Spinner<Integer> cusAuraSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> cusAuraSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)entry.cusAura);
         cusAuraSpinner.setEditable(true);
-        cusAuraSpinner.getValueFactory().setValue((int)entry.cusAura);
         cusAuraSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 entry.cusAura = newValue.shortValue();
