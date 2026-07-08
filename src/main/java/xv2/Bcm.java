@@ -3182,7 +3182,6 @@ public class Bcm {
         unknown8.setToggleGroup(randomFlagToggleGroup);
         RadioButton unknown9 = new RadioButton("Unknown 9");
         unknown9.setToggleGroup(randomFlagToggleGroup);
-        none.setSelected(true);
 
         switch (entry.bacRandomFlags) {
             case 1 -> randomBACEntry.setSelected(true);
@@ -3413,8 +3412,7 @@ public class Bcm {
         maleMajinsOnly.setToggleGroup(raceGenderToggleGroup);
         RadioButton femaleMajinsOnly = new RadioButton("Female Majins Only");
         femaleMajinsOnly.setToggleGroup(raceGenderToggleGroup);
-        allCharactersDefault.setSelected(true);
-
+        
         switch ((int)entry.raceGender) {
             case 1 -> rosterCharactersOnly.setSelected(true);
             case 2 -> maleHumansOnly.setSelected(true);
