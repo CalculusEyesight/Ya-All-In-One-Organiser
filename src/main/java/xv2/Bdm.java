@@ -589,9 +589,8 @@ public class Bdm {
         Label damageAmountLabel=new Label("Damage Amount");
         damageAmountLabel.setPrefWidth(160);
 
-        Spinner<Integer> damageAmountSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> damageAmountSpinner=new Spinner<>(0,65535,subEntry.damageAmount);
         damageAmountSpinner.setEditable(true);
-        damageAmountSpinner.getValueFactory().setValue(subEntry.damageAmount);
         damageAmountSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.damageAmount = newValue;
@@ -610,9 +609,8 @@ public class Bdm {
         Label damageSpecialLabel=new Label("Damage Special");
         damageSpecialLabel.setPrefWidth(160);
 
-        Spinner<Integer> damageSpecialSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> damageSpecialSpinner=new Spinner<>(0,65535,subEntry.damageSpecial);
         damageSpecialSpinner.setEditable(true);
-        damageSpecialSpinner.getValueFactory().setValue(subEntry.damageSpecial);
         damageSpecialSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.damageSpecial = newValue;
@@ -630,9 +628,8 @@ public class Bdm {
         Label damageSpecial2Label=new Label("Damage Special 2");
         damageSpecial2Label.setPrefWidth(160);
 
-        Spinner<Integer> damageSpecial2Spinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> damageSpecial2Spinner=new Spinner<>(0,65535,subEntry.damageSpecial2);
         damageSpecial2Spinner.setEditable(true);
-        damageSpecial2Spinner.getValueFactory().setValue(subEntry.damageSpecial2);
         damageSpecial2Spinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.damageSpecial2 = newValue;
@@ -650,9 +647,8 @@ public class Bdm {
         Label damageSpecial3Label=new Label("Damage Special 3");
         damageSpecial3Label.setPrefWidth(160);
 
-        Spinner<Integer> damageSpecial3Spinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> damageSpecial3Spinner=new Spinner<>(0,65535,subEntry.damageSpecial3);
         damageSpecial3Spinner.setEditable(true);
-        damageSpecial3Spinner.getValueFactory().setValue(subEntry.damageSpecial3);
         damageSpecial3Spinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.damageSpecial3 = newValue;
@@ -679,9 +675,8 @@ public class Bdm {
         Label userAnimationTimeLabel=new Label("User Animation Time");
         userAnimationTimeLabel.setPrefWidth(160);
 
-        Spinner<Integer> userAnimationTimeSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> userAnimationTimeSpinner=new Spinner<>(0,65535,subEntry.userAnimationTime);
         userAnimationTimeSpinner.setEditable(true);
-        userAnimationTimeSpinner.getValueFactory().setValue(subEntry.userAnimationTime);
         userAnimationTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.userAnimationTime = newValue;
@@ -699,9 +694,8 @@ public class Bdm {
         Label userAnimationSpeed=new Label("User Animation Speed");
         userAnimationSpeed.setPrefWidth(160);
 
-        Spinner<Double> userAnimationSpeedSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
+        Spinner<Double> userAnimationSpeedSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,(double)subEntry.userAnimationSpeed);
         userAnimationSpeedSpinner.setEditable(true);
-        userAnimationSpeedSpinner.getValueFactory().setValue((double)subEntry.userAnimationSpeed);
         userAnimationSpeedSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.userAnimationSpeed = newValue.floatValue();
@@ -718,9 +712,8 @@ public class Bdm {
         Label victimAnimationTimeLabel=new Label("Victim Animation Time");
         victimAnimationTimeLabel.setPrefWidth(160);
 
-        Spinner<Integer> victimAnimationTimeSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> victimAnimationTimeSpinner=new Spinner<>(0,65535,subEntry.victimAnimationTime);
         victimAnimationTimeSpinner.setEditable(true);
-        victimAnimationTimeSpinner.getValueFactory().setValue(subEntry.victimAnimationTime);
         victimAnimationTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.victimAnimationTime = newValue;
@@ -738,9 +731,8 @@ public class Bdm {
         Label victimAnimationSpeed=new Label("Victim Animation Speed");
         victimAnimationSpeed.setPrefWidth(160);
 
-        Spinner<Double> victimAnimationSpeedSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
+        Spinner<Double> victimAnimationSpeedSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,(double)subEntry.victimAnimationSpeed);
         victimAnimationSpeedSpinner.setEditable(true);
-        victimAnimationSpeedSpinner.getValueFactory().setValue((double)subEntry.victimAnimationSpeed);
         victimAnimationSpeedSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.victimAnimationSpeed = newValue.floatValue();
@@ -812,9 +804,8 @@ public class Bdm {
         Label cueIdSpeed=new Label("Cue Id");
         cueIdSpeed.setPrefWidth(100);
 
-        Spinner<Integer> cueIdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> cueIdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)subEntry.cueId);
         cueIdSpinner.setEditable(true);
-        cueIdSpinner.getValueFactory().setValue((int)subEntry.cueId);
         cueIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.cueId = newValue.shortValue();
@@ -840,9 +831,8 @@ public class Bdm {
         Label effect1IdLabel=new Label("Effect 1 Id");
         effect1IdLabel.setPrefWidth(160);
 
-        Spinner<Integer> effect1IdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> effect1IdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)subEntry.effect1Id);
         effect1IdSpinner.setEditable(true);
-        effect1IdSpinner.getValueFactory().setValue((int)subEntry.effect1Id);
         effect1IdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.effect1Id = newValue.shortValue();
@@ -860,9 +850,8 @@ public class Bdm {
         Label effect1SkillIdLabel=new Label("Effect 1 Skill Id");
         effect1SkillIdLabel.setPrefWidth(160);
 
-        Spinner<Integer> effect1SkillIdSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> effect1SkillIdSpinner=new Spinner<>(0,65535,subEntry.effect1SkillId);
         effect1SkillIdSpinner.setEditable(true);
-        effect1SkillIdSpinner.getValueFactory().setValue(subEntry.effect1SkillId);
         effect1SkillIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.effect1SkillId = newValue;
@@ -992,9 +981,8 @@ public class Bdm {
         Label effect2IdLabel=new Label("Effect 2 Id");
         effect2IdLabel.setPrefWidth(160);
 
-        Spinner<Integer> effect2IdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> effect2IdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)subEntry.effect2Id);
         effect2IdSpinner.setEditable(true);
-        effect2IdSpinner.getValueFactory().setValue((int)subEntry.effect2Id);
         effect2IdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.effect2Id = newValue.shortValue();
@@ -1012,9 +1000,8 @@ public class Bdm {
         Label effect2SkillIdLabel=new Label("Effect 2 Skill Id");
         effect2SkillIdLabel.setPrefWidth(160);
 
-        Spinner<Integer> effect2SkillIdSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> effect2SkillIdSpinner=new Spinner<>(0,65535,subEntry.effect2SkillId);
         effect2SkillIdSpinner.setEditable(true);
-        effect2SkillIdSpinner.getValueFactory().setValue(subEntry.effect2SkillId);
         effect2SkillIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.effect2SkillId = newValue;
@@ -1144,9 +1131,8 @@ public class Bdm {
         Label effect3IdLabel=new Label("Effect 3 Id");
         effect3IdLabel.setPrefWidth(160);
 
-        Spinner<Integer> effect3IdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> effect3IdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)subEntry.effect3Id);
         effect3IdSpinner.setEditable(true);
-        effect3IdSpinner.getValueFactory().setValue((int)subEntry.effect3Id);
         effect3IdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.effect3Id = newValue.shortValue();
@@ -1164,9 +1150,8 @@ public class Bdm {
         Label effect3SkillIdLabel=new Label("Effect 3 Skill Id");
         effect3SkillIdLabel.setPrefWidth(160);
 
-        Spinner<Integer> effect3SkillIdSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> effect3SkillIdSpinner=new Spinner<>(0,65535,subEntry.effect3SkillId);
         effect3SkillIdSpinner.setEditable(true);
-        effect3SkillIdSpinner.getValueFactory().setValue(subEntry.effect3SkillId);
         effect3SkillIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.effect3SkillId = newValue;
@@ -1304,9 +1289,8 @@ public class Bdm {
         Label pushbackStrengthLabel=new Label("Pushback Strength");
         pushbackStrengthLabel.setPrefWidth(200);
 
-        Spinner<Double> pushbackStrengthSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
+        Spinner<Double> pushbackStrengthSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,(double)subEntry.pushbackStrength);
         pushbackStrengthSpinner.setEditable(true);
-        pushbackStrengthSpinner.getValueFactory().setValue((double)subEntry.pushbackStrength);
         pushbackStrengthSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.pushbackStrength = newValue.floatValue();
@@ -1323,9 +1307,8 @@ public class Bdm {
         Label pushbackAccelerationLabel=new Label("Pushback Acceleration");
         pushbackAccelerationLabel.setPrefWidth(200);
 
-        Spinner<Double> pushbackAccelerationSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
+        Spinner<Double> pushbackAccelerationSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,(double)subEntry.pushbackAcceleration);
         pushbackAccelerationSpinner.setEditable(true);
-        pushbackAccelerationSpinner.getValueFactory().setValue((double)subEntry.pushbackAcceleration);
         pushbackAccelerationSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.pushbackAcceleration = newValue.floatValue();
@@ -1342,9 +1325,8 @@ public class Bdm {
         Label userStuntLabel=new Label("User Stunt");
         userStuntLabel.setPrefWidth(200);
 
-        Spinner<Integer> userStuntSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> userStuntSpinner=new Spinner<>(0,65535,subEntry.userStunt);
         userStuntSpinner.setEditable(true);
-        userStuntSpinner.getValueFactory().setValue(subEntry.userStunt);
         userStuntSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.userStunt = newValue;
@@ -1362,9 +1344,8 @@ public class Bdm {
         Label victimStuntLabel=new Label("Victim Stunt");
         victimStuntLabel.setPrefWidth(200);
 
-        Spinner<Integer> victimStuntSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> victimStuntSpinner=new Spinner<>(0,65535,subEntry.victimStunt);
         victimStuntSpinner.setEditable(true);
-        victimStuntSpinner.getValueFactory().setValue(subEntry.victimStunt);
         victimStuntSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.victimStunt = newValue;
@@ -1383,9 +1364,8 @@ public class Bdm {
         Label knockbackDurationLabel=new Label("Knockback Duration");
         knockbackDurationLabel.setPrefWidth(200);
 
-        Spinner<Integer> knockbackDurationSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> knockbackDurationSpinner=new Spinner<>(0,65535,subEntry.knockbackDuration);
         knockbackDurationSpinner.setEditable(true);
-        knockbackDurationSpinner.getValueFactory().setValue(subEntry.knockbackDuration);
         knockbackDurationSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.knockbackDuration = newValue;
@@ -1402,9 +1382,8 @@ public class Bdm {
         Label knockbackGroundImpactTimeLabel=new Label("Knockback Ground Impact Time");
         knockbackGroundImpactTimeLabel.setPrefWidth(200);
 
-        Spinner<Integer> knockbackGroundImpactSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> knockbackGroundImpactSpinner=new Spinner<>(0,65535,subEntry.knockbackGroundImpactTime);
         knockbackGroundImpactSpinner.setEditable(true);
-        knockbackGroundImpactSpinner.getValueFactory().setValue(subEntry.knockbackGroundImpactTime);
         knockbackGroundImpactSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                subEntry.knockbackGroundImpactTime = newValue;
@@ -1421,9 +1400,8 @@ public class Bdm {
         Label knockbackRecoveryAfterImpactTimeLabel=new Label("Knockback Recovery After Impact");
         knockbackRecoveryAfterImpactTimeLabel.setPrefWidth(200);
 
-        Spinner<Integer> knockbackRecoveryAfterImpactSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> knockbackRecoveryAfterImpactSpinner=new Spinner<>(0,65535,subEntry.knockbackRecoveryAfterImpactTime);
         knockbackRecoveryAfterImpactSpinner.setEditable(true);
-        knockbackRecoveryAfterImpactSpinner.getValueFactory().setValue(subEntry.knockbackRecoveryAfterImpactTime);
         knockbackRecoveryAfterImpactSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.knockbackRecoveryAfterImpactTime = newValue;
@@ -1440,9 +1418,8 @@ public class Bdm {
         Label knockbackStrengthXLabel=new Label("Knockback Strength X");
         knockbackStrengthXLabel.setPrefWidth(200);
 
-        Spinner<Double> knockbackStrengthXSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
+        Spinner<Double> knockbackStrengthXSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,(double)subEntry.knockbackStrengthX);
         knockbackStrengthXSpinner.setEditable(true);
-        knockbackStrengthXSpinner.getValueFactory().setValue((double)subEntry.knockbackStrengthX);
         knockbackStrengthXSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.knockbackStrengthX = newValue.floatValue();
@@ -1459,9 +1436,8 @@ public class Bdm {
         Label knockbackStrengthYLabel=new Label("Knockback Strength Y");
         knockbackStrengthYLabel.setPrefWidth(200);
 
-        Spinner<Double> knockbackStrengthYSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
+        Spinner<Double> knockbackStrengthYSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,(double)subEntry.knockbackStrengthY);
         knockbackStrengthYSpinner.setEditable(true);
-        knockbackStrengthYSpinner.getValueFactory().setValue((double)subEntry.knockbackStrengthY);
         knockbackStrengthYSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.knockbackStrengthY = newValue.floatValue();
@@ -1478,9 +1454,8 @@ public class Bdm {
         Label knockbackStrengthZLabel=new Label("Knockback Strength Z");
         knockbackStrengthZLabel.setPrefWidth(200);
 
-        Spinner<Double> knockbackStrengthZSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
+        Spinner<Double> knockbackStrengthZSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,(double)subEntry.knockbackStrengthZ);
         knockbackStrengthZSpinner.setEditable(true);
-        knockbackStrengthZSpinner.getValueFactory().setValue((double)subEntry.knockbackStrengthZ);
         knockbackStrengthZSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.knockbackStrengthZ = newValue.floatValue();
@@ -1497,9 +1472,8 @@ public class Bdm {
         Label knockbackSDragYLabel=new Label("Knockback Strength Y");
         knockbackSDragYLabel.setPrefWidth(200);
 
-        Spinner<Double> knockbackSDragYSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,0.0);
+        Spinner<Double> knockbackSDragYSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,(double)subEntry.knockbackDragY);
         knockbackSDragYSpinner.setEditable(true);
-        knockbackSDragYSpinner.getValueFactory().setValue((double)subEntry.knockbackDragY);
         knockbackSDragYSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.knockbackDragY = newValue.floatValue();
@@ -1516,9 +1490,8 @@ public class Bdm {
         Label knockbackGravityTimeLabel=new Label("Knockback Gravity Time");
         knockbackGravityTimeLabel.setPrefWidth(200);
 
-        Spinner<Integer> knockbackGravityTimeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> knockbackGravityTimeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,subEntry.knockbackGravityTime);
         knockbackGravityTimeSpinner.setEditable(true);
-        knockbackGravityTimeSpinner.getValueFactory().setValue(subEntry.knockbackGravityTime);
         knockbackGravityTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.knockbackGravityTime = newValue;
@@ -1535,9 +1508,8 @@ public class Bdm {
         Label victimInvincibilityTimeLabel=new Label("Victim Invincibility Time");
         victimInvincibilityTimeLabel.setPrefWidth(200);
 
-        Spinner<Integer> victimInvincibilityTimeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> victimInvincibilityTimeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)subEntry.victimInvincibilityTime);
         victimInvincibilityTimeSpinner.setEditable(true);
-        victimInvincibilityTimeSpinner.getValueFactory().setValue((int)subEntry.victimInvincibilityTime);
         victimInvincibilityTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.victimInvincibilityTime = newValue.shortValue();
@@ -1565,9 +1537,8 @@ public class Bdm {
         cameraShakeTypeLabel.setPrefWidth(150);
         Label cameraShakeTypeIndicatorLabel = new Label();
 
-        Spinner<Integer> cameraShakeTypeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> cameraShakeTypeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)subEntry.cameraShakeType);
         cameraShakeTypeSpinner.setEditable(true);
-        cameraShakeTypeSpinner.getValueFactory().setValue((int)subEntry.cameraShakeType);
         cameraShakeTypeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.cameraShakeType = newValue.shortValue();
@@ -1596,9 +1567,8 @@ public class Bdm {
         Label cameraShakeTimeLabel=new Label("Camera Shake Time");
         cameraShakeTimeLabel.setPrefWidth(150);
 
-        Spinner<Integer> cameraShakeTimeSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> cameraShakeTimeSpinner=new Spinner<>(0,65535,subEntry.cameraShakeTime);
         cameraShakeTimeSpinner.setEditable(true);
-        cameraShakeTimeSpinner.getValueFactory().setValue(subEntry.cameraShakeTime);
         cameraShakeTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.cameraShakeTime = newValue.shortValue();
@@ -1616,9 +1586,8 @@ public class Bdm {
         Label userBpeIdLabel=new Label("User Bpe Id");
         userBpeIdLabel.setPrefWidth(150);
 
-        Spinner<Integer> userBpeIdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> userBpeIdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)subEntry.userBpeID);
         userBpeIdSpinner.setEditable(true);
-        userBpeIdSpinner.getValueFactory().setValue((int)subEntry.userBpeID);
         userBpeIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.userBpeID = newValue.shortValue();
@@ -1636,9 +1605,8 @@ public class Bdm {
         Label victimBpeIdLabel=new Label("Victim Bpe Id");
         victimBpeIdLabel.setPrefWidth(150);
 
-        Spinner<Integer> victimBpeIdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,0);
+        Spinner<Integer> victimBpeIdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,(int)subEntry.victimBpeID);
         victimBpeIdSpinner.setEditable(true);
-        victimBpeIdSpinner.getValueFactory().setValue((int)subEntry.victimBpeID);
         victimBpeIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.victimBpeID = newValue.shortValue();
@@ -1665,9 +1633,8 @@ public class Bdm {
         transformationTypeLabel.setPrefWidth(180);
         Label trasnformationTypeIndicatorLabel = new Label();
 
-        Spinner<Integer> trasnsformationTypeSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> trasnsformationTypeSpinner=new Spinner<>(0,65535,subEntry.transformationType);
         trasnsformationTypeSpinner.setEditable(true);
-        trasnsformationTypeSpinner.getValueFactory().setValue(subEntry.transformationType);
         trasnsformationTypeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.transformationType = newValue.shortValue();
@@ -2071,9 +2038,8 @@ public class Bdm {
         Label staminaBrokenOverrideBdmIdLabel=new Label("Stamina Broken Override Bdm Id");
         staminaBrokenOverrideBdmIdLabel.setPrefWidth(180);
 
-        Spinner<Integer> staminaBrokenOverrideBdmIdSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> staminaBrokenOverrideBdmIdSpinner=new Spinner<>(0,65535,(int)subEntry.staminaBrokenOverrideBdmId);
         staminaBrokenOverrideBdmIdSpinner.setEditable(true);
-        staminaBrokenOverrideBdmIdSpinner.getValueFactory().setValue((int)subEntry.staminaBrokenOverrideBdmId);
         staminaBrokenOverrideBdmIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.staminaBrokenOverrideBdmId = newValue.shortValue();
@@ -2091,9 +2057,8 @@ public class Bdm {
         Label szVanishEnableTimeLabel=new Label("Z Vanish Enable Time");
         szVanishEnableTimeLabel.setPrefWidth(180);
 
-        Spinner<Integer> zVanishEnableTimeSpinner=new Spinner<>(0,65535,0);
+        Spinner<Integer> zVanishEnableTimeSpinner=new Spinner<>(0,65535,(int)subEntry.zVanishEnableTime);
         zVanishEnableTimeSpinner.setEditable(true);
-        zVanishEnableTimeSpinner.getValueFactory().setValue((int)subEntry.zVanishEnableTime);
         zVanishEnableTimeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
             if(newValue!=null){
                 subEntry.zVanishEnableTime = newValue.shortValue();
@@ -3254,12 +3219,12 @@ class BdmEntry {
     public BdmEntry(BdmEntry other) {
         for (int i = 0; i < 10; i++) {
             // Clones each individual sub-entry into the new instance's array
-            this.subEntries[i] = other.subEntries[i].clone();
+            this.subEntries[i] = new BdmSubEntry(other.subEntries[i]);
         }
     }
 }
 
-class BdmSubEntry implements Cloneable {
+class BdmSubEntry {
     public int damageType = 0;
     public int i02 = 0;
     public int damageAmount = 0;
@@ -3316,15 +3281,63 @@ class BdmSubEntry implements Cloneable {
     public float userAnimationSpeed = 0.0f;
     public float victimAnimationSpeed = 0.0f;
 
-    @Override
-    public BdmSubEntry clone() {
-        try {
-            return (BdmSubEntry) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
-    }
-
     public BdmSubEntry() {}
+    public BdmSubEntry(BdmSubEntry other) {
+        this.damageType = other.damageType;
+        this.i02 = other.i02;
+        this.damageAmount = other.damageAmount;
+        this.i06 = other.i06;
+        this.f08 = other.f08;
+        this.acbType = other.acbType;
+        this.cueId = other.cueId;
+        this.effect1Id = other.effect1Id;
+        this.effect1SkillId = other.effect1SkillId;
+        this.effect1EepkType = other.effect1EepkType;
+        this.i22 = other.i22;
+        this.effect2Id = other.effect2Id;
+        this.effect2SkillId = other.effect2SkillId;
+        this.effect2EepkType = other.effect2EepkType;
+        this.i30 = other.i30;
+        this.effect3Id = other.effect3Id;
+        this.effect3SkillId = other.effect3SkillId;
+        this.effect3EepkType = other.effect3EepkType;
+        this.i38 = other.i38;
+        this.pushbackStrength = other.pushbackStrength;
+        this.pushbackAcceleration = other.pushbackAcceleration;
+        this.userStunt = other.userStunt;
+        this.knockbackDuration = other.knockbackDuration;
+        this.knockbackRecoveryAfterImpactTime = other.knockbackRecoveryAfterImpactTime;
+        this.knockbackGroundImpactTime = other.knockbackGroundImpactTime;
+        this.i58 = other.i58;
+        this.victimStunt = other.victimStunt;
+        this.knockbackStrengthX = other.knockbackStrengthX;
+        this.knockbackStrengthY = other.knockbackStrengthY;
+        this.knockbackStrengthZ = other.knockbackStrengthZ;
+        this.knockbackDragY = other.knockbackDragY;
+        this.i76 = other.i76;
+        this.knockbackGravityTime = other.knockbackGravityTime;
+        this.victimInvincibilityTime = other.victimInvincibilityTime;
+        this.i82 = other.i82;
+        this.transformationType = other.transformationType;
+        this.alimentType = other.alimentType;
+        this.i88 = other.i88;
+        this.i90 = other.i90;
+        this.i92 = other.i92;
+        this.damageSpecial = other.damageSpecial;
+        this.damageSpecial2 = other.damageSpecial2;
+        this.damageSpecial3 = other.damageSpecial3;
+        this.stumbleType = other.stumbleType;
+        this.secondaryType = other.secondaryType;
+        this.cameraShakeType = other.cameraShakeType;
+        this.cameraShakeTime = other.cameraShakeTime;
+        this.userBpeID = other.userBpeID;
+        this.victimBpeID = other.victimBpeID;
+        this.staminaBrokenOverrideBdmId = other.staminaBrokenOverrideBdmId;
+        this.zVanishEnableTime = other.zVanishEnableTime;
+        this.userAnimationTime = other.userAnimationTime;
+        this.victimAnimationTime = other.victimAnimationTime;
+        this.userAnimationSpeed = other.userAnimationSpeed;
+        this.victimAnimationSpeed = other.victimAnimationSpeed;
+    }
 
 }
