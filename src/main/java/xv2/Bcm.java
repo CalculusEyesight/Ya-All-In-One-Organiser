@@ -40,8 +40,16 @@ public class Bcm {
     int entryIndex;
 
    ArrayList <BcmEntry> bcmEntries = new ArrayList<>();
-
     private BcmEntry copyContainer = null;
+
+    ContextMenu contextMenu=new ContextMenu();
+    MenuItem copy=new MenuItem("Copy Ctrl+C");
+    MenuItem paste=new MenuItem("Paste Ctrl+V");
+    MenuItem delete=new MenuItem("Delete Delete");
+    MenuItem append=new MenuItem("Append Ctrl+A");
+    MenuItem insert=new MenuItem("Insert Ctrl+I");
+    MenuItem addNewChild=new MenuItem("Add New Child Ctrl+N");
+    MenuItem addComment =new MenuItem("Add Comment Ctrl+Q");
   
     public Bcm(){
         entriesActionListener();
@@ -84,7 +92,7 @@ public class Bcm {
         //directional input
         HBox directionalInputHBox=new HBox(2);
         directionalInputHBox.setPadding(new Insets(20,0,0,8));
-        
+
         Label directionalInputLabel=new Label("Directional input ");
         directionalInputLabel.setPrefWidth(100);
 
@@ -576,7 +584,7 @@ public class Bcm {
         blast.setSelected((entry.buttonInputs& 4L) != 0);
         jump.setSelected((entry.buttonInputs & 8L) != 0);
 
-        // 0x1 Group
+        //0x1
         light.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) { 
                 entry.buttonInputs |= 1L; 
@@ -3412,7 +3420,7 @@ public class Bcm {
         maleMajinsOnly.setToggleGroup(raceGenderToggleGroup);
         RadioButton femaleMajinsOnly = new RadioButton("Female Majins Only");
         femaleMajinsOnly.setToggleGroup(raceGenderToggleGroup);
-        
+
         switch ((int)entry.raceGender) {
             case 1 -> rosterCharactersOnly.setSelected(true);
             case 2 -> maleHumansOnly.setSelected(true);
@@ -3425,6 +3433,7 @@ public class Bcm {
             case 9 -> femaleMajinsOnly.setSelected(true);
             default -> allCharactersDefault.setSelected(true);
         }
+        
         raceGenderToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue.isSelected()) {
                 RadioButton selectedRadio = (RadioButton) newValue;
@@ -3635,10 +3644,15 @@ public class Bcm {
     }
      
     public void entriesActionListener(){
+        
+        paste.setDisable(true);
+        contextMenu.getItems().addAll(copy,paste,delete,append,insert,addNewChild,addComment);
+        treeView.setContextMenu(contextMenu);
         treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)->{
             if (newValue == null) {
                 return;
             }
+            currentEntry=newValue;
             // //input tab
             tabPane.getTabs().get(0).setContent(createInputsVBox(bcmEntries.get(treeView.getRow(newValue))));
             // //activator tab
@@ -3652,20 +3666,10 @@ public class Bcm {
         });
         treeView.setOnMouseClicked(e->{
             if(e.getButton()==MouseButton.SECONDARY){
-                ContextMenu contextMenu=new ContextMenu();
-                MenuItem copy=new MenuItem("Copy Ctrl+C");
-                MenuItem paste=new MenuItem("Paste Ctrl+V");
-                MenuItem delete=new MenuItem("Delete Delete");
-                MenuItem append=new MenuItem("Append Ctrl+A");
-                MenuItem insert=new MenuItem("Insert Ctrl+I");
-                MenuItem addNewChild=new MenuItem("Add New Child Ctrl+N");
-                MenuItem addComment =new MenuItem("Add Comment Ctrl+Q");
-                contextMenu.getItems().addAll(copy,paste,delete,append,insert,addNewChild,addComment);
-                treeView.setContextMenu(contextMenu);
-               
                 contextMenu.setOnAction(event->{
                     if(event.getTarget()==copy){
                         Copy();
+                        paste.setDisable(false);
                     }
                     if(event.getTarget()==paste){
                         Paste();
@@ -3694,6 +3698,7 @@ public class Bcm {
         treeView.setOnKeyPressed(e->{
             if(e.isControlDown()&&e.getCode()==KeyCode.C){
                 Copy();
+                paste.setDisable(false);
             }
             if(e.isControlDown()&&e.getCode()==KeyCode.V){
                 Paste();
@@ -3703,7 +3708,6 @@ public class Bcm {
             }
             if(e.isControlDown()&&e.getCode()==KeyCode.A){
                 Append();
-                
             }
             if(e.isControlDown()&&e.getCode()==KeyCode.I){
                 Insert();
@@ -3721,14 +3725,12 @@ public class Bcm {
         if (currentEntry == null) {
             return;
         }
-
         copyContainer = new BcmEntry(bcmEntries.get(treeView.getSelectionModel().getSelectedIndex()));
     }
     private void Paste() {
         if (currentEntry == null || copyContainer == null) {
             return;
         }
-        
         bcmEntries.set(treeView.getSelectionModel().getSelectedIndex(), new BcmEntry(copyContainer));
 
         if (treeView.getSelectionModel().getSelectedItem() != null) {
@@ -3753,9 +3755,11 @@ public class Bcm {
         renameTreeItems(treeView.getRoot(), index);
 
     }
+
     private void Append() {
         TreeItem<String> parent = currentEntry.getParent();
         if (parent != null) {
+            System.out.println("run");
             TreeItem<String> newEntry = new TreeItem<>("New Entry");
             int currentPos = parent.getChildren().indexOf(currentEntry);
             parent.getChildren().add(currentPos + 1, newEntry);

@@ -33,13 +33,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class Bdm {
-
-    Bdm(){
-        entriesActionListener();
-        entriesKeysListener();
-        tabActionListener();
-    }
-
     ArrayList <String> allEntries;
     ArrayList<BdmEntry> bdmEntries = new ArrayList<>();
 
@@ -47,6 +40,19 @@ public class Bdm {
     TabPane mainTabPane =new TabPane();
 
     private ArrayList<BdmEntry> copyContainer = new ArrayList<>();
+
+    ContextMenu contextMenu=new ContextMenu();
+    MenuItem copy=new MenuItem("Copy Ctrl+C");
+    MenuItem paste=new MenuItem("Paste Ctrl+V");
+    MenuItem delete=new MenuItem("Delete Delete");
+    MenuItem append=new MenuItem("Append Ctrl+A");
+    MenuItem insert=new MenuItem("Insert Ctrl+I");
+
+    Bdm(){
+        entriesActionListener();
+        entriesKeysListener();
+        tabActionListener();
+    }
 
     public HBox createHBox(){
         createMainTabPane();
@@ -2309,12 +2315,13 @@ public class Bdm {
         //I_92
 
         unknownVBox.getChildren().addAll(unknown02HBox,unknown06HBox,unknown08HBox,unknown22HBox,unknown30HBox,unknown38HBox,unknown58HBox,unknown76HBox,unknown82HBox,unknown88HBox,unknown90HBox,unknown92HBox);
-
-
         return unknownVBox;
     }
 
     public void entriesActionListener(){
+        paste.setDisable(true);
+        contextMenu.getItems().addAll(copy,paste,delete,append,insert);
+        listView.setContextMenu(contextMenu);
         listView.getSelectionModel().selectedItemProperty().addListener((obs,oldValue,newValue)->{
             if(newValue==null){
                 return;
@@ -2331,22 +2338,13 @@ public class Bdm {
             ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(5).setContent(createCameraVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
             ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(6).setContent(createMiscVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
             ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(7).setContent(createUnknownVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
-
-            
         });
         listView.setOnMouseClicked(e->{
             if(e.getButton()==MouseButton.SECONDARY){
-                ContextMenu contextMenu=new ContextMenu();
-                MenuItem copy=new MenuItem("Copy Ctrl+C");
-                MenuItem paste=new MenuItem("Paste Ctrl+V");
-                MenuItem delete=new MenuItem("Delete Delete");
-                MenuItem append=new MenuItem("Append Ctrl+A");
-                MenuItem insert=new MenuItem("Insert Ctrl+I");
-                contextMenu.getItems().addAll(copy,paste,delete,append,insert);
-                listView.setContextMenu(contextMenu);
                 contextMenu.setOnAction(event->{
                     if(event.getTarget()==copy){
                         Copy();
+                        paste.setDisable(false);
                     }
                     if(event.getTarget()==paste){
                         Paste();
@@ -2390,6 +2388,7 @@ public class Bdm {
         listView.setOnKeyPressed(e->{
             if(e.isControlDown()&&e.getCode()==KeyCode.C){
                 Copy();
+                paste.setDisable(false);
             }
             if(e.isControlDown()&&e.getCode()==KeyCode.V){
                 Paste();
@@ -2415,7 +2414,6 @@ public class Bdm {
 
     private void Paste() {
         if(copyContainer.isEmpty()) return;
-
         bdmEntries.set(listView.getSelectionModel().getSelectedIndex(),copyContainer.get(0));
         ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(0).setContent(createMainVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
         ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(1).setContent(createAnimationVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
