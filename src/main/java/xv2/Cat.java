@@ -31,6 +31,13 @@ public class Cat {
 
     private CatEntry copyContainer = null;
 
+    ContextMenu contextMenu=new ContextMenu();
+    MenuItem copy=new MenuItem("Copy Ctrl+C");
+    MenuItem paste=new MenuItem("Paste Ctrl+V");
+    MenuItem delete=new MenuItem("Delete Delete");
+    MenuItem append=new MenuItem("Append Ctrl+A");
+    MenuItem insert=new MenuItem("Insert Ctrl+I");
+
     public Cat(){
         entriesActionListener();
         entriesKeysListener();
@@ -222,27 +229,23 @@ public class Cat {
     }
 
     private void entriesActionListener(){
-         listView.getSelectionModel().selectedItemProperty().addListener((obs,oldValue,newValue)->{
+        paste.setDisable(true);
+        contextMenu.getItems().addAll(copy,paste,delete,append,insert);
+        listView.setContextMenu(contextMenu);
+        listView.getSelectionModel().selectedItemProperty().addListener((obs,oldValue,newValue)->{
             if(newValue==null){
                 return;
             }
-            //System.out.println("entry clicked: "+listView.getSelectionModel().getSelectedIndex());
+
             outerHBox.getChildren().remove(1);
             outerHBox.getChildren().set(1, createVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
         });
         listView.setOnMouseClicked(e->{
             if(e.getButton()==MouseButton.SECONDARY){
-                ContextMenu contextMenu=new ContextMenu();
-                MenuItem copy=new MenuItem("Copy Ctrl+C");
-                MenuItem paste=new MenuItem("Paste Ctrl+V");
-                MenuItem delete=new MenuItem("Delete Delete");
-                MenuItem append=new MenuItem("Append Ctrl+A");
-                MenuItem insert=new MenuItem("Insert Ctrl+I");
-                contextMenu.getItems().addAll(copy,paste,delete,append,insert);
-                listView.setContextMenu(contextMenu);
                 contextMenu.setOnAction(event->{
                     if(event.getTarget()==copy){
                         Copy();
+                        paste.setDisable(false);
                     }
                     if(event.getTarget()==paste){
                         Paste();
@@ -296,6 +299,7 @@ public class Cat {
 
     private void Delete(){
         if(listView.getSelectionModel().getSelectedIndex() == 0) return;
+
         catEntries.remove(listView.getSelectionModel().getSelectedIndex());
         for(int i=0;i<listView.getItems().size();i++){
             allEntries.set(i,new String("Entry: "+i));
