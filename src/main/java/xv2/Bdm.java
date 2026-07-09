@@ -760,7 +760,7 @@ public class Bdm {
         //sound type
         HBox acbTypeHBox = new HBox(2);
         acbTypeHBox.setPadding(new Insets(20,0,0,8));
-        Label acbTypeLabel=new Label("Acb Type");
+        Label acbTypeLabel=new Label("ACB Type");
         acbTypeLabel.setPrefWidth(100);
 
         HBox acbTypeRadioButtonsHBox=new HBox(15);
@@ -872,7 +872,7 @@ public class Bdm {
         //effect 1 eepk type
         HBox effect1EepkTypeHBox=new HBox(2);
         effect1EepkTypeHBox.setPadding(new Insets(20,0,0,8));
-        Label effect1EepkTypeLabel=new Label("Effect 1 Eepk Type");
+        Label effect1EepkTypeLabel=new Label("Effect 1 EEPK Type");
         effect1EepkTypeLabel.setPrefWidth(160);
 
         GridPane effect1EepkTypeGridPane =new GridPane();
@@ -1022,7 +1022,7 @@ public class Bdm {
         //effect 2 eepk type
         HBox effect2EepkTypeHBox=new HBox(2);
         effect2EepkTypeHBox.setPadding(new Insets(20,0,0,8));
-        Label effect2EepkTypeLabel=new Label("Effect 2 Eepk Type");
+        Label effect2EepkTypeLabel=new Label("Effect 2 EEPK Type");
         effect2EepkTypeLabel.setPrefWidth(160);
 
         GridPane effect2EepkTypeGridPane =new GridPane();
@@ -1172,7 +1172,7 @@ public class Bdm {
         //effect 3 eepk type
         HBox effect3EepkTypeHBox=new HBox(2);
         effect3EepkTypeHBox.setPadding(new Insets(20,0,0,8));
-        Label effect3EepkTypeLabel=new Label("Effect 3 Eepk Type");
+        Label effect3EepkTypeLabel=new Label("Effect 3 EEPK Type");
         effect3EepkTypeLabel.setPrefWidth(160);
 
         GridPane effect3EepkTypeGridPane =new GridPane();
@@ -1551,6 +1551,7 @@ public class Bdm {
             }
 
         });
+
         cameraShakeTypeIndicatorLabel.setTextFill(Color.CRIMSON);
         cameraShakeTypeIndicatorLabel.textProperty().bind(
             Bindings.when(cameraShakeTypeSpinner.valueProperty().isEqualTo(-1).or(cameraShakeTypeSpinner.valueProperty().isEqualTo(3)).or(cameraShakeTypeSpinner.valueProperty().isEqualTo(4).or(cameraShakeTypeSpinner.valueProperty().isEqualTo(5).or(cameraShakeTypeSpinner.valueProperty().isEqualTo(9))))).then("None").
@@ -1589,7 +1590,7 @@ public class Bdm {
         //user bpe id
         HBox userBpeIdHBox=new HBox(12);
         userBpeIdHBox.setPadding(new Insets(20,0,0,8));
-        Label userBpeIdLabel=new Label("User Bpe Id");
+        Label userBpeIdLabel=new Label("User BPE Id");
         userBpeIdLabel.setPrefWidth(150);
 
         Spinner<Integer> userBpeIdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,subEntry.userBpeID);
@@ -1608,7 +1609,7 @@ public class Bdm {
         //opponent bpe id
         HBox victimBpeIdHBox=new HBox(12);
         victimBpeIdHBox.setPadding(new Insets(20,0,0,8));
-        Label victimBpeIdLabel=new Label("Victim Bpe Id");
+        Label victimBpeIdLabel=new Label("Victim BPE Id");
         victimBpeIdLabel.setPrefWidth(150);
 
         Spinner<Integer> victimBpeIdSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,subEntry.victimBpeID);
