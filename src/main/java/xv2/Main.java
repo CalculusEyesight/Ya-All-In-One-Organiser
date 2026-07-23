@@ -41,7 +41,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        
         //bpane
         bPane.setTop(menuBar);
         bPane.setCenter(tabPane);
@@ -104,9 +103,6 @@ public class Main extends Application {
                                         er.printStackTrace();
                                     }
                                 });
-                                break;
-                            case "bac":
-
                                 break;
                             case "bcm":
                                 Tab tabBcm = new Tab();
@@ -173,7 +169,7 @@ public class Main extends Application {
                                         bsa.bsaReader(xv2File.toPath()); 
                                         
                                         Platform.runLater(() -> {
-                                            tabBsa.setContent(bsa.treeView);
+                                            tabBsa.setContent(bsa.createSplitPane());
                                         });
 
                                     } catch (Exception er) {
@@ -258,19 +254,12 @@ public class Main extends Application {
                         });
                         hasSaved=true;
                         break;
-                    case "bac":
-                        
-                        
-                        break;
-
                     case "bcm":
                         Bcm bcm=(Bcm) FileTypeRecall.get(originalPath);
                         executorService.submit(()->{
                             bcm.bcmWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
                         });
                         hasSaved=true;
-                        break;
-                    case "bcs":
                         break;
                     case "bdm":
                         Bdm bdm=(Bdm) FileTypeRecall.get(originalPath);
@@ -280,11 +269,11 @@ public class Main extends Application {
                         hasSaved=true;
                         break;
                     case "bsa":
-                        // Bsa bsa=(Bsa) FileTypeRecall.get(originalPath);
-                        // executorService.submit(()->{
-                        //     bsa.bsaWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
-                        // });
-                        // hasSaved=true;
+                        Bsa bsa=(Bsa) FileTypeRecall.get(originalPath);
+                        executorService.submit(()->{
+                            bsa.bsaWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        });
+                        hasSaved=true;
                         break;
                     case "cat":
                         Cat cat=(Cat) FileTypeRecall.get(originalPath);
@@ -319,7 +308,7 @@ public class Main extends Application {
         primaryStage.getIcons().add(image);
         primaryStage.setScene(scene);
         primaryStage.show();
-        primaryStage.setTitle("Ya-All-In-One");
+        primaryStage.setTitle("All-In-One Organiser");
         
         primaryStage.setOnCloseRequest(event->{
             executorService.shutdown();
