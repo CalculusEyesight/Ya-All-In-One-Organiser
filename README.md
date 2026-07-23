@@ -16,7 +16,8 @@ A big thank you to the people who have worked and have been updating the [Xv2Cor
 |.bcm| ✅ |
 |.bcs| ❌ |
 |.bdm| ✅ |
-|.bsa| ❌ |
+|.bsa| ✅ |
+|.cat| ✅ |
 |.ean| ❌ |
 |.emb| ✅ |
 
