@@ -335,7 +335,7 @@ public class Aur {
                 ContextMenu contextMenu=new ContextMenu();
                 MenuItem copy=new MenuItem("Copy Ctrl+C");
                 MenuItem paste=new MenuItem("Paste Ctrl+V");
-                MenuItem delete=new MenuItem("Delete Delete");
+                MenuItem delete=new MenuItem("Delete Del");
                 MenuItem append=new MenuItem("Append Ctrl+A");
                 MenuItem insert=new MenuItem("Insert Ctrl+I");
                 contextMenu.getItems().addAll(copy,paste,delete,append,insert);
