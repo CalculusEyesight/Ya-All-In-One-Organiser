@@ -26,99 +26,131 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 public class Emb {
-    private int embEntries=0;
-    private int i08;
-    private boolean isPortrait=false;
-
     ArrayList<String> allEntries;
-    
     ArrayList<byte []> allImages;
 
-    ListView<String> listView=new ListView<>();
+    HBox hBox = new HBox();
+    ListView<String> listView = new ListView<>();
 
-    HBox hBox=new HBox();
-    Emb(){
+    int embEntries = 0;
+    int i08;
+    boolean isPortrait = false;
+
+    Emb() {
         entriesActionListener();
         entriesKeysListener();
     }
 
-    public VBox createVBox(){
-        VBox vBox=new VBox(createToolBar(),createHBox());
+    public VBox createVBox() {
         VBox.setVgrow(hBox, Priority.ALWAYS);
-        return vBox;
+        return new VBox(createToolBar(), createHBox());
     }
 
-    private ToolBar createToolBar(){
-        Button addNewImage= new Button("Add New Images");
-        addNewImage.setOnAction(event->{
+    private ToolBar createToolBar() {
+        Button addNewImage = new Button("Add New Images");
+        addNewImage.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open Resource File");
+            fileChooser.setTitle("Choose Image Files");
             fileChooser.getExtensionFilters().addAll(
             new ExtensionFilter("Image Files", "*.dds"));
             List<File> selectedFiles = fileChooser.showOpenMultipleDialog(null);
+
             try {
-                if(selectedFiles!=null){
-                    for(File file: selectedFiles){
+                if (selectedFiles != null) {
+                    for (File file: selectedFiles) {
                         allImages.add(Files.readAllBytes(file.toPath()));
-                        allEntries.add(new String(file.getName()+"\0"));
+                        allEntries.add(new String(file.getName() + "\0"));
                         listView.getItems().add(allEntries.getLast());
                     }
-
                 }
-                
             } catch (Exception e) {
                 e.printStackTrace();
             }
             
         });
-        Button mergeEmb=new Button("Merge embs");
-        mergeEmb.setOnAction(event->{
+
+        Button extractAllImages = new Button("Extract All Images");
+        extractAllImages.setOnAction(event -> {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            File selectedDirectory = directoryChooser.showDialog(null);
+            if(selectedDirectory != null) {
+                for (int i = 0; i < allImages.size(); i++) {
+                    if(!isPortrait){
+                        try(FileChannel channel = FileChannel.open(selectedDirectory.toPath().resolve(allEntries.get(i) + ".dds"), StandardOpenOption.WRITE,StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING)) {
+                            ByteBuffer dynamicBuffer = ByteBuffer.allocate(allImages.get(i).length);
+                            dynamicBuffer.clear();
+                            dynamicBuffer.put(allImages.get(i));
+                            dynamicBuffer.flip();
+                            channel.write(dynamicBuffer);
+                        } catch(IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        try(FileChannel channel = FileChannel.open(selectedDirectory.toPath().resolve(allEntries.get(i).replace("\0", "").trim()), StandardOpenOption.WRITE,StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING)) {
+                            ByteBuffer dynamicBuffer = ByteBuffer.allocate(allImages.get(i).length);
+                            dynamicBuffer.clear();
+                            dynamicBuffer.put(allImages.get(i));
+                            dynamicBuffer.flip();
+                            channel.write(dynamicBuffer);
+                        } catch(IOException e) {
+                            e.printStackTrace();
+                        }
+                    } 
+                }
+                
+                Platform.runLater(() -> {
+                    Popups.ImagesExtracted();
+                });
+            }
+        });
+
+        Button mergeEmb = new Button("Merge embs");
+        mergeEmb.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Resource File");
             fileChooser.getExtensionFilters().addAll(
-            new ExtensionFilter("Emb Files", "*.emb"));
-            File selectedFile = fileChooser.showOpenDialog(null);
-            if(selectedFile!=null){
-                embReader(selectedFile.toPath(),allEntries.size());
-            }
+                new ExtensionFilter("Emb Files", "*.emb")
+            );
             
+            File selectedFile = fileChooser.showOpenDialog(null);
+
+            if (selectedFile != null) {
+                embReader(selectedFile.toPath(), allEntries.size());
+            }
         });
 
-        ToolBar toolBar=new ToolBar(
-            addNewImage,
-            mergeEmb
-        );
-
-        return toolBar;
+        return new ToolBar(addNewImage, extractAllImages, mergeEmb);
     }
 
-    private HBox createHBox(){
-        ImageView imageView=new ImageView();
-        this.hBox.getChildren().addAll(listView,imageView);
+    private HBox createHBox() {
+        this.hBox.getChildren().addAll(listView, new ImageView());
         return hBox;
     }
 
-    private StackPane createImageView(int i){
-        ImageView imageView=new ImageView();
+    private StackPane createImageView(int i) {
+        ImageView imageView = new ImageView();
         ByteArrayInputStream byteArrayInputStream=new ByteArrayInputStream(allImages.get(i));
+
         try {
-            BufferedImage bufferedImage=ImageIO.read(byteArrayInputStream);
-            Image image= SwingFXUtils.toFXImage(bufferedImage, null);
+            BufferedImage bufferedImage = ImageIO.read(byteArrayInputStream);
+            Image image = SwingFXUtils.toFXImage(bufferedImage, null);
             imageView.setImage(image);
             
         } catch (NullPointerException | IOException e) {
-            Platform.runLater(()->{
+            Platform.runLater(() -> {
                 Popups.ImageDataNotSupported();
             });
             return null;
         }
         
-        StackPane imageContainer=new StackPane(imageView);
+        StackPane imageContainer = new StackPane(imageView);
         this.hBox.getChildren().add(imageContainer);
         HBox.setHgrow(imageContainer, Priority.ALWAYS);
         
@@ -131,80 +163,87 @@ public class Emb {
         return imageContainer;
     }
 
-    private void entriesActionListener(){
-        listView.getSelectionModel().selectedItemProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue==null){
+    private void entriesActionListener() {
+        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue==null) {
                 return;
             }
-            //System.out.println("entry clicked: "+listView.getSelectionModel().getSelectedIndex());
+
             try {
                 hBox.getChildren().remove(1);
                 hBox.getChildren().set(1,createImageView(listView.getSelectionModel().getSelectedIndex()));
-                
+             
             } catch (IndexOutOfBoundsException e) {
                 return;
             }
             
         });
-        listView.setOnMouseClicked(e->{
-            if(e.getButton()==MouseButton.SECONDARY){
+        listView.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.SECONDARY) {
                 ContextMenu contextMenu=new ContextMenu();
                 MenuItem delete=new MenuItem("Delete Delete");
                 MenuItem append=new MenuItem("Append Ctrl+A");
                 MenuItem insert=new MenuItem("Insert Ctrl+I");
                 MenuItem replace=new MenuItem("Replace Ctrl+R");
-                contextMenu.getItems().addAll(delete,append,insert,replace);
+                MenuItem extractImage = new MenuItem("Extract Image Ctrl+E");
+                contextMenu.getItems().addAll(delete,append,insert,replace,extractImage);
                 listView.setContextMenu(contextMenu);
-                contextMenu.setOnAction(event->{
-                    if(event.getTarget()==delete){
+                contextMenu.setOnAction(event -> {
+                    if (event.getTarget() == delete) {
                        Delete();
                     }
-                    if(event.getTarget()==append){
+                    if (event.getTarget() == append) {
                         Append();
                     }
-                    if(event.getTarget()==insert){
+                    if (event.getTarget() == insert) {
                         Insert();
                     }
-                    if(event.getTarget()==replace){
+                    if (event.getTarget() == replace) {
                         Replace();
+                    }
+                    if (event.getTarget() == extractImage){
+                        ExtractImage();
                     }
                 });
             }
         });
     }
 
-    private void entriesKeysListener(){
-        listView.setOnKeyPressed(e->{
-            if(e.getCode()==KeyCode.DELETE){
+    private void entriesKeysListener() {
+        listView.setOnKeyPressed(e -> {
+            if (e.getCode()==KeyCode.DELETE) {
                 Delete();
             }
-            if(e.isControlDown()&&e.getCode()==KeyCode.A){
+            if (e.isControlDown()&&e.getCode()==KeyCode.A) {
                 Append();
                 
             }
-            if(e.isControlDown()&&e.getCode()==KeyCode.I){
+            if (e.isControlDown()&&e.getCode()==KeyCode.I) {
                 Insert();
             }
-            if(e.isControlDown()&&e.getCode()==KeyCode.R){
-                Replace();;
+            if (e.isControlDown()&&e.getCode()==KeyCode.R) {
+                Replace();
+            }
+            if (e.isControlDown()&&e.getCode()==KeyCode.E) {
+                ExtractImage();
             }
         });
 
     }
 
-    private void Delete(){ 
+    private void Delete() { 
         allEntries.remove(listView.getSelectionModel().getSelectedIndex());
         allImages.remove(listView.getSelectionModel().getSelectedIndex());
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
     }
 
-    private void Append(){
+    private void Append() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
         new ExtensionFilter("Image Files", "*.dds"));
         File selectedFile = fileChooser.showOpenDialog(null);
-        if(selectedFile!=null){
+        if (selectedFile!=null) {
             try {
             allImages.add((listView.getSelectionModel().getSelectedIndex()+1),Files.readAllBytes(selectedFile.toPath()));
             allEntries.add((listView.getSelectionModel().getSelectedIndex()+1),new String(selectedFile.getName()));
@@ -215,13 +254,13 @@ public class Emb {
             }
         }
     }
-    private void Insert(){
+    private void Insert() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
         new ExtensionFilter("Image Files", "*.dds"));
         File selectedFile = fileChooser.showOpenDialog(null);
-        if(selectedFile!=null){
+        if (selectedFile!=null) {
             try {
             allImages.add((listView.getSelectionModel().getSelectedIndex()),Files.readAllBytes(selectedFile.toPath()));
             allEntries.add((listView.getSelectionModel().getSelectedIndex()),new String(selectedFile.getName()));
@@ -234,34 +273,69 @@ public class Emb {
 
         }
     }
-    private void Replace(){
-        
+    private void Replace() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
-        new ExtensionFilter("Image Files", "*.dds"));
+            new ExtensionFilter("Image Files", "*.dds")
+        );
         File selectedFile = fileChooser.showOpenDialog(null);
-        if(selectedFile!=null){
+        if (selectedFile!=null) {
             try {
-            allImages.add((listView.getSelectionModel().getSelectedIndex()+1),Files.readAllBytes(selectedFile.toPath()));
-            allEntries.add((listView.getSelectionModel().getSelectedIndex()+1),new String(selectedFile.getName()));
-            
-            listView.getItems().add(listView.getSelectionModel().getSelectedIndex() + 1, allEntries.get(listView.getSelectionModel().getSelectedIndex() + 1));
-            allEntries.remove(listView.getSelectionModel().getSelectedIndex());
-            allImages.remove(listView.getSelectionModel().getSelectedIndex());
-            listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
-            listView.getSelectionModel().select(listView.getSelectionModel().getSelectedIndex()+1);
-
-            
+                allImages.add((listView.getSelectionModel().getSelectedIndex()+1),Files.readAllBytes(selectedFile.toPath()));
+                allEntries.add((listView.getSelectionModel().getSelectedIndex()+1),new String(selectedFile.getName()));
+                
+                listView.getItems().add(listView.getSelectionModel().getSelectedIndex() + 1, allEntries.get(listView.getSelectionModel().getSelectedIndex() + 1));
+                allEntries.remove(listView.getSelectionModel().getSelectedIndex());
+                allImages.remove(listView.getSelectionModel().getSelectedIndex());
+                listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
+                listView.getSelectionModel().select(listView.getSelectionModel().getSelectedIndex()+1);
+                
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
-
     }
 
-    public void embReader(Path path){
+    private void ExtractImage() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        fileChooser.getExtensionFilters().addAll(
+            new ExtensionFilter("Image Files", "*.dds")
+        );
+        fileChooser.setInitialFileName(listView.getSelectionModel().getSelectedItem());
+        File selectedFile = fileChooser.showSaveDialog(null);
+        if (selectedFile!=null) {
+            if(!isPortrait){
+                try(FileChannel channel = FileChannel.open(selectedFile.toPath(), StandardOpenOption.WRITE, StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING)) {
+                    ByteBuffer dynamicBuffer = ByteBuffer.allocate(allImages.get(listView.getSelectionModel().getSelectedIndex()).length);
+                    dynamicBuffer.clear();
+                    dynamicBuffer.put(allImages.get(listView.getSelectionModel().getSelectedIndex()));
+                    dynamicBuffer.flip();
+                    channel.write(dynamicBuffer);
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                try(FileChannel channel = FileChannel.open(selectedFile.toPath(), StandardOpenOption.WRITE,StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING)) {
+                    ByteBuffer dynamicBuffer = ByteBuffer.allocate(allImages.get(listView.getSelectionModel().getSelectedIndex()).length);
+                    dynamicBuffer.clear();
+                    dynamicBuffer.put(allImages.get(listView.getSelectionModel().getSelectedIndex()));
+                    dynamicBuffer.flip();
+                    channel.write(dynamicBuffer);
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+            } 
+
+            Platform.runLater(() -> {
+                Popups.ImagesExtracted();
+            });
+        }
+    }
+
+    public void embReader(Path path) {
         try(FileChannel channel=FileChannel.open(path, StandardOpenOption.READ)) {
             ByteBuffer byteBuffer=ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
             ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
@@ -294,8 +368,8 @@ public class Emb {
 
             allEntries=new ArrayList<>(embEntries);
             allImages=new ArrayList<>(embEntries);
-            for(int i=0;i<embEntries;i++){
-                if(filesOffset!=0){
+            for (int i=0;i<embEntries;i++) {
+                if (filesOffset!=0) {
                     isPortrait=true;
                     channel.position(filesOffset+i*4);
                     intBuffer.clear();
@@ -374,13 +448,13 @@ public class Emb {
                 }
             }
         }
-        catch(IOException e){
+        catch(IOException e) {
             e.printStackTrace();
 
         }
     }
 
-    public void embReader(Path path, int initialEntries){
+    public void embReader(Path path, int initialEntries) {
         try(FileChannel channel=FileChannel.open(path, StandardOpenOption.READ)) {
             ByteBuffer byteBuffer=ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
             ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
@@ -392,12 +466,11 @@ public class Emb {
             int imageOffset;
             int imageSize;
 
-
             channel.position(12);
             intBuffer.clear();
             channel.read(intBuffer);
             intBuffer.flip();
-            embEntries=intBuffer.getInt();
+            embEntries = intBuffer.getInt();
             
             channel.position(28);
             intBuffer.clear();
@@ -405,10 +478,10 @@ public class Emb {
             intBuffer.flip();
             filesOffset=intBuffer.getInt();
 
-            allEntries.ensureCapacity(embEntries+initialEntries);
-            allImages.ensureCapacity(embEntries+initialEntries);
-            for(int i=0;i<embEntries;i++){
-                if(filesOffset!=0){
+            allEntries.ensureCapacity(embEntries + initialEntries);
+            allImages.ensureCapacity(embEntries + initialEntries);
+            for (int i=0;i<embEntries;i++) {
+                if (filesOffset!=0) {
                     channel.position(filesOffset+i*4);
                     intBuffer.clear();
                     channel.read(intBuffer);
@@ -416,6 +489,7 @@ public class Emb {
                     fileNamesOffset=intBuffer.getInt();
 
                     int counter=0;
+
                     do {
                         channel.position(fileNamesOffset+counter);
                         byteBuffer.clear();
@@ -423,11 +497,13 @@ public class Emb {
                         byteBuffer.flip();
                         counter++;
                     } while (byteBuffer.get()!=0);
-                    dynamicStringBuffer=ByteBuffer.allocate(counter).order(ByteOrder.LITTLE_ENDIAN);
+
+                    dynamicStringBuffer = ByteBuffer.allocate(counter).order(ByteOrder.LITTLE_ENDIAN);
                     channel.position(fileNamesOffset);
                     dynamicStringBuffer.clear();
                     channel.read(dynamicStringBuffer);
                     dynamicStringBuffer.flip();
+
                     allEntries.add(new String(dynamicStringBuffer.array(),StandardCharsets.ISO_8859_1));
                     listView.getItems().add(allEntries.getLast());
 
@@ -452,7 +528,15 @@ public class Emb {
 
                 }
                 else{
-                    allEntries.add(new String("DATA00"+i));
+                    String dataString;
+                    if ((initialEntries + i) < 10) { 
+                        dataString = "DATA00"; 
+                    } else if ((initialEntries + i) < 100) { 
+                        dataString = "DATA0"; 
+                    } else { 
+                        dataString = "DATA"; 
+                    }
+                    allEntries.add(new String(dataString + (initialEntries + i)));
                     listView.getItems().add(allEntries.getLast());
 
                     channel.position(entriesOffset+i*8);
@@ -476,12 +560,12 @@ public class Emb {
                 }
             }
         }
-        catch(IOException e){
+        catch(IOException e ) {
             e.printStackTrace();
         }
     }
 
-    public void embWriter(Path path){
+    public void embWriter(Path path) {
         try(FileChannel channel=FileChannel.open(path, StandardOpenOption.WRITE,StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING)) {
             
             ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
@@ -527,7 +611,7 @@ public class Emb {
             intBuffer.putInt(entriesOffset);
             intBuffer.flip();
             channel.write(intBuffer);
-            if(isPortrait){
+            if (isPortrait) {
                 int fileNamesOffset=absoluteDataStart+allImages.stream().mapToInt(arr -> arr.length).sum();
 
                 channel.position(28);
@@ -535,7 +619,7 @@ public class Emb {
                 intBuffer.putInt(filesOffset);
                 intBuffer.flip();
                 channel.write(intBuffer);
-                for(int i=0;i<allEntries.size();i++){
+                for (int i=0;i<allEntries.size();i++) {
                     channel.position(filesOffset+i*4);
                     intBuffer.clear();
                     intBuffer.putInt(fileNamesOffset);
@@ -573,7 +657,7 @@ public class Emb {
 
             }
             else{
-               for(int i=0;i<allEntries.size();i++){
+               for (int i=0;i<allEntries.size();i++) {
                     channel.position(entriesOffset+i*8);
                     intBuffer.clear();
                     intBuffer.putInt(imageOffset-i*8);
@@ -599,7 +683,7 @@ public class Emb {
             }
             
         }
-        catch(IOException e){
+        catch(IOException e) {
             e.printStackTrace();
         }
     }
