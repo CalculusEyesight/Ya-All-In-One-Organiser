@@ -237,7 +237,7 @@ public class Aur {
         insertEntry.setOnAction(event -> {
             AurCharaEntry newCharaEntry = new AurCharaEntry();
             charaEntries.add(newCharaEntry);
-            createVBoxRightCharaId(newCharaEntry);
+            createCharaIdVBox(newCharaEntry);
             characterEntries += 1;
         });
 
@@ -256,7 +256,7 @@ public class Aur {
         return new ToolBar(insertEntry, removeEntry);
     }
     
-    private VBox createVBoxRightCharaId(AurCharaEntry entry) {
+    private VBox createCharaIdVBox(AurCharaEntry entry) {
         HBox hBox = new HBox(10);
 
         //charaId
@@ -530,7 +530,7 @@ public class Aur {
                 intBuffer.flip();
                 charaEntry.glare = (intBuffer.getInt() ==  1);
 
-                createVBoxRightCharaId(charaEntries.get(i));
+                createCharaIdVBox(charaEntries.get(i));
             }
         } catch (IOException e) {
             e.printStackTrace();
