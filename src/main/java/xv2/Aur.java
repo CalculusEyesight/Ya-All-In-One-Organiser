@@ -325,13 +325,13 @@ public class Aur {
 
     private void entriesActionListener() {
         listView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue == null) return;
+            if (newValue == null) return;
 
             hBox.getChildren().remove(1);
             hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
         });
         listView.setOnMouseClicked(e -> {
-            if(e.getButton() == MouseButton.SECONDARY) {
+            if (e.getButton() == MouseButton.SECONDARY) {
                 ContextMenu contextMenu = new ContextMenu();
                 MenuItem copy = new MenuItem("Copy Ctrl+C");
                 MenuItem paste = new MenuItem("Paste Ctrl+V");
@@ -341,11 +341,11 @@ public class Aur {
                 contextMenu.getItems().addAll(copy, paste, delete, append, insert);
                 listView.setContextMenu(contextMenu);
                 contextMenu.setOnAction(event -> {
-                    if(event.getTarget() == copy) Copy();
-                    if(event.getTarget() == paste) Paste();
-                    if(event.getTarget() == delete) Delete();
-                    if(event.getTarget() == append) Append();
-                    if(event.getTarget() == insert) Insert();
+                    if (event.getTarget() == copy) Copy();
+                    if (event.getTarget() == paste) Paste();
+                    if (event.getTarget() == delete) Delete();
+                    if (event.getTarget() == append) Append();
+                    if (event.getTarget() == insert) Insert();
                 });
             }
         });
@@ -357,11 +357,11 @@ public class Aur {
 
     private void entriesKeysListener() {
         listView.setOnKeyPressed(e -> {
-            if(e.isControlDown() && e.getCode() == KeyCode.C) Copy();
-            if(e.isControlDown() && e.getCode() == KeyCode.V) Paste();
-            if(e.getCode() == KeyCode.DELETE) Delete();
-            if(e.isControlDown() && e.getCode() == KeyCode.A) Append();
-            if(e.isControlDown() && e.getCode() == KeyCode.I) Insert();
+            if (e.isControlDown() && e.getCode() == KeyCode.C) Copy();
+            if (e.isControlDown() && e.getCode() == KeyCode.V) Paste();
+            if (e.getCode() == KeyCode.DELETE) Delete();
+            if (e.isControlDown() && e.getCode() == KeyCode.A) Append();
+            if (e.isControlDown() && e.getCode() == KeyCode.I) Insert();
         });
     }
 
@@ -370,7 +370,7 @@ public class Aur {
     }
 
     private void Paste() {
-        if(copyContainer == null) return;
+        if (copyContainer == null) return;
 
         auraEntries.set(listView.getSelectionModel().getSelectedIndex(), new AurAuraEntry(copyContainer));
         hBox.getChildren().remove(1);
@@ -378,13 +378,13 @@ public class Aur {
     }
 
     private void Delete() {
-        if(listView.getSelectionModel().getSelectedIndex() == 0) return;
+        if (listView.getSelectionModel().getSelectedIndex() == 0) return;
         
         auraEntries.remove(listView.getSelectionModel().getSelectedIndex());
         allEntries.remove(listView.getSelectionModel().getSelectedIndex());
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
 
-        for(int i = 0; i < listView.getItems().size(); i++) {
+        for (int i = 0; i < listView.getItems().size(); i++) {
             allEntries.set(i, new String("Aura ID " + i));
             listView.getItems().set(i,allEntries.get(i));
         }
@@ -397,12 +397,12 @@ public class Aur {
     }
 
     private void Insert() {
-        if(listView.getSelectionModel().getSelectedIndex() > 0) {
+        if (listView.getSelectionModel().getSelectedIndex() > 0) {
             auraEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new AurAuraEntry());
             allEntries.add(new String("Aura ID " + listView.getItems().size()));
             listView.getItems().add(allEntries.getLast());
         }
-        else if(listView.getSelectionModel().getSelectedIndex() == 0) {
+        else if (listView.getSelectionModel().getSelectedIndex() == 0) {
             auraEntries.add(listView.getSelectionModel().getSelectedIndex(), new AurAuraEntry());
             allEntries.add(new String("Aura ID " + listView.getItems().size()));
             listView.getItems().add(allEntries.getLast());
@@ -426,7 +426,7 @@ public class Aur {
 
             allEntries = new ArrayList<>(auraEntriesCount);
 
-            for(int i = 0; i < auraEntriesCount; i++) {
+            for (int i = 0; i < auraEntriesCount; i++) {
                 allEntries.add(new String("Aura ID " + i));
                 listView.getItems().add(allEntries.get(i));
             }
@@ -443,7 +443,7 @@ public class Aur {
             intBuffer.flip();
             charaOffset = intBuffer.getInt();
 
-            for(int i = 0; i < auraEntriesCount; i++) {
+            for (int i = 0; i < auraEntriesCount; i++) {
                 AurAuraEntry auraEntry = new AurAuraEntry();
                 auraEntries.add(auraEntry);
 
@@ -502,7 +502,7 @@ public class Aur {
                 auraEntry.henshinEnd = intBuffer.getInt();
             }
 
-            for(int i = 0; i < characterEntries; i++) {
+            for (int i = 0; i < characterEntries; i++) {
                 AurCharaEntry charaEntry = new AurCharaEntry();
                 charaEntries.add(charaEntry);
 
@@ -643,7 +643,7 @@ public class Aur {
             channel.position(auraTypeOffset + 28);
             channel.write(ByteBuffer.wrap(auraTypes.getBytes(StandardCharsets.ISO_8859_1)));
 
-            for(int i = 0; i < allEntries.size(); i++) {
+            for (int i = 0; i < allEntries.size(); i++) {
                 AurAuraEntry auraEntry = auraEntries.get(i);
    
                 channel.position(auraOffset + i * 16);
@@ -731,7 +731,7 @@ public class Aur {
                 channel.write(intBuffer);
             }
 
-            for(int i = 0; i < characterEntries; i++) {
+            for (int i = 0; i < characterEntries; i++) {
                 AurCharaEntry charaEntry = charaEntries.get(i);
             
                 channel.position(charaOffset + i * 16);
