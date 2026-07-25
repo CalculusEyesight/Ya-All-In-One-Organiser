@@ -148,6 +148,7 @@ class Agd {
             
             for (int i = 0; i < entries; i++) {
                 AgdEntry agdEntry = new AgdEntry();
+                agdEntries.add(agdEntry);
 
                 channel.position(offset * (i + 1));
                 intBuffer.clear();
@@ -172,8 +173,6 @@ class Agd {
                 channel.read(intBuffer);
                 intBuffer.flip();
                 agdEntry.attributePointsGained = intBuffer.getInt();
-
-                agdEntries.add(agdEntry);
 
                 createAgdVBox(agdEntry);
             }
