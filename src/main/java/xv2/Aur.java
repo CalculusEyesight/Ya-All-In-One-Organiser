@@ -330,17 +330,17 @@ public class Aur {
             hBox.getChildren().remove(1);
             hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
         });
-        listView.setOnMouseClicked(e->{
-            if(e.getButton()==MouseButton.SECONDARY) {
-                ContextMenu contextMenu=new ContextMenu();
-                MenuItem copy=new MenuItem("Copy Ctrl+C");
-                MenuItem paste=new MenuItem("Paste Ctrl+V");
-                MenuItem delete=new MenuItem("Delete Del");
-                MenuItem append=new MenuItem("Append Ctrl+A");
-                MenuItem insert=new MenuItem("Insert Ctrl+I");
-                contextMenu.getItems().addAll(copy,paste,delete,append,insert);
+        listView.setOnMouseClicked(e -> {
+            if(e.getButton() == MouseButton.SECONDARY) {
+                ContextMenu contextMenu = new ContextMenu();
+                MenuItem copy = new MenuItem("Copy Ctrl+C");
+                MenuItem paste = new MenuItem("Paste Ctrl+V");
+                MenuItem delete = new MenuItem("Delete Del");
+                MenuItem append = new MenuItem("Append Ctrl+A");
+                MenuItem insert = new MenuItem("Insert Ctrl+I");
+                contextMenu.getItems().addAll(copy, paste, delete, append, insert);
                 listView.setContextMenu(contextMenu);
-                contextMenu.setOnAction(event->{
+                contextMenu.setOnAction(event -> {
                     if(event.getTarget() == copy) Copy();
                     if(event.getTarget() == paste) Paste();
                     if(event.getTarget() == delete) Delete();
@@ -356,7 +356,7 @@ public class Aur {
     }
 
     private void entriesKeysListener() {
-        listView.setOnKeyPressed(e->{
+        listView.setOnKeyPressed(e -> {
             if(e.isControlDown() && e.getCode() == KeyCode.C) Copy();
             if(e.isControlDown() && e.getCode() == KeyCode.V) Paste();
             if(e.getCode() == KeyCode.DELETE) Delete();
