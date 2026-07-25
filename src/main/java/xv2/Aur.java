@@ -57,7 +57,7 @@ public class Aur {
     private VBox createAuraIdVBox(AurAuraEntry entry) {
         //i04
         Label i04Label = new Label("I_04");
-        i04Label.setPrefWidth(80);
+        i04Label.setPrefWidth(120);
 
         TextField i04TextField = new TextField(String.valueOf(entry.i04));
         i04TextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -71,13 +71,13 @@ public class Aur {
             }
         });
 
-        HBox i04HBox = new HBox(40, i04Label, i04TextField);
+        HBox i04HBox = new HBox(i04Label, i04TextField);
         i04HBox.setAlignment(Pos.CENTER_LEFT);
         //i04
 
         //boostStart
         Label boostStartLabel = new Label("BoostStart");
-        boostStartLabel.setPrefWidth(80);
+        boostStartLabel.setPrefWidth(120);
 
         TextField boostStartTextField = new TextField(String.valueOf(entry.boostStart));
         boostStartTextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -91,13 +91,13 @@ public class Aur {
             }
         });
 
-        HBox boostStartHBox = new HBox(40, boostStartLabel, boostStartTextField);
+        HBox boostStartHBox = new HBox(boostStartLabel, boostStartTextField);
         boostStartHBox.setAlignment(Pos.CENTER_LEFT);
         //boostStart
 
         //boostLoop
         Label boostLoopLabel = new Label("BoostLoop");
-        boostLoopLabel.setPrefWidth(80);
+        boostLoopLabel.setPrefWidth(120);
 
         TextField boostLoopTextField=new TextField(String.valueOf(entry.boostLoop));
         boostLoopTextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -111,13 +111,13 @@ public class Aur {
             }
         });
 
-        HBox boostLoopHBox = new HBox(40, boostLoopLabel, boostLoopTextField);
+        HBox boostLoopHBox = new HBox(boostLoopLabel, boostLoopTextField);
         boostLoopHBox.setAlignment(Pos.CENTER_LEFT);
         //boostLoop
 
         //boostEnd
         Label boostEndLabel = new Label("BoostEnd");
-        boostEndLabel.setPrefWidth(80);
+        boostEndLabel.setPrefWidth(120);
 
         TextField boostEndTextField = new TextField(String.valueOf(entry.boostEnd));
         boostEndTextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -131,12 +131,12 @@ public class Aur {
             }
         });
 
-        HBox boostEndHBox = new HBox(40,boostEndLabel, boostEndTextField);
+        HBox boostEndHBox = new HBox(boostEndLabel, boostEndTextField);
         boostEndHBox.setAlignment(Pos.CENTER_LEFT);
 
         //kiaiCharge
         Label kiaiChargeLabel = new Label("KiaiCharge");
-        kiaiChargeLabel.setPrefWidth(80);
+        kiaiChargeLabel.setPrefWidth(120);
 
         TextField kiaiChargeTextField = new TextField(String.valueOf(entry.kiaiCharge));
         kiaiChargeTextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -150,12 +150,12 @@ public class Aur {
             }
         });
 
-        HBox kiaiChargeHBox = new HBox(40, kiaiChargeLabel, kiaiChargeTextField);
+        HBox kiaiChargeHBox = new HBox(kiaiChargeLabel, kiaiChargeTextField);
         kiaiChargeHBox.setAlignment(Pos.CENTER_LEFT);
 
         //kiryokuMax
         Label kiryokuMaxLabel = new Label("KiryokuMax");
-        kiryokuMaxLabel.setPrefWidth(80);
+        kiryokuMaxLabel.setPrefWidth(120);
 
         TextField txtKiryokuMax=new TextField(String.valueOf(entry.kiryokuMax));
         txtKiryokuMax.textProperty().addListener((obs, oldText, newText) -> {
@@ -169,13 +169,13 @@ public class Aur {
             }
         });
 
-        HBox kiryokuMaxHBox = new HBox(40, kiryokuMaxLabel, txtKiryokuMax);
+        HBox kiryokuMaxHBox = new HBox(kiryokuMaxLabel, txtKiryokuMax);
         kiryokuMaxHBox.setAlignment(Pos.CENTER_LEFT);
         //kiryokuMax
 
         //henshinStart
         Label henshinStartLabel = new Label("HenshinStart");
-        henshinStartLabel.setPrefWidth(80);
+        henshinStartLabel.setPrefWidth(120);
 
         TextField henshinStartTextField = new TextField(String.valueOf(entry.henshinStart));
         henshinStartTextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -189,13 +189,13 @@ public class Aur {
             }
         });
 
-        HBox henshinStartHBox = new HBox(40, henshinStartLabel, henshinStartTextField);
+        HBox henshinStartHBox = new HBox(henshinStartLabel, henshinStartTextField);
         henshinStartHBox.setAlignment(Pos.CENTER_LEFT);
         //henshinStart
 
         //henshinEnd
         Label henshinEndLabel = new Label("HenshinEnd");
-        henshinEndLabel.setPrefWidth(80);
+        henshinEndLabel.setPrefWidth(120);
 
         TextField henshinEndTextField = new TextField(String.valueOf(entry.henshinEnd));
         henshinEndTextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -209,7 +209,7 @@ public class Aur {
             }
         });
 
-        HBox henshinEndHBox = new HBox(40, henshinEndLabel, henshinEndTextField);
+        HBox henshinEndHBox = new HBox(henshinEndLabel, henshinEndTextField);
         henshinEndHBox.setAlignment(Pos.CENTER_LEFT);
         //henshinEnd
 
