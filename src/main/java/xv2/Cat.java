@@ -20,44 +20,40 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
 public class Cat {
     ArrayList<String> allEntries;
     ArrayList <CatEntry> catEntries = new ArrayList<>();
 
     ListView <String> listView = new ListView<>();
-
     HBox outerHBox = new HBox(2);
 
-    private CatEntry copyContainer = null;
+    CatEntry copyContainer = null;
 
-    ContextMenu contextMenu=new ContextMenu();
-    MenuItem copy=new MenuItem("Copy Ctrl+C");
-    MenuItem paste=new MenuItem("Paste Ctrl+V");
-    MenuItem delete=new MenuItem("Delete Delete");
-    MenuItem append=new MenuItem("Append Ctrl+A");
-    MenuItem insert=new MenuItem("Insert Ctrl+I");
+    ContextMenu contextMenu = new ContextMenu();
+    MenuItem copy = new MenuItem("Copy Ctrl+C");
+    MenuItem paste = new MenuItem("Paste Ctrl+V");
+    MenuItem delete = new MenuItem("Delete Del");
+    MenuItem append = new MenuItem("Append Ctrl+A");
+    MenuItem insert = new MenuItem("Insert Ctrl+I");
 
-    public Cat(){
+    public Cat() {
         entriesActionListener();
         entriesKeysListener();
     }
-    public HBox createHBoxOuter(){
-        VBox vBox = new VBox();
-        outerHBox.getChildren().addAll(listView,vBox);
+
+    public HBox createHBoxOuter() {
+        outerHBox.getChildren().addAll(listView, new VBox());
         return this.outerHBox;
     }
 
-    private VBox createVBox(CatEntry entry){
-        VBox catVBox = new VBox(30);
-        catVBox.setPadding(new Insets(20,0,0,5));
+    private VBox createCatVBox(CatEntry entry) {
+        //charaId
+        Label charaIdLabel = new Label("Chara ID");
+        charaIdLabel.setPrefWidth(170);
 
-        HBox charaIdHBox=new HBox(40);
-        Label lblCharaId=new Label("Chara Id: ");
-        lblCharaId.setPrefWidth(130);
-        TextField txtCharaId=new TextField(String.valueOf(entry.charaId));
-        txtCharaId.textProperty().addListener((obs,oldText,newText)->{
-            if (txtCharaId.getText().contains("-")) {
+        TextField charaIdTextField = new TextField(String.valueOf(entry.charaId));
+        charaIdTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (charaIdTextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -66,15 +62,18 @@ public class Cat {
                 e.printStackTrace();
             }
         });
-        charaIdHBox.setAlignment(Pos.CENTER_LEFT);
-        charaIdHBox.getChildren().addAll(lblCharaId,txtCharaId);
 
-        HBox costumeHBox=new HBox(40);
-        Label lblCostume=new Label("Costume: ");
-        lblCostume.setPrefWidth(130);
-        TextField txtCostume=new TextField(String.valueOf(entry.costume));
-        txtCostume.textProperty().addListener((obs,oldText,newText)->{
-            if (txtCostume.getText().contains("-")) {
+        HBox charaIdHBox = new HBox(charaIdLabel, charaIdTextField);
+        charaIdHBox.setAlignment(Pos.CENTER_LEFT);
+        //charaId
+
+        //costume
+        Label costumeLabel = new Label("Costume");
+        costumeLabel.setPrefWidth(170);
+
+        TextField costumeTextField=new TextField(String.valueOf(entry.costume));
+        costumeTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (costumeTextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -83,15 +82,17 @@ public class Cat {
                 e.printStackTrace();
             }
         });
-        costumeHBox.setAlignment(Pos.CENTER_LEFT);
-        costumeHBox.getChildren().addAll(lblCostume,txtCostume);
 
-        HBox i04HBox=new HBox(40);
-        Label lblI04=new Label("I_04: ");
-        lblI04.setPrefWidth(130);
-        TextField txtI04=new TextField(String.valueOf(entry.i04));
-        txtI04.textProperty().addListener((obs,oldText,newText)->{
-            if (txtI04.getText().contains("-")) {
+        HBox costumeHBox = new HBox(costumeLabel, costumeTextField);
+        costumeHBox.setAlignment(Pos.CENTER_LEFT);
+
+        //i04
+        Label i04Label = new Label("I_04");
+        i04Label.setPrefWidth(170);
+
+        TextField i04TextField = new TextField(String.valueOf(entry.i04));
+        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i04TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -100,15 +101,18 @@ public class Cat {
                 e.printStackTrace();
             }
         });
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        i04HBox.getChildren().addAll(lblI04,txtI04);
 
-        HBox skillId2HBox=new HBox(40);
-        Label lblSkillId2=new Label("Skill Id 2: ");
-        lblSkillId2.setPrefWidth(130);
-        TextField txtSkillId2=new TextField(String.valueOf(entry.skillId2));
-        txtSkillId2.textProperty().addListener((obs,oldText,newText)->{
-            if (txtSkillId2.getText().contains("-")) {
+        HBox i04HBox = new HBox(i04Label, i04TextField);
+        i04HBox.setAlignment(Pos.CENTER_LEFT);
+        //i04
+
+        //skillId2
+        Label skillId2Label = new Label("Skill Id 2");
+        skillId2Label.setPrefWidth(170);
+
+        TextField skillId2TextField = new TextField(String.valueOf(entry.skillId2));
+        skillId2TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (skillId2TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -117,15 +121,18 @@ public class Cat {
                 e.printStackTrace();
             }
         });
-        skillId2HBox.setAlignment(Pos.CENTER_LEFT);
-        skillId2HBox.getChildren().addAll(lblSkillId2,txtSkillId2);
 
-        HBox charaCodeHBox=new HBox(40);
-        Label lblCharaCode=new Label("Chara Code: ");
-        lblCharaCode.setPrefWidth(130);
-        TextField txtCharaCode=new TextField(entry.charaCode);
-        txtCharaCode.textProperty().addListener((obs,oldText,newText)->{
-            if (txtCharaCode.getText().contains("-")) {
+        HBox skillId2HBox = new HBox(skillId2Label, skillId2TextField);
+        skillId2HBox.setAlignment(Pos.CENTER_LEFT);
+        //skillId2
+
+        //charaCode
+        Label charaCodeLabel = new Label("Chara Code");
+        charaCodeLabel.setPrefWidth(170);
+
+        TextField charaCodeTextField = new TextField(entry.charaCode);
+        charaCodeTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (charaCodeTextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -134,15 +141,18 @@ public class Cat {
                 e.printStackTrace();
             }
         });
-        charaCodeHBox.setAlignment(Pos.CENTER_LEFT);
-        charaCodeHBox.getChildren().addAll(lblCharaCode,txtCharaCode);
 
-        HBox i12HBox=new HBox(40);
-        Label lblBI12=new Label("I_12: ");
-        lblBI12.setPrefWidth(130);
-        TextField txtI12=new TextField(String.valueOf(entry.i12));
-        txtI12.textProperty().addListener((obs,oldText,newText)->{
-            if (txtI12.getText().contains("-")) {
+        HBox charaCodeHBox = new HBox(charaCodeLabel, charaCodeTextField);
+        charaCodeHBox.setAlignment(Pos.CENTER_LEFT);
+        //charaCode
+
+        //i12
+        Label i12Label = new Label("I_12");
+        i12Label.setPrefWidth(170);
+
+        TextField i12TextField = new TextField(String.valueOf(entry.i12));
+        i12TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i12TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -151,15 +161,18 @@ public class Cat {
                 e.printStackTrace();
             }
         });
-        i12HBox.setAlignment(Pos.CENTER_LEFT);
-        i12HBox.getChildren().addAll(lblBI12,txtI12);
 
-        HBox i16HBox=new HBox(40);
-        Label lblI16=new Label("Loading Screen Value?: ");
-        lblI16.setPrefWidth(130);
-        TextField txtI16=new TextField(String.valueOf(entry.i16));
-        txtI16.textProperty().addListener((obs,oldText,newText)->{
-            if (txtI16.getText().contains("-")) {
+        HBox i12HBox=new HBox(i12Label, i12TextField);
+        i12HBox.setAlignment(Pos.CENTER_LEFT);
+        //i12
+
+        //i16
+        Label i16Label = new Label("Loading Screen Value?");
+        i16Label.setPrefWidth(170);
+
+        TextField i16TextField = new TextField(String.valueOf(entry.i16));
+        i16TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i16TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -168,15 +181,18 @@ public class Cat {
                 e.printStackTrace();
             }
         });
-        i16HBox.setAlignment(Pos.CENTER_LEFT);
-        i16HBox.getChildren().addAll(lblI16,txtI16);
 
-        HBox i20HBox=new HBox(40);
-        Label lblI20=new Label("I_20: ");
-        lblI20.setPrefWidth(130);
-        TextField txtI20=new TextField(String.valueOf(entry.i20));
-        txtI20.textProperty().addListener((obs,oldText,newText)->{
-            if (txtI20.getText().contains("-")) {
+        HBox i16HBox = new HBox(i16Label, i16TextField);
+        i16HBox.setAlignment(Pos.CENTER_LEFT);
+        //i16
+
+        //i20
+        Label i20Label = new Label("I_20");
+        i20Label.setPrefWidth(170);
+
+        TextField i20TextField = new TextField(String.valueOf(entry.i20));
+        i20TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i20TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -185,15 +201,18 @@ public class Cat {
                 e.printStackTrace();
             }
         });
-        i20HBox.setAlignment(Pos.CENTER_LEFT);
-        i20HBox.getChildren().addAll(lblI20,txtI20);
 
-        HBox transformationEntryHBox=new HBox(40);
-        Label lblTransformationEntry=new Label("Trasnformation Entry: ");
-        lblTransformationEntry.setPrefWidth(130);
-        TextField txtTransformationEntry=new TextField(String.valueOf(entry.transformationEntry));
-        txtTransformationEntry.textProperty().addListener((obs,oldText,newText)->{
-            if (txtTransformationEntry.getText().contains("-")) {
+        HBox i20HBox = new HBox(i20Label, i20TextField);
+        i20HBox.setAlignment(Pos.CENTER_LEFT);
+        //i20
+
+        //transformationEntry
+        Label transformationEntryLabel = new Label("Trasnformation Entry");
+        transformationEntryLabel.setPrefWidth(170);
+
+        TextField transformationEntryTextField = new TextField(String.valueOf(entry.transformationEntry));
+        transformationEntryTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (transformationEntryTextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -202,15 +221,18 @@ public class Cat {
                 e.printStackTrace();
             }
         });
-        transformationEntryHBox.setAlignment(Pos.CENTER_LEFT);
-        transformationEntryHBox.getChildren().addAll(lblTransformationEntry,txtTransformationEntry);
 
-        HBox i22HBox=new HBox(40);
-        Label lblI22=new Label("I_22: ");
-        lblI22.setPrefWidth(130);
-        TextField txtI22=new TextField(String.valueOf(entry.i22));
-        txtI22.textProperty().addListener((obs,oldText,newText)->{
-            if (txtI22.getText().contains("-")) {
+        HBox transformationEntryHBox = new HBox(transformationEntryLabel, transformationEntryTextField);
+        transformationEntryHBox.setAlignment(Pos.CENTER_LEFT);
+        //transformationEntry
+
+        //i22
+        Label i22Label = new Label("I_22");
+        i22Label.setPrefWidth(170);
+
+        TextField i22TextField = new TextField(String.valueOf(entry.i22));
+        i22TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i22TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -219,44 +241,51 @@ public class Cat {
                 e.printStackTrace();
             }
         });
-        i22HBox.setAlignment(Pos.CENTER_LEFT);
-        i22HBox.getChildren().addAll(lblI22,txtI22);
-        
-        catVBox.getChildren().addAll(charaIdHBox,costumeHBox,i04HBox,skillId2HBox,charaCodeHBox,i12HBox,i16HBox,i20HBox,transformationEntryHBox,i22HBox);
-        this.outerHBox.getChildren().add(catVBox);
-        return catVBox;
 
+        HBox i22HBox = new HBox(i22Label, i22TextField);
+        i22HBox.setAlignment(Pos.CENTER_LEFT);
+        //i22
+
+        VBox catVBox = new VBox(30,
+            charaIdHBox, costumeHBox,
+            i04HBox, skillId2HBox,
+            charaCodeHBox, i12HBox,
+            i16HBox, i20HBox,
+            transformationEntryHBox, i22HBox
+        );
+        catVBox.setPadding(new Insets(20, 0, 0, 5));
+        return catVBox;
     }
 
-    private void entriesActionListener(){
+    private void entriesActionListener() {
         paste.setDisable(true);
+
         contextMenu.getItems().addAll(copy,paste,delete,append,insert);
+
         listView.setContextMenu(contextMenu);
-        listView.getSelectionModel().selectedItemProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue==null){
-                return;
-            }
+        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue == null) return;
 
             outerHBox.getChildren().remove(1);
-            outerHBox.getChildren().set(1, createVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
+            outerHBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
         });
-        listView.setOnMouseClicked(e->{
-            if(e.getButton()==MouseButton.SECONDARY){
-                contextMenu.setOnAction(event->{
-                    if(event.getTarget()==copy){
+        listView.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.SECONDARY) {
+                contextMenu.setOnAction(event -> {
+                    if (event.getTarget() == copy) {
                         Copy();
                         paste.setDisable(false);
                     }
-                    if(event.getTarget()==paste){
+                    if (event.getTarget() == paste) {
                         Paste();
                     }
-                    if(event.getTarget()==delete){
+                    if (event.getTarget() == delete) {
                        Delete();
                     }
-                    if(event.getTarget()==append){
+                    if (event.getTarget() == append) {
                         Append();
                     }
-                    if(event.getTarget()==insert){
+                    if (event.getTarget() == insert) {
                         Insert();
                     }
                 });
@@ -264,22 +293,21 @@ public class Cat {
         });
     }
 
-    private void entriesKeysListener(){
-        listView.setOnKeyPressed(e->{
-            if(e.isControlDown()&&e.getCode()==KeyCode.C){
+    private void entriesKeysListener() {
+        listView.setOnKeyPressed(e -> {
+            if (e.isControlDown() && e.getCode() == KeyCode.C) {
                 Copy();
             }
-            if(e.isControlDown()&&e.getCode()==KeyCode.V){
+            if (e.isControlDown() && e.getCode()==KeyCode.V) {
                 Paste();
             }
-            if(e.getCode()==KeyCode.DELETE){
+            if (e.getCode() == KeyCode.DELETE) {
                 Delete();
             }
-            if(e.isControlDown()&&e.getCode()==KeyCode.A){
+            if (e.isControlDown() && e.getCode() == KeyCode.A) {
                 Append();
-                
             }
-            if(e.isControlDown()&&e.getCode()==KeyCode.I){
+            if (e.isControlDown() && e.getCode() == KeyCode.I) {
                 Insert();
             }
         });
@@ -289,245 +317,226 @@ public class Cat {
         copyContainer = new CatEntry(catEntries.get(listView.getSelectionModel().getSelectedIndex()));
     }
 
-    private void Paste(){
-        if(copyContainer == null) return;
+    private void Paste() {
+        if (copyContainer == null) return;
         
         catEntries.set(listView.getSelectionModel().getSelectedIndex(), new CatEntry(copyContainer));
+
         outerHBox.getChildren().remove(1);
-        outerHBox.getChildren().set(1, createVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
+        outerHBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
     }
 
-    private void Delete(){
-        if(listView.getSelectionModel().getSelectedIndex() == 0) return;
+    private void Delete() {
+        if (listView.getSelectionModel().getSelectedIndex() == 0) return;
 
         catEntries.remove(listView.getSelectionModel().getSelectedIndex());
-        for(int i=0;i<listView.getItems().size();i++){
-            allEntries.set(i,new String("Entry: "+i));
+
+        for (int i = 0; i < listView.getItems().size(); i++) {
+            allEntries.set(i,new String("Entry: " + i));
             listView.getItems().set(i,allEntries.get(i));
         }
     }
 
-    private void Append(){
-        catEntries.add(listView.getSelectionModel().getSelectedIndex()+1,new CatEntry());
-        allEntries.add(new String("Entry "+listView.getItems().size()));
+    private void Append() {
+        catEntries.add(listView.getSelectionModel().getSelectedIndex() + 1, new CatEntry());
+        allEntries.add(new String("Entry " + listView.getItems().size()));
         listView.getItems().add(allEntries.getLast());
     }
 
-    private void Insert(){
-        if(listView.getSelectionModel().getSelectedIndex()>0){
-            catEntries.add(listView.getSelectionModel().getSelectedIndex()-1,new CatEntry());
-            allEntries.add(new String("Entry: "+listView.getItems().size()));
+    private void Insert() {
+        if (listView.getSelectionModel().getSelectedIndex() > 0) {
+            catEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new CatEntry());
+            allEntries.add(new String("Entry " + listView.getItems().size()));
             listView.getItems().add(allEntries.getLast());
         }
-        else if(listView.getSelectionModel().getSelectedIndex()==0){
-            catEntries.add(listView.getSelectionModel().getSelectedIndex(),new CatEntry());
-            allEntries.add(new String("Entry: "+listView.getItems().size()));
+        else if (listView.getSelectionModel().getSelectedIndex() == 0) {
+            catEntries.add(listView.getSelectionModel().getSelectedIndex(), new CatEntry());
+            allEntries.add(new String("Entry " + listView.getItems().size()));
             listView.getItems().add(allEntries.getLast());
         }
     }
 
-    public void catReader(Path path){
-        try(FileChannel channel = FileChannel.open(path,StandardOpenOption.READ)) {
-            ByteBuffer byteBuffer=ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
-            ByteBuffer shortBuffer=ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
-            ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+    public void catReader(Path path) {
+        try(FileChannel channel = FileChannel.open(path, StandardOpenOption.READ)) {
+            ByteBuffer byteBuffer = ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer shortBuffer = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
             
             short catEntriesCount;
-            int entryOffset=12;
+            int entryOffset = 12;
 
-            //reading entries
             channel.position(6);
             shortBuffer.clear();
             channel.read(shortBuffer);
             shortBuffer.flip();
-            catEntriesCount=shortBuffer.getShort();
+            catEntriesCount = shortBuffer.getShort();
 
-            allEntries=new ArrayList<>(catEntriesCount);
-            for(int i=0;i<catEntriesCount;i++){
-                allEntries.add(new String("Entry "+i));
+            allEntries = new ArrayList<>(catEntriesCount);
+
+            for (int i = 0; i < catEntriesCount; i++) {
+                allEntries.add(new String("Entry " + i));
                 listView.getItems().add(allEntries.get(i));
             }
 
-            for(int i=0;i<catEntriesCount;i++){
+            for (int i = 0; i < catEntriesCount; i++) {
                 CatEntry catEntry = new CatEntry();
-                //reading charaid
-                channel.position(entryOffset+i*24);
+                catEntries.add(catEntry);
+
+                channel.position(entryOffset + i * 24);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 catEntry.charaId = toUShort(shortBuffer.getShort());
                 
-                //reading costume
-                channel.position(entryOffset+i*24+2);
+                channel.position(entryOffset +  i * 24 + 2);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 catEntry.costume = toUShort(shortBuffer.getShort());
 
-                //reding I_04
-                channel.position(entryOffset+i*24+4);
+                channel.position(entryOffset + i * 24 + 4);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 catEntry.i04 = toUShort(shortBuffer.getShort());
 
-                //reading skillid2
-                channel.position(entryOffset+i*24+6);
+                channel.position(entryOffset + i * 24 + 6);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 catEntry.skillId2 = toUShort(shortBuffer.getShort());
 
-                //reading characode
-                channel.position(entryOffset+i*24+8);
+                channel.position(entryOffset + i * 24 + 8);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 catEntry.charaCode = StandardCharsets.ISO_8859_1.decode(intBuffer).toString().trim();
 
-                //reading I_12
-                channel.position(entryOffset+i*24+12);
+                channel.position(entryOffset + i * 24 + 12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 catEntry.i12 = intBuffer.getInt();
                 
-                //reading I_16
-                channel.position(entryOffset+i*24+16);
+                channel.position(entryOffset + i * 24 + 16);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 catEntry.i16 = intBuffer.getInt();
 
-                //reading I_20
-                channel.position(entryOffset+i*24+20);
+                channel.position(entryOffset + i * 24 + 20);
                 byteBuffer.clear();
                 channel.read(byteBuffer);
                 byteBuffer.flip();
                 catEntry.i20 = toUByte(byteBuffer.get());
                 
-                //reading Transformation Entry
-                channel.position(entryOffset+i*24+21);
+                channel.position(entryOffset + i * 24 + 21);
                 byteBuffer.clear();
                 channel.read(byteBuffer);
                 byteBuffer.flip();
                 catEntry.transformationEntry = toUByte(byteBuffer.get());
 
-                //reading I_22
-                channel.position(entryOffset+i*24+22);
+                channel.position(entryOffset + i * 24 + 22);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 catEntry.i22 = toUShort(shortBuffer.getShort());
-                catEntries.add(catEntry);
             }    
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void catWriter(Path path){
-        try(FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE,StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING)) {
-            int entriesOffset=12;
-            ByteBuffer byteBuffer=ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
-            ByteBuffer shortBuffer=ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
-            ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+    public void catWriter(Path path) {
+        try(FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            int entriesOffset = 12;
+
+            ByteBuffer byteBuffer = ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer shortBuffer = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
             
-            //write magic
             channel.position(0);
-            channel.write(ByteBuffer.wrap(new byte[]{0x23,0x43,0x41,0x54}));
+            channel.write(ByteBuffer.wrap(new byte[]{0x23, 0x43, 0x41, 0x54}));
             
-            //write endiannes
             channel.position(4);
-            channel.write(ByteBuffer.wrap(new byte[]{(byte)0xFE,(byte)0xFF}));
+            channel.write(ByteBuffer.wrap(new byte[]{(byte)0xFE, (byte)0xFF}));
         
-            //write entry
             channel.position(6);
             shortBuffer.clear();
             shortBuffer.putShort((short)allEntries.size());
             shortBuffer.flip();
             channel.write(shortBuffer);
 
-            //write entry offset
             channel.position(8);
             intBuffer.clear();
             intBuffer.putInt(entriesOffset);
             intBuffer.flip();
             channel.write(intBuffer);
 
-            for(int i=0;i<allEntries.size();i++){
+            for (int i = 0; i < allEntries.size(); i++) {
                 CatEntry catEntry = catEntries.get(i);
-                //writing charaid
-                channel.position(entriesOffset+i*24);
+
+                channel.position(entriesOffset + i * 24);
                 shortBuffer.clear();
                 shortBuffer.putShort((short)catEntry.charaId);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                //writing costume
-                channel.position(entriesOffset+i*24+2);
+                channel.position(entriesOffset + i * 24 + 2);
                 shortBuffer.clear();
                 shortBuffer.putShort((short)catEntry.costume);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                //writing I_04
-                channel.position(entriesOffset+i*24+4);
+                channel.position(entriesOffset + i * 24 + 4);
                 shortBuffer.clear();
                 shortBuffer.putShort((short)catEntry.i04);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                //writing skillid2
-                channel.position(entriesOffset+i*24+6);
+                channel.position(entriesOffset + i * 24 + 6);
                 shortBuffer.clear();
                 shortBuffer.putShort((short)catEntry.skillId2);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
                 
-                //writing characode
-                channel.position(entriesOffset+i*24+8);
+                channel.position(entriesOffset + i * 24 + 8);
                 intBuffer.clear();
                 intBuffer.put(catEntry.charaCode.getBytes(StandardCharsets.ISO_8859_1));
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                //witing I_12
-                channel.position(entriesOffset+i*24+12);
+                channel.position(entriesOffset + i * 24 + 12);
                 intBuffer.clear();
                 intBuffer.putInt(catEntry.i12);
                 intBuffer.flip();
                 channel.write(intBuffer);
             
-                //writing I_16
-                channel.position(entriesOffset+i*24+16);
+                channel.position(entriesOffset + i * 24 + 16);
                 intBuffer.clear();
                 intBuffer.putInt(catEntry.i16);
                 intBuffer.flip();
                 channel.write(intBuffer);
         
-                //writing I_20
-                channel.position(entriesOffset+i*24+20);
+                channel.position(entriesOffset + i * 24 + 20);
                 byteBuffer.clear();
                 byteBuffer.put((byte)catEntry.i20);
                 byteBuffer.flip();
                 channel.write(byteBuffer);
 
-                //writing TransformationEntry
-                channel.position(entriesOffset+i*24+21);
+                channel.position(entriesOffset + i * 24 + 21);
                 byteBuffer.clear();
                 byteBuffer.put((byte)catEntry.transformationEntry);
                 byteBuffer.flip();
                 channel.write(byteBuffer);
 
-                //writing I_22
-                channel.position(entriesOffset+i*24+22);
+                channel.position(entriesOffset + i * 24 + 22);
                 shortBuffer.clear();
                 shortBuffer.putShort((short)catEntry.i22);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
             }
-        }catch(IOException e){
+        }catch(IOException e) {
             e.printStackTrace();
         } 
     }
@@ -546,7 +555,7 @@ class CatEntry{
 
     public CatEntry() {}
 
-    public CatEntry(CatEntry other){
+    public CatEntry(CatEntry other) {
         this.charaId = other.charaId;
         this.costume = other.costume;
         this.i04 = other.i04;
