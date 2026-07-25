@@ -178,7 +178,6 @@ class Agd {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Popups.ErrorLoad(path.toFile().getName());
         }
     }
 
@@ -235,7 +234,6 @@ class Agd {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Popups.ErrorSave(path.toFile().getName());
         }
     }
 }
