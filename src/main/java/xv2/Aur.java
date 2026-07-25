@@ -24,49 +24,44 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
 public class Aur {
     VBox vBox = new VBox(5);
+    HBox hBox = new HBox(10);
+    ListView<String> listView = new ListView<>();
+
     ArrayList<String> allEntries;
-    
     ArrayList<AurAuraEntry> auraEntries = new ArrayList<>();
     ArrayList<AurCharaEntry> charaEntries = new ArrayList<>();
 
-    ListView<String> listView=new ListView<>();
-    HBox hBox=new HBox(10);
-
-    private AurAuraEntry copyContainer = null;
-    
+    AurAuraEntry copyContainer = null;
     int characterEntries;
     
-    public Aur(){
-        vBox.setPadding(new Insets(5,5,5,5));
+    public Aur() {
+        vBox.setPadding(new Insets(5, 5, 5, 5));
         entriesActionListener();
         entriesKeysListener();
         vBoxListener();
     }
-    public SplitPane createSplitPane(){
-       SplitPane splitPane =new SplitPane(createHBoxLeft(),createVBoxRight());
+
+    public SplitPane createSplitPane() {
+       SplitPane splitPane = new SplitPane(createHBoxLeft(), createVBoxRight());
        splitPane.setDividerPositions(0.43);
        return splitPane;
     }
 
-    private HBox createHBoxLeft(){
-        VBox vBox=new VBox();
-        this.hBox.getChildren().addAll(listView,vBox);
+    private HBox createHBoxLeft() {
+        this.hBox.getChildren().addAll(listView, new VBox());
         return hBox;
     }
 
-    private VBox createVBoxAuraId(AurAuraEntry entry){
-        VBox auraIdVBox=new VBox(60);
-        auraIdVBox.setPadding(new Insets(30,0,0,0));
+    private VBox createAuraIdVBox(AurAuraEntry entry) {
+        //i04
+        Label i04Label = new Label("I_04");
+        i04Label.setPrefWidth(80);
 
-        HBox i04HBox=new HBox(40);
-        Label lblI04=new Label("I_04: ");
-        lblI04.setPrefWidth(80);
-        TextField txtI04=new TextField(String.valueOf(entry.i04));
-        txtI04.textProperty().addListener((obs,oldText,newText)->{
-            if (txtI04.getText().contains("-")) {
+        TextField i04TextField = new TextField(String.valueOf(entry.i04));
+        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i04TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -75,15 +70,18 @@ public class Aur {
                 e.printStackTrace();
             }
         });
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        i04HBox.getChildren().addAll(lblI04,txtI04);
 
-        HBox boostStartHBox=new HBox(40);
-        Label lblBoostStart=new Label("BoostStart: ");
-        lblBoostStart.setPrefWidth(80);
-        TextField txtBoostStart=new TextField(String.valueOf(entry.boostStart));
-        txtBoostStart.textProperty().addListener((obs,oldText,newText)->{
-            if (txtBoostStart.getText().contains("-")) {
+        HBox i04HBox = new HBox(40, i04Label, i04TextField);
+        i04HBox.setAlignment(Pos.CENTER_LEFT);
+        //i04
+
+        //boostStart
+        Label boostStartLabel = new Label("BoostStart");
+        boostStartLabel.setPrefWidth(80);
+
+        TextField boostStartTextField = new TextField(String.valueOf(entry.boostStart));
+        boostStartTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (boostStartTextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -92,15 +90,18 @@ public class Aur {
                 e.printStackTrace();
             }
         });
-        boostStartHBox.setAlignment(Pos.CENTER_LEFT);
-        boostStartHBox.getChildren().addAll(lblBoostStart,txtBoostStart);
 
-        HBox boostLoopHBox=new HBox(40);
-        Label lblBoostLoop=new Label("BoostLoop: ");
-        lblBoostLoop.setPrefWidth(80);
-        TextField txtBoostLoop=new TextField(String.valueOf(entry.boostLoop));
-        txtBoostLoop.textProperty().addListener((obs,oldText,newText)->{
-            if (txtBoostLoop.getText().contains("-")) {
+        HBox boostStartHBox = new HBox(40, boostStartLabel, boostStartTextField);
+        boostStartHBox.setAlignment(Pos.CENTER_LEFT);
+        //boostStart
+
+        //boostLoop
+        Label boostLoopLabel = new Label("BoostLoop");
+        boostLoopLabel.setPrefWidth(80);
+
+        TextField boostLoopTextField=new TextField(String.valueOf(entry.boostLoop));
+        boostLoopTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (boostLoopTextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -109,15 +110,18 @@ public class Aur {
                 e.printStackTrace();
             }
         });
-        boostLoopHBox.setAlignment(Pos.CENTER_LEFT);
-        boostLoopHBox.getChildren().addAll(lblBoostLoop,txtBoostLoop);
 
-        HBox boostEndHBox=new HBox(40);
-        Label lblBoostEnd=new Label("BoostEnd: ");
-        lblBoostEnd.setPrefWidth(80);
-        TextField txtBoostEnd=new TextField(String.valueOf(entry.boostEnd));
-        txtBoostEnd.textProperty().addListener((obs,oldText,newText)->{
-            if (txtBoostEnd.getText().contains("-")) {
+        HBox boostLoopHBox = new HBox(40, boostLoopLabel, boostLoopTextField);
+        boostLoopHBox.setAlignment(Pos.CENTER_LEFT);
+        //boostLoop
+
+        //boostEnd
+        Label boostEndLabel = new Label("BoostEnd");
+        boostEndLabel.setPrefWidth(80);
+
+        TextField boostEndTextField = new TextField(String.valueOf(entry.boostEnd));
+        boostEndTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (boostEndTextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -126,15 +130,17 @@ public class Aur {
                 e.printStackTrace();
             }
         });
-        boostEndHBox.setAlignment(Pos.CENTER_LEFT);
-        boostEndHBox.getChildren().addAll(lblBoostEnd,txtBoostEnd);
 
-        HBox kiaiChargeHBox=new HBox(40);
-        Label lblKiaiCharge=new Label("KiaiCharge: ");
-        lblKiaiCharge.setPrefWidth(80);
-        TextField txtKiaiCharge=new TextField(String.valueOf(entry.kiaiCharge));
-        txtKiaiCharge.textProperty().addListener((obs,oldText,newText)->{
-            if (txtKiaiCharge.getText().contains("-")) {
+        HBox boostEndHBox = new HBox(40,boostEndLabel, boostEndTextField);
+        boostEndHBox.setAlignment(Pos.CENTER_LEFT);
+
+        //kiaiCharge
+        Label kiaiChargeLabel = new Label("KiaiCharge");
+        kiaiChargeLabel.setPrefWidth(80);
+
+        TextField kiaiChargeTextField = new TextField(String.valueOf(entry.kiaiCharge));
+        kiaiChargeTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (kiaiChargeTextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -143,32 +149,37 @@ public class Aur {
                 e.printStackTrace();
             }
         });
-        kiaiChargeHBox.setAlignment(Pos.CENTER_LEFT);
-        kiaiChargeHBox.getChildren().addAll(lblKiaiCharge,txtKiaiCharge);
 
-        HBox kiryokuMaxHBox=new HBox(40);
-        Label lblKiryokuMax=new Label("KiryokuMax: ");
-        lblKiryokuMax.setPrefWidth(80);
-        TextField txtKiryokuMax=new TextField(String.valueOf(entry.kiaiCharge));
-        txtKiryokuMax.textProperty().addListener((obs,oldText,newText)->{
+        HBox kiaiChargeHBox = new HBox(40, kiaiChargeLabel, kiaiChargeTextField);
+        kiaiChargeHBox.setAlignment(Pos.CENTER_LEFT);
+
+        //kiryokuMax
+        Label kiryokuMaxLabel = new Label("KiryokuMax");
+        kiryokuMaxLabel.setPrefWidth(80);
+
+        TextField txtKiryokuMax=new TextField(String.valueOf(entry.kiryokuMax));
+        txtKiryokuMax.textProperty().addListener((obs, oldText, newText) -> {
             if (txtKiryokuMax.getText().contains("-")) {
                 return;
             }
             try {
-                entry.kiaiCharge = Integer.parseInt(newText); 
+                entry.kiryokuMax = Integer.parseInt(newText); 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         });
-        kiryokuMaxHBox.setAlignment(Pos.CENTER_LEFT);
-        kiryokuMaxHBox.getChildren().addAll(lblKiryokuMax,txtKiryokuMax);
 
-        HBox henshinStartHBox=new HBox(40);
-        Label lblHenshinStart=new Label("HenshinStart: ");
-        lblHenshinStart.setPrefWidth(80);
-        TextField txtHenshinStart=new TextField(String.valueOf(entry.henshinStart));
-        txtHenshinStart.textProperty().addListener((obs,oldText,newText)->{
-            if (txtHenshinStart.getText().contains("-")) {
+        HBox kiryokuMaxHBox = new HBox(40, kiryokuMaxLabel, txtKiryokuMax);
+        kiryokuMaxHBox.setAlignment(Pos.CENTER_LEFT);
+        //kiryokuMax
+
+        //henshinStart
+        Label henshinStartLabel = new Label("HenshinStart");
+        henshinStartLabel.setPrefWidth(80);
+
+        TextField henshinStartTextField = new TextField(String.valueOf(entry.henshinStart));
+        henshinStartTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (henshinStartTextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -177,15 +188,18 @@ public class Aur {
                 e.printStackTrace();
             }
         });
-        henshinStartHBox.setAlignment(Pos.CENTER_LEFT);
-        henshinStartHBox.getChildren().addAll(lblHenshinStart,txtHenshinStart);
 
-        HBox henshinEndHBox=new HBox(40);
-        Label lblHenshinEnd=new Label("HenshinEnd: ");
-        lblHenshinEnd.setPrefWidth(80);
-        TextField txtHenshinEnd=new TextField(String.valueOf(entry.henshinEnd));
-        txtHenshinEnd.textProperty().addListener((obs,oldText,newText)->{
-            if (txtHenshinEnd.getText().contains("-")) {
+        HBox henshinStartHBox = new HBox(40, henshinStartLabel, henshinStartTextField);
+        henshinStartHBox.setAlignment(Pos.CENTER_LEFT);
+        //henshinStart
+
+        //henshinEnd
+        Label henshinEndLabel = new Label("HenshinEnd");
+        henshinEndLabel.setPrefWidth(80);
+
+        TextField henshinEndTextField = new TextField(String.valueOf(entry.henshinEnd));
+        henshinEndTextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (henshinEndTextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -194,61 +208,61 @@ public class Aur {
                 e.printStackTrace();
             }
         });
+
+        HBox henshinEndHBox = new HBox(40, henshinEndLabel, henshinEndTextField);
         henshinEndHBox.setAlignment(Pos.CENTER_LEFT);
-        henshinEndHBox.getChildren().addAll(lblHenshinEnd,txtHenshinEnd);
+        //henshinEnd
 
-        auraIdVBox.getChildren().addAll(i04HBox,boostStartHBox,boostLoopHBox,boostEndHBox,kiaiChargeHBox,kiryokuMaxHBox,henshinStartHBox,henshinEndHBox);
-        this.hBox.getChildren().add(auraIdVBox);
-        
+        VBox auraIdVBox = new VBox(60, 
+            i04HBox, boostStartHBox,
+            boostLoopHBox, boostEndHBox,
+            kiaiChargeHBox, kiryokuMaxHBox,
+            henshinStartHBox, henshinEndHBox
+        );
+        auraIdVBox.setPadding(new Insets(30, 0, 0, 0));
+
         return auraIdVBox;
-
-    }
-    private ScrollPane createScrollPane(){
-        ScrollPane scrollPane=new ScrollPane();
-        scrollPane.setContent(vBox);
-        return scrollPane;
-        
-    }
-    private VBox createVBoxRight(){
-        VBox vBox=new VBox();
-        vBox.getChildren().addAll(createToolBarRight(),createScrollPane());
-        return vBox;
     }
 
-    private ToolBar createToolBarRight(){
-        Button insertEntry=new Button("Insert Chara Id");
-        insertEntry.setOnAction(event->{
+    private ScrollPane createScrollPane() {
+        return new ScrollPane(vBox);
+    }
+
+    private VBox createVBoxRight() {
+        return new VBox(createToolBarRight(), createScrollPane());
+    }
+
+    private ToolBar createToolBarRight() {
+        Button insertEntry = new Button("Insert ID");
+        insertEntry.setOnAction(event -> {
             AurCharaEntry newCharaEntry = new AurCharaEntry();
             charaEntries.add(newCharaEntry);
             createVBoxRightCharaId(newCharaEntry);
-            characterEntries+=1;
+            characterEntries += 1;
         });
 
-        Button removeEntry=new Button("Remove Chara Id");
-        removeEntry.setOnAction(event->{
+        Button removeEntry = new Button("Remove Chara ID");
+        removeEntry.setOnAction(event -> {
             try {
-                charaEntries.remove(characterEntries-1);
-                vBox.getChildren().remove(characterEntries-1);
-                characterEntries-=1;
+                charaEntries.remove(characterEntries - 1);
+                vBox.getChildren().remove(characterEntries - 1);
+                characterEntries -= 1;
             } catch (IndexOutOfBoundsException e) {
                 Popups.ErrorOutOfBounds();
                 e.printStackTrace();
             }
-
         });
-        ToolBar toolBar=new ToolBar(
-            insertEntry,
-            removeEntry
-        );
-        return toolBar;
+
+        return new ToolBar(insertEntry, removeEntry);
     }
     
-    private VBox createVBoxRightCharaId(AurCharaEntry entry){
-        HBox hBox=new HBox(10);
+    private VBox createVBoxRightCharaId(AurCharaEntry entry) {
+        HBox hBox = new HBox(10);
 
-        Label lblCharaId=new Label("Chara Id");
-        TextField txtCharaId=new TextField(String.valueOf(entry.charaId));
-        txtCharaId.textProperty().addListener((obs,oldText,newText)->{
+        //charaId
+        Label charaIdLabel = new Label("Chara ID");
+        TextField txtCharaId = new TextField(String.valueOf(entry.charaId));
+        txtCharaId.textProperty().addListener((obs, oldText, newText) -> {
             if (txtCharaId.getText().contains("-")) {
                 return;
             }
@@ -258,10 +272,12 @@ public class Aur {
                 e.printStackTrace();
             }
         });
+        //charaId
 
-        Label lblCostume=new Label("Costume");
-        TextField txtCostume=new TextField(String.valueOf(entry.costume));
-        txtCostume.textProperty().addListener((obs,oldText,newText)->{
+        //costume
+        Label costumeLabel = new Label("Costume");
+        TextField costumeTextField = new TextField(String.valueOf(entry.costume));
+        costumeTextField.textProperty().addListener((obs, oldText, newText) -> {
             if (txtCharaId.getText().contains("-")) {
                 return;
             }
@@ -271,10 +287,12 @@ public class Aur {
                 e.printStackTrace();
             }
         });
+        //costume
 
-        Label lblAuraId=new Label("Aura Id");
-        TextField txtAuraId=new TextField(String.valueOf(entry.auraId));
-        txtAuraId.textProperty().addListener((obs,oldText,newText)->{
+        //auraId
+        Label auraIdLabel = new Label("Aura ID");
+        TextField txtAuraId = new TextField(String.valueOf(entry.auraId));
+        txtAuraId.textProperty().addListener((obs, oldText, newText) -> {
             if (txtAuraId.getText().contains("-")) {
                 return;
             }
@@ -284,37 +302,36 @@ public class Aur {
                 e.printStackTrace();
             }
         });
+        //auraId
 
-        Label lblGlare=new Label("Glare");
-        CheckBox glareCheckBox=new CheckBox();
+        //glare
+        CheckBox glareCheckBox = new CheckBox("Glare");
         glareCheckBox.setSelected(entry.glare);
-        glareCheckBox.selectedProperty().addListener((obs,oldValue,newValue)->{
-            try {
-                entry.glare = newValue;
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-
+        glareCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            entry.glare = newValue; 
         });
+        //glare
 
-        hBox.getChildren().addAll(lblCharaId,txtCharaId,lblCostume,txtCostume,lblAuraId,txtAuraId,lblGlare,glareCheckBox);
+        hBox.getChildren().addAll(
+            charaIdLabel, txtCharaId,
+            costumeLabel, costumeTextField,
+            auraIdLabel, txtAuraId ,glareCheckBox
+        );
         hBox.setAlignment(Pos.CENTER_LEFT);
         vBox.getChildren().add(hBox);
 
         return vBox;
     }
 
-    private void entriesActionListener(){
-        listView.getSelectionModel().selectedItemProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue==null){
-                return;
-            }
-            //System.out.println("entry clicked: "+listView.getSelectionModel().getSelectedIndex());
+    private void entriesActionListener() {
+        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if(newValue == null) return;
+
             hBox.getChildren().remove(1);
-            hBox.getChildren().set(1, createVBoxAuraId(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
+            hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
         });
         listView.setOnMouseClicked(e->{
-            if(e.getButton()==MouseButton.SECONDARY){
+            if(e.getButton()==MouseButton.SECONDARY) {
                 ContextMenu contextMenu=new ContextMenu();
                 MenuItem copy=new MenuItem("Copy Ctrl+C");
                 MenuItem paste=new MenuItem("Paste Ctrl+V");
@@ -334,12 +351,11 @@ public class Aur {
         });
     }
 
-    private void vBoxListener(){
-        vBox.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-        });
+    private void vBoxListener() {
+        vBox.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {});
     }
 
-    private void entriesKeysListener(){
+    private void entriesKeysListener() {
         listView.setOnKeyPressed(e->{
             if(e.isControlDown() && e.getCode() == KeyCode.C) Copy();
             if(e.isControlDown() && e.getCode() == KeyCode.V) Paste();
@@ -349,193 +365,184 @@ public class Aur {
         });
     }
 
-    private void Copy(){
+    private void Copy() {
         copyContainer = new AurAuraEntry(auraEntries.get(listView.getSelectionModel().getSelectedIndex()));
     }
 
-    private void Paste(){
+    private void Paste() {
         if(copyContainer == null) return;
 
         auraEntries.set(listView.getSelectionModel().getSelectedIndex(), new AurAuraEntry(copyContainer));
         hBox.getChildren().remove(1);
-        hBox.getChildren().set(1, createVBoxAuraId(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
+        hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
     }
 
-    private void Delete(){
+    private void Delete() {
         if(listView.getSelectionModel().getSelectedIndex() == 0) return;
+        
         auraEntries.remove(listView.getSelectionModel().getSelectedIndex());
         allEntries.remove(listView.getSelectionModel().getSelectedIndex());
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
 
-        for(int i=0;i<listView.getItems().size();i++){
-            allEntries.set(i,new String("Aura Id: "+i));
+        for(int i = 0; i < listView.getItems().size(); i++) {
+            allEntries.set(i, new String("Aura ID " + i));
             listView.getItems().set(i,allEntries.get(i));
         }
     }
 
-    private void Append(){
+    private void Append() {
         auraEntries.add(listView.getSelectionModel().getSelectedIndex()+1,new AurAuraEntry());
-        allEntries.add(new String("Aura Id: "+listView.getItems().size()));
+        allEntries.add(new String("Aura ID "+ listView.getItems().size()));
         listView.getItems().add(allEntries.getLast());
     }
-    private void Insert(){
-        if(listView.getSelectionModel().getSelectedIndex()>0){
-            auraEntries.add(listView.getSelectionModel().getSelectedIndex()-1,new AurAuraEntry());
-            allEntries.add(new String("Aura Id: "+listView.getItems().size()));
+
+    private void Insert() {
+        if(listView.getSelectionModel().getSelectedIndex() > 0) {
+            auraEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new AurAuraEntry());
+            allEntries.add(new String("Aura ID " + listView.getItems().size()));
             listView.getItems().add(allEntries.getLast());
         }
-        else if(listView.getSelectionModel().getSelectedIndex()==0){
-            auraEntries.add(listView.getSelectionModel().getSelectedIndex(),new AurAuraEntry());
-            allEntries.add(new String("Aura Id: "+listView.getItems().size()));
+        else if(listView.getSelectionModel().getSelectedIndex() == 0) {
+            auraEntries.add(listView.getSelectionModel().getSelectedIndex(), new AurAuraEntry());
+            allEntries.add(new String("Aura ID " + listView.getItems().size()));
             listView.getItems().add(allEntries.getLast());
         }
     }
 
-    public void aurReader(Path path){
-        try(FileChannel channel=FileChannel.open(path, StandardOpenOption.READ)) {
-            int auraoffset=32;
-            int charaOffset=0;
-            int effectsOffset=0;
+    public void aurReader(Path path) {
+        try(FileChannel channel = FileChannel.open(path, StandardOpenOption.READ)) {
+            int auraoffset = 32;
+            int charaOffset = 0;
+            int effectsOffset = 0;
             int auraEntriesCount;
             
-            ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
             
-            //reading aura entries
             channel.position(8);
             intBuffer.clear();
             channel.read(intBuffer);
             intBuffer.flip();
-            auraEntriesCount=intBuffer.getInt();
+            auraEntriesCount = intBuffer.getInt();
 
-            allEntries=new ArrayList<>(auraEntriesCount);
-            for(int i=0;i<auraEntriesCount;i++){
-                allEntries.add(new String("Aura Id: "+i));
+            allEntries = new ArrayList<>(auraEntriesCount);
+
+            for(int i = 0; i < auraEntriesCount; i++) {
+                allEntries.add(new String("Aura ID " + i));
                 listView.getItems().add(allEntries.get(i));
             }
 
-            //reading character entries
             channel.position(24);
             intBuffer.clear();
             channel.read(intBuffer);
             intBuffer.flip();
-            characterEntries=intBuffer.getInt();
+            characterEntries = intBuffer.getInt();
 
-            //reading character entries offstet
             channel.position(28);
             intBuffer.clear();
             channel.read(intBuffer);
             intBuffer.flip();
-            charaOffset=intBuffer.getInt();
+            charaOffset = intBuffer.getInt();
 
-            for(int i=0;i<auraEntriesCount;i++){
+            for(int i = 0; i < auraEntriesCount; i++) {
                 AurAuraEntry auraEntry = new AurAuraEntry();
-                //reading i04
-                channel.position(auraoffset+16*i+4);
+                auraEntries.add(auraEntry);
+
+                channel.position(auraoffset + i * 16 + 4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 auraEntry.i04 = intBuffer.getInt();
 
-                //reading effectOffset
-                channel.position(auraoffset+16*i+12);
+                channel.position(auraoffset + i * 16 + 12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                effectsOffset=intBuffer.getInt();
+                effectsOffset = intBuffer.getInt();
 
-                //reading boostStart
-                channel.position(effectsOffset+4);
+                channel.position(effectsOffset + 4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 auraEntry.boostStart = intBuffer.getInt();
 
-                //reading boostLoop
-                channel.position(effectsOffset+12);
+                channel.position(effectsOffset + 12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 auraEntry.boostLoop = intBuffer.getInt();
 
-                //reading boostEnd
-                channel.position(effectsOffset+20);
+                channel.position(effectsOffset + 20);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 auraEntry.boostEnd = intBuffer.getInt();
 
-                //reading kiaiCharge
-                channel.position(effectsOffset+28);
+                channel.position(effectsOffset + 28);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 auraEntry.kiaiCharge = intBuffer.getInt();
 
-                //reading kiryokuMax
-                channel.position(effectsOffset+36);
+                channel.position(effectsOffset + 36);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 auraEntry.kiryokuMax = intBuffer.getInt();
 
-                //reading HenshinStart
-                channel.position(effectsOffset+44);
+                channel.position(effectsOffset + 44);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 auraEntry.henshinStart = intBuffer.getInt();
 
-                //reading HenshinEnd
-                channel.position(effectsOffset+52);
+                channel.position(effectsOffset + 52);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 auraEntry.henshinEnd = intBuffer.getInt();
-                auraEntries.add(auraEntry);
-                //System.out.println("looking at: "+(effectsOffset+52));
             }
-            for(int i=0;i<characterEntries;i++){
+
+            for(int i = 0; i < characterEntries; i++) {
                 AurCharaEntry charaEntry = new AurCharaEntry();
-                channel.position(charaOffset+16*i);
+                charaEntries.add(charaEntry);
+
+                channel.position(charaOffset + i * 16);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 charaEntry.charaId = intBuffer.getInt();
     
-                channel.position(charaOffset+16*i+4);
+                channel.position(charaOffset + i * 16 + 4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 charaEntry.costume = intBuffer.getInt();
 
-                channel.position(charaOffset+16*i+8);
+                channel.position(charaOffset + i * 16 + 8);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 charaEntry.auraId = intBuffer.getInt();
                 
-                channel.position(charaOffset+16*i+12);
+                channel.position(charaOffset + i * 16 + 12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 charaEntry.glare = (intBuffer.getInt() ==  1);
 
-                charaEntries.add(charaEntry);
                 createVBoxRightCharaId(charaEntries.get(i));
             }
-            
         } catch (IOException e) {
-            System.err.println(e);
-            
+            e.printStackTrace();
         }
     }
 
-    public void aurWriter(Path path){
-        try(FileChannel channel=FileChannel.open(path,StandardOpenOption.WRITE,StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING)) {
-            int effectCount=7;
-            int auraOffset=32;
-            int auraTypeOffset=32+allEntries.size()*16+allEntries.size()*56;
-            int charaOffset=32+allEntries.size()*16+allEntries.size()*56+120;
+    public void aurWriter(Path path) {
+        try(FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            int effectCount = 7;
+            int auraOffset = 32;
+            int auraTypeOffset = 32 + allEntries.size() * 72;
+            int charaOffset = 32 + allEntries.size() * 72 + 120;
             String auraTypes =  
             "BoostStart\0" + 
             "BoostLoop\0" + 
@@ -545,246 +552,214 @@ public class Aur {
             "HenshinStart\0" + 
             "HenshinEnd\0";
 
-            ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
             
-            //writing magic
-            channel.write(ByteBuffer.wrap(new byte[]{0x23,0x41,0x55,0x52}));
-          
-            //writing endinanes
-            channel.position(4);
-            channel.write(ByteBuffer.wrap(new byte[]{(byte)0xFE,(byte)0xFF}));
-            
-            //writing header size 
-            channel.position(6);
-            channel.write(ByteBuffer.wrap(new byte[]{0x20,0x00}));
+            channel.write(ByteBuffer.wrap(new byte[]{0x23, 0x41, 0x55, 0x52}));
 
-            //writing total aura entries
+            channel.position(4);
+            channel.write(ByteBuffer.wrap(new byte[]{(byte)0xFE, (byte)0xFF}));
+            
+            channel.position(6);
+            channel.write(ByteBuffer.wrap(new byte[]{0x20, 0x00}));
+
             channel.position(8);
             intBuffer.clear();
             intBuffer.putInt(allEntries.size());
             intBuffer.flip();
             channel.write(intBuffer);
 
-            //writing auraoffset 
             channel.position(12);
             intBuffer.clear();
             intBuffer.putInt(auraOffset);
             intBuffer.flip();
             channel.write(intBuffer);
-            
-            //writing effect count
+
             channel.position(16);
             intBuffer.clear();
             intBuffer.putInt(effectCount);
             intBuffer.flip();
             channel.write(intBuffer);
-            
-            //writing aura type offset
+
             channel.position(20);
             intBuffer.clear();
             intBuffer.putInt(auraTypeOffset);
             intBuffer.flip();
             channel.write(intBuffer);
 
-            //writing character entries
             channel.position(24);
             intBuffer.clear();
             intBuffer.putInt(characterEntries);
             intBuffer.flip();
             channel.write(intBuffer);
 
-            //writing character id offset
             channel.position(28);
             intBuffer.clear();
             intBuffer.putInt(charaOffset);
             intBuffer.flip();
             channel.write(intBuffer);
 
-            //writing boostStart textString offset
             channel.position(auraTypeOffset);
             intBuffer.clear();
-            intBuffer.putInt(auraTypeOffset+28);
+            intBuffer.putInt(auraTypeOffset + 28);
             intBuffer.flip();
             channel.write(intBuffer);
 
-            //writing boostLoop textString offset
-            channel.position(auraTypeOffset+4);
+            channel.position(auraTypeOffset + 4);
             intBuffer.clear();
-            intBuffer.putInt(auraTypeOffset+39);
+            intBuffer.putInt(auraTypeOffset + 39);
             intBuffer.flip();
             channel.write(intBuffer);
 
-            //writing boostEnd textString offset
-            channel.position(auraTypeOffset+8);
+            channel.position(auraTypeOffset + 8);
             intBuffer.clear();
-            intBuffer.putInt(auraTypeOffset+49);
+            intBuffer.putInt(auraTypeOffset + 49);
             intBuffer.flip();
             channel.write(intBuffer);
 
-            //writing kiaiCharge textString offset
-            channel.position(auraTypeOffset+12);
+            channel.position(auraTypeOffset + 12);
             intBuffer.clear();
-            intBuffer.putInt(auraTypeOffset+58);
+            intBuffer.putInt(auraTypeOffset + 58);
             intBuffer.flip();
             channel.write(intBuffer);
 
-            //writing kiryokuMax textString offset
-            channel.position(auraTypeOffset+16);
+            channel.position(auraTypeOffset + 16);
             intBuffer.clear();
-            intBuffer.putInt(auraTypeOffset+69);
+            intBuffer.putInt(auraTypeOffset + 69);
             intBuffer.flip();
             channel.write(intBuffer);
 
-            //writing henshinStart textString offset
-            channel.position(auraTypeOffset+20);
+            channel.position(auraTypeOffset + 20);
             intBuffer.clear();
-            intBuffer.putInt(auraTypeOffset+80);
+            intBuffer.putInt(auraTypeOffset + 80);
             intBuffer.flip();
             channel.write(intBuffer);
 
-            //writing henshinEnd textString offset
-            channel.position(auraTypeOffset+24);
+            channel.position(auraTypeOffset + 24);
             intBuffer.clear();
-            intBuffer.putInt(auraTypeOffset+93);
+            intBuffer.putInt(auraTypeOffset + 93);
             intBuffer.flip();
             channel.write(intBuffer);
 
-            channel.position(auraTypeOffset+28);
+            channel.position(auraTypeOffset + 28);
             channel.write(ByteBuffer.wrap(auraTypes.getBytes(StandardCharsets.ISO_8859_1)));
 
-            for(int i=0;i<allEntries.size();i++){
+            for(int i = 0; i < allEntries.size(); i++) {
                 AurAuraEntry auraEntry = auraEntries.get(i);
-                //writing aura id initial
-                channel.position(auraOffset+(16*i));
+   
+                channel.position(auraOffset + i * 16);
                 intBuffer.clear();
                 intBuffer.putInt(allEntries.indexOf(allEntries.get(i)));
                 intBuffer.flip();
                 channel.write(intBuffer);
-                
-                //writing i04
-                channel.position(auraOffset+(16*i)+4);
+
+                channel.position(auraOffset + i * 16 + 4);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.i04);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                //writing effectCount
-                channel.position(auraOffset+(16*i)+8);
+                channel.position(auraOffset + i * 16 + 8);
                 intBuffer.clear();
                 intBuffer.putInt(effectCount);
                 intBuffer.flip();
                 channel.write(intBuffer);
                 
-                //writing effectsOffset
-                channel.position(auraOffset+(16*i)+12);
+                channel.position(auraOffset+ i * 16 + 12);
                 intBuffer.clear();
-                intBuffer.putInt(allEntries.size()*16+32+56*i);
+                intBuffer.putInt(allEntries.size() * 16 + 32 + i * 56);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                //writing boostStart
-                channel.position(allEntries.size()*16+32+56*i+4);
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 4);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.boostStart);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                //write 1
-                channel.position(allEntries.size()*16+32+56*i+8);
-                channel.write(ByteBuffer.wrap(new byte[]{0x01,0x00,0x00,0x00}));
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 8);
+                channel.write(ByteBuffer.wrap(new byte[]{0x01, 0x00, 0x00, 0x00}));
 
-                //write boostLoop
-                channel.position(allEntries.size()*16+32+56*i+12);
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 12);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.boostLoop);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                //write 2
-                channel.position(allEntries.size()*16+32+56*i+16);
-                channel.write(ByteBuffer.wrap(new byte[]{0x02,0x00,0x00,0x00}));
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 16);
+                channel.write(ByteBuffer.wrap(new byte[]{0x02, 0x00, 0x00, 0x00}));
                 
-                //write boostEnd
-                channel.position(allEntries.size()*16+32+56*i+20);
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 20);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.boostEnd);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                //write 3
-                channel.position(allEntries.size()*16+32+56*i+24);
-                channel.write(ByteBuffer.wrap(new byte[]{0x03,0x00,0x00,0x00}));
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 24);
+                channel.write(ByteBuffer.wrap(new byte[]{0x03, 0x00, 0x00, 0x00}));
 
-                //write kiai charge
-                channel.position(allEntries.size()*16+32+56*i+28);
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 28);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.kiaiCharge);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                //write 4
-                channel.position(allEntries.size()*16+32+56*i+32);
-                channel.write(ByteBuffer.wrap(new byte[]{0x04,0x00,0x00,0x00}));
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 32);
+                channel.write(ByteBuffer.wrap(new byte[]{0x04, 0x00, 0x00, 0x00}));
                 
-                //write kiryoku max
-                channel.position(allEntries.size()*16+32+56*i+36);
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 36);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.kiryokuMax);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                //write 5
-                channel.position(allEntries.size()*16+32+56*i+40);
-                channel.write(ByteBuffer.wrap(new byte[]{0x05,0x00,0x00,0x00}));
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 40);
+                channel.write(ByteBuffer.wrap(new byte[]{0x05 ,0x00,0x00,0x00}));
 
-                //werite henshin start
-                channel.position(allEntries.size()*16+32+56*i+44);
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 44);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.henshinStart);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                //write 6
-                channel.position(allEntries.size()*16+32+56*i+48);
-                channel.write(ByteBuffer.wrap(new byte[]{0x06,0x00,0x00,0x00}));
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 48);
+                channel.write(ByteBuffer.wrap(new byte[]{0x06, 0x00, 0x00, 0x00}));
 
-                //writing henshin end
-                channel.position(allEntries.size()*16+32+56*i+52);
+                channel.position(allEntries.size() * 16 + 32 + i * 56 + 52);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.henshinEnd);
                 intBuffer.flip();
                 channel.write(intBuffer);
             }
-            for(int i=0;i<characterEntries;i++){
+
+            for(int i = 0; i < characterEntries; i++) {
                 AurCharaEntry charaEntry = charaEntries.get(i);
             
-                channel.position(charaOffset+(16*i));
+                channel.position(charaOffset + i * 16);
                 intBuffer.clear();
                 intBuffer.putInt(charaEntry.charaId);
                 intBuffer.flip();
                 channel.write(intBuffer);
     
-                channel.position(charaOffset+(16*i)+4);
+                channel.position(charaOffset + i * 16 + 4);
                 intBuffer.clear();
                 intBuffer.putInt(charaEntry.costume);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(charaOffset+(16*i)+8);
+                channel.position(charaOffset + i * 16 + 8);
                 intBuffer.clear();
                 intBuffer.putInt(charaEntry.auraId);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(charaOffset+(16*i)+12);
+                channel.position(charaOffset + i * 16 + 12);
                 intBuffer.clear();
                 intBuffer.putInt(charaEntry.glare ? 1 : 0);
                 intBuffer.flip();
                 channel.write(intBuffer);
             }
         } catch (IOException e) {
-            System.err.println(e);
-            Popups.ErrorSave(path.toFile().getName());   
+            e.printStackTrace();
         }
     }
 }
