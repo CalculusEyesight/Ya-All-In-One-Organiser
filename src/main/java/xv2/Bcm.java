@@ -60,9 +60,7 @@ public class Bcm {
         createTabs();
         SplitPane splitPane = new SplitPane(treeView, tabPane);
         splitPane.setDividerPositions(0.245);
-
-        String css = getClass().getResource("/style.css").toExternalForm();
-        splitPane.getStylesheets().add(css); 
+        splitPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm()); 
 
         return splitPane;
     }
