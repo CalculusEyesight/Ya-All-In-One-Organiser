@@ -1276,10 +1276,10 @@ public class Bcm {
 
         automatic.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (manual.isSelected() || unknown18HDC.isSelected() || unknown19HDC.isSelected() || unknown20HDC.isSelected()) {
-                continueUntilReleased.setSelected(false);
+                automatic.setSelected(false);
             }
             else {
-                continueUntilReleased.setSelected(true);
+                automatic.setSelected(true);
             }
         });
         manual.selectedProperty().addListener((obs, oldValue, newValue) -> {
@@ -1312,7 +1312,7 @@ public class Bcm {
         });
 
         VBox chargeTypeBox = new VBox(2, automatic, manual, unknown18HDC, unknown19HDC, unknown20HDC );
-        chargeTypeBox.addEventHandler(ActionEvent.ACTION,event -> {
+        chargeTypeBox.addEventHandler(ActionEvent.ACTION, event -> {
             if (manual.isSelected() || unknown18HDC.isSelected() || unknown19HDC.isSelected() || unknown20HDC.isSelected()) {
                 automatic.setSelected(false);
             }
