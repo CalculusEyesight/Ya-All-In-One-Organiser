@@ -3090,36 +3090,16 @@ public class Bcm {
 
         randomFlagToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue.isSelected()) {
-                if ((RadioButton) newValue == none) { 
-                    entry.bacRandomFlags = 0;
-                }
-                else if ((RadioButton) newValue == randomBACEntry) { 
-                    entry.bacRandomFlags = 1;
-                }
-                else if ((RadioButton) newValue == noTargetCorrection) { 
-                    entry.bacRandomFlags = 2;
-                }
-                else if ((RadioButton) newValue == threeInstanceSetup) { 
-                    entry.bacRandomFlags = 3;
-                }
-                else if ((RadioButton) newValue == unknown4) { 
-                    entry.bacRandomFlags = 4;
-                }
-                else if ((RadioButton) newValue == unknown5) { 
-                    entry.bacRandomFlags = 5;
-                }
-                else if ((RadioButton) newValue == unknown6) { 
-                    entry.bacRandomFlags = 6;
-                }
-                else if ((RadioButton) newValue == unknown7) { 
-                    entry.bacRandomFlags = 7;
-                }
-                else if ((RadioButton) newValue == unknown8) { 
-                    entry.bacRandomFlags = 8;
-                }
-                else if ((RadioButton) newValue == unknown9) { 
-                    entry.bacRandomFlags = 9;
-                }
+                if ((RadioButton) newValue == none)                     { entry.bacRandomFlags = 0; }
+                else if ((RadioButton) newValue == randomBACEntry)      { entry.bacRandomFlags = 1; }
+                else if ((RadioButton) newValue == noTargetCorrection)  { entry.bacRandomFlags = 2; }
+                else if ((RadioButton) newValue == threeInstanceSetup)  { entry.bacRandomFlags = 3; }
+                else if ((RadioButton) newValue == unknown4)            { entry.bacRandomFlags = 4; }
+                else if ((RadioButton) newValue == unknown5)            { entry.bacRandomFlags = 5; }
+                else if ((RadioButton) newValue == unknown6)            { entry.bacRandomFlags = 6; }
+                else if ((RadioButton) newValue == unknown7)            { entry.bacRandomFlags = 7; }
+                else if ((RadioButton) newValue == unknown8)            { entry.bacRandomFlags = 8; }
+                else if ((RadioButton) newValue == unknown9)            { entry.bacRandomFlags = 9; }
             }
         });
 
@@ -3315,36 +3295,16 @@ public class Bcm {
         
         raceGenderToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue.isSelected()) {
-                if ((RadioButton) newValue == allCharactersDefault) {
-                    entry.raceGender = 0L;
-                }
-                else if ((RadioButton) newValue == rosterCharactersOnly) {
-                    entry.raceGender = 1L;
-                }
-                else if ((RadioButton) newValue == maleHumansOnly) {
-                    entry.raceGender = 2L;
-                }
-                else if ((RadioButton) newValue == femaleHumansOnly) {
-                    entry.raceGender = 3L;
-                }
-                else if ((RadioButton) newValue == maleSaiyansOnly) {
-                    entry.raceGender = 4L;
-                }
-                else if ((RadioButton) newValue == femaleSaiyansOnly) {
-                    entry.raceGender = 5L;
-                }
-                else if ((RadioButton) newValue == namekiansOnly) {
-                    entry.raceGender = 6L;
-                }
-                else if ((RadioButton) newValue == friezaRaceOnly) {
-                    entry.raceGender = 7L;
-                }
-                else if ((RadioButton) newValue == maleMajinsOnly) {
-                    entry.raceGender = 8L;
-                }
-                else if ((RadioButton) newValue == femaleMajinsOnly) {
-                    entry.raceGender = 9L;
-                }
+                if ((RadioButton) newValue == allCharactersDefault)      { entry.raceGender = 0L; }
+                else if ((RadioButton) newValue == rosterCharactersOnly) { entry.raceGender = 1L; }
+                else if ((RadioButton) newValue == maleHumansOnly)       { entry.raceGender = 2L; }
+                else if ((RadioButton) newValue == femaleHumansOnly)     { entry.raceGender = 3L; }
+                else if ((RadioButton) newValue == maleSaiyansOnly)      { entry.raceGender = 4L; }
+                else if ((RadioButton) newValue == femaleSaiyansOnly)    { entry.raceGender = 5L; }
+                else if ((RadioButton) newValue == namekiansOnly)        { entry.raceGender = 6L; }
+                else if ((RadioButton) newValue == friezaRaceOnly)       { entry.raceGender = 7L; }
+                else if ((RadioButton) newValue == maleMajinsOnly)       { entry.raceGender = 8L; }
+                else if ((RadioButton) newValue == femaleMajinsOnly)     { entry.raceGender = 9L; }
             }
         });
 
