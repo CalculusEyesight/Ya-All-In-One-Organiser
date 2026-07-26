@@ -45,7 +45,7 @@ public class Bcm {
     ContextMenu contextMenu = new ContextMenu();
     MenuItem copy = new MenuItem("Copy Ctrl+C");
     MenuItem paste = new MenuItem("Paste Ctrl+V");
-    MenuItem delete = new MenuItem("Delete Delete");
+    MenuItem delete = new MenuItem("Delete Del");
     MenuItem append = new MenuItem("Append Ctrl+A");
     MenuItem insert = new MenuItem("Insert Ctrl+I");
     MenuItem addNewChild = new MenuItem("Add New Child Ctrl+N");
