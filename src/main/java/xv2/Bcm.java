@@ -33,41 +33,41 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.Tab;
 
 public class Bcm {
-    TreeView<String> treeView=new TreeView<>();
-    TreeItem<String> currentEntry=new TreeItem<>();
     ArrayList<TreeItem<String>> allEntries;
-    TabPane tabPane=new TabPane();
-    int entryIndex;
+    ArrayList <BcmEntry> bcmEntries = new ArrayList<>();
 
-   ArrayList <BcmEntry> bcmEntries = new ArrayList<>();
-    private BcmEntry copyContainer = null;
+    TreeView<String> treeView = new TreeView<>();
+    TreeItem<String> currentEntry = new TreeItem<>();
+    TabPane tabPane = new TabPane();
 
-    ContextMenu contextMenu=new ContextMenu();
-    MenuItem copy=new MenuItem("Copy Ctrl+C");
-    MenuItem paste=new MenuItem("Paste Ctrl+V");
-    MenuItem delete=new MenuItem("Delete Delete");
-    MenuItem append=new MenuItem("Append Ctrl+A");
-    MenuItem insert=new MenuItem("Insert Ctrl+I");
-    MenuItem addNewChild=new MenuItem("Add New Child Ctrl+N");
-    MenuItem addComment =new MenuItem("Add Comment Ctrl+Q");
+    BcmEntry copyContainer = null;
+
+    ContextMenu contextMenu = new ContextMenu();
+    MenuItem copy = new MenuItem("Copy Ctrl+C");
+    MenuItem paste = new MenuItem("Paste Ctrl+V");
+    MenuItem delete = new MenuItem("Delete Delete");
+    MenuItem append = new MenuItem("Append Ctrl+A");
+    MenuItem insert = new MenuItem("Insert Ctrl+I");
+    MenuItem addNewChild = new MenuItem("Add New Child Ctrl+N");
+    MenuItem addComment = new MenuItem("Add Comment Ctrl+Q");
   
-    public Bcm(){
+    public Bcm() {
         entriesActionListener();
         entriesKeysListener();
     }
 
-    public SplitPane createSplitPane(){
-        SplitPane splitPane =new SplitPane();
+    public SplitPane createSplitPane() {
         createTabs();
-  
-        splitPane.getItems().addAll(treeView, tabPane);
+        SplitPane splitPane = new SplitPane(treeView, tabPane);
         splitPane.setDividerPositions(0.245);
+
         String css = getClass().getResource("/style.css").toExternalForm();
         splitPane.getStylesheets().add(css); 
+
         return splitPane;
     }
 
-    public void createTabs(){
+    public void createTabs() {
         if (tabPane.getTabs().isEmpty()) {
             Tab inputsTab = new Tab("Inputs");
             Tab activatorTab = new Tab("Activator");
@@ -85,86 +85,81 @@ public class Bcm {
         }
     }
     
-    public VBox createInputsVBox(BcmEntry entry){
-        VBox inputsVBox=new VBox(20);
-        inputsVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
- 
+    public VBox createInputsVBox(BcmEntry entry) {
         //directional input
-        HBox directionalInputHBox=new HBox(2);
-        directionalInputHBox.setPadding(new Insets(20,0,0,8));
-
-        Label directionalInputLabel=new Label("Directional input ");
+        Label directionalInputLabel = new Label("Directional input");
         directionalInputLabel.setPrefWidth(100);
 
         //relative direction
         Label relativeDirectionLabel = new Label("Relative Direction");
         relativeDirectionLabel.getStyleClass().add("titled-address-label");
+        relativeDirectionLabel.setTranslateY(-8); 
+        relativeDirectionLabel.setTranslateX(10);
 
-        CheckBox forwardsRD=new CheckBox("Forwards");
-        CheckBox backwardsRD=new CheckBox("Backwards");
-        CheckBox leftRD=new CheckBox("Left");
-        CheckBox rightRD= new CheckBox("Right");
+        CheckBox forwardsRD = new CheckBox("Forwards");
+        CheckBox backwardsRD = new CheckBox("Backwards");
+        CheckBox leftRD = new CheckBox("Left");
+        CheckBox rightRD = new CheckBox("Right");
 
         forwardsRD.setSelected((entry.directionalInputs & 1L) != 0);
         backwardsRD.setSelected((entry.directionalInputs & 2L) != 0);
         leftRD.setSelected((entry.directionalInputs & 4L) != 0);
         rightRD.setSelected((entry.directionalInputs & 8L) != 0);
 
-        forwardsRD.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=1L;
+        forwardsRD.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 1L;
             }
-            else{
-                entry.directionalInputs&=~1L;
-            }
-        });
-        backwardsRD.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=2L;
-            }
-            else{
-                entry.directionalInputs&=~2L;
+            else {
+                entry.directionalInputs &= ~1L;
             }
         });
-        leftRD.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=4L;
+        backwardsRD.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 2L;
             }
-            else{
-                entry.directionalInputs&=~4L;
-            }
-        });
-        rightRD.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=8L;
-            }
-            else{
-                entry.directionalInputs&=~8L;
+            else {
+                entry.directionalInputs &= ~2L;
             }
         });
-        VBox relativeDirectionBox = new VBox(2,forwardsRD,backwardsRD,leftRD,rightRD);
+        leftRD.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 4L;
+            }
+            else {
+                entry.directionalInputs &= ~4L;
+            }
+        });
+        rightRD.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 8L;
+            }
+            else {
+                entry.directionalInputs &= ~8L;
+            }
+        });
 
-        VBox borderContainerRD=new VBox(relativeDirectionBox);
+        VBox relativeDirectionBox = new VBox(2, forwardsRD, backwardsRD, leftRD, rightRD);
+
+        VBox borderContainerRD = new VBox(relativeDirectionBox);
         borderContainerRD.getStyleClass().add("titled-address-box");
-        borderContainerRD.setPadding(new Insets(12,0,0,0));
+        borderContainerRD.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane relativeDirectionBoxStackPane = new StackPane();
-        relativeDirectionBoxStackPane.getChildren().addAll(borderContainerRD,relativeDirectionLabel);
-
+        StackPane relativeDirectionBoxStackPane = new StackPane(borderContainerRD, relativeDirectionLabel);
         StackPane.setAlignment(relativeDirectionLabel, Pos.TOP_LEFT);
-        relativeDirectionLabel.setTranslateY(-8); 
-        relativeDirectionLabel.setTranslateX(10);
         //relative direction
         
         //user direction
         Label userDirectionLabel = new Label("User Direction");
         userDirectionLabel.getStyleClass().add("titled-address-label");
+        userDirectionLabel.setTranslateY(-8); 
+        userDirectionLabel.setTranslateX(10);
 
-        CheckBox inputActivatedOnceDI=new CheckBox("Input Activated Once");
-        CheckBox upDI=new CheckBox("Up");
-        CheckBox downDI=new CheckBox("Down");
-        CheckBox rightDI=new CheckBox("Right");
-        CheckBox leftDI=new CheckBox("Left");
+        CheckBox inputActivatedOnceDI = new CheckBox("Input Activated Once");
+        CheckBox upDI = new CheckBox("Up");
+        CheckBox downDI = new CheckBox("Down");
+        CheckBox rightDI = new CheckBox("Right");
+        CheckBox leftDI = new CheckBox("Left");
 
         inputActivatedOnceDI.setSelected((entry.directionalInputs & 16L) != 0);
         upDI.setSelected((entry.directionalInputs & 32L) != 0);
@@ -172,69 +167,68 @@ public class Bcm {
         rightDI.setSelected((entry.directionalInputs & 128L) != 0);
         leftDI.setSelected((entry.directionalInputs & 256L) != 0);
 
-        inputActivatedOnceDI.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=16L;
+        inputActivatedOnceDI.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 16L;
             }
-            else{
-                entry.directionalInputs&=~16L;
-            }
-        });
-        upDI.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=32L;
-            }
-            else{
-                entry.directionalInputs&=~32L;
+            else {
+                entry.directionalInputs &= ~16L;
             }
         });
-        downDI.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=64L;
+        upDI.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 32L;
             }
-            else{
-                entry.directionalInputs&=~64L;
-            }
-        });
-        rightDI.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=128L;
-            }
-            else{
-                entry.directionalInputs&=~128L;
+            else {
+                entry.directionalInputs &= ~32L;
             }
         });
-        leftDI.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=256L;
+        downDI.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 64L;
             }
-            else{
-                entry.directionalInputs&=~256L;
+            else {
+                entry.directionalInputs &= ~64L;
             }
         });
-        VBox userDirectionVBox = new VBox(2,inputActivatedOnceDI,upDI,downDI,rightDI,leftDI);
+        rightDI.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 128L;
+            }
+            else {
+                entry.directionalInputs &= ~128L;
+            }
+        });
+        leftDI.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 256L;
+            }
+            else {
+                entry.directionalInputs &= ~256L;
+            }
+        });
 
-        VBox borderContainerUD=new VBox(userDirectionVBox);
+        VBox userDirectionVBox = new VBox(2, inputActivatedOnceDI, upDI, downDI, rightDI, leftDI);
+
+        VBox borderContainerUD = new VBox(userDirectionVBox);
         borderContainerUD.getStyleClass().add("titled-address-box");
-        borderContainerUD.setPadding(new Insets(12,0,0,0));
+        borderContainerUD.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane userDirectionBoxStackPane = new StackPane();
-        userDirectionBoxStackPane.getChildren().addAll(borderContainerUD,userDirectionLabel);
-
+        StackPane userDirectionBoxStackPane = new StackPane(borderContainerUD, userDirectionLabel);
         StackPane.setAlignment(userDirectionLabel, Pos.TOP_LEFT);
-        userDirectionLabel.setTranslateY(-8); 
-        userDirectionLabel.setTranslateX(10);
         //user direction
 
         //unknown1
         Label unknownDir1Label = new Label("Unknown 1");
         unknownDir1Label.getStyleClass().add("titled-address-label");
+        unknownDir1Label.setTranslateY(-8); 
+        unknownDir1Label.setTranslateX(10);
 
-        CheckBox unknown10=new CheckBox("Unknown 10");
-        CheckBox unknown11=new CheckBox("Unknown 11");
-        CheckBox unknown12=new CheckBox("Unknown 12");
-        CheckBox unknown13=new CheckBox("Unknown 13");
-        CheckBox unknown14=new CheckBox("Unknown 14");
+        CheckBox unknown10 = new CheckBox("Unknown 10");
+        CheckBox unknown11 = new CheckBox("Unknown 11");
+        CheckBox unknown12 = new CheckBox("Unknown 12");
+        CheckBox unknown13 = new CheckBox("Unknown 13");
+        CheckBox unknown14 = new CheckBox("Unknown 14");
 
         unknown10.setSelected((entry.directionalInputs & 512L) != 0);
         unknown11.setSelected((entry.directionalInputs & 1024L) != 0);
@@ -242,138 +236,137 @@ public class Bcm {
         unknown13.setSelected((entry.directionalInputs & 4096L) != 0);
         unknown14.setSelected((entry.directionalInputs & 8192L) != 0);
 
-        unknown10.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=512L;
+        unknown10.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 512L;
             }
-            else{
-                entry.directionalInputs&=~512L;
-            }
-        });
-        unknown11.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=1024L;
-            }
-            else{
-                entry.directionalInputs&=~1024L;
+            else {
+                entry.directionalInputs &= ~512L;
             }
         });
-        unknown12.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=2048L;
+        unknown11.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 1024L;
             }
-            else{
-                entry.directionalInputs&=~2048L;
-            }
-        });
-        unknown13.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=4096L;
-            }
-            else{
-                entry.directionalInputs&=~4096L;
+            else {
+                entry.directionalInputs &= ~1024L;
             }
         });
-        unknown14.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=8192L;
+        unknown12.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 2048L;
             }
-            else{
-                entry.directionalInputs&=~8192L;
+            else {
+                entry.directionalInputs &= ~2048L;
             }
         });
-        VBox unknownGroup1Box = new VBox(2,unknown10,unknown11,unknown12,unknown13,unknown14);
+        unknown13.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 4096L;
+            }
+            else {
+                entry.directionalInputs &= ~4096L;
+            }
+        });
+        unknown14.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 8192L;
+            }
+            else {
+                entry.directionalInputs &= ~8192L;
+            }
+        });
 
-        VBox borderContainerUG1=new VBox(unknownGroup1Box);
+        VBox unknownGroup1Box = new VBox(2, unknown10, unknown11, unknown12, unknown13, unknown14);
+
+        VBox borderContainerUG1 = new VBox(unknownGroup1Box);
         borderContainerUG1.getStyleClass().add("titled-address-box");
-        borderContainerUG1.setPadding(new Insets(12,0,0,0));
+        borderContainerUG1.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane unknownGroup1BoxStackPane = new StackPane();
-        unknownGroup1BoxStackPane.getChildren().addAll(borderContainerUG1,unknownDir1Label);
-
+        StackPane unknownGroup1BoxStackPane = new StackPane(borderContainerUG1, unknownDir1Label);
         StackPane.setAlignment(unknownDir1Label, Pos.TOP_LEFT);
-        unknownDir1Label.setTranslateY(-8); 
-        unknownDir1Label.setTranslateX(10);
         //unknown1
 
         //unknown2
         Label unknownDir2Label = new Label("Unknown 2");
         unknownDir2Label.getStyleClass().add("titled-address-label");
+        unknownDir2Label.setTranslateY(-8); 
+        unknownDir2Label.setTranslateX(10);
 
-        CheckBox unknown15=new CheckBox("Unknown 15");
-        CheckBox unknown16=new CheckBox("Unknown 16");
-        CheckBox unknown17=new CheckBox("Unknown 17");
-        CheckBox unknown18=new CheckBox("Unknown 18");
-        CheckBox unknown19=new CheckBox("Unknown 19");
+        CheckBox unknown15 = new CheckBox("Unknown 15");
+        CheckBox unknown16 = new CheckBox("Unknown 16");
+        CheckBox unknown17 = new CheckBox("Unknown 17");
+        CheckBox unknown18 = new CheckBox("Unknown 18");
+        CheckBox unknown19 = new CheckBox("Unknown 19");
 
         unknown15.setSelected((entry.directionalInputs & 16384L) != 0);
         unknown16.setSelected((entry.directionalInputs & 32768L) != 0);
         unknown17.setSelected((entry.directionalInputs & 65536L) != 0);
         unknown18.setSelected((entry.directionalInputs & 131072L) != 0);
         unknown19.setSelected((entry.directionalInputs & 262144L) != 0);
-        unknown15.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=16384L;
-            }
-            else{
-                entry.directionalInputs&=~16384L;
-            }
-        });
-        unknown16.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=32768L;
-            }
-            else{
-                entry.directionalInputs&=~32768L;
-            }
-        });
-        unknown17.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=65536L;
-            }
-            else{
-                entry.directionalInputs&=~65536L;
-            }
-        });
-        unknown18.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=131072L;
-            }
-            else{
-                entry.directionalInputs&=~131072L;
-            }
-        });
-        unknown19.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=262144L;
-            }
-            else{
-                entry.directionalInputs&=~262144L;
-            }
-        });
-        VBox unknownGroup2Box = new VBox(2,unknown15,unknown16,unknown17,unknown18,unknown19);
 
-        VBox borderContainerUG2=new VBox(unknownGroup2Box);
+        unknown15.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 16384L;
+            }
+            else {
+                entry.directionalInputs &= ~16384L;
+            }
+        });
+        unknown16.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 32768L;
+            }
+            else {
+                entry.directionalInputs &= ~32768L;
+            }
+        });
+        unknown17.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 65536L;
+            }
+            else {
+                entry.directionalInputs &= ~65536L;
+            }
+        });
+        unknown18.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 131072L;
+            }
+            else {
+                entry.directionalInputs &= ~131072L;
+            }
+        });
+        unknown19.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 262144L;
+            }
+            else {
+                entry.directionalInputs &= ~262144L;
+            }
+        });
+
+        VBox unknownGroup2Box = new VBox(2, unknown15, unknown16, unknown17, unknown18, unknown19);
+
+        VBox borderContainerUG2 = new VBox(unknownGroup2Box);
         borderContainerUG2.getStyleClass().add("titled-address-box");
-        borderContainerUG2.setPadding(new Insets(12,0,0,0));
+        borderContainerUG2.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane unknownGroup2BoxStackPane = new StackPane();
-        unknownGroup2BoxStackPane.getChildren().addAll(borderContainerUG2,unknownDir2Label);
-
+        StackPane unknownGroup2BoxStackPane = new StackPane(borderContainerUG2,unknownDir2Label);
         StackPane.setAlignment(unknownDir2Label, Pos.TOP_LEFT);
-        unknownDir2Label.setTranslateY(-8); 
-        unknownDir2Label.setTranslateX(10);
         //unknown2
 
         //unknown3
         Label unknownDir3Label = new Label("Unknown 3");
         unknownDir3Label.getStyleClass().add("titled-address-label");
+        unknownDir3Label.setTranslateY(-8); 
+        unknownDir3Label.setTranslateX(10);
 
-        CheckBox unknown20=new CheckBox("Unknown 20");
-        CheckBox unknown21=new CheckBox("Unknown 21");
-        CheckBox unknown22=new CheckBox("Unknown 22");
-        CheckBox unknown23=new CheckBox("Unknown 23");
-        CheckBox unknown24=new CheckBox("Unknown 24");
+        CheckBox unknown20 = new CheckBox("Unknown 20");
+        CheckBox unknown21 = new CheckBox("Unknown 21");
+        CheckBox unknown22 = new CheckBox("Unknown 22");
+        CheckBox unknown23 = new CheckBox("Unknown 23");
+        CheckBox unknown24 = new CheckBox("Unknown 24");
 
         unknown20.setSelected((entry.directionalInputs & 524288L) != 0);
         unknown21.setSelected((entry.directionalInputs & 1048576L) != 0);
@@ -381,70 +374,68 @@ public class Bcm {
         unknown23.setSelected((entry.directionalInputs & 4194304L) != 0);
         unknown24.setSelected((entry.directionalInputs & 8388608L) != 0);
 
-        unknown20.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=524288L;
+        unknown20.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 524288L;
             }
-            else{
-                entry.directionalInputs&=~524288L;
-            }
-        });
-        unknown21.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=1048576L;
-            }
-            else{
-                entry.directionalInputs&=~1048576L;
+            else {
+                entry.directionalInputs &= ~524288L;
             }
         });
-        unknown22.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=2097152L;
+        unknown21.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 1048576L;
             }
-            else{
-                entry.directionalInputs&=~2097152L;
-            }
-        });
-        unknown23.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=4194304L;
-            }
-            else{
-                entry.directionalInputs&=~4194304L;
+            else {
+                entry.directionalInputs &= ~1048576L;
             }
         });
-        unknown24.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=8388608L;
+        unknown22.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 2097152L;
             }
-            else{
-                entry.directionalInputs&=~8388608L;
+            else {
+                entry.directionalInputs &= ~2097152L;
+            }
+        });
+        unknown23.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) { 
+                entry.directionalInputs |= 4194304L;
+            }
+            else {
+                entry.directionalInputs &= ~4194304L;
+            }
+        });
+        unknown24.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 8388608L;
+            }
+            else {
+                entry.directionalInputs &= ~8388608L;
             }
         });
         
-        VBox unknownGroup3Box = new VBox(2,unknown20,unknown21,unknown22,unknown23,unknown24);
+        VBox unknownGroup3Box = new VBox(2, unknown20, unknown21, unknown22, unknown23, unknown24);
 
-        VBox borderContainerUG3=new VBox(unknownGroup3Box);
+        VBox borderContainerUG3 = new VBox(unknownGroup3Box);
         borderContainerUG3.getStyleClass().add("titled-address-box");
-        borderContainerUG3.setPadding(new Insets(12,0,0,0));
+        borderContainerUG3.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane unknownGroup3BoxStackPane = new StackPane();
-        unknownGroup3BoxStackPane.getChildren().addAll(borderContainerUG3,unknownDir3Label);
-
+        StackPane unknownGroup3BoxStackPane = new StackPane(borderContainerUG3, unknownDir3Label);
         StackPane.setAlignment(unknownDir3Label, Pos.TOP_LEFT);
-        unknownDir3Label.setTranslateY(-8); 
-        unknownDir3Label.setTranslateX(10);
         //unknown3
 
         //unknown4
         Label unknownDir4Label = new Label("Unknown 4");
         unknownDir4Label.getStyleClass().add("titled-address-label");
+        unknownDir4Label.setTranslateY(-8); 
+        unknownDir4Label.setTranslateX(10);
 
-        CheckBox unknown25=new CheckBox("Unknown 25");
-        CheckBox unknown26=new CheckBox("Unknown 26");
-        CheckBox unknown27=new CheckBox("Unknown 27");
-        CheckBox unknown28=new CheckBox("Unknown 28");
-        CheckBox unknown29=new CheckBox("Unknown 29");
+        CheckBox unknown25 = new CheckBox("Unknown 25");
+        CheckBox unknown26 = new CheckBox("Unknown 26");
+        CheckBox unknown27 = new CheckBox("Unknown 27");
+        CheckBox unknown28 = new CheckBox("Unknown 28");
+        CheckBox unknown29 = new CheckBox("Unknown 29");
 
         unknown25.setSelected((entry.directionalInputs & 16777216L) != 0);
         unknown26.setSelected((entry.directionalInputs & 33554432L) != 0);
@@ -452,127 +443,122 @@ public class Bcm {
         unknown28.setSelected((entry.directionalInputs & 134217728L) != 0);
         unknown29.setSelected((entry.directionalInputs & 268435456L) != 0);
 
-        unknown25.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=16777216L;
+        unknown25.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 16777216L;
             }
-            else{
-                entry.directionalInputs&=~16777216L;
-            }
-        });
-        unknown26.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=33554432L;
-            }
-            else{
-                entry.directionalInputs&=~33554432L;
+            else {
+                entry.directionalInputs &= ~16777216L;
             }
         });
-        unknown27.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=67108864L;
+        unknown26.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 33554432L;
             }
-            else{
-                entry.directionalInputs&=~67108864L;
-            }
-        });
-        unknown28.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=134217728L;
-            }
-            else{
-                entry.directionalInputs&=~134217728L;
+            else {
+                entry.directionalInputs &= ~33554432L;
             }
         });
-        unknown29.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=268435456L;
+        unknown27.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 67108864L;
             }
-            else{
-                entry.directionalInputs&=~268435456L;
+            else {
+                entry.directionalInputs &= ~67108864L;
             }
         });
-        VBox unknownGroup4Box = new VBox(2,unknown25,unknown26,unknown27,unknown28,unknown29);
+        unknown28.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 134217728L;
+            }
+            else {
+                entry.directionalInputs &= ~134217728L;
+            }
+        });
+        unknown29.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 268435456L;
+            }
+            else {
+                entry.directionalInputs &= ~268435456L;
+            }
+        });
+        VBox unknownGroup4Box = new VBox(2, unknown25, unknown26, unknown27, unknown28, unknown29);
 
         VBox borderContainerUG4=new VBox(unknownGroup4Box);
         borderContainerUG4.getStyleClass().add("titled-address-box");
-        borderContainerUG4.setPadding(new Insets(12,0,0,0));
+        borderContainerUG4.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane unknownGroup4BoxStackPane = new StackPane();
-        unknownGroup4BoxStackPane.getChildren().addAll(borderContainerUG4,unknownDir4Label);
-
+        StackPane unknownGroup4BoxStackPane = new StackPane(borderContainerUG4,unknownDir4Label);
         StackPane.setAlignment(unknownDir4Label, Pos.TOP_LEFT);
-        unknownDir4Label.setTranslateY(-8); 
-        unknownDir4Label.setTranslateX(10);
         //unknown4
 
         //unknown5
         Label unknownDir5Label = new Label("Unknown 5");
         unknownDir5Label.getStyleClass().add("titled-address-label");
+        unknownDir5Label.setTranslateY(-8); 
+        unknownDir5Label.setTranslateX(10);
 
-        CheckBox unknown30=new CheckBox("Unknown 30");
-        CheckBox unknown31=new CheckBox("Unknown 31");
-        CheckBox unknown32=new CheckBox("Unknown 32");
+        CheckBox unknown30 = new CheckBox("Unknown 30");
+        CheckBox unknown31 = new CheckBox("Unknown 31");
+        CheckBox unknown32 = new CheckBox("Unknown 32");
 
         unknown30.setSelected((entry.directionalInputs & 536870912L) != 0);
         unknown31.setSelected((entry.directionalInputs & 1073741824L) != 0);
         unknown32.setSelected((entry.directionalInputs & 2147483648L) != 0);
 
-        unknown30.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=536870912L;
+        unknown30.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 536870912L;
             }
-            else{
-                entry.directionalInputs&=~536870912L;
-            }
-        });
-        unknown31.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=1073741824L;
-            }
-            else{
-                entry.directionalInputs&=~1073741824L;
+            else {
+                entry.directionalInputs &= ~536870912L;
             }
         });
-        unknown32.selectedProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue){
-                entry.directionalInputs|=2147483648L;
+        unknown31.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 1073741824L;
             }
-            else{
-                entry.directionalInputs&=~2147483648L;
+            else {
+                entry.directionalInputs &= ~1073741824L;
             }
         });
-        VBox unknownGroup5Box = new VBox(2,unknown30,unknown31,unknown32);
+        unknown32.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                entry.directionalInputs |= 2147483648L;
+            }
+            else {
+                entry.directionalInputs &= ~2147483648L;
+            }
+        });
+        VBox unknownGroup5Box = new VBox(2, unknown30, unknown31, unknown32);
 
-        VBox borderContainerUG5=new VBox(unknownGroup5Box);
+        VBox borderContainerUG5 = new VBox(unknownGroup5Box);
         borderContainerUG5.getStyleClass().add("titled-address-box");
-        borderContainerUG5.setPadding(new Insets(12,0,0,0));
+        borderContainerUG5.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane unknownGroup5BoxStackPane = new StackPane();
-        unknownGroup5BoxStackPane.getChildren().addAll(borderContainerUG5,unknownDir5Label);
-
+        StackPane unknownGroup5BoxStackPane = new StackPane(borderContainerUG5, unknownDir5Label);
         StackPane.setAlignment(unknownDir5Label, Pos.TOP_LEFT);
-        unknownDir5Label.setTranslateY(-8); 
-        unknownDir5Label.setTranslateX(10);
-        
         //unknown5
+
+        HBox directionalInputHBox = new HBox(5,
+            directionalInputLabel, relativeDirectionBoxStackPane,
+            userDirectionBoxStackPane, unknownGroup1BoxStackPane,
+            unknownGroup2BoxStackPane, unknownGroup3BoxStackPane,
+            unknownGroup4BoxStackPane,unknownGroup5BoxStackPane
+        );
         directionalInputHBox.setAlignment(Pos.CENTER_LEFT);
-        directionalInputHBox.getChildren().addAll(directionalInputLabel,relativeDirectionBoxStackPane,userDirectionBoxStackPane,unknownGroup1BoxStackPane,unknownGroup2BoxStackPane,unknownGroup3BoxStackPane,unknownGroup4BoxStackPane,unknownGroup5BoxStackPane);
         //directional input 
         
         //button input
-        HBox buttonInputHBox=new HBox(40);
-        buttonInputHBox.setPadding(new Insets(20,0,0,8));
-
         Label buttonInputLabel = new Label("Button Input");
-
-        GridPane buttonInputGridPane=new GridPane();
-        buttonInputGridPane.setVgap(10);
-        buttonInputGridPane.setHgap(10);
+        buttonInputLabel.setPrefWidth(100);
 
         //0x1
         Label hexDigit0Label = new Label("0x1");
         hexDigit0Label.getStyleClass().add("titled-address-label");
+        hexDigit0Label.setTranslateY(-8); 
+        hexDigit0Label.setTranslateX(10);
 
         CheckBox light = new CheckBox("Light");
         CheckBox heavy = new CheckBox("Heavy");
@@ -581,7 +567,7 @@ public class Bcm {
 
         light.setSelected((entry.buttonInputs & 1L) != 0);
         heavy.setSelected((entry.buttonInputs & 2L) != 0);
-        blast.setSelected((entry.buttonInputs& 4L) != 0);
+        blast.setSelected((entry.buttonInputs & 4L) != 0);
         jump.setSelected((entry.buttonInputs & 8L) != 0);
 
         //0x1
@@ -623,18 +609,15 @@ public class Bcm {
         borderContainerHexDigit0.getStyleClass().add("titled-address-box");
         borderContainerHexDigit0.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane hexDigit0StackPane = new StackPane();
-        hexDigit0StackPane.getChildren().addAll(borderContainerHexDigit0, hexDigit0Label);
-
+        StackPane hexDigit0StackPane = new StackPane(borderContainerHexDigit0, hexDigit0Label);
         StackPane.setAlignment(hexDigit0Label, Pos.TOP_LEFT);
-        hexDigit0Label.setTranslateY(-8); 
-        hexDigit0Label.setTranslateX(10);
-        buttonInputGridPane.add(hexDigit0StackPane, 0, 0); // Position 0
         //0x1
 
         //0x10
         Label hexDigit1Label = new Label("0x10");
         hexDigit1Label.getStyleClass().add("titled-address-label");
+        hexDigit1Label.setTranslateY(-8); 
+        hexDigit1Label.setTranslateX(10);
 
         CheckBox skillMenu = new CheckBox("Skill Menu");
         CheckBox boost = new CheckBox("Boost");
@@ -680,18 +663,15 @@ public class Bcm {
         borderContainerHexDigit1.getStyleClass().add("titled-address-box");
         borderContainerHexDigit1.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane hexDigit1StackPane = new StackPane();
-        hexDigit1StackPane.getChildren().addAll(borderContainerHexDigit1, hexDigit1Label);
-
+        StackPane hexDigit1StackPane = new StackPane(borderContainerHexDigit1, hexDigit1Label);
         StackPane.setAlignment(hexDigit1Label, Pos.TOP_LEFT);
-        hexDigit1Label.setTranslateY(-8); 
-        hexDigit1Label.setTranslateX(10);
-        buttonInputGridPane.add(hexDigit1StackPane, 1, 0); // Position 1
         //0x10
 
         //0x100
         Label hexDigit2Label = new Label("0x100");
         hexDigit2Label.getStyleClass().add("titled-address-label");
+        hexDigit2Label.setTranslateY(-8); 
+        hexDigit2Label.setTranslateX(10);
 
         CheckBox superSkill1 = new CheckBox("Super Skill 1");
         CheckBox superSkill2 = new CheckBox("Super Skill 2");
@@ -737,18 +717,15 @@ public class Bcm {
         borderContainerHexDigit2.getStyleClass().add("titled-address-box");
         borderContainerHexDigit2.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane hexDigit2StackPane = new StackPane();
-        hexDigit2StackPane.getChildren().addAll(borderContainerHexDigit2, hexDigit2Label);
-
-        StackPane.setAlignment(hexDigit2Label, Pos.TOP_LEFT);
-        hexDigit2Label.setTranslateY(-8); 
-        hexDigit2Label.setTranslateX(10);
-        buttonInputGridPane.add(hexDigit2StackPane, 2, 0); // Position 2
+        StackPane hexDigit2StackPane = new StackPane(borderContainerHexDigit2, hexDigit2Label);
+        StackPane.setAlignment(hexDigit2Label, Pos.TOP_LEFT); 
         //0x100
 
         //0x1000
         Label hexDigit3Label = new Label("0x1000");
         hexDigit3Label.getStyleClass().add("titled-address-label");
+        hexDigit3Label.setTranslateY(-8); 
+        hexDigit3Label.setTranslateX(10);
 
         CheckBox ultimateSkill1 = new CheckBox("Ultimate Skill 1");
         CheckBox ultimateSkill2 = new CheckBox("Ultimate Skill 2");
@@ -794,18 +771,15 @@ public class Bcm {
         borderContainerHexDigit3.getStyleClass().add("titled-address-box");
         borderContainerHexDigit3.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane hexDigit3StackPane = new StackPane();
-        hexDigit3StackPane.getChildren().addAll(borderContainerHexDigit3, hexDigit3Label);
-
+        StackPane hexDigit3StackPane = new StackPane(borderContainerHexDigit3, hexDigit3Label);
         StackPane.setAlignment(hexDigit3Label, Pos.TOP_LEFT);
-        hexDigit3Label.setTranslateY(-8); 
-        hexDigit3Label.setTranslateX(10);
-        buttonInputGridPane.add(hexDigit3StackPane, 3, 0); // Position 3
         //0x1000
 
         //0x10000
         Label hexDigit4Label = new Label("0x10000");
         hexDigit4Label.getStyleClass().add("titled-address-label");
+        hexDigit4Label.setTranslateY(-8); 
+        hexDigit4Label.setTranslateX(10);
 
         CheckBox skillInput = new CheckBox("Skill Input");
         CheckBox superMenuPlusSkillInput = new CheckBox("Super Menu + Skill Input");
@@ -851,23 +825,20 @@ public class Bcm {
         borderContainerHexDigit4.getStyleClass().add("titled-address-box");
         borderContainerHexDigit4.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane hexDigit4StackPane = new StackPane();
-        hexDigit4StackPane.getChildren().addAll(borderContainerHexDigit4, hexDigit4Label);
-
+        StackPane hexDigit4StackPane = new StackPane(borderContainerHexDigit4, hexDigit4Label);
         StackPane.setAlignment(hexDigit4Label, Pos.TOP_LEFT);
-        hexDigit4Label.setTranslateY(-8); 
-        hexDigit4Label.setTranslateX(10);
-        buttonInputGridPane.add(hexDigit4StackPane, 0, 1); // Row 2, Position 0
         //0x10000
 
         //0x100000
         Label hexDigit5Label = new Label("0x100000");
         hexDigit5Label.getStyleClass().add("titled-address-label");
+        hexDigit5Label.setTranslateY(-8); 
+        hexDigit5Label.setTranslateX(10);
 
-        CheckBox lockedON=new CheckBox("Locked On");
-        CheckBox descend=new CheckBox("Descend");
-        CheckBox dragonRadar=new CheckBox("Dragon Radar");
-        CheckBox jump2=new CheckBox("Jump 2");
+        CheckBox lockedON = new CheckBox("Locked On");
+        CheckBox descend = new CheckBox("Descend");
+        CheckBox dragonRadar = new CheckBox("Dragon Radar");
+        CheckBox jump2 = new CheckBox("Jump 2");
 
         lockedON.setSelected((entry.buttonInputs & 1048576L) != 0);
         descend.setSelected((entry.buttonInputs & 2097152L) != 0);
@@ -902,28 +873,26 @@ public class Bcm {
                 entry.buttonInputs &= ~8388608L;
             }
         });
-        VBox hexDigit5Box = new VBox(2, lockedON,descend,dragonRadar,jump2);
+        VBox hexDigit5Box = new VBox(2, lockedON, descend, dragonRadar, jump2);
 
         VBox borderContainerHexDigit5 = new VBox(hexDigit5Box);
         borderContainerHexDigit5.getStyleClass().add("titled-address-box");
         borderContainerHexDigit5.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane hexDigit5StackPane = new StackPane();
-        hexDigit5StackPane.getChildren().addAll(borderContainerHexDigit5, hexDigit5Label);
-
+        StackPane hexDigit5StackPane = new StackPane(borderContainerHexDigit5, hexDigit5Label);
         StackPane.setAlignment(hexDigit5Label, Pos.TOP_LEFT);
-        hexDigit5Label.setTranslateY(-8); 
-        hexDigit5Label.setTranslateX(10);
-        buttonInputGridPane.add(hexDigit5StackPane, 1, 1); 
         //0x100000
 
         //0x1000000
         Label hexDigit6Label = new Label("0x1000000");
         hexDigit6Label.getStyleClass().add("titled-address-label");
-        CheckBox ultimateMenu=new CheckBox("Ultimate Menu");
-        CheckBox unknown26ButtonInput=new CheckBox("Unknown 26");
-        CheckBox unknown27ButtonInput=new CheckBox("Unknown 27");
-        CheckBox unknown28ButtonInput=new CheckBox("Unknown 28");
+        hexDigit6Label.setTranslateY(-8); 
+        hexDigit6Label.setTranslateX(10);
+
+        CheckBox ultimateMenu = new CheckBox("Ultimate Menu");
+        CheckBox unknown26ButtonInput = new CheckBox("Unknown 26");
+        CheckBox unknown27ButtonInput = new CheckBox("Unknown 27");
+        CheckBox unknown28ButtonInput = new CheckBox("Unknown 28");
 
         ultimateMenu.setSelected((entry.buttonInputs & 16777216L) != 0);
         unknown26ButtonInput.setSelected((entry.buttonInputs & 33554432L) != 0);
@@ -959,29 +928,26 @@ public class Bcm {
             }
         });
 
-        VBox hexDigit6Box = new VBox(2,ultimateMenu,unknown26ButtonInput,unknown27ButtonInput,unknown28ButtonInput);
+        VBox hexDigit6Box = new VBox(2, ultimateMenu, unknown26ButtonInput, unknown27ButtonInput, unknown28ButtonInput);
 
-        VBox borderContainerHexDigit6=new VBox(hexDigit6Box);
+        VBox borderContainerHexDigit6 = new VBox(hexDigit6Box);
         borderContainerHexDigit6.getStyleClass().add("titled-address-box");
-        borderContainerHexDigit6.setPadding(new Insets(12,0,0,0));
+        borderContainerHexDigit6.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane hexDigit6StackPane = new StackPane();
-        hexDigit6StackPane.getChildren().addAll(borderContainerHexDigit6,hexDigit6Label);
-
+        StackPane hexDigit6StackPane = new StackPane(borderContainerHexDigit6, hexDigit6Label);
         StackPane.setAlignment(hexDigit6Label, Pos.TOP_LEFT);
-        hexDigit6Label.setTranslateY(-8); 
-        hexDigit6Label.setTranslateX(10);
-        buttonInputGridPane.add(hexDigit6StackPane, 2,1);
         //0x1000000
 
         //0x10000000
         Label hexDigit7Label = new Label("0x10000000");
         hexDigit7Label.getStyleClass().add("titled-address-label");
+        hexDigit7Label.setTranslateY(-8); 
+        hexDigit7Label.setTranslateX(10);
 
-        CheckBox ultimateMenu2=new CheckBox("Ultimate Menu 2");
-        CheckBox unknown30ButtonInput=new CheckBox("Unknown 30");
-        CheckBox unknown31ButtonInput=new CheckBox("Unknown 31");
-        CheckBox unknown32ButtonInput=new CheckBox("Unknown 32");
+        CheckBox ultimateMenu2 = new CheckBox("Ultimate Menu 2");
+        CheckBox unknown30ButtonInput = new CheckBox("Unknown 30");
+        CheckBox unknown31ButtonInput = new CheckBox("Unknown 31");
+        CheckBox unknown32ButtonInput = new CheckBox("Unknown 32");
 
         ultimateMenu2.setSelected((entry.buttonInputs & 268435456L) != 0);
         unknown30ButtonInput.setSelected((entry.buttonInputs & 536870912L) != 0);
@@ -1017,38 +983,39 @@ public class Bcm {
             }
         });
 
-        VBox hexDigit7Box = new VBox(2,ultimateMenu2,unknown30ButtonInput,unknown31ButtonInput,unknown32ButtonInput);
+        VBox hexDigit7Box = new VBox(2, ultimateMenu2, unknown30ButtonInput, unknown31ButtonInput, unknown32ButtonInput);
 
-        VBox borderContainerhexDigit7=new VBox(hexDigit7Box);
+        VBox borderContainerhexDigit7 = new VBox(hexDigit7Box);
         borderContainerhexDigit7.getStyleClass().add("titled-address-box");
-        borderContainerhexDigit7.setPadding(new Insets(12,0,0,0));
+        borderContainerhexDigit7.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane hexDigit7BoxStackPane = new StackPane();
-        hexDigit7BoxStackPane.getChildren().addAll(borderContainerhexDigit7,hexDigit7Label);
-
+        StackPane hexDigit7StackPane = new StackPane(borderContainerhexDigit7, hexDigit7Label);
         StackPane.setAlignment(hexDigit7Label, Pos.TOP_LEFT);
-        hexDigit7Label.setTranslateY(-8); 
-        hexDigit7Label.setTranslateX(10);
-        buttonInputGridPane.add(hexDigit7BoxStackPane, 3, 1);
         //0x10000000
-        buttonInputHBox.setAlignment(Pos.CENTER_LEFT);;
-        buttonInputHBox.getChildren().addAll(buttonInputLabel,buttonInputGridPane);
+
+        GridPane buttonInputGridPane = new GridPane(10, 10);
+        buttonInputGridPane.add(hexDigit0StackPane, 0, 0);
+        buttonInputGridPane.add(hexDigit1StackPane, 1, 0);
+        buttonInputGridPane.add(hexDigit2StackPane, 2, 0);
+        buttonInputGridPane.add(hexDigit3StackPane, 3, 0);
+        buttonInputGridPane.add(hexDigit4StackPane, 0, 1);
+        buttonInputGridPane.add(hexDigit5StackPane, 1, 1); 
+        buttonInputGridPane.add(hexDigit6StackPane, 2, 1);
+        buttonInputGridPane.add(hexDigit7StackPane, 3, 1);
+
+        HBox buttonInputHBox = new HBox(5, buttonInputLabel, buttonInputGridPane);
+        buttonInputHBox.setAlignment(Pos.CENTER_LEFT);
         //button input
 
         //hold down conditions
-        HBox holdDownConditionsHBox =new HBox(40);
-        holdDownConditionsHBox.setPadding(new Insets(20,0,0,8));
-        
-
-        GridPane holdDownConditionsGridPane=new GridPane();
-        holdDownConditionsGridPane.setHgap(10);
-        holdDownConditionsGridPane.setVgap(8);
-  
         Label holdDownConditionslabel = new Label("Hold Down \nConditions");
+        holdDownConditionslabel.setPrefWidth(100);
         
         //Action
         Label actionLabel = new Label("Action");
         actionLabel.getStyleClass().add("titled-address-label");
+        actionLabel.setTranslateY(-8); 
+        actionLabel.setTranslateX(10);
 
         CheckBox continueUntilReleased = new CheckBox("Continue Until Released");
         CheckBox delayUntilReleased = new CheckBox("Delay Until Released");
@@ -1062,19 +1029,17 @@ public class Bcm {
         stopSkillFromActivating.setSelected((entry.holdDownConditions& 4L) != 0);  
         unknown4HDC.setSelected((entry.holdDownConditions & 8L) != 0);
 
-        if(delayUntilReleased.isSelected()||unknown2HDC.isSelected()||stopSkillFromActivating.isSelected()||unknown4HDC.isSelected()){
+        if (delayUntilReleased.isSelected() || unknown2HDC.isSelected() || stopSkillFromActivating.isSelected() || unknown4HDC.isSelected()) {
             continueUntilReleased.setSelected(false);
-
         }
 
         continueUntilReleased.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(delayUntilReleased.isSelected()||unknown2HDC.isSelected()||stopSkillFromActivating.isSelected()||unknown4HDC.isSelected()){
+            if (delayUntilReleased.isSelected() || unknown2HDC.isSelected() || stopSkillFromActivating.isSelected() || unknown4HDC.isSelected()) {
                 continueUntilReleased.setSelected(false);
             }
-            else{
+            else {
                 continueUntilReleased.setSelected(true);
-            }
-            
+            }  
         });
         delayUntilReleased.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
@@ -1106,31 +1071,28 @@ public class Bcm {
         });
 
         VBox actionBox = new VBox(2, continueUntilReleased, delayUntilReleased, unknown2HDC, stopSkillFromActivating,unknown4HDC);
+        actionBox.addEventHandler(ActionEvent.ACTION,event -> {
+            if (delayUntilReleased.isSelected()|| unknown2HDC.isSelected()||stopSkillFromActivating.isSelected()||unknown4HDC.isSelected()) {
+                continueUntilReleased.setSelected(false);
+            }
+            else {
+                continueUntilReleased.setSelected(true);
+            }
+        });
 
         VBox borderContainerAction = new VBox(actionBox);
         borderContainerAction.getStyleClass().add("titled-address-box");
         borderContainerAction.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane actionBoxStackPane = new StackPane();
-        actionBoxStackPane.getChildren().addAll(borderContainerAction, actionLabel);
-        
-        actionBox.addEventHandler(ActionEvent.ACTION,event->{
-            if(delayUntilReleased.isSelected()|| unknown2HDC.isSelected()||stopSkillFromActivating.isSelected()||unknown4HDC.isSelected()){
-                continueUntilReleased.setSelected(false);
-            }
-            else{
-                continueUntilReleased.setSelected(true);
-            }
-        });
-
+        StackPane actionBoxStackPane = new StackPane(borderContainerAction, actionLabel);
         StackPane.setAlignment(actionLabel, Pos.TOP_LEFT);
-        actionLabel.setTranslateY(-8); 
-        actionLabel.setTranslateX(10);
-        holdDownConditionsGridPane.add(actionBoxStackPane,0,0);
         //Action
+
         //Option 2
         Label option2Label = new Label("Option 2");
         option2Label.getStyleClass().add("titled-address-label");
+        option2Label.setTranslateY(-8); 
+        option2Label.setTranslateX(10);
 
         CheckBox unknown5HDC = new CheckBox("Unknown 5");
         CheckBox unknown6HDC = new CheckBox("Unknown 6");
@@ -1171,24 +1133,21 @@ public class Bcm {
             }
         });
 
-        VBox option2Box = new VBox(2, unknown5HDC,unknown6HDC, unknown7HDC, unknown8HDC);
+        VBox option2Box = new VBox(2, unknown5HDC, unknown6HDC, unknown7HDC, unknown8HDC);
 
         VBox borderContainerOption2 = new VBox(option2Box);
         borderContainerOption2.getStyleClass().add("titled-address-box");
         borderContainerOption2.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane option2BoxStackPane = new StackPane();
-        option2BoxStackPane.getChildren().addAll(borderContainerOption2, option2Label);
-
+        StackPane option2BoxStackPane = new StackPane(borderContainerOption2, option2Label);
         StackPane.setAlignment(option2Label, Pos.TOP_LEFT);
-        option2Label.setTranslateY(-8); 
-        option2Label.setTranslateX(10);
-        holdDownConditionsGridPane.add(option2BoxStackPane,1,0);
         //Options 2
 
         //Options 3
         Label option3Label = new Label("Option 3");
         option3Label.getStyleClass().add("titled-address-label");
+        option3Label.setTranslateY(-8); 
+        option3Label.setTranslateX(10);
 
         CheckBox unknown9HDC = new CheckBox("Unknown 9");
         CheckBox unknown10HDC = new CheckBox("Unknown 10");
@@ -1230,24 +1189,21 @@ public class Bcm {
             }
         });
 
-        VBox option3Box = new VBox(2,unknown9HDC, unknown10HDC,unknown11HDC,unknown12HDC);
+        VBox option3Box = new VBox(2,unknown9HDC, unknown10HDC, unknown11HDC, unknown12HDC);
 
         VBox borderContainerOption3 = new VBox(option3Box);
         borderContainerOption3.getStyleClass().add("titled-address-box");
         borderContainerOption3.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane option3BoxStackPane = new StackPane();
-        option3BoxStackPane.getChildren().addAll(borderContainerOption3, option3Label);
-
+        StackPane option3BoxStackPane = new StackPane(borderContainerOption3, option3Label);
         StackPane.setAlignment(option3Label, Pos.TOP_LEFT);
-        option3Label.setTranslateY(-8); 
-        option3Label.setTranslateX(10);
-        holdDownConditionsGridPane.add(option3BoxStackPane,2,0);
         //Options 3
 
         //Options 4
         Label option4Label = new Label("Option 4");
         option4Label.getStyleClass().add("titled-address-label");
+        option4Label.setTranslateY(-8); 
+        option4Label.setTranslateX(10);
 
         CheckBox unknown13HDC = new CheckBox("Unknown 13");
         CheckBox unknown14HDC = new CheckBox("Unknown 14");
@@ -1287,24 +1243,21 @@ public class Bcm {
                 entry.holdDownConditions &= ~32768L;
             }
         });
-        VBox option4Box = new VBox(2,unknown13HDC,unknown14HDC,unknown15HDC,unknown16HDC);
+        VBox option4Box = new VBox(2, unknown13HDC, unknown14HDC, unknown15HDC, unknown16HDC);
 
         VBox borderContainerOption4 = new VBox(option4Box);
         borderContainerOption4.getStyleClass().add("titled-address-box");
         borderContainerOption4.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane option4BoxStackPane = new StackPane();
-        option4BoxStackPane.getChildren().addAll(borderContainerOption4, option4Label);
-
+        StackPane option4BoxStackPane = new StackPane(borderContainerOption4, option4Label);
         StackPane.setAlignment(option4Label, Pos.TOP_LEFT);
-        option4Label.setTranslateY(-8); 
-        option4Label.setTranslateX(10);
-        holdDownConditionsGridPane.add(option4BoxStackPane,3,0);
         //Options 4
 
         //ChargeType
         Label chargeTypeLabel = new Label("Charge Type");
         chargeTypeLabel.getStyleClass().add("titled-address-label");
+        chargeTypeLabel.setTranslateY(-8); 
+        chargeTypeLabel.setTranslateX(10);
 
         CheckBox automatic = new CheckBox("Automatic");
         CheckBox manual = new CheckBox("Manual");
@@ -1318,20 +1271,19 @@ public class Bcm {
         unknown19HDC.setSelected((entry.holdDownConditions & 262144L) != 0);  
         unknown20HDC.setSelected((entry.holdDownConditions & 524288L) != 0);  
 
-        if(manual.isSelected()||unknown18HDC.isSelected()||unknown19HDC.isSelected()||unknown20HDC.isSelected()){
+        if (manual.isSelected() || unknown18HDC.isSelected() || unknown19HDC.isSelected() || unknown20HDC.isSelected()) {
             automatic.setSelected(false);
 
         }
 
         automatic.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(manual.isSelected()||unknown18HDC.isSelected()||unknown19HDC.isSelected()||unknown20HDC.isSelected()){
+            if (manual.isSelected() || unknown18HDC.isSelected() || unknown19HDC.isSelected() || unknown20HDC.isSelected()) {
                 continueUntilReleased.setSelected(false);
             }
-            else{
+            else {
                 continueUntilReleased.setSelected(true);
             }
         });
-
         manual.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
                 entry.holdDownConditions |= 65536L;
@@ -1361,36 +1313,30 @@ public class Bcm {
             }
         });
 
-
-        VBox chargeTypeBox = new VBox(2, automatic, manual, unknown18HDC,unknown19HDC,unknown20HDC );
-
-        VBox borderContainerChargeType = new VBox(chargeTypeBox);
-        borderContainerChargeType.getStyleClass().add("titled-address-box");
-        borderContainerChargeType.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane chargeTypeBoxStackPane = new StackPane();
-        chargeTypeBoxStackPane.getChildren().addAll(borderContainerChargeType, chargeTypeLabel);
-
-        chargeTypeBox.addEventHandler(ActionEvent.ACTION,event->{
-            if(manual.isSelected()|| unknown18HDC.isSelected()||unknown19HDC.isSelected()||unknown20HDC.isSelected()){
+        VBox chargeTypeBox = new VBox(2, automatic, manual, unknown18HDC, unknown19HDC, unknown20HDC );
+        chargeTypeBox.addEventHandler(ActionEvent.ACTION,event -> {
+            if (manual.isSelected() || unknown18HDC.isSelected() || unknown19HDC.isSelected() || unknown20HDC.isSelected()) {
                 automatic.setSelected(false);
             }
-            else{
+            else {
                 automatic.setSelected(true);
             }
         
         });
 
+        VBox borderContainerChargeType = new VBox(chargeTypeBox);
+        borderContainerChargeType.getStyleClass().add("titled-address-box");
+        borderContainerChargeType.setPadding(new Insets(12, 0, 0, 0));
+
+        StackPane chargeTypeBoxStackPane = new StackPane(borderContainerChargeType, chargeTypeLabel);
         StackPane.setAlignment(chargeTypeLabel, Pos.TOP_LEFT);
-        chargeTypeLabel.setTranslateY(-8); 
-        chargeTypeLabel.setTranslateX(10);
-        holdDownConditionsGridPane.add(chargeTypeBoxStackPane,0,1);
         //ChargeType
 
         //Options 6
         Label option6Label = new Label("Option 6");
         option6Label.getStyleClass().add("titled-address-label");
-
+        option6Label.setTranslateY(-8); 
+        option6Label.setTranslateX(10);
 
         CheckBox unknown21HDC = new CheckBox("Unknown 21");
         CheckBox unknown22HDC = new CheckBox("Unknown 22");
@@ -1431,26 +1377,21 @@ public class Bcm {
             }
         });
 
-
-        VBox option6Box = new VBox(2,unknown21HDC,unknown22HDC,unknown23HDC,unknown24HDC);
+        VBox option6Box = new VBox(2, unknown21HDC, unknown22HDC, unknown23HDC, unknown24HDC);
 
         VBox borderContainerOption6 = new VBox(option6Box);
         borderContainerOption6.getStyleClass().add("titled-address-box");
         borderContainerOption6.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane option6BoxStackPane = new StackPane();
-        option6BoxStackPane.getChildren().addAll(borderContainerOption6, option6Label);
-
+        StackPane option6BoxStackPane = new StackPane(borderContainerOption6, option6Label);
         StackPane.setAlignment(option6Label, Pos.TOP_LEFT);
-        option6Label.setTranslateY(-8); 
-        option6Label.setTranslateX(10);
-        holdDownConditionsGridPane.add(option6BoxStackPane,1,1);
         //Options 6
 
         //Options 7
         Label option7Label = new Label("Option 7");
         option7Label.getStyleClass().add("titled-address-label");
-
+        option7Label.setTranslateY(-8); 
+        option7Label.setTranslateX(10);
 
         CheckBox unknown25HDC = new CheckBox("Unknown 25");
         CheckBox unknown26HDC = new CheckBox("Unknown 26");
@@ -1491,24 +1432,21 @@ public class Bcm {
             }
         });
 
-        VBox option7Box = new VBox(2,unknown25HDC,unknown26HDC,unknown27HDC,unknown28HDC);
+        VBox option7Box = new VBox(2, unknown25HDC, unknown26HDC, unknown27HDC, unknown28HDC);
 
         VBox borderContainerOption7 = new VBox(option7Box);
         borderContainerOption7.getStyleClass().add("titled-address-box");
         borderContainerOption7.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane option7BoxStackPane = new StackPane();
-        option7BoxStackPane.getChildren().addAll(borderContainerOption7, option7Label);
-
+        StackPane option7BoxStackPane = new StackPane(borderContainerOption7, option7Label);
         StackPane.setAlignment(option7Label, Pos.TOP_LEFT);
-        option7Label.setTranslateY(-8); 
-        option7Label.setTranslateX(10);
-        holdDownConditionsGridPane.add(option7BoxStackPane,2,1);
         //Options 7
 
         //Options 8
         Label option8Label = new Label("Option 8");
         option8Label.getStyleClass().add("titled-address-label");
+        option8Label.setTranslateY(-8); 
+        option8Label.setTranslateX(10);
 
         CheckBox unknown29HDC = new CheckBox("Unknown 29");
         CheckBox unknown30HDC = new CheckBox("Unknown 30");
@@ -1549,50 +1487,47 @@ public class Bcm {
             }
         });
 
-        VBox option8Box = new VBox(2,unknown29HDC,unknown30HDC,unknown31HDC,unknown32HDC);
+        VBox option8Box = new VBox(2, unknown29HDC, unknown30HDC, unknown31HDC, unknown32HDC);
 
         VBox borderContainerOption8 = new VBox(option8Box);
         borderContainerOption8.getStyleClass().add("titled-address-box");
         borderContainerOption8.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane option8BoxStackPane = new StackPane();
-        option8BoxStackPane.getChildren().addAll(borderContainerOption8, option8Label);
-
+        StackPane option8BoxStackPane = new StackPane(borderContainerOption8, option8Label);
         StackPane.setAlignment(option8Label, Pos.TOP_LEFT);
-        option8Label.setTranslateY(-8); 
-        option8Label.setTranslateX(10);
-        holdDownConditionsGridPane.add(option8BoxStackPane,3,1);
         //Options 8
 
+        GridPane holdDownConditionsGridPane = new GridPane(10, 10);
+        holdDownConditionsGridPane.add(actionBoxStackPane ,0 ,0);
+        holdDownConditionsGridPane.add(option2BoxStackPane, 1, 0);
+        holdDownConditionsGridPane.add(option3BoxStackPane, 2, 0);
+        holdDownConditionsGridPane.add(option4BoxStackPane, 3, 0);
+        holdDownConditionsGridPane.add(chargeTypeBoxStackPane, 0, 1);
+        holdDownConditionsGridPane.add(option6BoxStackPane, 1, 1);
+        holdDownConditionsGridPane.add(option7BoxStackPane, 2, 1);
+        holdDownConditionsGridPane.add(option8BoxStackPane, 3, 1);
+
+        HBox holdDownConditionsHBox = new HBox(5, holdDownConditionslabel, holdDownConditionsGridPane);
         holdDownConditionsHBox.setAlignment(Pos.CENTER_LEFT);
-        holdDownConditionsHBox.getChildren().addAll(holdDownConditionslabel,holdDownConditionsGridPane);
         //hold down conditions
 
-        inputsVBox.getChildren().addAll(directionalInputHBox,buttonInputHBox,holdDownConditionsHBox);
-   
+        VBox inputsVBox = new VBox(25, directionalInputHBox, buttonInputHBox, holdDownConditionsHBox);
+        inputsVBox.setPadding(new Insets(20, 0, 0, 8));
+        inputsVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
         return inputsVBox;
     }
 
-    private ScrollPane createActivatorScrollPane(BcmEntry entry){
-        Tab activator=new Tab("Activator");
-        activator.setClosable(false);
-
-        VBox activatorVBox=new VBox(20);
-        activatorVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-
+    private ScrollPane createActivatorScrollPane(BcmEntry entry) {
         //Opponent Size Conditions
-        HBox opponentsSizeConditionsHBox=new HBox(2);
-        opponentsSizeConditionsHBox.setPadding(new Insets(20,0,0,8));
         Label opponentSizeConditionsLabel = new Label("Opponent Size\nConditions");
         opponentSizeConditionsLabel.setPrefWidth(120);
-
-        GridPane opponentSizeConditionsGridPane=new GridPane();
-        opponentSizeConditionsGridPane.setVgap(10);
-        opponentSizeConditionsGridPane.setHgap(10);
 
         //Unk Size 1
         Label unknownSize1Label = new Label("Unk Size 1");
         unknownSize1Label.getStyleClass().add("titled-address-label");
+        unknownSize1Label.setTranslateY(-8); 
+        unknownSize1Label.setTranslateX(10);
 
         CheckBox unknown1OpponentSizeConditions = new CheckBox("Unknown 1");
         CheckBox unknown2OpponentSizeConditions = new CheckBox("Unknown 2");
@@ -1639,18 +1574,15 @@ public class Bcm {
         borderContainerUnknownSize1Conditions.getStyleClass().add("titled-address-box");
         borderContainerUnknownSize1Conditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane unknownSize1StackPane = new StackPane();
-        unknownSize1StackPane.getChildren().addAll(borderContainerUnknownSize1Conditions, unknownSize1Label);
-
+        StackPane unknownSize1StackPane = new StackPane(borderContainerUnknownSize1Conditions, unknownSize1Label);
         StackPane.setAlignment(unknownSize1Label, Pos.TOP_LEFT);
-        unknownSize1Label.setTranslateY(-8); 
-        unknownSize1Label.setTranslateX(10);
-        opponentSizeConditionsGridPane.add(unknownSize1StackPane, 0, 0); 
         //Unk Size 1
 
         //Unk Size 2
         Label unknownSize2Label = new Label("Unk Size 2");
         unknownSize2Label.getStyleClass().add("titled-address-label");
+        unknownSize2Label.setTranslateY(-8); 
+        unknownSize2Label.setTranslateX(10);
 
         CheckBox unknown5OpponentSizeConditions = new CheckBox("Unknown 5");
         CheckBox unknown6OpponentSizeConditions = new CheckBox("Unknown 6");
@@ -1697,18 +1629,15 @@ public class Bcm {
         borderContainerUnknownSize2Conditions.getStyleClass().add("titled-address-box");
         borderContainerUnknownSize2Conditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane unknownSize2StackPane = new StackPane();
-        unknownSize2StackPane.getChildren().addAll(borderContainerUnknownSize2Conditions, unknownSize2Label);
-
+        StackPane unknownSize2StackPane = new StackPane(borderContainerUnknownSize2Conditions, unknownSize2Label);
         StackPane.setAlignment(unknownSize2Label, Pos.TOP_LEFT);
-        unknownSize2Label.setTranslateY(-8); 
-        unknownSize2Label.setTranslateX(10);
-        opponentSizeConditionsGridPane.add(unknownSize2StackPane, 1, 0); 
         //Unk Size 2
 
         //Unk Size 3
         Label unknownSize3Label = new Label("Unk Size 3");
         unknownSize3Label.getStyleClass().add("titled-address-label");
+        unknownSize3Label.setTranslateY(-8); 
+        unknownSize3Label.setTranslateX(10);
 
         CheckBox unknown9OpponentSizeConditions = new CheckBox("Unknown 9");
         CheckBox unknown10OpponentSizeConditions = new CheckBox("Unknown 10");
@@ -1755,18 +1684,15 @@ public class Bcm {
         borderContainerUnknownSize3Conditions.getStyleClass().add("titled-address-box");
         borderContainerUnknownSize3Conditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane unknownSize3StackPane = new StackPane();
-        unknownSize3StackPane.getChildren().addAll(borderContainerUnknownSize3Conditions, unknownSize3Label);
-
+        StackPane unknownSize3StackPane = new StackPane(borderContainerUnknownSize3Conditions, unknownSize3Label);
         StackPane.setAlignment(unknownSize3Label, Pos.TOP_LEFT);
-        unknownSize3Label.setTranslateY(-8); 
-        unknownSize3Label.setTranslateX(10);
-        opponentSizeConditionsGridPane.add(unknownSize3StackPane, 2, 0); 
         //Unk Size 3
 
         //Unk Size 4
         Label unknownSize4Label = new Label("Unk Size 4");
         unknownSize4Label.getStyleClass().add("titled-address-label");
+        unknownSize4Label.setTranslateY(-8); 
+        unknownSize4Label.setTranslateX(10);
 
         CheckBox unknown13OpponentSizeConditions = new CheckBox("Unknown 13");
         CheckBox unknown14OpponentSizeConditions = new CheckBox("Unknown 14");
@@ -1813,18 +1739,15 @@ public class Bcm {
         borderContainerUnknownSize4Conditions.getStyleClass().add("titled-address-box");
         borderContainerUnknownSize4Conditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane unknownSize4StackPane = new StackPane();
-        unknownSize4StackPane.getChildren().addAll(borderContainerUnknownSize4Conditions, unknownSize4Label);
-
+        StackPane unknownSize4StackPane = new StackPane(borderContainerUnknownSize4Conditions, unknownSize4Label);
         StackPane.setAlignment(unknownSize4Label, Pos.TOP_LEFT);
-        unknownSize4Label.setTranslateY(-8); 
-        unknownSize4Label.setTranslateX(10);
-        opponentSizeConditionsGridPane.add(unknownSize4StackPane, 3, 0); 
         //Unk Size 4
 
         //Opponent Size 1
         Label opponentSize1Label = new Label("Opponent Size 1");
         opponentSize1Label.getStyleClass().add("titled-address-label");
+        opponentSize1Label.setTranslateY(-8); 
+        opponentSize1Label.setTranslateX(10);
 
         CheckBox unknown17OpponentSizeConditions = new CheckBox("Unknown 17");
         CheckBox unknown18OpponentSizeConditions = new CheckBox("Unknown 18");
@@ -1871,18 +1794,15 @@ public class Bcm {
         borderContainerOpponentSize1Conditions.getStyleClass().add("titled-address-box");
         borderContainerOpponentSize1Conditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane opponentSize1StackPane = new StackPane();
-        opponentSize1StackPane.getChildren().addAll(borderContainerOpponentSize1Conditions, opponentSize1Label);
-
+        StackPane opponentSize1StackPane = new StackPane(borderContainerOpponentSize1Conditions, opponentSize1Label);
         StackPane.setAlignment(opponentSize1Label, Pos.TOP_LEFT);
-        opponentSize1Label.setTranslateY(-8); 
-        opponentSize1Label.setTranslateX(10);
-        opponentSizeConditionsGridPane.add(opponentSize1StackPane, 0, 1); 
         //Opponent Size 1
 
         //Opponent Size 2
         Label opponentSize2Label = new Label("Opponent Size 2");
         opponentSize2Label.getStyleClass().add("titled-address-label");
+        opponentSize2Label.setTranslateY(-8); 
+        opponentSize2Label.setTranslateX(10);
 
         CheckBox unknown21OpponentSizeConditions = new CheckBox("Unknown 21");
         CheckBox unknown22OpponentSizeConditions = new CheckBox("Unknown 22");
@@ -1929,18 +1849,15 @@ public class Bcm {
         borderContainerOpponentSize2Conditions.getStyleClass().add("titled-address-box");
         borderContainerOpponentSize2Conditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane opponentSize2StackPane = new StackPane();
-        opponentSize2StackPane.getChildren().addAll(borderContainerOpponentSize2Conditions, opponentSize2Label);
-
+        StackPane opponentSize2StackPane = new StackPane(borderContainerOpponentSize2Conditions, opponentSize2Label);
         StackPane.setAlignment(opponentSize2Label, Pos.TOP_LEFT);
-        opponentSize2Label.setTranslateY(-8); 
-        opponentSize2Label.setTranslateX(10);
-        opponentSizeConditionsGridPane.add(opponentSize2StackPane, 1, 1); 
         //Opponent Size 2
 
         //Skill Upgrade 1
         Label skillUpgrade1Label = new Label("Skill Upgrade 1");
         skillUpgrade1Label.getStyleClass().add("titled-address-label");
+        skillUpgrade1Label.setTranslateY(-8); 
+        skillUpgrade1Label.setTranslateX(10);
 
         CheckBox unknown25OpponentSizeConditions = new CheckBox("Unknown 25");
         CheckBox unknown26OpponentSizeConditions = new CheckBox("Unknown 26");
@@ -1987,18 +1904,15 @@ public class Bcm {
         borderContainerSkillUpgrade1Conditions.getStyleClass().add("titled-address-box");
         borderContainerSkillUpgrade1Conditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane skillUpgrade1StackPane = new StackPane();
-        skillUpgrade1StackPane.getChildren().addAll(borderContainerSkillUpgrade1Conditions, skillUpgrade1Label);
-
+        StackPane skillUpgrade1StackPane = new StackPane(borderContainerSkillUpgrade1Conditions, skillUpgrade1Label);
         StackPane.setAlignment(skillUpgrade1Label, Pos.TOP_LEFT);
-        skillUpgrade1Label.setTranslateY(-8); 
-        skillUpgrade1Label.setTranslateX(10);
-        opponentSizeConditionsGridPane.add(skillUpgrade1StackPane, 2, 1); 
         //Skill Upgrade 1
 
         //Skill Upgrade 2
         Label skillUpgrade2Label = new Label("Skill Upgrade 2");
         skillUpgrade2Label.getStyleClass().add("titled-address-label");
+        skillUpgrade2Label.setTranslateY(-8); 
+        skillUpgrade2Label.setTranslateX(10);
 
         CheckBox unknown29OpponentSizeConditions = new CheckBox("Unknown 29");
         CheckBox unknown30OpponentSizeConditions = new CheckBox("Unknown 30");
@@ -2045,68 +1959,65 @@ public class Bcm {
         borderContainerSkillUpgrade2Conditions.getStyleClass().add("titled-address-box");
         borderContainerSkillUpgrade2Conditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane skillUpgrade2StackPane = new StackPane();
-        skillUpgrade2StackPane.getChildren().addAll(borderContainerSkillUpgrade2Conditions, skillUpgrade2Label);
-
+        StackPane skillUpgrade2StackPane = new StackPane(borderContainerSkillUpgrade2Conditions, skillUpgrade2Label);
         StackPane.setAlignment(skillUpgrade2Label, Pos.TOP_LEFT);
-        skillUpgrade2Label.setTranslateY(-8); 
-        skillUpgrade2Label.setTranslateX(10);
-        opponentSizeConditionsGridPane.add(skillUpgrade2StackPane, 3, 1); 
         //Skill Upgrade 2
 
+        GridPane opponentSizeConditionsGridPane = new GridPane(10, 10);
+        opponentSizeConditionsGridPane.add(unknownSize1StackPane, 0, 0); 
+        opponentSizeConditionsGridPane.add(unknownSize2StackPane, 1, 0);
+        opponentSizeConditionsGridPane.add(unknownSize3StackPane, 2, 0); 
+        opponentSizeConditionsGridPane.add(unknownSize4StackPane, 3, 0); 
+        opponentSizeConditionsGridPane.add(opponentSize1StackPane, 0, 1); 
+        opponentSizeConditionsGridPane.add(opponentSize2StackPane, 1, 1); 
+        opponentSizeConditionsGridPane.add(skillUpgrade1StackPane, 2, 1);
+        opponentSizeConditionsGridPane.add(skillUpgrade2StackPane, 3, 1); 
+
+        HBox opponentsSizeConditionsHBox = new HBox(5, opponentSizeConditionsLabel, opponentSizeConditionsGridPane);
         opponentsSizeConditionsHBox.setAlignment(Pos.CENTER_LEFT);
-        opponentsSizeConditionsHBox.getChildren().addAll(opponentSizeConditionsLabel,opponentSizeConditionsGridPane);
         //Opponents Size Conditons
 
         //Minimum Loop Conditions
-        HBox minimumLoopDurationHBox=new HBox(2);
-        minimumLoopDurationHBox.setPadding(new Insets(20,0,0,8));
-        Label minimumLoopDurationLabel=new Label("Minimum Loop\nConditions");
-        minimumLoopDurationLabel.setPrefWidth(120);;
+        Label minimumLoopDurationLabel = new Label("Minimum Loop\nConditions");
+        minimumLoopDurationLabel.setPrefWidth(120);
 
-        Spinner<Integer> minimumLoopDurationSpinner=new Spinner<>(0,65535,entry.minimumLoopDuration);
+        Spinner<Integer> minimumLoopDurationSpinner = new Spinner<>(0, 65535, entry.minimumLoopDuration);
         minimumLoopDurationSpinner.setEditable(true);
-        minimumLoopDurationSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        minimumLoopDurationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.minimumLoopDuration = newValue;
             }
         });
 
-        minimumLoopDurationHBox.getChildren().addAll(minimumLoopDurationLabel,minimumLoopDurationSpinner);
+        HBox minimumLoopDurationHBox = new HBox(5, minimumLoopDurationLabel, minimumLoopDurationSpinner);
         minimumLoopDurationHBox.setAlignment(Pos.CENTER_LEFT);
         //Minimum Loop Conditions
 
         //Maximum Loop Conditions
-        HBox maximumLoopDurationHBox=new HBox(2);
-        maximumLoopDurationHBox.setPadding(new Insets(20,0,0,8));
-        Label maximumLoopDurationLabel=new Label("Maximum Loop\nConditions");
+        Label maximumLoopDurationLabel = new Label("Maximum Loop\nConditions");
         maximumLoopDurationLabel.setPrefWidth(120);
         
-        Spinner<Integer> maximumLoopDurationSpinner=new Spinner<>(0,65535,entry.maximumLoopDuration);
+        Spinner<Integer> maximumLoopDurationSpinner = new Spinner<>(0, 65535, entry.maximumLoopDuration);
         maximumLoopDurationSpinner.setEditable(true);
-        maximumLoopDurationSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        maximumLoopDurationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.maximumLoopDuration = newValue;
             }
-
         });
-        maximumLoopDurationHBox.getChildren().addAll(maximumLoopDurationLabel,maximumLoopDurationSpinner);
+
+        HBox maximumLoopDurationHBox = new HBox(5, maximumLoopDurationLabel, maximumLoopDurationSpinner);
         maximumLoopDurationHBox.setAlignment(Pos.CENTER_LEFT);
         //Maximum Loop Conditions
 
         //Primary Activator Conditions
-        HBox primaryActivatorConditionsHBox=new HBox(2);
-        primaryActivatorConditionsHBox.setPadding(new Insets(20,0,0,8));
         Label primaryActivatorConditionsLabel = new Label("Primary Activator\nConditions");
         primaryActivatorConditionsLabel.setPrefWidth(120);
         
-        GridPane primaryActivatorConditionsGridPane=new GridPane();
-        primaryActivatorConditionsGridPane.setVgap(10);
-        primaryActivatorConditionsGridPane.setHgap(10);
-
         //Position
         Label positionLabel = new Label("Position");
         positionLabel.getStyleClass().add("titled-address-label");
+        positionLabel.setTranslateY(-8); 
+        positionLabel.setTranslateX(10);
 
         CheckBox standing = new CheckBox("Standing");
         CheckBox floating = new CheckBox("Floating");
@@ -2153,18 +2064,15 @@ public class Bcm {
         borderContainerPositionConditions.getStyleClass().add("titled-address-box");
         borderContainerPositionConditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane positionStackPane = new StackPane();
-        positionStackPane.getChildren().addAll(borderContainerPositionConditions, positionLabel);
-
+        StackPane positionStackPane = new StackPane(borderContainerPositionConditions, positionLabel);
         StackPane.setAlignment(positionLabel, Pos.TOP_LEFT);
-        positionLabel.setTranslateY(-8); 
-        positionLabel.setTranslateX(10);
-        primaryActivatorConditionsGridPane.add(positionStackPane, 0, 0); 
         //Position
 
         //Distance and Transformation
         Label distanceTransformationLabel = new Label("Distance And Transformation");
         distanceTransformationLabel.getStyleClass().add("titled-address-label");
+        distanceTransformationLabel.setTranslateY(-8); 
+        distanceTransformationLabel.setTranslateX(10);
 
         CheckBox attackBlocked = new CheckBox("Attack Blocked");
         CheckBox closeToTarget = new CheckBox("Close To Target");
@@ -2211,18 +2119,15 @@ public class Bcm {
         borderContainerdistanceTransformationConditions.getStyleClass().add("titled-address-box");
         borderContainerdistanceTransformationConditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane distanceTransformationStackPane = new StackPane();
-        distanceTransformationStackPane.getChildren().addAll(borderContainerdistanceTransformationConditions, distanceTransformationLabel);
-
+        StackPane distanceTransformationStackPane = new StackPane(borderContainerdistanceTransformationConditions, distanceTransformationLabel);
         StackPane.setAlignment(distanceTransformationLabel, Pos.TOP_LEFT);
-        distanceTransformationLabel.setTranslateY(-8); 
-        distanceTransformationLabel.setTranslateX(10);
-        primaryActivatorConditionsGridPane.add(distanceTransformationStackPane, 1, 0); 
         //Distance and Transformation
 
         //Primary Activator
         Label primaryActivatorLabel=new Label("Primary Activator");
         primaryActivatorLabel.getStyleClass().add("titled-address-label");
+        primaryActivatorLabel.setTranslateY(-8); 
+        primaryActivatorLabel.setTranslateX(10);
 
         CheckBox inTransformedState = new CheckBox("In Transformed State");
         CheckBox flashOnOffUnlessTargeting = new CheckBox("Flash On/Off Unless Targeting");
@@ -2269,18 +2174,15 @@ public class Bcm {
         borderContainerPrimaryActivator.getStyleClass().add("titled-address-box");
         borderContainerPrimaryActivator.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane primaryActivatorStackPane = new StackPane();
-        primaryActivatorStackPane.getChildren().addAll(borderContainerPrimaryActivator, primaryActivatorLabel);
-
+        StackPane primaryActivatorStackPane = new StackPane(borderContainerPrimaryActivator, primaryActivatorLabel);
         StackPane.setAlignment(primaryActivatorLabel, Pos.TOP_LEFT);
-        primaryActivatorLabel.setTranslateY(-8); 
-        primaryActivatorLabel.setTranslateX(10);
-        primaryActivatorConditionsGridPane.add(primaryActivatorStackPane, 2, 0); 
         //Primary Activator
 
         //Counter and Ki Amount
         Label counterKiAmountLabel = new Label("Counter And Ki Amount");
         counterKiAmountLabel.getStyleClass().add("titled-address-label");
+        counterKiAmountLabel.setTranslateY(-8); 
+        counterKiAmountLabel.setTranslateX(10);
 
         CheckBox counterMelee = new CheckBox("Counter Melee");
         CheckBox counterProjectile = new CheckBox("Counter Projectile");
@@ -2327,18 +2229,15 @@ public class Bcm {
         borderContainercounterKiAmountConditions.getStyleClass().add("titled-address-box");
         borderContainercounterKiAmountConditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane counterKiAmountStackPane = new StackPane();
-        counterKiAmountStackPane.getChildren().addAll(borderContainercounterKiAmountConditions, counterKiAmountLabel);
-
+        StackPane counterKiAmountStackPane = new StackPane(borderContainercounterKiAmountConditions, counterKiAmountLabel);
         StackPane.setAlignment(counterKiAmountLabel, Pos.TOP_LEFT);
-        counterKiAmountLabel.setTranslateY(-8); 
-        counterKiAmountLabel.setTranslateX(10);
-        primaryActivatorConditionsGridPane.add(counterKiAmountStackPane, 3, 0); 
         //Counter and Ki Amount
 
         //Touching
         Label touchingLabel = new Label("Touching");
         touchingLabel.getStyleClass().add("titled-address-label");
+        touchingLabel.setTranslateY(-8); 
+        touchingLabel.setTranslateX(10);
 
         CheckBox unknown17PrimaryActivatorConditions = new CheckBox("Unknown 17");
         CheckBox unknown18PrimaryActivatorConditions = new CheckBox("Unknown 18");
@@ -2385,18 +2284,15 @@ public class Bcm {
         borderContainertouchingConditions.getStyleClass().add("titled-address-box");
         borderContainertouchingConditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane touchingStackPane = new StackPane();
-        touchingStackPane.getChildren().addAll(borderContainertouchingConditions, touchingLabel);
-
+        StackPane touchingStackPane = new StackPane(borderContainertouchingConditions, touchingLabel);
         StackPane.setAlignment(touchingLabel, Pos.TOP_LEFT);
-        touchingLabel.setTranslateY(-8); 
-        touchingLabel.setTranslateX(10);
-        primaryActivatorConditionsGridPane.add(touchingStackPane, 0, 1); 
         //Touching
 
         //Targeting
         Label targetingLabel = new Label("Targeting");
         targetingLabel.getStyleClass().add("titled-address-label");
+        targetingLabel.setTranslateY(-8); 
+        targetingLabel.setTranslateX(10);
 
         CheckBox opponentKnockback = new CheckBox("Opponent Knockback");
         CheckBox unknown22PrimaryActivatorConditions = new CheckBox("Unknown 22");
@@ -2443,18 +2339,15 @@ public class Bcm {
         borderContainerTargetingConditions.getStyleClass().add("titled-address-box");
         borderContainerTargetingConditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane targetingStackPane = new StackPane();
-        targetingStackPane.getChildren().addAll(borderContainerTargetingConditions, targetingLabel);
-
+        StackPane targetingStackPane = new StackPane(borderContainerTargetingConditions, targetingLabel);
         StackPane.setAlignment(targetingLabel, Pos.TOP_LEFT);
-        targetingLabel.setTranslateY(-8); 
-        targetingLabel.setTranslateX(10);
-        primaryActivatorConditionsGridPane.add(targetingStackPane, 1, 1); 
         //Targeting
 
         //Collision and Stamina
         Label collisionStaminaLabel = new Label("Collision/Stamina");
         collisionStaminaLabel.getStyleClass().add("titled-address-label");
+        collisionStaminaLabel.setTranslateY(-8); 
+        collisionStaminaLabel.setTranslateX(10);
 
         CheckBox activateProjectile = new CheckBox("Activate Projectile");
         CheckBox staminaAboveZero = new CheckBox("Stamina > 0%");
@@ -2501,18 +2394,15 @@ public class Bcm {
         borderContainerCollisionStaminaConditions.getStyleClass().add("titled-address-box");
         borderContainerCollisionStaminaConditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane collisionStaminaStackPane = new StackPane();
-        collisionStaminaStackPane.getChildren().addAll(borderContainerCollisionStaminaConditions, collisionStaminaLabel);
-
+        StackPane collisionStaminaStackPane = new StackPane(borderContainerCollisionStaminaConditions, collisionStaminaLabel);
         StackPane.setAlignment(collisionStaminaLabel, Pos.TOP_LEFT);
-        collisionStaminaLabel.setTranslateY(-8); 
-        collisionStaminaLabel.setTranslateX(10);
-        primaryActivatorConditionsGridPane.add(collisionStaminaStackPane, 2, 1); 
         //Collision and Stamina
 
         //Health
         Label healthLabel = new Label("Health");
         healthLabel.getStyleClass().add("titled-address-label");
+        healthLabel.setTranslateY(-8); 
+        healthLabel.setTranslateX(10);
 
         CheckBox usersHealth_OneUse = new CheckBox("Users Health (One Use)");
         CheckBox targetsHealthLessThan25 = new CheckBox("Target's Health < 25%");
@@ -2559,30 +2449,34 @@ public class Bcm {
         borderContainerhealthConditions.getStyleClass().add("titled-address-box");
         borderContainerhealthConditions.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane healthStackPane = new StackPane();
-        healthStackPane.getChildren().addAll(borderContainerhealthConditions, healthLabel);
-
+        StackPane healthStackPane = new StackPane(borderContainerhealthConditions, healthLabel);
         StackPane.setAlignment(healthLabel, Pos.TOP_LEFT);
-        healthLabel.setTranslateY(-8); 
-        healthLabel.setTranslateX(10);
-        primaryActivatorConditionsGridPane.add(healthStackPane, 3, 1); 
         //Health
 
-        primaryActivatorConditionsHBox.getChildren().addAll(primaryActivatorConditionsLabel,primaryActivatorConditionsGridPane);
+        GridPane primaryActivatorConditionsGridPane=new GridPane(10, 10);
+        primaryActivatorConditionsGridPane.add(positionStackPane, 0, 0); 
+        primaryActivatorConditionsGridPane.add(distanceTransformationStackPane, 1, 0); 
+        primaryActivatorConditionsGridPane.add(primaryActivatorStackPane, 2, 0); 
+        primaryActivatorConditionsGridPane.add(counterKiAmountStackPane, 3, 0); 
+        primaryActivatorConditionsGridPane.add(touchingStackPane, 0, 1);
+        primaryActivatorConditionsGridPane.add(targetingStackPane, 1, 1); 
+        primaryActivatorConditionsGridPane.add(collisionStaminaStackPane, 2, 1);
+        primaryActivatorConditionsGridPane.add(healthStackPane, 3, 1); 
+
+        HBox primaryActivatorConditionsHBox = new HBox(5, primaryActivatorConditionsLabel, primaryActivatorConditionsGridPane);
         primaryActivatorConditionsHBox.setAlignment(Pos.CENTER_LEFT);
         //Primary Activator Conditions
 
         //Activator State
-        HBox activatorStateHBox=new HBox(2);
-        activatorStateHBox.setPadding(new Insets(20,0,0,8));
         Label activatorStateLabel = new Label("Activator State");
         activatorStateLabel.setPrefWidth(120);
         
-        GridPane activatorStateGridPane=new GridPane();
-        activatorStateGridPane.setVgap(10);
-        activatorStateGridPane.setHgap(10);
-        
         //activator state box 1
+        Label activatorState1Label = new Label("Activator State 1");
+        activatorState1Label.getStyleClass().add("titled-address-label");
+        activatorState1Label.setTranslateY(-8); 
+        activatorState1Label.setTranslateX(10);
+
         CheckBox idleActivatorState = new CheckBox("Idle");
         CheckBox comboSkill = new CheckBox("Combo/Skill");
         CheckBox boosting = new CheckBox("Boosting"); 
@@ -2628,10 +2522,16 @@ public class Bcm {
         borderContainerActivatorState1.getStyleClass().add("titled-address-box");
         borderContainerActivatorState1.setPadding(new Insets(12, 0, 0, 0));
 
-        activatorStateGridPane.add(borderContainerActivatorState1, 0, 0); 
+        StackPane activatorState1StackPane = new StackPane(borderContainerActivatorState1, activatorState1Label);
+        StackPane.setAlignment(activatorState1Label, Pos.TOP_LEFT);
         //activator state box 1
 
         //activator state box 2
+        Label activatorState2Label = new Label("Activator State 2");
+        activatorState2Label.getStyleClass().add("titled-address-label");
+        activatorState2Label.setTranslateY(-8); 
+        activatorState2Label.setTranslateX(10);
+
         CheckBox receivingDamage = new CheckBox("Receiving Damage");
         CheckBox jumping = new CheckBox("Jumping");
         CheckBox notBeingDamaged = new CheckBox("Not Being Damaged"); 
@@ -2677,10 +2577,16 @@ public class Bcm {
         borderContainerActivatorState2.getStyleClass().add("titled-address-box");
         borderContainerActivatorState2.setPadding(new Insets(12, 0, 0, 0));
 
-        activatorStateGridPane.add(borderContainerActivatorState2, 1, 0); 
+        StackPane activatorState2StackPane = new StackPane(borderContainerActivatorState2, activatorState2Label);
+        StackPane.setAlignment(activatorState2Label, Pos.TOP_LEFT);
         //activator state box 2
 
         //activator state box 3
+        Label activatorState3Label = new Label("Activator State 3");
+        activatorState3Label.getStyleClass().add("titled-address-label");
+        activatorState3Label.setTranslateY(-8); 
+        activatorState3Label.setTranslateX(10);
+
         CheckBox forwards = new CheckBox("Forwards");
         CheckBox backwards = new CheckBox("Backwards");
         CheckBox left = new CheckBox("Left"); 
@@ -2726,12 +2632,16 @@ public class Bcm {
         borderContainerActivatorState3.getStyleClass().add("titled-address-box");
         borderContainerActivatorState3.setPadding(new Insets(12, 0, 0, 0));
 
-        activatorStateGridPane.add(borderContainerActivatorState3, 2, 0); 
+        StackPane activatorState3StackPane = new StackPane(borderContainerActivatorState3, activatorState3Label);
+        StackPane.setAlignment(activatorState3Label, Pos.TOP_LEFT);
         //activator state box 3
 
         //activator state box 4
         Label unknownState4Label = new Label("Unk State 4");
         unknownState4Label.getStyleClass().add("titled-address-label");
+        unknownState4Label.setTranslateY(-8); 
+        unknownState4Label.setTranslateX(10);
+
         CheckBox unknown13ActivatorState = new CheckBox("Unknown 13");
         CheckBox unknown14ActivatorState = new CheckBox("Unknown 14");
         CheckBox unknown15ActivatorState = new CheckBox("Unknown 15"); 
@@ -2777,19 +2687,15 @@ public class Bcm {
         borderContainerActivatorState4.getStyleClass().add("titled-address-box");
         borderContainerActivatorState4.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane activatorState4StackPane = new StackPane();
-        activatorState4StackPane.getChildren().addAll(borderContainerActivatorState4, unknownState4Label);
-
+        StackPane activatorState4StackPane = new StackPane(borderContainerActivatorState4, unknownState4Label);
         StackPane.setAlignment(unknownState4Label, Pos.TOP_LEFT);
-        unknownState4Label.setTranslateY(-8); 
-        unknownState4Label.setTranslateX(10);
-
-        activatorStateGridPane.add(activatorState4StackPane, 3, 0); 
         //activator state box 4
 
         //activator state box 5
         Label unknownState5Label = new Label("Unk State 5");
         unknownState5Label.getStyleClass().add("titled-address-label");
+        unknownState5Label.setTranslateY(-8); 
+        unknownState5Label.setTranslateX(10);
 
         CheckBox unknown17ActivatorState = new CheckBox("Unknown 17");
         CheckBox unknown18ActivatorState = new CheckBox("Unknown 18");
@@ -2836,20 +2742,15 @@ public class Bcm {
         borderContainerActivatorState5.getStyleClass().add("titled-address-box");
         borderContainerActivatorState5.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane activatorState5StackPane = new StackPane();
-        activatorState5StackPane.getChildren().addAll(borderContainerActivatorState5, unknownState5Label);
-
+        StackPane activatorState5StackPane = new StackPane(borderContainerActivatorState5, unknownState5Label);
         StackPane.setAlignment(unknownState5Label, Pos.TOP_LEFT);
-        unknownState5Label.setTranslateY(-8); 
-        unknownState5Label.setTranslateX(10);
-        
-        // Placed at Column 0, Row 1
-        activatorStateGridPane.add(activatorState5StackPane, 0, 1); 
         //activator state box 5
 
         //activator state box 6
         Label unknownState6Label = new Label("Unk State 6");
         unknownState6Label.getStyleClass().add("titled-address-label");
+        unknownState6Label.setTranslateY(-8); 
+        unknownState6Label.setTranslateX(10);
 
         CheckBox unknown21ActivatorState = new CheckBox("Unknown 21");
         CheckBox unknown22ActivatorState = new CheckBox("Unknown 22");
@@ -2895,20 +2796,15 @@ public class Bcm {
         borderContainerActivatorState6.getStyleClass().add("titled-address-box");
         borderContainerActivatorState6.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane activatorState6StackPane = new StackPane();
-        activatorState6StackPane.getChildren().addAll(borderContainerActivatorState6, unknownState6Label);
-
+        StackPane activatorState6StackPane = new StackPane(borderContainerActivatorState6, unknownState6Label);
         StackPane.setAlignment(unknownState6Label, Pos.TOP_LEFT);
-        unknownState6Label.setTranslateY(-8); 
-        unknownState6Label.setTranslateX(10);
-        
-        // Placed at Column 1, Row 1
-        activatorStateGridPane.add(activatorState6StackPane, 1, 1); 
         //activator state box 6
 
         //activator state box 7
         Label unknownState7Label = new Label("Unk State 7");
         unknownState7Label.getStyleClass().add("titled-address-label");
+        unknownState7Label.setTranslateY(-8); 
+        unknownState7Label.setTranslateX(10);
 
         CheckBox unknown25ActivatorState = new CheckBox("Unknown 25");
         CheckBox unknown26ActivatorState = new CheckBox("Unknown 26");
@@ -2955,20 +2851,15 @@ public class Bcm {
         borderContainerActivatorState7.getStyleClass().add("titled-address-box");
         borderContainerActivatorState7.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane activatorState7StackPane = new StackPane();
-        activatorState7StackPane.getChildren().addAll(borderContainerActivatorState7, unknownState7Label);
-
+        StackPane activatorState7StackPane = new StackPane(borderContainerActivatorState7, unknownState7Label);
         StackPane.setAlignment(unknownState7Label, Pos.TOP_LEFT);
-        unknownState7Label.setTranslateY(-8); 
-        unknownState7Label.setTranslateX(10);
-        
-        // Placed at Column 2, Row 1
-        activatorStateGridPane.add(activatorState7StackPane, 2, 1); 
         //activator state box 7
 
         //activator state box 8
         Label unknownState8Label = new Label("Unk State 8");
         unknownState8Label.getStyleClass().add("titled-address-label");
+        unknownState8Label.setTranslateY(-8); 
+        unknownState8Label.setTranslateX(10);
 
         CheckBox unknown29ActivatorState = new CheckBox("Unknown 29");
         CheckBox unknown30ActivatorState = new CheckBox("Unknown 30");
@@ -3022,175 +2913,170 @@ public class Bcm {
         borderContainerActivatorState8.getStyleClass().add("titled-address-box");
         borderContainerActivatorState8.setPadding(new Insets(12, 0, 0, 0));
 
-        StackPane activatorState8StackPane = new StackPane();
-        activatorState8StackPane.getChildren().addAll(borderContainerActivatorState8, unknownState8Label);
-
+        StackPane activatorState8StackPane = new StackPane(borderContainerActivatorState8, unknownState8Label);
         StackPane.setAlignment(unknownState8Label, Pos.TOP_LEFT);
-        unknownState8Label.setTranslateY(-8); 
-        unknownState8Label.setTranslateX(10);
-        
-        // Placed at Column 3, Row 1
-        activatorStateGridPane.add(activatorState8StackPane, 3, 1); 
         //activator state box 8
 
-        activatorStateHBox.getChildren().addAll(activatorStateLabel,activatorStateGridPane);
+        GridPane activatorStateGridPane = new GridPane(10, 10);
+        activatorStateGridPane.add(activatorState1StackPane, 0, 0);
+        activatorStateGridPane.add(activatorState2StackPane, 1, 0);
+        activatorStateGridPane.add(activatorState3StackPane, 2, 0);
+        activatorStateGridPane.add(activatorState4StackPane, 3, 0); 
+        activatorStateGridPane.add(activatorState5StackPane, 0, 1); 
+        activatorStateGridPane.add(activatorState6StackPane, 1, 1); 
+        activatorStateGridPane.add(activatorState7StackPane, 2, 1); 
+        activatorStateGridPane.add(activatorState8StackPane, 3, 1);
+
+        HBox activatorStateHBox = new HBox(5, activatorStateLabel,activatorStateGridPane);
         activatorStateHBox.setAlignment(Pos.CENTER_LEFT);
 
-        activatorVBox.getChildren().addAll(opponentsSizeConditionsHBox,minimumLoopDurationHBox,maximumLoopDurationHBox,primaryActivatorConditionsHBox,activatorStateHBox);
-        
-        ScrollPane scrollPane = new ScrollPane(activatorVBox);
-        scrollPane.setFitToWidth(true);
-        activator.setContent(scrollPane);
+        VBox activatorVBox = new VBox(25, 
+            opponentsSizeConditionsHBox, minimumLoopDurationHBox,
+            maximumLoopDurationHBox, primaryActivatorConditionsHBox, activatorStateHBox
+        );
+        activatorVBox.setPadding(new Insets(20, 0, 20, 8));
+        activatorVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
-        return scrollPane;
+        ScrollPane activatorScrollPane = new ScrollPane(activatorVBox);
+        activatorScrollPane.setFitToWidth(true);
+
+        return activatorScrollPane;
     }
 
-    private VBox createBACVBox(BcmEntry entry){
-
-        VBox BACVBox=new VBox(12);
-        BACVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-
+    private VBox createBACVBox(BcmEntry entry) {
         //BAC entry primary
-        HBox BACEntryPrimaryHBox=new HBox(40);
-        BACEntryPrimaryHBox.setPadding(new Insets(20,0,0,8));
-        Label BACEntryPrimaryLabel=new Label("BAC Entry Primary");
-        BACEntryPrimaryLabel.setPrefWidth(160);
+        Label BACEntryPrimaryLabel = new Label("BAC Entry Primary");
+        BACEntryPrimaryLabel.setPrefWidth(200);
         
-        Spinner<Integer> BACEntryPrimarySpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,entry.bacEntryPrimary);
+        Spinner<Integer> BACEntryPrimarySpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryPrimary);
         BACEntryPrimarySpinner.setEditable(true);
-        BACEntryPrimarySpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        BACEntryPrimarySpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.bacEntryPrimary = newValue.shortValue();
             }
         });
         
-        BACEntryPrimaryHBox.getChildren().addAll(BACEntryPrimaryLabel,BACEntryPrimarySpinner);
+        HBox BACEntryPrimaryHBox = new HBox(BACEntryPrimaryLabel, BACEntryPrimarySpinner);
         BACEntryPrimaryHBox.setAlignment(Pos.CENTER_LEFT);
         //BAC entry primary
 
         //BAC entry charge
-        HBox BACEntryChargeHBox=new HBox(40);
-        BACEntryChargeHBox.setPadding(new Insets(20,0,0,8));
-        Label BACEntryChargeLabel=new Label("BAC Entry Charge");
-        BACEntryChargeLabel.setPrefWidth(160);
+        
+        Label BACEntryChargeLabel = new Label("BAC Entry Charge");
+        BACEntryChargeLabel.setPrefWidth(200);
 
-        Spinner<Integer> BACEntryChargeSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,entry.bacEntryCharge);
+        Spinner<Integer> BACEntryChargeSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryCharge);
         BACEntryChargeSpinner.setEditable(true);
-        BACEntryChargeSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        BACEntryChargeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.bacEntryCharge = newValue.shortValue();
             }
         });
 
-        BACEntryChargeHBox.getChildren().addAll(BACEntryChargeLabel,BACEntryChargeSpinner);
+        HBox BACEntryChargeHBox = new HBox(BACEntryChargeLabel, BACEntryChargeSpinner);
         BACEntryChargeHBox.setAlignment(Pos.CENTER_LEFT);
         //BAC entry charge
 
         //BAC entry user connect
-        HBox BACEntryUserConnectHBox=new HBox(40);
-        BACEntryUserConnectHBox.setPadding(new Insets(20,0,0,8));
-        Label BACEntryUserConnectLabel=new Label("BAC Entry User Connect");
-        BACEntryUserConnectLabel.setPrefWidth(160);
+        Label BACEntryUserConnectLabel = new Label("BAC Entry User Connect");
+        BACEntryUserConnectLabel.setPrefWidth(200);
 
-        Spinner<Integer> BACEntryUserConnectSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,entry.bacEntryUserConnect);
+        Spinner<Integer> BACEntryUserConnectSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryUserConnect);
         BACEntryUserConnectSpinner.setEditable(true);
-        BACEntryUserConnectSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        BACEntryUserConnectSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.bacEntryUserConnect = newValue.shortValue();
             }
         });
 
-        BACEntryUserConnectHBox.getChildren().addAll(BACEntryUserConnectLabel,BACEntryUserConnectSpinner);
+        HBox BACEntryUserConnectHBox = new HBox(BACEntryUserConnectLabel, BACEntryUserConnectSpinner);
         BACEntryUserConnectHBox.setAlignment(Pos.CENTER_LEFT);
         //BAC entry user connect
 
         //BAC entry victim connect
-        HBox BACEntryVictimConnectHBox=new HBox(40);
-        BACEntryVictimConnectHBox.setPadding(new Insets(20,0,0,8));
-        Label BACEntryVictimConnectLabel=new Label("BAC Entry Victim Connect");
-        BACEntryVictimConnectLabel.setPrefWidth(160);
+        Label BACEntryVictimConnectLabel = new Label("BAC Entry Victim Connect");
+        BACEntryVictimConnectLabel.setPrefWidth(200);
         
-        Spinner<Integer> BACEntryVictimConnectSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,entry.bacEntryVictimConnect);
+        Spinner<Integer> BACEntryVictimConnectSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryVictimConnect);
         BACEntryVictimConnectSpinner.setEditable(true);
-        BACEntryVictimConnectSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        BACEntryVictimConnectSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.bacEntryVictimConnect = newValue.shortValue();
             }
         });
 
-        BACEntryVictimConnectHBox.getChildren().addAll(BACEntryVictimConnectLabel,BACEntryVictimConnectSpinner);
+        HBox BACEntryVictimConnectHBox = new HBox(BACEntryVictimConnectLabel, BACEntryVictimConnectSpinner);
         BACEntryVictimConnectHBox.setAlignment(Pos.CENTER_LEFT);
         //BAC entry victim connect
 
         //BAC entry airborne
-        HBox BACEntryAirborneHBox=new HBox(40);
-        BACEntryAirborneHBox.setPadding(new Insets(20,0,0,8));
-        Label BACEntryAirborneLabel=new Label("BAC Entry Airborne");
-        BACEntryAirborneLabel.setPrefWidth(160);
+        Label BACEntryAirborneLabel = new Label("BAC Entry Airborne");
+        BACEntryAirborneLabel.setPrefWidth(200);
 
-        Spinner<Integer> BACEntryAirborneSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,entry.bacEntryAirborne);
+        Spinner<Integer> BACEntryAirborneSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryAirborne);
         BACEntryAirborneSpinner.setEditable(true);
-        BACEntryAirborneSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        BACEntryAirborneSpinner.valueProperty().addListener((obs,oldValue,newValue) -> {
+            if (newValue != null) {
                 entry.bacEntryAirborne = newValue.shortValue();
             }
         });
 
-        BACEntryAirborneHBox.getChildren().addAll(BACEntryAirborneLabel,BACEntryAirborneSpinner);
+        HBox BACEntryAirborneHBox = new HBox(BACEntryAirborneLabel, BACEntryAirborneSpinner);
         BACEntryAirborneHBox.setAlignment(Pos.CENTER_LEFT);
         //BAC entry airborne
 
         //BAC entry targeting override
-        HBox BACEntryTargetingOverrideHBox=new HBox(40);
-        BACEntryTargetingOverrideHBox.setPadding(new Insets(20,0,0,8));
-        Label BACEntryTargetingOverrideLabel=new Label("BAC Entry Targeting Override");
-        BACEntryTargetingOverrideLabel.setPrefWidth(160);
+        Label BACEntryTargetingOverrideLabel = new Label("BAC Entry Targeting Override");
+        BACEntryTargetingOverrideLabel.setPrefWidth(200);
 
-        Spinner<Integer> BACEntryTargetingOverrideSpinner=new Spinner<>(0,65535,entry.bacEntryTargetingOverride);
+        Spinner<Integer> BACEntryTargetingOverrideSpinner = new Spinner<>(0, 65535, entry.bacEntryTargetingOverride);
         BACEntryTargetingOverrideSpinner.setEditable(true);
-        BACEntryTargetingOverrideSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        BACEntryTargetingOverrideSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.bacEntryTargetingOverride = newValue;
             }
         });
         
-        BACEntryTargetingOverrideHBox.getChildren().addAll(BACEntryTargetingOverrideLabel,BACEntryTargetingOverrideSpinner);
+        HBox BACEntryTargetingOverrideHBox = new HBox(BACEntryTargetingOverrideLabel, BACEntryTargetingOverrideSpinner);
         BACEntryTargetingOverrideHBox.setAlignment(Pos.CENTER_LEFT);
         //BAC entry targeting override
 
         //random flags
-        HBox randomFlagHBox=new HBox(40);
-        randomFlagHBox.setPadding(new Insets(20,0,0,8));
-        Label randomFlagLabel=new Label("Random Flag");
-        randomFlagLabel.setPrefWidth(160);
-
-        GridPane randomFlagGridPane=new GridPane();
-        randomFlagGridPane.getStyleClass().add("titled-address-box");
-        randomFlagGridPane.setHgap(10);
-        randomFlagGridPane.setVgap(10);
+        Label randomFlagLabel = new Label("Random Flag");
+        randomFlagLabel.setPrefWidth(200);
 
         ToggleGroup randomFlagToggleGroup=new ToggleGroup();
+
         RadioButton none=new RadioButton("None");
         none.setToggleGroup(randomFlagToggleGroup);
+
         RadioButton randomBACEntry=new RadioButton("Random BAC Entry");
         randomBACEntry.setToggleGroup(randomFlagToggleGroup);
+
         RadioButton noTargetCorrection=new RadioButton("No Target Correction");
         noTargetCorrection.setToggleGroup(randomFlagToggleGroup);
+
         RadioButton threeInstanceSetup =new RadioButton("3 Instance Setup");
         threeInstanceSetup.setToggleGroup(randomFlagToggleGroup);
+
         RadioButton unknown4=new RadioButton("Unknown 4");
         unknown4.setToggleGroup(randomFlagToggleGroup);
+
         RadioButton unknown5 = new RadioButton("Unknown 5");
         unknown5.setToggleGroup(randomFlagToggleGroup);
+
         RadioButton unknown6 = new RadioButton("Unknown 6");
         unknown6.setToggleGroup(randomFlagToggleGroup);
+
         RadioButton unknown7 = new RadioButton("Unknown 7");
         unknown7.setToggleGroup(randomFlagToggleGroup);
+
         RadioButton unknown8 = new RadioButton("Unknown 8");
         unknown8.setToggleGroup(randomFlagToggleGroup);
+
         RadioButton unknown9 = new RadioButton("Unknown 9");
         unknown9.setToggleGroup(randomFlagToggleGroup);
-
+        
         switch (entry.bacRandomFlags) {
             case 1 -> randomBACEntry.setSelected(true);
             case 2 -> noTargetCorrection.setSelected(true);
@@ -3204,42 +3090,43 @@ public class Bcm {
             default -> none.setSelected(true);
         }
 
-        randomFlagToggleGroup.selectedToggleProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue.isSelected()){
-                RadioButton selectedRadio = (RadioButton) newValue;
-                if (selectedRadio == none) { 
+        randomFlagToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue.isSelected()) {
+                if ((RadioButton) newValue == none) { 
                     entry.bacRandomFlags = 0;
                 }
-                else if (selectedRadio == randomBACEntry) { 
+                else if ((RadioButton) newValue == randomBACEntry) { 
                     entry.bacRandomFlags = 1;
                 }
-                else if (selectedRadio == noTargetCorrection) { 
+                else if ((RadioButton) newValue == noTargetCorrection) { 
                     entry.bacRandomFlags = 2;
                 }
-                else if (selectedRadio == threeInstanceSetup) { 
+                else if ((RadioButton) newValue == threeInstanceSetup) { 
                     entry.bacRandomFlags = 3;
                 }
-                else if (selectedRadio == unknown4) { 
+                else if ((RadioButton) newValue == unknown4) { 
                     entry.bacRandomFlags = 4;
                 }
-                else if (selectedRadio == unknown5) { 
+                else if ((RadioButton) newValue == unknown5) { 
                     entry.bacRandomFlags = 5;
                 }
-                else if (selectedRadio == unknown6) { 
+                else if ((RadioButton) newValue == unknown6) { 
                     entry.bacRandomFlags = 6;
                 }
-                else if (selectedRadio == unknown7) { 
+                else if ((RadioButton) newValue == unknown7) { 
                     entry.bacRandomFlags = 7;
                 }
-                else if (selectedRadio == unknown8) { 
+                else if ((RadioButton) newValue == unknown8) { 
                     entry.bacRandomFlags = 8;
                 }
-                else if (selectedRadio == unknown9) { 
+                else if ((RadioButton) newValue == unknown9) { 
                     entry.bacRandomFlags = 9;
                 }
             }
         });
 
+        GridPane randomFlagGridPane=new GridPane(10, 10);
+        randomFlagGridPane.getStyleClass().add("titled-address-box");
         randomFlagGridPane.add(none, 0, 0);   
         randomFlagGridPane.add(randomBACEntry, 1, 0);          
         randomFlagGridPane.add(noTargetCorrection, 0, 1);          
@@ -3251,173 +3138,167 @@ public class Bcm {
         randomFlagGridPane.add(unknown8, 0, 4);          
         randomFlagGridPane.add(unknown9, 1, 4);   
         
-        randomFlagHBox.getChildren().addAll(randomFlagLabel,randomFlagGridPane);
+        HBox randomFlagHBox = new HBox(randomFlagLabel, randomFlagGridPane);
         randomFlagHBox.setAlignment(Pos.CENTER_LEFT);
-        //random flangs
-        //BAC
-        BACVBox.getChildren().addAll(BACEntryPrimaryHBox,BACEntryChargeHBox,BACEntryUserConnectHBox,BACEntryVictimConnectHBox,BACEntryAirborneHBox,BACEntryTargetingOverrideHBox,randomFlagHBox);
+        //random flags
+
+        VBox BACVBox = new VBox(20, 
+            BACEntryPrimaryHBox, BACEntryChargeHBox,
+            BACEntryUserConnectHBox, BACEntryVictimConnectHBox,
+            BACEntryAirborneHBox, BACEntryTargetingOverrideHBox,
+            randomFlagHBox
+        );
+        BACVBox.setPadding(new Insets(20, 0, 0, 8));
+        BACVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
         return BACVBox;
     }
 
-    private VBox createMiscVBox(BcmEntry entry){
-        VBox miscVBox=new VBox(12);
-        miscVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-
+    private VBox createMiscVBox(BcmEntry entry) {
         //ki cost
-        HBox kiCostHBox=new HBox(40);
-        kiCostHBox.setPadding(new Insets(20,0,0,8));
-        Label kiCostLabel=new Label("Ki Cost");
-        kiCostLabel.setPrefWidth(160);
+        Label kiCostLabel = new Label("Ki Cost");
+        kiCostLabel.setPrefWidth(180);
 
-        Spinner<Double> kiCostSpinner=new Spinner<>(0,4294967295.0,(double)entry.kiCost);
+        Spinner<Double> kiCostSpinner = new Spinner<>(0, 4294967295.0, (double)entry.kiCost);
         kiCostSpinner.setEditable(true);
-        kiCostSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        kiCostSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.kiCost = newValue.longValue();
             }
         });
 
-        kiCostHBox.getChildren().addAll(kiCostLabel,kiCostSpinner);
+        HBox kiCostHBox = new HBox(kiCostLabel, kiCostSpinner);
         kiCostHBox.setAlignment(Pos.CENTER_LEFT);
         //ki cost
 
         //receiver link id
-        HBox receiverIdLinkHBox=new HBox(40);
-        receiverIdLinkHBox.setPadding(new Insets(20,0,0,8));
-        Label receiverLinkIdLabel=new Label("Receiver Link Id");
-        receiverLinkIdLabel.setPrefWidth(160);
+        Label receiverLinkIdLabel = new Label("Receiver Link ID");
+        receiverLinkIdLabel.setPrefWidth(180);
 
-        Spinner<Double> receiverLinkIdSpinner=new Spinner<>(0,4294967295.0,(double)entry.receiverLinkId);
+        Spinner<Double> receiverLinkIdSpinner = new Spinner<>(0, 4294967295.0, (double)entry.receiverLinkId);
         receiverLinkIdSpinner.setEditable(true);
-        receiverLinkIdSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        receiverLinkIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.receiverLinkId = newValue.longValue();
             }
         });
 
-        receiverIdLinkHBox.getChildren().addAll(receiverLinkIdLabel,receiverLinkIdSpinner);
+        HBox receiverIdLinkHBox = new HBox(receiverLinkIdLabel, receiverLinkIdSpinner);
         receiverIdLinkHBox.setAlignment(Pos.CENTER_LEFT);
         //receiver link id
 
         //stamina cost
-        HBox staminaCostHBox=new HBox(40);
-        staminaCostHBox.setPadding(new Insets(20,0,0,8));
-        Label staminaCostLabel=new Label("Stamina Cost");
-        staminaCostLabel.setPrefWidth(160);
+        Label staminaCostLabel = new Label("Stamina Cost");
+        staminaCostLabel.setPrefWidth(180);
 
-        Spinner<Double> staminaCostSpinner=new Spinner<>(0,4294967295.0,(double)entry.staminaCost);
+        Spinner<Double> staminaCostSpinner = new Spinner<>(0, 4294967295.0, (double)entry.staminaCost);
         staminaCostSpinner.setEditable(true);
-        staminaCostSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        staminaCostSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.staminaCost = newValue.longValue();
             }
         });
         
-        staminaCostHBox.getChildren().addAll(staminaCostLabel,staminaCostSpinner);
+        HBox staminaCostHBox = new HBox(staminaCostLabel, staminaCostSpinner);
         staminaCostHBox.setAlignment(Pos.CENTER_LEFT);
         //stamina cost
 
         //ki required
-        HBox kiRequiredHBox=new HBox(40);
-        kiRequiredHBox.setPadding(new Insets(20,0,0,8));
-        Label kiRequiredLabel=new Label("Ki Required");
-        kiRequiredLabel.setPrefWidth(160);
+        Label kiRequiredLabel = new Label("Ki Required");
+        kiRequiredLabel.setPrefWidth(180);
 
-        Spinner<Double> kiRequiredSpinner=new Spinner<>(0,4294967295.0,(double)entry.kiRequired);
+        Spinner<Double> kiRequiredSpinner = new Spinner<>(0, 4294967295.0, (double)entry.kiRequired);
         kiRequiredSpinner.setEditable(true);
-        kiRequiredSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        kiRequiredSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.kiRequired = newValue.longValue();
             }
         });
 
-        kiRequiredHBox.getChildren().addAll(kiRequiredLabel,kiRequiredSpinner);
+        HBox kiRequiredHBox = new HBox(kiRequiredLabel, kiRequiredSpinner);
         kiRequiredHBox.setAlignment(Pos.CENTER_LEFT);
         //ki required
 
         //health required
-        HBox healthRequiredHBox=new HBox(40);
-        healthRequiredHBox.setPadding(new Insets(20,0,0,8));
-        Label healthRequiredLabel=new Label("Health Required");
-        healthRequiredLabel.setPrefWidth(160);
+        Label healthRequiredLabel = new Label("Health Required");
+        healthRequiredLabel.setPrefWidth(180);
 
-        Spinner<Double> healthRequiredSpinner=new Spinner<>(Float.MIN_VALUE,Float.MAX_VALUE,(double)entry.healthRequired);
+        Spinner<Double> healthRequiredSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, (double)entry.healthRequired);
         healthRequiredSpinner.setEditable(true);
-        healthRequiredSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        healthRequiredSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.healthRequired = newValue.floatValue();
             }
         });
 
-        healthRequiredHBox.getChildren().addAll(healthRequiredLabel,healthRequiredSpinner);
+        HBox healthRequiredHBox = new HBox(healthRequiredLabel, healthRequiredSpinner);
         healthRequiredHBox.setAlignment(Pos.CENTER_LEFT);
         //health required
 
         //transformation stage
-        HBox transformationStageHBox=new HBox(40);
-        transformationStageHBox.setPadding(new Insets(20,0,0,8));
-        Label transformationStageLabel=new Label("Transformation Stage");
-        transformationStageLabel.setPrefWidth(160);
+        Label transformationStageLabel = new Label("Transformation Stage");
+        transformationStageLabel.setPrefWidth(180);
 
-        Spinner<Integer> transformationStageSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,entry.transformationStage);
+        Spinner<Integer> transformationStageSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.transformationStage);
         transformationStageSpinner.setEditable(true);
-        transformationStageSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        transformationStageSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.transformationStage = newValue.shortValue();
             }
         });
 
-        transformationStageHBox.getChildren().addAll(transformationStageLabel,transformationStageSpinner);
+        HBox transformationStageHBox = new HBox(transformationStageLabel, transformationStageSpinner);
         transformationStageHBox.setAlignment(Pos.CENTER_LEFT);
         //transformation stage
 
         //cus aura
-        HBox cusAuraHBox=new HBox(40);
-        cusAuraHBox.setPadding(new Insets(20,0,0,8));
-        Label cusAuraLabel=new Label("CUS Aura");
-        cusAuraLabel.setPrefWidth(160);
+        Label cusAuraLabel = new Label("CUS Aura");
+        cusAuraLabel.setPrefWidth(180);
 
-        Spinner<Integer> cusAuraSpinner=new Spinner<>(Short.MIN_VALUE,Short.MAX_VALUE,entry.cusAura);
+        Spinner<Integer> cusAuraSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.cusAura);
         cusAuraSpinner.setEditable(true);
-        cusAuraSpinner.valueProperty().addListener((obs,oldValue,newValue)->{
-            if(newValue!=null){
+        cusAuraSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
                 entry.cusAura = newValue.shortValue();
             }
         });
-        cusAuraHBox.getChildren().addAll(cusAuraLabel,cusAuraSpinner);
+        HBox cusAuraHBox = new HBox(cusAuraLabel,cusAuraSpinner);
         cusAuraHBox.setAlignment(Pos.CENTER_LEFT);
         //cus aura
 
         //race and gender
-        HBox raceGenderHBox=new HBox(40);
-        raceGenderHBox.setPadding(new Insets(20,0,0,8));
-        Label raceGenderLabel=new Label("Race/Gender");
-        raceGenderLabel.setPrefWidth(160);
-
-        GridPane raceGenderGridPane=new GridPane();
-        raceGenderGridPane.getStyleClass().add("titled-address-box");
-        raceGenderGridPane.setHgap(10);
-        raceGenderGridPane.setVgap(10);
+        Label raceGenderLabel = new Label("Race/Gender");
+        raceGenderLabel.setPrefWidth(180);
 
         ToggleGroup raceGenderToggleGroup=new ToggleGroup();
+
         RadioButton allCharactersDefault=new RadioButton("All Characters/Default");
         allCharactersDefault.setToggleGroup(raceGenderToggleGroup);
+
         RadioButton rosterCharactersOnly=new RadioButton("Roster Characters Only");
         rosterCharactersOnly.setToggleGroup(raceGenderToggleGroup);
+
         RadioButton maleHumansOnly=new RadioButton("Male Humans Only");
         maleHumansOnly.setToggleGroup(raceGenderToggleGroup);
+
         RadioButton femaleHumansOnly =new RadioButton("Female Humans Only");
         femaleHumansOnly.setToggleGroup(raceGenderToggleGroup);
+
         RadioButton maleSaiyansOnly=new RadioButton("Male Saiyans Only");
         maleSaiyansOnly.setToggleGroup(raceGenderToggleGroup);
+
         RadioButton femaleSaiyansOnly = new RadioButton("Female Saiyans Only");
         femaleSaiyansOnly.setToggleGroup(raceGenderToggleGroup);
+
         RadioButton namekiansOnly = new RadioButton("Namekians Only");
         namekiansOnly.setToggleGroup(raceGenderToggleGroup);
+
         RadioButton friezaRaceOnly = new RadioButton("Frieza Race Only");
         friezaRaceOnly.setToggleGroup(raceGenderToggleGroup);
+
         RadioButton maleMajinsOnly = new RadioButton("Male Majins Only");
         maleMajinsOnly.setToggleGroup(raceGenderToggleGroup);
+
         RadioButton femaleMajinsOnly = new RadioButton("Female Majins Only");
         femaleMajinsOnly.setToggleGroup(raceGenderToggleGroup);
 
@@ -3436,42 +3317,41 @@ public class Bcm {
         
         raceGenderToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue.isSelected()) {
-                RadioButton selectedRadio = (RadioButton) newValue;
-                if (selectedRadio == allCharactersDefault) {
+                if ((RadioButton) newValue == allCharactersDefault) {
                     entry.raceGender = 0L;
                 }
-                else if (selectedRadio == rosterCharactersOnly) {
+                else if ((RadioButton) newValue == rosterCharactersOnly) {
                     entry.raceGender = 1L;
                 }
-                else if (selectedRadio == maleHumansOnly) {
+                else if ((RadioButton) newValue == maleHumansOnly) {
                     entry.raceGender = 2L;
                 }
-                else if (selectedRadio == femaleHumansOnly) {
+                else if ((RadioButton) newValue == femaleHumansOnly) {
                     entry.raceGender = 3L;
                 }
-                else if (selectedRadio == maleSaiyansOnly) {
+                else if ((RadioButton) newValue == maleSaiyansOnly) {
                     entry.raceGender = 4L;
                 }
-                else if (selectedRadio == femaleSaiyansOnly) {
+                else if ((RadioButton) newValue == femaleSaiyansOnly) {
                     entry.raceGender = 5L;
                 }
-                else if (selectedRadio == namekiansOnly) {
+                else if ((RadioButton) newValue == namekiansOnly) {
                     entry.raceGender = 6L;
                 }
-                else if (selectedRadio == friezaRaceOnly) {
+                else if ((RadioButton) newValue == friezaRaceOnly) {
                     entry.raceGender = 7L;
                 }
-                else if (selectedRadio == maleMajinsOnly) {
+                else if ((RadioButton) newValue == maleMajinsOnly) {
                     entry.raceGender = 8L;
                 }
-                else if (selectedRadio == femaleMajinsOnly) {
+                else if ((RadioButton) newValue == femaleMajinsOnly) {
                     entry.raceGender = 9L;
                 }
             }
         });
-        raceGenderHBox.getChildren().addAll(raceGenderLabel,raceGenderGridPane);
-        raceGenderHBox.setAlignment(Pos.CENTER_LEFT);
 
+        GridPane raceGenderGridPane = new GridPane(10, 10);
+        raceGenderGridPane.getStyleClass().add("titled-address-box");
         raceGenderGridPane.add(allCharactersDefault, 0, 0);   
         raceGenderGridPane.add(rosterCharactersOnly, 1, 0);          
         raceGenderGridPane.add(maleHumansOnly, 0, 1);          
@@ -3482,211 +3362,218 @@ public class Bcm {
         raceGenderGridPane.add(friezaRaceOnly, 1, 3);          
         raceGenderGridPane.add(maleMajinsOnly, 0, 4);          
         raceGenderGridPane.add(femaleMajinsOnly, 1, 4);
+
+        HBox raceGenderHBox = new HBox(raceGenderLabel, raceGenderGridPane);
+        raceGenderHBox.setAlignment(Pos.CENTER_LEFT);
         
-        miscVBox.getChildren().addAll(kiCostHBox,receiverIdLinkHBox,staminaCostHBox,kiRequiredHBox,healthRequiredHBox,transformationStageHBox,cusAuraHBox,raceGenderHBox);
-   
+        VBox miscVBox = new VBox(20, 
+            kiCostHBox, receiverIdLinkHBox,
+            staminaCostHBox, kiRequiredHBox,
+            healthRequiredHBox, transformationStageHBox,
+            cusAuraHBox, raceGenderHBox
+        );
+        miscVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        miscVBox.setPadding(new Insets(20, 0, 0, 8));
+
         return miscVBox;
     }
 
-    private VBox createUnknownVBox(BcmEntry entry){
-        VBox unknownVBox=new VBox(20);
-        unknownVBox.setPadding(new Insets(20,0,0,8));
+    private VBox createUnknownVBox(BcmEntry entry) {
+        //i00
+        Label i00Label=new Label("I_00");
+        i00Label.setPrefWidth(120);
 
-        //I_00
-        HBox unknown00HBox=new HBox(2);
-        unknown00HBox.setPadding(new Insets(20,0,0,8));
-        Label lblI00=new Label("I_00: ");
-        lblI00.setPrefWidth(120);
-        TextField txtI00=new TextField(String.valueOf(entry.unknown0));
-        txtI00.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtI00.getText().contains("-")) {
+        TextField i00TextField = new TextField(String.valueOf(entry.i00));
+        i00TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i00TextField.getText().contains("-")) {
                 return;
             }
             try {
-                entry.unknown0 = Long.parseLong(newText); 
+                entry.i00 = Long.parseLong(newText); 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         });
         
-        unknown00HBox.getChildren().addAll(lblI00,txtI00);
-        unknown00HBox.setAlignment(Pos.CENTER_LEFT);
-        //I_00
+        HBox i00HBox = new HBox(i00Label, i00TextField);
+        i00HBox.setAlignment(Pos.CENTER_LEFT);
+        //i00
 
-        //I_36
-        HBox unknown36HBox=new HBox(2);
-        unknown36HBox.setPadding(new Insets(20,0,0,8));
-        Label lblI36=new Label("I_36: ");
-        lblI36.setPrefWidth(120);
-        TextField txtI36=new TextField(String.valueOf(entry.unknown36));
-        txtI36.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtI36.getText().contains("-")) {
+        //i36
+        Label i36Label = new Label("I_36");
+        i36Label.setPrefWidth(120);
+
+        TextField i36TextField = new TextField(String.valueOf(entry.i36));
+        i36TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i36TextField.getText().contains("-")) {
                 return;
             }
             try {
-                entry.unknown36 = Short.parseShort(newText); 
+                entry.i36 = Short.parseShort(newText); 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         });
         
-        unknown36HBox.getChildren().addAll(lblI36,txtI36);
-        unknown36HBox.setAlignment(Pos.CENTER_LEFT);
-        //I_68
-        HBox unknown68HBox=new HBox(2);
-        unknown68HBox.setPadding(new Insets(20,0,0,8));
-        Label lblI68=new Label("I_68: ");
-        lblI68.setPrefWidth(120);
-        TextField txtI68=new TextField(String.valueOf(entry.unknown68));
-        txtI68.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtI68.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.unknown68 = Long.parseLong(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                
-            }
-        });
-    
-        unknown68HBox.getChildren().addAll(lblI68,txtI68);
-        unknown68HBox.setAlignment(Pos.CENTER_LEFT);
-        //I_68
+        HBox i36HBox = new HBox(i36Label, i36TextField);
+        i36HBox.setAlignment(Pos.CENTER_LEFT);
+        //i36
 
-        //I_72
-        HBox unknown72HBox=new HBox(2);
-        unknown72HBox.setPadding(new Insets(20,0,0,8));
-        Label lblI72=new Label("I_72: ");
-        lblI72.setPrefWidth(120);
-        TextField txtI72=new TextField(String.valueOf(entry.unknown72));
-        txtI72.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtI72.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.unknown72 = Long.parseLong(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                
-            }
-        });
-        unknown72HBox.getChildren().addAll(lblI72,txtI72);
-        unknown72HBox.setAlignment(Pos.CENTER_LEFT);
-        //I_72
+        //i68
+        Label i68Label = new Label("I_68");
+        i68Label.setPrefWidth(120);
 
-        //I_80
-        HBox unknown80HBox=new HBox(2);
-        unknown80HBox.setPadding(new Insets(20,0,0,8));
-        Label lblI80=new Label("I_80: ");
-        lblI80.setPrefWidth(120);
-        TextField txtI80=new TextField(String.valueOf(entry.unknown80));
-        txtI80.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtI80.getText().contains("-")) {
+        TextField i68TextField = new TextField(String.valueOf(entry.i68));
+        i68TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i68TextField.getText().contains("-")) {
                 return;
             }
             try {
-                entry.unknown80 = Long.parseLong(newText); 
+                entry.i68 = Long.parseLong(newText); 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 
             }
         });
         
-        unknown80HBox.getChildren().addAll(lblI80,txtI80);
-        unknown80HBox.setAlignment(Pos.CENTER_LEFT);
-        //I_80
+        HBox i68HBox = new HBox(i68Label, i68TextField);
+        i68HBox.setAlignment(Pos.CENTER_LEFT);
+        //i68
 
-        //I_88
-        HBox unknown88HBox=new HBox(2);
-        unknown88HBox.setPadding(new Insets(20,0,0,8));
-        Label lblI88=new Label("I_88: ");
-        lblI88.setPrefWidth(120);
-        TextField txtI88=new TextField(String.valueOf(entry.unknown88));
-        txtI88.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtI88.getText().contains("-")) {
+        //i72
+        Label i72Label = new Label("I_72");
+        i72Label.setPrefWidth(120);
+
+        TextField i72TextField = new TextField(String.valueOf(entry.i72));
+        i72TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i72TextField.getText().contains("-")) {
                 return;
             }
             try {
-                entry.unknown88 = Long.parseLong(newText); 
+                entry.i72 = Long.parseLong(newText); 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 
             }
         });
-        unknown88HBox.getChildren().addAll(lblI88,txtI88);
-        unknown88HBox.setAlignment(Pos.CENTER_LEFT);
-        //I_88
 
-        //I_104
-        HBox unknown104HBox=new HBox(2);
-        unknown104HBox.setPadding(new Insets(20,0,0,8));
-        Label lblI104=new Label("Skill Upgrade Value?: ");
-        lblI104.setPrefWidth(120);
-        TextField txtI104=new TextField(String.valueOf(entry.unknown104));
-        txtI104.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtI104.getText().contains("-")) {
+        HBox i72HBox = new HBox(i72Label, i72TextField);
+        i72HBox.setAlignment(Pos.CENTER_LEFT);
+        //i72
+
+        //i80
+        Label i80Label = new Label("I_80");
+        i80Label.setPrefWidth(120);
+
+        TextField i80TextField = new TextField(String.valueOf(entry.i80));
+        i80TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i80TextField.getText().contains("-")) {
                 return;
             }
             try {
-                entry.unknown104 = Long.parseLong(newText); 
+                entry.i80 = Long.parseLong(newText); 
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                
+            }
+        });
+        
+        HBox i80HBox = new HBox(i80Label, i80TextField);
+        i80HBox.setAlignment(Pos.CENTER_LEFT);
+        //i80
+
+        //i88
+        Label i88Label = new Label("I_88");
+        i88Label.setPrefWidth(120);
+
+        TextField i88TextField = new TextField(String.valueOf(entry.i88));
+        i88TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i88TextField.getText().contains("-")) {
+                return;
+            }
+            try {
+                entry.i88 = Long.parseLong(newText); 
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                
+            }
+        });
+
+        HBox i88HBox = new HBox(i88Label, i88TextField);
+        i88HBox.setAlignment(Pos.CENTER_LEFT);
+        //i88
+
+        //i04
+        Label i104Label = new Label("Skill Upgrade Value?");
+        i104Label.setPrefWidth(120);
+
+        TextField i104TextField = new TextField(String.valueOf(entry.i104));
+        i104TextField.textProperty().addListener((obs, oldText, newText) -> {
+            if (i104TextField.getText().contains("-")) {
+                return;
+            }
+            try {
+                entry.i104 = Long.parseLong(newText); 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         });
         
-        unknown104HBox.getChildren().addAll(lblI104,txtI104);
-        unknown104HBox.setAlignment(Pos.CENTER_LEFT);
-        //I_104
+        HBox i104HBox = new HBox(i104Label, i104TextField);
+        i104HBox.setAlignment(Pos.CENTER_LEFT);
+        //i04
 
-        unknownVBox.getChildren().addAll(unknown00HBox,unknown36HBox,unknown68HBox,unknown72HBox,unknown80HBox,unknown88HBox,unknown104HBox);
+        VBox unknownVBox = new VBox(20,
+            i00HBox, i36HBox,
+            i68HBox, i72HBox,
+            i80HBox, i88HBox,
+            i104HBox
+        );
+        unknownVBox.setPadding(new Insets(20, 0, 0, 8));
+
         return unknownVBox;
     }
      
-    public void entriesActionListener(){
-        
+    public void entriesActionListener() {
         paste.setDisable(true);
-        contextMenu.getItems().addAll(copy,paste,delete,append,insert,addNewChild,addComment);
+
+        contextMenu.getItems().addAll(copy, paste, delete, append, insert, addNewChild, addComment);
+
         treeView.setContextMenu(contextMenu);
-        treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue)->{
-            if (newValue == null) {
-                return;
-            }
+        treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue == null)  return;
+            
             currentEntry=newValue;
-            // //input tab
+
             tabPane.getTabs().get(0).setContent(createInputsVBox(bcmEntries.get(treeView.getRow(newValue))));
-            // //activator tab
             tabPane.getTabs().get(1).setContent(createActivatorScrollPane(bcmEntries.get(treeView.getRow(newValue))));
-            // //BAC tab
             tabPane.getTabs().get(2).setContent(createBACVBox(bcmEntries.get(treeView.getRow(newValue))));
-            // //misc tab
             tabPane.getTabs().get(3).setContent(createMiscVBox(bcmEntries.get(treeView.getRow(newValue))));
-            //unknown tab
             tabPane.getTabs().get(4).setContent(createUnknownVBox(bcmEntries.get(treeView.getRow(newValue))));
         });
-        treeView.setOnMouseClicked(e->{
-            if(e.getButton()==MouseButton.SECONDARY){
-                contextMenu.setOnAction(event->{
-                    if(event.getTarget()==copy){
+        treeView.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.SECONDARY) {
+                contextMenu.setOnAction(event -> {
+                    if (event.getTarget() == copy) {
                         Copy();
                         paste.setDisable(false);
                     }
-                    if(event.getTarget()==paste){
+                    if (event.getTarget() == paste) {
                         Paste();
                     }
-                    if(event.getTarget()==delete){
+                    if (event.getTarget() == delete) {
                        Delete();
                     }
-                    if(event.getTarget()==append){
+                    if (event.getTarget() == append) {
                         Append();
                     }
-                    if(event.getTarget()==insert){
+                    if (event.getTarget() == insert) {
                         Insert();
                     }
-                    if(event.getTarget()==addNewChild){
+                    if (event.getTarget() == addNewChild) {
                         AddNewChild();
                     }
-                    if(event.getTarget()==addComment){
+                    if (event.getTarget() == addComment) {
                         AddComment();
                     }
                 });
@@ -3694,43 +3581,42 @@ public class Bcm {
         });
     }
 
-    public void entriesKeysListener(){
-        treeView.setOnKeyPressed(e->{
-            if(e.isControlDown()&&e.getCode()==KeyCode.C){
+    public void entriesKeysListener() {
+        treeView.setOnKeyPressed(e -> {
+            if (e.isControlDown() && e.getCode() == KeyCode.C) {
                 Copy();
                 paste.setDisable(false);
             }
-            if(e.isControlDown()&&e.getCode()==KeyCode.V){
+            if (e.isControlDown() && e.getCode() == KeyCode.V) {
                 Paste();
             }
-            if(e.getCode()==KeyCode.DELETE){
+            if (e.getCode() == KeyCode.DELETE) {
                 Delete();
             }
-            if(e.isControlDown()&&e.getCode()==KeyCode.A){
+            if (e.isControlDown() && e.getCode() == KeyCode.A) {
                 Append();
             }
-            if(e.isControlDown()&&e.getCode()==KeyCode.I){
+            if (e.isControlDown() && e.getCode()==KeyCode.I) {
                 Insert();
             }
-            if(e.isControlDown()&&e.getCode()==KeyCode.N){
+            if (e.isControlDown() && e.getCode()==KeyCode.N) {
                 AddNewChild();
             }
-            if(e.isControlDown()&&e.getCode()==KeyCode.Q){
+            if (e.isControlDown() && e.getCode()==KeyCode.Q) {
                 AddComment();
             }
         });
     }
 
     private void Copy() {
-        if (currentEntry == null) {
-            return;
-        }
+        if (currentEntry == null) return;
+        
         copyContainer = new BcmEntry(bcmEntries.get(treeView.getSelectionModel().getSelectedIndex()));
     }
+
     private void Paste() {
-        if (currentEntry == null || copyContainer == null) {
-            return;
-        }
+        if (currentEntry == null || copyContainer == null) return;
+        
         bcmEntries.set(treeView.getSelectionModel().getSelectedIndex(), new BcmEntry(copyContainer));
 
         if (treeView.getSelectionModel().getSelectedItem() != null) {
@@ -3740,12 +3626,10 @@ public class Bcm {
             tabPane.getTabs().get(3).setContent(createMiscVBox(bcmEntries.get(treeView.getSelectionModel().getSelectedIndex())));
             tabPane.getTabs().get(4).setContent(createUnknownVBox(bcmEntries.get(treeView.getSelectionModel().getSelectedIndex())));
         }
-        
     }
+
     private void Delete() {
-        if (currentEntry == null || currentEntry.getParent() == null) {
-            return;
-        }
+        if (currentEntry == null || currentEntry.getParent() == null) return;
         
         bcmEntries.remove(treeView.getSelectionModel().getSelectedIndex());
         currentEntry.getParent().getChildren().remove(currentEntry);
@@ -3753,60 +3637,68 @@ public class Bcm {
 
         int[] index = {0};
         renameTreeItems(treeView.getRoot(), index);
-
     }
 
     private void Append() {
         TreeItem<String> parent = currentEntry.getParent();
         if (parent != null) {
-            System.out.println("run");
             TreeItem<String> newEntry = new TreeItem<>("New Entry");
+
             int currentPos = parent.getChildren().indexOf(currentEntry);
+
             parent.getChildren().add(currentPos + 1, newEntry);
+
             bcmEntries.add(treeView.getRow(currentEntry) + 1, new BcmEntry());
             allEntries.add(treeView.getRow(currentEntry) + 1, newEntry);
+
             int[] index = {0};
             renameTreeItems(treeView.getRoot(), index);
         }
     }
+
    private void Insert() {
         TreeItem<String> parent = currentEntry.getParent();
         if (parent != null) {
             TreeItem<String> newEntry = new TreeItem<>("New Entry");
+
             int currentPos = parent.getChildren().indexOf(currentEntry);
+
             parent.getChildren().add(currentPos, newEntry);
+
             bcmEntries.add(treeView.getRow(currentEntry) - 1, new BcmEntry());
             allEntries.add(treeView.getRow(currentEntry) - 1, newEntry);
+
             int[] index = {0};
             renameTreeItems(treeView.getRoot(), index);
         }
     }
+
     public void AddNewChild() {
-        if (currentEntry == null) {
-            return;
-        }
+        if (currentEntry == null) return;
+
         TreeItem<String> newChild = new TreeItem<>("New Entry");
+
         currentEntry.getChildren().add(newChild);
         currentEntry.setExpanded(true);
+
         bcmEntries.add(treeView.getRow(currentEntry) + 1, new BcmEntry());
         allEntries.add(treeView.getRow(currentEntry) + 1, newChild);
+
         int[] index = {0};
         renameTreeItems(treeView.getRoot(), index);
     }
 
-    public void AddComment(){
-        if(currentEntry==null){
-            return;
-        }
+    public void AddComment() {
+        if (currentEntry == null) return;
 
-        TextInputDialog textInputDialog=new TextInputDialog();
+        TextInputDialog textInputDialog = new TextInputDialog();
         textInputDialog.setTitle("Comment");
         textInputDialog.getDialogPane().setContentText("New Comment: ");
 
         System.out.println(textInputDialog.getEditor().getText());
 
-        textInputDialog.showAndWait().ifPresent(updatedText->{
-            currentEntry.setValue(currentEntry.getValue()+" - "+ updatedText);
+        textInputDialog.showAndWait().ifPresent(updatedText -> {
+            currentEntry.setValue(currentEntry.getValue() + " - " + updatedText);
         });
     }
 
@@ -3814,9 +3706,9 @@ public class Bcm {
         if (item == null) return;
 
         item.setValue("Entry " + index[0]);
+
         allEntries.set(index[0], item);
-        System.out.println("this index is: "+index[0]);
-        System.out.println("array size: "+allEntries.size());
+
         index[0]++;
         
         for (TreeItem<String> child : item.getChildren()) {
@@ -3824,29 +3716,33 @@ public class Bcm {
         }
     }
 
-    public void bcmReader(Path path){
-        try(FileChannel channel=FileChannel.open(path, StandardOpenOption.READ)){
-            ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
-            ByteBuffer shortBuffer=ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+    public void bcmReader(Path path) {
+        try(FileChannel channel = FileChannel.open(path, StandardOpenOption.READ)) {
             int entries;
+
+            ByteBuffer shortBuffer = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
 
             channel.position(8);
             intBuffer.clear();
             channel.read(intBuffer);
             intBuffer.flip();
-            entries=intBuffer.getInt();
+            entries = intBuffer.getInt();
             
-            allEntries=new ArrayList<>(entries);
-            for(int i=0;i<entries;i++){
+            allEntries = new ArrayList<>(entries);
+
+            for (int i = 0; i < entries; i++) {
                 allEntries.add(new TreeItem<>("Entry "+i));
             }
 
-            if(entries>0){
+            if (entries > 0) {
                 treeView.setRoot(allEntries.get(0));
             }
 
-            for(int i=0;i<entries;i++){
+            for (int i = 0; i < entries; i++) {
                 BcmEntry bcmEntry = new BcmEntry();
+                bcmEntries.add(bcmEntry);
+
                 int entryStartOffset = 16 + (i * 112);
                 int siblingOffset = entryStartOffset + 48;
                 int childOffset = entryStartOffset + 52;
@@ -3855,99 +3751,99 @@ public class Bcm {
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.unknown0 = toUint32(intBuffer.getInt());
+                bcmEntry.i00 = toUint32(intBuffer.getInt());
 
-                channel.position(entryStartOffset+4);
+                channel.position(entryStartOffset + 4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.directionalInputs = toUint32(intBuffer.getInt());
                 
-                channel.position(entryStartOffset+8);
+                channel.position(entryStartOffset + 8);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.buttonInputs = toUint32(intBuffer.getInt());
             
-                channel.position(entryStartOffset+12);
+                channel.position(entryStartOffset + 12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.holdDownConditions = toUint32(intBuffer.getInt());
                 
-                channel.position(entryStartOffset+16);
+                channel.position(entryStartOffset + 16);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.opponentSizeConditions = toUint32(intBuffer.getInt());
                 
-                channel.position(entryStartOffset+20);
+                channel.position(entryStartOffset + 20);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 bcmEntry.minimumLoopDuration = toUShort(shortBuffer.getShort());
 
-                channel.position(entryStartOffset+22);
+                channel.position(entryStartOffset + 22);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 bcmEntry.maximumLoopDuration = toUShort(shortBuffer.getShort());
 
-                channel.position(entryStartOffset+24);
+                channel.position(entryStartOffset + 24);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.primaryActivatorConditions = toUint32(intBuffer.getInt());
                 
-                channel.position(entryStartOffset+28);
+                channel.position(entryStartOffset + 28);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.activatorState = toUint32(intBuffer.getInt());
               
-                channel.position(entryStartOffset+32);
+                channel.position(entryStartOffset + 32);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 bcmEntry.bacEntryPrimary = shortBuffer.getShort();
 
-                channel.position(entryStartOffset+34);
+                channel.position(entryStartOffset + 34);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 bcmEntry.bacEntryCharge = shortBuffer.getShort();
 
-                channel.position(entryStartOffset+36);
+                channel.position(entryStartOffset + 36);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.unknown36 = shortBuffer.getShort();
+                bcmEntry.i36 = shortBuffer.getShort();
 
-                channel.position(entryStartOffset+38);
+                channel.position(entryStartOffset + 38);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 bcmEntry.bacEntryUserConnect = shortBuffer.getShort();
 
-                channel.position(entryStartOffset+40);
+                channel.position(entryStartOffset + 40);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 bcmEntry.bacEntryVictimConnect = shortBuffer.getShort();
 
-                channel.position(entryStartOffset+42);
+                channel.position(entryStartOffset + 42);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 bcmEntry.bacEntryAirborne = shortBuffer.getShort();
 
-                channel.position(entryStartOffset+44);
+                channel.position(entryStartOffset + 44);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 bcmEntry.bacEntryTargetingOverride = toUShort(shortBuffer.getShort());
                 
-                channel.position(entryStartOffset+46);
+                channel.position(entryStartOffset + 46);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
@@ -3957,12 +3853,15 @@ public class Bcm {
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int siblingPointer=intBuffer.getInt();
-                if(siblingPointer!=0){
-                    TreeItem<String> newSiblingEntry=allEntries.get(i).getParent();
-                    if(newSiblingEntry!=null){
-                        int siblingEntry=(siblingPointer-16)/112;
-                        if(allEntries.get(i).getParent()!=null){
+                int siblingPointer = intBuffer.getInt();
+
+                if (siblingPointer != 0) {
+                    TreeItem<String> newSiblingEntry = allEntries.get(i).getParent();
+
+                    if (newSiblingEntry != null) {
+                        int siblingEntry = (siblingPointer-16)/112;
+
+                        if (allEntries.get(i).getParent() != null) {
                             allEntries.get(i).getParent().getChildren().add(allEntries.get(siblingEntry));
                         }
                     }
@@ -3972,112 +3871,113 @@ public class Bcm {
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                int childPointer=intBuffer.getInt();
-                if(childPointer!=0){
-                    int childEntry=(childPointer - 16) / 112;
+                int childPointer = intBuffer.getInt();
+
+                if (childPointer != 0) {
+                    int childEntry = (childPointer - 16) / 112;
                     allEntries.get(i).getChildren().add(allEntries.get(childEntry));
                 }
 
-                channel.position(entryStartOffset+64);
+                channel.position(entryStartOffset + 64);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.kiCost = toUint32(intBuffer.getInt());
 
-                channel.position(entryStartOffset+68);
+                channel.position(entryStartOffset + 68);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.unknown68 = toUint32(intBuffer.getInt());
+                bcmEntry.i68 = toUint32(intBuffer.getInt());
 
-                channel.position(entryStartOffset+72);
+                channel.position(entryStartOffset + 72);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.unknown72 = toUint32(intBuffer.getInt());
+                bcmEntry.i72 = toUint32(intBuffer.getInt());
 
-                channel.position(entryStartOffset+76);
+                channel.position(entryStartOffset + 76);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.receiverLinkId = toUint32(intBuffer.getInt());
 
-                channel.position(entryStartOffset+80);
+                channel.position(entryStartOffset + 80);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.unknown80 = toUint32(intBuffer.getInt());
+                bcmEntry.i80 = toUint32(intBuffer.getInt());
 
-                channel.position(entryStartOffset+84);
+                channel.position(entryStartOffset + 84);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.staminaCost = toUint32(intBuffer.getInt());
 
-                channel.position(entryStartOffset+88);
+                channel.position(entryStartOffset + 88);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.unknown88 = toUint32(intBuffer.getInt());
+                bcmEntry.i88 = toUint32(intBuffer.getInt());
 
-                channel.position(entryStartOffset+92);
+                channel.position(entryStartOffset + 92);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.kiRequired = toUint32(intBuffer.getInt());
 
-                channel.position(entryStartOffset+96);
+                channel.position(entryStartOffset + 96);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.healthRequired = intBuffer.getFloat();
 
-                channel.position(entryStartOffset+100);
+                channel.position(entryStartOffset + 100);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 bcmEntry.transformationStage = shortBuffer.getShort();
 
-                channel.position(entryStartOffset+102);
+                channel.position(entryStartOffset + 102);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
                 bcmEntry.cusAura = shortBuffer.getShort();
 
-                channel.position(entryStartOffset+104);
+                channel.position(entryStartOffset + 104);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.unknown104 = toUint32(intBuffer.getInt());
+                bcmEntry.i104 = toUint32(intBuffer.getInt());
                 
-                channel.position(entryStartOffset+108);
+                channel.position(entryStartOffset + 108);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
                 bcmEntry.raceGender = toUint32(intBuffer.getInt());
-                bcmEntries.add(bcmEntry);
             }
         }
         catch (IOException e) {
-            System.err.println(e);
-            
+            e.printStackTrace();
         }
     }
-    public void bcmWriter(Path path){
-        try(FileChannel channel=FileChannel.open(path, StandardOpenOption.WRITE,StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING)){
-            ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
-            ByteBuffer shortBuffer=ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
-            int zeroEntryOffset=16;
-            int currentParent=0;
+
+    public void bcmWriter(Path path) {
+        try(FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            int zeroEntryOffset = 16;
+            int currentParent = 0;
+
+            ByteBuffer shortBuffer = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
         
             channel.position(0);
-            channel.write(ByteBuffer.wrap(new byte[]{0x23,0x42,0x43,(byte)0x4D}));
+            channel.write(ByteBuffer.wrap(new byte[]{0x23, 0x42, 0x43, (byte)0x4D}));
 
             channel.position(4);
-            channel.write(ByteBuffer.wrap(new byte[]{(byte)0xFE,(byte)0xFF}));
+            channel.write(ByteBuffer.wrap(new byte[]{(byte)0xFE, (byte)0xFF}));
 
             channel.position(6);
-            channel.write(ByteBuffer.wrap(new byte[]{0x00,0x00}));
+            channel.write(ByteBuffer.wrap(new byte[]{0x00, 0x00}));
 
             channel.position(8);
             intBuffer.clear();
@@ -4091,7 +3991,7 @@ public class Bcm {
             intBuffer.flip();
             channel.write(intBuffer);
             
-            for(int i=0;i<allEntries.size();i++){
+            for (int i = 0; i < allEntries.size(); i++) {
                 BcmEntry bcmEntry = bcmEntries.get(i);
                 int entryStartOffset = 16 + (112 * i);
                 int siblingOffset = entryStartOffset + 48;
@@ -4101,101 +4001,101 @@ public class Bcm {
                 
                 channel.position(entryStartOffset);
                 intBuffer.clear();
-                intBuffer.putInt(((int)bcmEntry.unknown0));
+                intBuffer.putInt(((int)bcmEntry.i00));
                 intBuffer.flip();
                 channel.write(intBuffer);
                     
-                channel.position(entryStartOffset+4);
+                channel.position(entryStartOffset + 4);
                 intBuffer.clear();
                 intBuffer.putInt((int)bcmEntry.directionalInputs);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+8);
+                channel.position(entryStartOffset + 8);
                 intBuffer.clear();
                 intBuffer.putInt((int)bcmEntry.buttonInputs);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+12);
+                channel.position(entryStartOffset + 12);
                 intBuffer.clear();
                 intBuffer.putInt((int)bcmEntry.holdDownConditions);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+16);
+                channel.position(entryStartOffset + 16);
                 intBuffer.clear();
                 intBuffer.putInt((int)bcmEntry.opponentSizeConditions);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+20);
+                channel.position(entryStartOffset + 20);
                 shortBuffer.clear();
                 shortBuffer.putShort((short)bcmEntry.minimumLoopDuration);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                channel.position(entryStartOffset+22);
+                channel.position(entryStartOffset + 22);
                 shortBuffer.clear();
                 shortBuffer.putShort((short)bcmEntry.maximumLoopDuration);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                channel.position(entryStartOffset+24);
+                channel.position(entryStartOffset + 24);
                 intBuffer.clear();
                 intBuffer.putInt((int)bcmEntry.primaryActivatorConditions);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+28);
+                channel.position(entryStartOffset + 28);
                 intBuffer.clear();
                 intBuffer.putInt((int)bcmEntry.activatorState);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+32);
+                channel.position(entryStartOffset + 32);
                 shortBuffer.clear();
                 shortBuffer.putShort(bcmEntry.bacEntryPrimary);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                channel.position(entryStartOffset+34);
+                channel.position(entryStartOffset + 34);
                 shortBuffer.clear();
                 shortBuffer.putShort(bcmEntry.bacEntryCharge);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                channel.position(entryStartOffset+36);
+                channel.position(entryStartOffset + 36);
                 shortBuffer.clear();
-                shortBuffer.putShort(bcmEntry.unknown36);
+                shortBuffer.putShort(bcmEntry.i36);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                channel.position(entryStartOffset+38);
+                channel.position(entryStartOffset + 38);
                 shortBuffer.clear();
                 shortBuffer.putShort(bcmEntry.bacEntryUserConnect);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                channel.position(entryStartOffset+40);
+                channel.position(entryStartOffset + 40);
                 shortBuffer.clear();
                 shortBuffer.putShort(bcmEntry.bacEntryVictimConnect);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                channel.position(entryStartOffset+42);
+                channel.position(entryStartOffset + 42);
                 shortBuffer.clear();
                 shortBuffer.putShort(bcmEntry.bacEntryAirborne);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                channel.position(entryStartOffset+44);
+                channel.position(entryStartOffset + 44);
                 shortBuffer.clear();
                 shortBuffer.putShort((short)bcmEntry.bacEntryTargetingOverride);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
-                channel.position(entryStartOffset+46);
+                channel.position(entryStartOffset + 46);
                 shortBuffer.clear();
                 shortBuffer.putShort((short)bcmEntry.bacRandomFlags);
                 shortBuffer.flip();
@@ -4203,11 +4103,10 @@ public class Bcm {
 
                 channel.position(siblingOffset);
                 intBuffer.clear();
-                if(allEntries.get(i).nextSibling()!=null){
-                    intBuffer.putInt(allEntries.indexOf(allEntries.get(i).nextSibling())*112+16);
-                    //System.out.println("the sibling: "+(allEntries.indexOf(allEntries.get(i).nextSibling())*112+16));
+                if (allEntries.get(i).nextSibling() != null) {
+                    intBuffer.putInt(allEntries.indexOf(allEntries.get(i).nextSibling()) * 112 + 16);
                 }
-                else{
+                else {
                     intBuffer.putInt(0);
                 }
                 intBuffer.flip();
@@ -4215,11 +4114,10 @@ public class Bcm {
 
                 channel.position(childOffset);
                 intBuffer.clear();
-                if(!allEntries.get(i).getChildren().isEmpty()){
-                    //System.out.println("the children:"+((allEntries.indexOf(allEntries.get(i).getChildren().get(0)))*112+16));
-                    intBuffer.putInt((allEntries.indexOf(allEntries.get(i).getChildren().get(0)))*112+16);
+                if (!allEntries.get(i).getChildren().isEmpty()) {
+                    intBuffer.putInt((allEntries.indexOf(allEntries.get(i).getChildren().get(0))) * 112 + 16);
                 }
-                else{
+                else {
                     intBuffer.putInt(0);
                 }
                 intBuffer.flip();
@@ -4227,101 +4125,102 @@ public class Bcm {
 
                 channel.position(parentOffset);
                 intBuffer.clear();
-                if(allEntries.indexOf(allEntries.get(i).getParent())==0&&i!=0){
-                    intBuffer.putInt(allEntries.indexOf(allEntries.get(i))*112+16);
-                    currentParent=allEntries.indexOf(allEntries.get(i))*112+16;
+                if (allEntries.indexOf(allEntries.get(i).getParent()) == 0 && i != 0) {
+                    intBuffer.putInt(allEntries.indexOf(allEntries.get(i)) * 112 + 16);
+                    currentParent = allEntries.indexOf(allEntries.get(i))*112+16;
                     intBuffer.flip();
                     channel.write(intBuffer);
                 }
-                else if(allEntries.indexOf(allEntries.get(i).getParent())!=0 && i!=0){
-                    intBuffer.putInt(allEntries.indexOf(allEntries.get(i).getParent())*112+16);
+                else if (allEntries.indexOf(allEntries.get(i).getParent()) != 0 && i != 0) {
+                    intBuffer.putInt(allEntries.indexOf(allEntries.get(i).getParent()) * 112 + 16);
                     intBuffer.flip();
                     channel.write(intBuffer);
+
                     channel.position(rootParentOffset);
                     intBuffer.clear();
                     intBuffer.putInt(currentParent);
                     intBuffer.flip();
                     channel.write(intBuffer);
                 }
-                else{
+                else {
                     intBuffer.putInt(0);
                     intBuffer.flip();
                     channel.write(intBuffer);
                 }
              
-                channel.position(entryStartOffset+64);
+                channel.position(entryStartOffset + 64);
                 intBuffer.clear();
                 intBuffer.putInt((int)bcmEntry.kiCost);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+68);
+                channel.position(entryStartOffset + 68);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.unknown68);
+                intBuffer.putInt((int)bcmEntry.i68);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+72);
+                channel.position(entryStartOffset + 72);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.unknown72);
+                intBuffer.putInt((int)bcmEntry.i72);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+76);
+                channel.position(entryStartOffset + 76);
                 intBuffer.clear();
                 intBuffer.putInt((int)bcmEntry.receiverLinkId);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+80);
+                channel.position(entryStartOffset + 80);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.unknown80);
+                intBuffer.putInt((int)bcmEntry.i80);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+84);
+                channel.position(entryStartOffset + 84);
                 intBuffer.clear();
                 intBuffer.putInt((int)bcmEntry.staminaCost);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+88);
+                channel.position(entryStartOffset + 88);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.unknown88);
+                intBuffer.putInt((int)bcmEntry.i88);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+92);
+                channel.position(entryStartOffset + 92);
                 intBuffer.clear();
                 intBuffer.putInt((int)bcmEntry.kiRequired);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+96);
+                channel.position(entryStartOffset + 96);
                 intBuffer.clear();
                 intBuffer.putFloat(bcmEntry.healthRequired);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+100);
+                channel.position(entryStartOffset + 100);
                 intBuffer.clear();
                 intBuffer.putInt(bcmEntry.transformationStage);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+102);
+                channel.position(entryStartOffset + 102);
                 intBuffer.clear();
                 intBuffer.putInt(bcmEntry.cusAura);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+104);
+                channel.position(entryStartOffset + 104);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.unknown104);
+                intBuffer.putInt((int)bcmEntry.i104);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(entryStartOffset+108);
+                channel.position(entryStartOffset + 108);
                 intBuffer.clear();
                 intBuffer.putInt((int)bcmEntry.raceGender);
                 intBuffer.flip();
@@ -4329,25 +4228,25 @@ public class Bcm {
             }
         }
          catch (IOException e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 }
 
 class BcmEntry {
-    // Inputs
+    //inputs
     public long directionalInputs;
     public long buttonInputs;
     public long holdDownConditions;
     
-    // Activator
+    // activator
     public long opponentSizeConditions;
     public int minimumLoopDuration;
     public int maximumLoopDuration;
     public long primaryActivatorConditions;
     public long activatorState;
 
-    // BAC
+    //bac
     public short bacEntryPrimary;
     public short bacEntryCharge;
     public short bacEntryUserConnect;
@@ -4356,7 +4255,7 @@ class BcmEntry {
     public int bacEntryTargetingOverride;
     public int bacRandomFlags;
 
-    // Misc
+    //misc
     public long kiCost;
     public long receiverLinkId;
     public long staminaCost;
@@ -4366,14 +4265,14 @@ class BcmEntry {
     public short cusAura;
     public long raceGender;
 
-    // Unknowns
-    public long unknown0;
-    public short unknown36;
-    public long unknown68;
-    public long unknown72;
-    public long unknown80;
-    public long unknown88;
-    public long unknown104;
+    //unknowns
+    public long i00;
+    public short i36;
+    public long i68;
+    public long i72;
+    public long i80;
+    public long i88;
+    public long i104;
 
     public BcmEntry() {}
 
@@ -4401,12 +4300,12 @@ class BcmEntry {
         this.transformationStage = other.transformationStage;
         this.cusAura = other.cusAura;
         this.raceGender = other.raceGender;
-        this.unknown0 = other.unknown0;
-        this.unknown36 = other.unknown36;
-        this.unknown68 = other.unknown68;
-        this.unknown72 = other.unknown72;
-        this.unknown80 = other.unknown80;
-        this.unknown88 = other.unknown88;
-        this.unknown104 = other.unknown104;
+        this.i00 = other.i00;
+        this.i36 = other.i36;
+        this.i68 = other.i68;
+        this.i72 = other.i72;
+        this.i80 = other.i80;
+        this.i88 = other.i88;
+        this.i104 = other.i104;
     }
 }
