@@ -25,7 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 public class Aur {
-    VBox vBox = new VBox(5);
+    VBox vBox = new VBox(10);
     HBox hBox = new HBox(10);
     ListView<String> listView = new ListView<>();
 
@@ -35,6 +35,13 @@ public class Aur {
 
     AurAuraEntry copyContainer = null;
     int characterEntries;
+
+    ContextMenu contextMenu = new ContextMenu();
+    MenuItem copy = new MenuItem("Copy Ctrl+C");
+    MenuItem paste = new MenuItem("Paste Ctrl+V");
+    MenuItem delete = new MenuItem("Delete Del");
+    MenuItem append = new MenuItem("Append Ctrl+A");
+    MenuItem insert = new MenuItem("Insert Ctrl+I");
     
     public Aur() {
         vBox.setPadding(new Insets(5, 5, 5, 5));
@@ -213,13 +220,13 @@ public class Aur {
         henshinEndHBox.setAlignment(Pos.CENTER_LEFT);
         //henshinEnd
 
-        VBox auraIdVBox = new VBox(60, 
+        VBox auraIdVBox = new VBox(70, 
             i04HBox, boostStartHBox,
             boostLoopHBox, boostEndHBox,
             kiaiChargeHBox, kiryokuMaxHBox,
             henshinStartHBox, henshinEndHBox
         );
-        auraIdVBox.setPadding(new Insets(30, 0, 0, 0));
+        auraIdVBox.setPadding(new Insets(20, 0, 0, 0));
 
         return auraIdVBox;
     }
@@ -324,6 +331,12 @@ public class Aur {
     }
 
     private void entriesActionListener() {
+        paste.setDisable(true);
+
+        contextMenu.getItems().addAll(copy, paste, delete, append, insert);
+
+        listView.setContextMenu(contextMenu);
+
         listView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue == null) return;
 
@@ -332,14 +345,6 @@ public class Aur {
         });
         listView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
-                ContextMenu contextMenu = new ContextMenu();
-                MenuItem copy = new MenuItem("Copy Ctrl+C");
-                MenuItem paste = new MenuItem("Paste Ctrl+V");
-                MenuItem delete = new MenuItem("Delete Del");
-                MenuItem append = new MenuItem("Append Ctrl+A");
-                MenuItem insert = new MenuItem("Insert Ctrl+I");
-                contextMenu.getItems().addAll(copy, paste, delete, append, insert);
-                listView.setContextMenu(contextMenu);
                 contextMenu.setOnAction(event -> {
                     if (event.getTarget() == copy) Copy();
                     if (event.getTarget() == paste) Paste();
@@ -366,6 +371,7 @@ public class Aur {
     }
 
     private void Copy() {
+        paste.setDisable(false);
         copyContainer = new AurAuraEntry(auraEntries.get(listView.getSelectionModel().getSelectedIndex()));
     }
 
