@@ -148,10 +148,9 @@ public class Emb {
 
             imageView.setImage(image);
         } catch (NullPointerException | IOException e) {
-            Platform.runLater(() -> {
-                Popups.ImageDataNotSupported();
-            });
-            return null;
+            Image image = new Image(getClass().getResourceAsStream("/default question mark.png"));
+
+            imageView.setImage(image);
         }
         
         StackPane imageContainer = new StackPane(imageView);
