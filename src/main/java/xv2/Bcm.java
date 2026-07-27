@@ -1509,7 +1509,7 @@ public class Bcm {
         holdDownConditionsHBox.setAlignment(Pos.CENTER_LEFT);
         //hold down conditions
 
-        VBox inputsVBox = new VBox(25, directionalInputHBox, buttonInputHBox, holdDownConditionsHBox);
+        VBox inputsVBox = new VBox(55, directionalInputHBox, buttonInputHBox, holdDownConditionsHBox);
         inputsVBox.setPadding(new Insets(20, 0, 0, 8));
         inputsVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
@@ -2928,7 +2928,7 @@ public class Bcm {
         HBox activatorStateHBox = new HBox(5, activatorStateLabel,activatorStateGridPane);
         activatorStateHBox.setAlignment(Pos.CENTER_LEFT);
 
-        VBox activatorVBox = new VBox(25, 
+        VBox activatorVBox = new VBox(35, 
             opponentsSizeConditionsHBox, minimumLoopDurationHBox,
             maximumLoopDurationHBox, primaryActivatorConditionsHBox, activatorStateHBox
         );
@@ -3120,7 +3120,7 @@ public class Bcm {
         randomFlagHBox.setAlignment(Pos.CENTER_LEFT);
         //random flags
 
-        VBox BACVBox = new VBox(20, 
+        VBox BACVBox = new VBox(30, 
             BACEntryPrimaryHBox, BACEntryChargeHBox,
             BACEntryUserConnectHBox, BACEntryVictimConnectHBox,
             BACEntryAirborneHBox, BACEntryTargetingOverrideHBox,
@@ -3324,7 +3324,7 @@ public class Bcm {
         HBox raceGenderHBox = new HBox(raceGenderLabel, raceGenderGridPane);
         raceGenderHBox.setAlignment(Pos.CENTER_LEFT);
         
-        VBox miscVBox = new VBox(20, 
+        VBox miscVBox = new VBox(30, 
             kiCostHBox, receiverIdLinkHBox,
             staminaCostHBox, kiRequiredHBox,
             healthRequiredHBox, transformationStageHBox,
@@ -3339,7 +3339,7 @@ public class Bcm {
     private VBox createUnknownVBox(BcmEntry entry) {
         //i00
         Label i00Label=new Label("I_00");
-        i00Label.setPrefWidth(120);
+        i00Label.setPrefWidth(130);
 
         TextField i00TextField = new TextField(String.valueOf(entry.i00));
         i00TextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -3359,7 +3359,7 @@ public class Bcm {
 
         //i36
         Label i36Label = new Label("I_36");
-        i36Label.setPrefWidth(120);
+        i36Label.setPrefWidth(130);
 
         TextField i36TextField = new TextField(String.valueOf(entry.i36));
         i36TextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -3379,7 +3379,7 @@ public class Bcm {
 
         //i68
         Label i68Label = new Label("I_68");
-        i68Label.setPrefWidth(120);
+        i68Label.setPrefWidth(130);
 
         TextField i68TextField = new TextField(String.valueOf(entry.i68));
         i68TextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -3400,7 +3400,7 @@ public class Bcm {
 
         //i72
         Label i72Label = new Label("I_72");
-        i72Label.setPrefWidth(120);
+        i72Label.setPrefWidth(130);
 
         TextField i72TextField = new TextField(String.valueOf(entry.i72));
         i72TextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -3421,7 +3421,7 @@ public class Bcm {
 
         //i80
         Label i80Label = new Label("I_80");
-        i80Label.setPrefWidth(120);
+        i80Label.setPrefWidth(130);
 
         TextField i80TextField = new TextField(String.valueOf(entry.i80));
         i80TextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -3442,7 +3442,7 @@ public class Bcm {
 
         //i88
         Label i88Label = new Label("I_88");
-        i88Label.setPrefWidth(120);
+        i88Label.setPrefWidth(130);
 
         TextField i88TextField = new TextField(String.valueOf(entry.i88));
         i88TextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -3463,7 +3463,7 @@ public class Bcm {
 
         //i04
         Label i104Label = new Label("Skill Upgrade Value?");
-        i104Label.setPrefWidth(120);
+        i104Label.setPrefWidth(130);
 
         TextField i104TextField = new TextField(String.valueOf(entry.i104));
         i104TextField.textProperty().addListener((obs, oldText, newText) -> {
@@ -3481,7 +3481,7 @@ public class Bcm {
         i104HBox.setAlignment(Pos.CENTER_LEFT);
         //i04
 
-        VBox unknownVBox = new VBox(20,
+        VBox unknownVBox = new VBox(30,
             i00HBox, i36HBox,
             i68HBox, i72HBox,
             i80HBox, i88HBox,
