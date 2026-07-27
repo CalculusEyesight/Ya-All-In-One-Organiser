@@ -358,7 +358,7 @@ public class Bdm {
         damageTypeGridPane.add(brainWash2, 2, 7);
         damageTypeGridPane.add(timeStop, 3, 7);
         
-        HBox damageTypeHBox = new HBox(2, damageTypeLabel, damageTypeGridPane);
+        HBox damageTypeHBox = new HBox(5, damageTypeLabel, damageTypeGridPane);
         damageTypeHBox.setAlignment(Pos.CENTER_LEFT);
         //damage type
 
@@ -602,7 +602,7 @@ public class Bdm {
         StackPane.setAlignment(damageOrientationLabel, Pos.TOP_LEFT);
         //damage properties
 
-        HBox secondaryTypeHBox = new HBox(2,
+        HBox secondaryTypeHBox = new HBox(5,
             secondaryTypeLabel, healthPropertiesBoxStackPane,
             unknownStackPane, damagePropertiesStackPane,
             damageOrientationStackPane
@@ -622,7 +622,7 @@ public class Bdm {
             }
         });
 
-        HBox damageAmountHBox = new HBox(2, damageAmountLabel, damageAmountSpinner);
+        HBox damageAmountHBox = new HBox(5, damageAmountLabel, damageAmountSpinner);
         damageAmountHBox.setAlignment(Pos.CENTER_LEFT);
         //damage amount
 
@@ -639,7 +639,7 @@ public class Bdm {
 
         });
 
-        HBox damageSpecialHBox = new HBox(2, damageSpecialLabel, damageSpecialSpinner);
+        HBox damageSpecialHBox = new HBox(5, damageSpecialLabel, damageSpecialSpinner);
         damageSpecialHBox.setAlignment(Pos.CENTER_LEFT);
         //damage special
 
@@ -656,7 +656,7 @@ public class Bdm {
 
         });
 
-        HBox damageSpecial2HBox = new HBox(2, damageSpecial2Label, damageSpecial2Spinner);
+        HBox damageSpecial2HBox = new HBox(5, damageSpecial2Label, damageSpecial2Spinner);
         damageSpecial2HBox.setAlignment(Pos.CENTER_LEFT);
         //damage special 2
 
@@ -673,7 +673,7 @@ public class Bdm {
 
         });
 
-        HBox damageSpecial3HBox = new HBox(2, damageSpecial3Label, damageSpecial3Spinner);
+        HBox damageSpecial3HBox = new HBox(5, damageSpecial3Label, damageSpecial3Spinner);
         damageSpecial3HBox.setAlignment(Pos.CENTER_LEFT);
         //damage special 3
 
@@ -1643,7 +1643,7 @@ public class Bdm {
 
         //aliment Type
         Label alimentTypeLabel = new Label("Aliment Type");
-        alimentTypeLabel.setPrefWidth(180);
+        alimentTypeLabel.setPrefWidth(190);
 
         //properties 1
         Label properties1Label = new Label("Properties #1");
@@ -1763,13 +1763,13 @@ public class Bdm {
         StackPane.setAlignment(properties2Label, Pos.TOP_LEFT);
         //properties 2
         
-        HBox alimentTypeHBox = new HBox(15, alimentTypeLabel, properties1BoxStackPane, properties2BoxStackPane);
+        HBox alimentTypeHBox = new HBox(5, alimentTypeLabel, properties1BoxStackPane, properties2BoxStackPane);
         alimentTypeHBox.setAlignment(Pos.CENTER_LEFT);
         //aliment type
 
         //stumble type
         Label stumbleTypeLabel = new Label("Stumble Type");
-        stumbleTypeLabel.setPrefWidth(180);
+        stumbleTypeLabel.setPrefWidth(190);
 
         //stumble group 1
         Label stumbleGroup1Label = new Label("Stumble Group 1");
@@ -2006,7 +2006,7 @@ public class Bdm {
         StackPane.setAlignment(stumbleGroup4Label, Pos.TOP_LEFT);
         //stumble group 4
 
-        HBox stumbleTypeHBox = new HBox(15, 
+        HBox stumbleTypeHBox = new HBox(5, 
             stumbleTypeLabel, stumbleGroup1BoxStackPane,
             stumbleGroup2BoxStackPane, stumbleGroup3BoxStackPane,
             stumbleGroup4BoxStackPane
