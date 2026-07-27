@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -16,12 +17,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 class Agd {
-    VBox vBox = new VBox(5);
+    VBox vBox = new VBox(10);
     ArrayList<AgdEntry> agdEntries = new ArrayList<>();
     int entries = 0;
 
     public Agd() {
-        this.vBox.setPadding(new Insets(0, 0, 0, 60));
+        this.vBox.setPadding(new Insets(20, 0, 20, 60));
         vBoxListener();
     }
 
@@ -126,6 +127,7 @@ class Agd {
             xpToThisLevelLabel, xpToThisLevelTextField, 
             attributePointsGainedLabel, attributePointsGainedTextField
         );
+        agdHBox.setAlignment(Pos.CENTER_LEFT);
 
         this.vBox.getChildren().add(agdHBox);
     }
