@@ -677,7 +677,7 @@ public class Bdm {
         damageSpecial3HBox.setAlignment(Pos.CENTER_LEFT);
         //damage special 3
 
-        VBox mainVBox = new VBox(25,
+        VBox mainVBox = new VBox(45,
             damageTypeHBox, secondaryTypeHBox,
             damageAmountHBox, damageSpecialHBox,
             damageSpecial2HBox, damageSpecial3HBox
@@ -753,7 +753,7 @@ public class Bdm {
         victimAnimationSpeedHBox.setAlignment(Pos.CENTER_LEFT);
         //victim animation speed
 
-        VBox animationVBox = new VBox(25, userAnimationTimeHBox, userAnimationSpeedHBox, victimAnimationTimeHBox, victimAnimationSpeedHBox);
+        VBox animationVBox = new VBox(30, userAnimationTimeHBox, userAnimationSpeedHBox, victimAnimationTimeHBox, victimAnimationSpeedHBox);
         animationVBox.setPadding(new Insets(20, 0, 0, 8));
 
         return animationVBox;
@@ -825,7 +825,7 @@ public class Bdm {
         cueIdHBox.setAlignment(Pos.CENTER_LEFT);
         //victim animation speed
 
-        VBox soundVBox = new VBox(25, acbTypeHBox, cueIdHBox);
+        VBox soundVBox = new VBox(30, acbTypeHBox, cueIdHBox);
         soundVBox.setPadding(new Insets(20, 0, 0, 8));
 
         return soundVBox;
@@ -1288,7 +1288,7 @@ public class Bdm {
         effect3EepkTypeHBox.setAlignment(Pos.CENTER_LEFT);
         //effect 2 eepk type
 
-        VBox effectsVBox = new VBox(25, 
+        VBox effectsVBox = new VBox(35, 
             effect1IdHBox, effect1SkillIdHBox,
             effect1EepkTypeHBox, effect2IdHBox,
             effect2SkillIdHBox, effect2EepkTypeHBox,
@@ -1510,7 +1510,7 @@ public class Bdm {
         victimInvincibilityTimeHBox.setAlignment(Pos.CENTER_LEFT);
         //knockback gravity time
 
-        VBox pushBackVBox = new VBox(25, 
+        VBox pushBackVBox = new VBox(27, 
             pushbackStrengthHBox, pushbackAccelerationHBox,
             userStuntHBox, victimStuntHBox,knockbackDurationHBox,
             knockbackGroundImpactTimeHBox, knockbackRecoveryAfterImpactTimeHBox,
@@ -1526,7 +1526,7 @@ public class Bdm {
     private VBox createCameraVBox(BdmSubEntry subEntry) {
         //camera shake type
         Label cameraShakeTypeLabel = new Label("Camera Shake Type");
-        cameraShakeTypeLabel.setPrefWidth(150);
+        cameraShakeTypeLabel.setPrefWidth(130);
 
         Spinner<Integer> cameraShakeTypeSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.cameraShakeType);
         cameraShakeTypeSpinner.setEditable(true);
@@ -1553,14 +1553,14 @@ public class Bdm {
             }, cameraShakeTypeSpinner.valueProperty())
         );
 
-        HBox cameraShakeTypeHBox = new HBox(2, cameraShakeTypeLabel, cameraShakeTypeSpinner, cameraShakeTypeIndicatorLabel);
+        HBox cameraShakeTypeHBox = new HBox(15, cameraShakeTypeLabel, cameraShakeTypeSpinner, cameraShakeTypeIndicatorLabel);
         cameraShakeTypeHBox.setAlignment(Pos.CENTER_LEFT);
         //camera shake type
         
 
         //camera shake time
         Label cameraShakeTimeLabel = new Label("Camera Shake Time");
-        cameraShakeTimeLabel.setPrefWidth(150);
+        cameraShakeTimeLabel.setPrefWidth(130);
 
         Spinner<Integer> cameraShakeTimeSpinner = new Spinner<>(0, 65535, subEntry.cameraShakeTime);
         cameraShakeTimeSpinner.setEditable(true);
@@ -1570,13 +1570,13 @@ public class Bdm {
             }
         });
         
-        HBox cameraShakeTimeHBox = new HBox(2, cameraShakeTimeLabel, cameraShakeTimeSpinner);
+        HBox cameraShakeTimeHBox = new HBox(15, cameraShakeTimeLabel, cameraShakeTimeSpinner);
         cameraShakeTimeHBox.setAlignment(Pos.CENTER_LEFT);
         //camera shake time
 
         //user bpe id
         Label userBpeIdLabel = new Label("User BPE ID");
-        userBpeIdLabel.setPrefWidth(150);
+        userBpeIdLabel.setPrefWidth(130);
 
         Spinner<Integer> userBpeIdSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.userBpeID);
         userBpeIdSpinner.setEditable(true);
@@ -1586,13 +1586,13 @@ public class Bdm {
             }
         });
         
-        HBox userBpeIdHBox = new HBox(2 ,userBpeIdLabel, userBpeIdSpinner);
+        HBox userBpeIdHBox = new HBox(15 ,userBpeIdLabel, userBpeIdSpinner);
         userBpeIdHBox.setAlignment(Pos.CENTER_LEFT);
         //user bpe id
 
         //opponent bpe id
         Label victimBpeIdLabel = new Label("Victim BPE ID");
-        victimBpeIdLabel.setPrefWidth(150);
+        victimBpeIdLabel.setPrefWidth(130);
 
         Spinner<Integer> victimBpeIdSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.victimBpeID);
         victimBpeIdSpinner.setEditable(true);
@@ -1602,7 +1602,7 @@ public class Bdm {
             }
         });
         
-        HBox victimBpeIdHBox = new HBox(2, victimBpeIdLabel, victimBpeIdSpinner);
+        HBox victimBpeIdHBox = new HBox(15, victimBpeIdLabel, victimBpeIdSpinner);
         victimBpeIdHBox.setAlignment(Pos.CENTER_LEFT);
         //opponent bpe id
 
@@ -1637,7 +1637,7 @@ public class Bdm {
             }, trasnsformationTypeSpinner.valueProperty())
         );
 
-        HBox transformationTypeHBox = new HBox(2, transformationTypeLabel, trasnsformationTypeSpinner, trasnformationTypeIndicatorLabel);
+        HBox transformationTypeHBox = new HBox(15, transformationTypeLabel, trasnsformationTypeSpinner, trasnformationTypeIndicatorLabel);
         transformationTypeHBox.setAlignment(Pos.CENTER_LEFT);
         //transformation type
 
@@ -1763,7 +1763,7 @@ public class Bdm {
         StackPane.setAlignment(properties2Label, Pos.TOP_LEFT);
         //properties 2
         
-        HBox alimentTypeHBox = new HBox(2, alimentTypeLabel, properties1BoxStackPane, properties2BoxStackPane);
+        HBox alimentTypeHBox = new HBox(15, alimentTypeLabel, properties1BoxStackPane, properties2BoxStackPane);
         alimentTypeHBox.setAlignment(Pos.CENTER_LEFT);
         //aliment type
 
@@ -2006,7 +2006,7 @@ public class Bdm {
         StackPane.setAlignment(stumbleGroup4Label, Pos.TOP_LEFT);
         //stumble group 4
 
-        HBox stumbleTypeHBox = new HBox(2, 
+        HBox stumbleTypeHBox = new HBox(15, 
             stumbleTypeLabel, stumbleGroup1BoxStackPane,
             stumbleGroup2BoxStackPane, stumbleGroup3BoxStackPane,
             stumbleGroup4BoxStackPane
@@ -2026,7 +2026,7 @@ public class Bdm {
             }
         });
 
-        HBox staminaBrokenOverrideBdmIdHBox = new HBox(2, staminaBrokenOverrideBdmIdLabel, staminaBrokenOverrideBdmIdSpinner);
+        HBox staminaBrokenOverrideBdmIdHBox = new HBox(15, staminaBrokenOverrideBdmIdLabel, staminaBrokenOverrideBdmIdSpinner);
         staminaBrokenOverrideBdmIdHBox.setAlignment(Pos.CENTER_LEFT);
         //stamina broken override bdm id
 
@@ -2042,11 +2042,11 @@ public class Bdm {
             }
         });
 
-        HBox zVanishEnableTimeHBox = new HBox(2, zVanishEnableTimeLabel,zVanishEnableTimeSpinner);
+        HBox zVanishEnableTimeHBox = new HBox(15, zVanishEnableTimeLabel,zVanishEnableTimeSpinner);
         zVanishEnableTimeHBox.setAlignment(Pos.CENTER_LEFT);
         //z vanish enable time
 
-        VBox miscVBox = new VBox(25, transformationTypeHBox, alimentTypeHBox, stumbleTypeHBox, staminaBrokenOverrideBdmIdHBox, zVanishEnableTimeHBox);
+        VBox miscVBox = new VBox(35, transformationTypeHBox, alimentTypeHBox, stumbleTypeHBox, staminaBrokenOverrideBdmIdHBox, zVanishEnableTimeHBox);
         miscVBox.setPadding(new Insets(20, 0, 0, 8));
 
         return miscVBox;
@@ -2292,7 +2292,7 @@ public class Bdm {
         i92HBox.setAlignment(Pos.CENTER_LEFT);
         //i92
 
-        VBox unknownVBox = new VBox(25, 
+        VBox unknownVBox = new VBox(32, 
             i02HBox, i06HBox,
             i08HBox, i22HBox,
             i30HBox, i38HBox,
