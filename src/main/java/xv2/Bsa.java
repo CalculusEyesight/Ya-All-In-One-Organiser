@@ -94,22 +94,21 @@ public class Bsa {
     ArrayList<Object[]> copyListContainer = new ArrayList<>();
     ArrayList<String> copyTypesContainer = new ArrayList<>();
 
-    public Bsa(){
+    public Bsa() {
         entriesActionListener();
         entriesKyesListener();
     }
 
-    public SplitPane createSplitPane(){
+    public SplitPane createSplitPane() {
         SplitPane splitPane =new SplitPane();
-        String css = getClass().getResource("/style.css").toExternalForm();
 
         splitPane.getItems().addAll(treeView, tabPane);
         splitPane.setDividerPositions(0.245);
-        splitPane.getStylesheets().add(css); 
+        splitPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm()); 
         return splitPane;
     }
 
-    private void createBsaMain(BsaMainEntry entry){
+    private void createBsaMain(BsaMainEntry entry) {
         //i00
         Label i00Label = new Label("I_00");
         i00Label.setPrefWidth(60);
@@ -141,7 +140,7 @@ public class Bsa {
         i16_aSpinner.setEditable(true);
         i16_aSpinner.setPrefWidth(60);
         i16_aSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.i16_a = newValue.byteValue();
             }
         });
@@ -154,7 +153,7 @@ public class Bsa {
         i16_bSpinner.setEditable(true);
         i16_bSpinner.setPrefWidth(60);
         i16_bSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.i16_b = newValue.byteValue();
             }
         });
@@ -211,7 +210,7 @@ public class Bsa {
         Spinner <Integer> lifetimeSpinner = new Spinner<>(0, 65535, entry.lifetime);
         lifetimeSpinner.setEditable(true);
         lifetimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.lifetime = newValue;
             }
         });
@@ -247,7 +246,7 @@ public class Bsa {
         Spinner <Integer> expiresSpinner = new Spinner<>(0, 65535, entry.expires);
         expiresSpinner.setEditable(true);
         expiresSpinner.valueProperty().addListener((obs, oldValue,newValue) -> {
-            if(newValue != null) { 
+            if (newValue != null) { 
                 entry.expires = newValue;
             }
         });
@@ -263,7 +262,7 @@ public class Bsa {
         Spinner <Integer> impactProjectileSpinner = new Spinner<>(0, 65535, entry.impactProjectile);
         impactProjectileSpinner.setEditable(true);
         impactProjectileSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.impactProjectile = newValue;
             }
         });
@@ -279,7 +278,7 @@ public class Bsa {
         Spinner <Integer> impactEnemySpinner = new Spinner<>(0, 65535, entry.impactEnemy);
         impactEnemySpinner.setEditable(true);
         impactEnemySpinner.valueProperty().addListener((obs,oldValue,newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.impactEnemy = newValue;
             }
         });
@@ -295,7 +294,7 @@ public class Bsa {
         Spinner <Integer> impactGroundSpinner = new Spinner<>(0, 65535, entry.impactGround);
         impactGroundSpinner.setEditable(true);
         impactGroundSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.impactGround = newValue;
             }
         });
@@ -365,7 +364,11 @@ public class Bsa {
         //i48
 
         //entry
-        VBox entryVBox = new VBox(25, impactPropertiesHBox, lifetimeHBox, expiresHBox, impactProjectileHBox, impactEnemyHBox, impactGroundHBox);
+        VBox entryVBox = new VBox(25, 
+            impactPropertiesHBox, lifetimeHBox, 
+            expiresHBox, impactProjectileHBox, 
+            impactEnemyHBox, impactGroundHBox
+        );
         entryVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab entryTab = new Tab("Entry", entryVBox);
@@ -373,7 +376,12 @@ public class Bsa {
         //entry
 
         //unknown
-        VBox unknownVBox = new VBox(25, i00HBox, i17HBox, i18HBox, i24HBox, i40HBox, i44HBox, i48HBox);
+        VBox unknownVBox = new VBox(25, 
+            i00HBox, i17HBox, 
+            i18HBox, i24HBox, 
+            i40HBox, i44HBox, 
+            i48HBox
+        );
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
@@ -429,8 +437,8 @@ public class Bsa {
             default -> common.setSelected(true);
         }
 
-        eepkTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue)->{
-            if(newValue.isSelected()){
+        eepkTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue)-> {
+            if (newValue.isSelected()) {
                 if ((RadioButton) newValue == common) { 
                     entry.eepkType = 0;
                 }
@@ -455,7 +463,7 @@ public class Bsa {
                 else if ((RadioButton) newValue == kiBlastSkill) { 
                     entry.eepkType = 9;
                 }
-                else if ((RadioButton) newValue == stage){
+                else if ((RadioButton) newValue == stage) {
                     entry.eepkType = 11;
                 }
             }
@@ -485,8 +493,8 @@ public class Bsa {
         
         Spinner <Integer> skillIdSpinner = new Spinner<>(0, 65535, entry.skillId);
         skillIdSpinner.setEditable(true);
-        skillIdSpinner.valueProperty().addListener((obs, oldValue, newValue)->{
-            if(newValue != null){
+        skillIdSpinner.valueProperty().addListener((obs, oldValue, newValue)-> {
+            if (newValue != null) {
                 entry.skillId = newValue;
             }
         });
@@ -501,8 +509,8 @@ public class Bsa {
         
         Spinner <Integer> effectIdSpinner = new Spinner<>(0, 65535, entry.effectId);
         effectIdSpinner.setEditable(true);
-        effectIdSpinner.valueProperty().addListener((obs, oldValue, newValue)->{
-            if(newValue!=null){
+        effectIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue!=null) {
                 entry.effectId = newValue;
             }
         });
@@ -517,7 +525,7 @@ public class Bsa {
 
         TextField i06TextField = new TextField(String.valueOf(entry.i06));
         i06TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i06TextField.getText().contains("-")){
+            if (i06TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -721,7 +729,7 @@ public class Bsa {
         tabPane.getTabs().add(expirationTab);
     }
 
-    public void createBsaType0(BsaType0Entry entry) {
+    private void createBsaType0(BsaType0Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(120);
@@ -729,7 +737,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true);
         startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -745,7 +753,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -761,7 +769,7 @@ public class Bsa {
         Spinner <Integer> firstConditonSpinner = new Spinner<>(0, 65535, entry.firstCondition);
         firstConditonSpinner.setEditable(true);
         firstConditonSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.firstCondition = newValue;
             }
         });
@@ -804,7 +812,7 @@ public class Bsa {
         bacConditionFromSystem.setSelected((entry.secondCondition & 8) != 0);
 
         unknown1.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 1;
             }
             else {
@@ -812,7 +820,7 @@ public class Bsa {
             }
         });
         unknown2.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 2;
             }
             else {
@@ -820,7 +828,7 @@ public class Bsa {
             }
         });
         unknown3.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 4;
             }
             else {
@@ -828,7 +836,7 @@ public class Bsa {
             }
         });
         bacConditionFromSystem.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 8;
             }
             else {
@@ -863,7 +871,7 @@ public class Bsa {
         unknown8.setSelected((entry.secondCondition & 128) != 0);
 
         unknown5.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 16;
             }
             else {
@@ -871,7 +879,7 @@ public class Bsa {
             }
         });
         unknown6.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 32;
             }
             else {
@@ -879,7 +887,7 @@ public class Bsa {
             }
         });
         unknown7.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 64;
             }
             else {
@@ -887,7 +895,7 @@ public class Bsa {
             }
         });
         unknown8.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 128;
             }
             else {
@@ -922,7 +930,7 @@ public class Bsa {
         unknown12.setSelected((entry.secondCondition & 2048) != 0);
 
         unknown9.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 256;
             }
             else {
@@ -930,7 +938,7 @@ public class Bsa {
             }
         });
         unknown10.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 512;
             }
             else {
@@ -938,7 +946,7 @@ public class Bsa {
             }
         });
         unknown11.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 1024;
             }
             else {
@@ -946,7 +954,7 @@ public class Bsa {
             }
         });
         unknown12.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 2048;
             }
             else {
@@ -981,7 +989,7 @@ public class Bsa {
         unknown16.setSelected((entry.secondCondition & 32768) != 0);
 
         unknown13.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 4096;
             }
             else {
@@ -989,7 +997,7 @@ public class Bsa {
             }
         });
         unknown14.selectedProperty().addListener((obs, oldValue, newValue) -> { 
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 8192;
             }
             else {
@@ -997,7 +1005,7 @@ public class Bsa {
             }
         });
         unknown15.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 16384;
             }
             else {
@@ -1005,7 +1013,7 @@ public class Bsa {
             }
         });
         unknown16.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.secondCondition |= 32768;
             }
             else {
@@ -1034,7 +1042,7 @@ public class Bsa {
         Spinner <Integer> bsaEntryIdSpinner = new Spinner<>(0, 65535, entry.bsaEntryId);
         bsaEntryIdSpinner.setEditable(true);
         bsaEntryIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.bsaEntryId = newValue;
             }
         });
@@ -1050,7 +1058,7 @@ public class Bsa {
         Spinner <Integer> i06Spinner = new Spinner<>(0, 65535, entry.i06);
         i06Spinner.setEditable(true);
         i06Spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.i06 = newValue;
             }
         });
@@ -1066,7 +1074,7 @@ public class Bsa {
         Spinner <Double> bacConditionSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.bacCondition);
         bacConditionSpinner.setEditable(true);
         bacConditionSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.bacCondition = newValue.floatValue();
             }
         });
@@ -1096,7 +1104,11 @@ public class Bsa {
         //f12
 
         //entry passing
-        VBox entryPassingVBox = new VBox(25, startTimeHBox, durationHBox, firstConditionHBox, secondConditionHBox, bsaEntryIdHBox, i06HBox, bacConditionHBox);
+        VBox entryPassingVBox = new VBox(25, startTimeHBox, durationHBox, 
+            firstConditionHBox, secondConditionHBox, 
+            bsaEntryIdHBox, i06HBox, 
+            bacConditionHBox
+        );
         entryPassingVBox.setPadding(new Insets(20 ,0, 0, 16));
 
         Tab entryPassingTab = new Tab("Entry Passing", entryPassingVBox);
@@ -1114,7 +1126,7 @@ public class Bsa {
         tabPane.getTabs().addAll(entryPassingTab, unknownTab);
     }
 
-    public void createBsaType1(BsaType1Entry entry) {
+    private void createBsaType1(BsaType1Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(120);
@@ -1122,7 +1134,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true);
         startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -1138,7 +1150,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -1166,7 +1178,7 @@ public class Bsa {
         unknown4.setSelected((entry.motionFlags & 8L) != 0);
 
         unknown1.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+             if (newValue) {
                 entry.motionFlags |= 1L;
             }
             else {
@@ -1174,7 +1186,7 @@ public class Bsa {
             }
         });
         unknown2.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 2L;
             }
             else {
@@ -1182,7 +1194,7 @@ public class Bsa {
             }
         });
         unknown3.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 4L;
             }
             else {
@@ -1190,7 +1202,7 @@ public class Bsa {
             }
         });
         unknown4.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 8L;
             }
             else {
@@ -1225,7 +1237,7 @@ public class Bsa {
         unknown8.setSelected((entry.motionFlags & 128L) != 0);
 
         unknown5.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 16L;
             }
             else {
@@ -1233,7 +1245,7 @@ public class Bsa {
             }
         });
         unknown6.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 32L;
             }
             else {
@@ -1241,7 +1253,7 @@ public class Bsa {
             }
         });
         unknown7.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 64L;
             }
             else {
@@ -1249,7 +1261,7 @@ public class Bsa {
             }
         });
         unknown8.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 128L;
             }
             else {
@@ -1284,7 +1296,7 @@ public class Bsa {
         unknown12.setSelected((entry.motionFlags & 2048L) != 0);
 
         unknown9.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 256L;
             }
             else {
@@ -1292,7 +1304,7 @@ public class Bsa {
             }
         });
         unknown10.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 512L;
             }
             else {
@@ -1300,7 +1312,7 @@ public class Bsa {
             }
         });
         unknown11.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 1024L;
             }
             else {
@@ -1308,7 +1320,7 @@ public class Bsa {
             }
         });
         unknown12.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 2048L;
             }
             else {
@@ -1342,7 +1354,7 @@ public class Bsa {
         unknown16.setSelected((entry.motionFlags & 32768L) != 0);
 
         unknown13.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 4096L;
             }
             else {
@@ -1350,7 +1362,7 @@ public class Bsa {
             }
         });
         unknown14.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 8192L;
             }
             else {
@@ -1358,7 +1370,7 @@ public class Bsa {
             }
         });
         unknown15.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 16384L;
             }
             else {
@@ -1366,7 +1378,7 @@ public class Bsa {
             }
         });
         unknown16.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 32768L;
             }
             else {
@@ -1400,7 +1412,7 @@ public class Bsa {
         unknown20.setSelected((entry.motionFlags & 524288L) != 0);
 
         unknown17.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 65536L;
             }
             else {
@@ -1408,7 +1420,7 @@ public class Bsa {
             }
         });
         opponentTracking.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 131072L;
             }
             else {
@@ -1416,7 +1428,7 @@ public class Bsa {
             }
         });
         unknown19.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 262144L;
             }
             else {
@@ -1424,7 +1436,7 @@ public class Bsa {
             }
         });
         unknown20.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 524288L;
             }
             else {
@@ -1458,7 +1470,7 @@ public class Bsa {
         unknown24.setSelected((entry.motionFlags & 8388608L) != 0);
 
         unknown21.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 1048576L;
             }
             else {
@@ -1466,7 +1478,7 @@ public class Bsa {
             }
         });
         unknown22.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 2097152L;
             }
             else {
@@ -1474,15 +1486,15 @@ public class Bsa {
             }
         });
         unknown23.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 4194304L;
             }
             else {
                 entry.motionFlags &= ~4194304L;
             }
         });
-        unknown24.selectedProperty().addListener((obs, oldValue, newValue)->{
-            if(newValue) {
+        unknown24.selectedProperty().addListener((obs, oldValue, newValue)-> {
+            if (newValue) {
                 entry.motionFlags |= 8388608L;
             }
             else {
@@ -1516,7 +1528,7 @@ public class Bsa {
         unknown28.setSelected((entry.motionFlags & 134217728L) != 0);
 
         unknown25.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 16777216L;
             }
             else {
@@ -1524,7 +1536,7 @@ public class Bsa {
             }
         });
         unknown26.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 33554432L;
             }
             else {
@@ -1532,7 +1544,7 @@ public class Bsa {
             }
         });
         unknown27.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 67108864L;
             }
             else {
@@ -1540,7 +1552,7 @@ public class Bsa {
             }
         });
         unknown28.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 134217728L;
             }
             else {
@@ -1574,7 +1586,7 @@ public class Bsa {
         unknown32.setSelected((entry.motionFlags & 2147483648L) != 0);
 
         unknown29.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) { 
+            if (newValue) { 
                 entry.motionFlags |= 268435456L;
             }
             else {
@@ -1582,7 +1594,7 @@ public class Bsa {
             }
         });
         unknown30.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 536870912L;
             }
             else {
@@ -1590,7 +1602,7 @@ public class Bsa {
             }
         });
         unknown31.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 1073741824L;
             }
             else {
@@ -1598,7 +1610,7 @@ public class Bsa {
             }
         });
         unknown32.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 entry.motionFlags |= 2147483648L;
             }
             else {
@@ -1640,7 +1652,7 @@ public class Bsa {
         Spinner <Double> speedXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.speedX);
         speedXSpinner.setEditable(true);
         speedXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.speedX = newValue.floatValue();
             }
         });
@@ -1656,7 +1668,7 @@ public class Bsa {
         Spinner <Double> speedYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.speedY);
         speedYSpinner.setEditable(true);
         speedYSpinner.valueProperty().addListener((obs ,oldValue, newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.speedY = newValue.floatValue();
             }
         });
@@ -1672,7 +1684,7 @@ public class Bsa {
         Spinner <Double> speedZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.speedZ);
         speedZSpinner.setEditable(true);
         speedZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.speedZ = newValue.floatValue();
             }
         });
@@ -1687,7 +1699,7 @@ public class Bsa {
         
         TextField f16TextField = new TextField(String.valueOf(entry.f16));
         f16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(f16TextField.getText().contains("-")) {
+            if (f16TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -1708,7 +1720,7 @@ public class Bsa {
         Spinner <Double> accelerationXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.accelerationX);
         accelerationXSpinner.setEditable(true);
         accelerationXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.accelerationX = newValue.floatValue();
             }
         }); 
@@ -1725,7 +1737,7 @@ public class Bsa {
         Spinner <Double> accelerationYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.accelerationY);
         accelerationYSpinner.setEditable(true);
         accelerationYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.speedY = newValue.floatValue();
             }
         });
@@ -1741,7 +1753,7 @@ public class Bsa {
         Spinner <Double> accelerationZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.accelerationZ);
         accelerationZSpinner.setEditable(true);
         accelerationZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.accelerationZ = newValue.floatValue();
             }
         });
@@ -1757,7 +1769,7 @@ public class Bsa {
         Spinner <Double> falloffStrengthSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.fallofStrength);
         falloffStrengthSpinner.setEditable(true);
         falloffStrengthSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.fallofStrength = newValue.floatValue();
             }
         });
@@ -1773,7 +1785,7 @@ public class Bsa {
         Spinner <Double> spreadDirectionXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.spreadDirectionX);
         spreadDirectionXSpinner.setEditable(true);
         spreadDirectionXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.spreadDirectionX = newValue.floatValue();
             }
         });
@@ -1789,7 +1801,7 @@ public class Bsa {
         Spinner <Double> spreadDirectionYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.spreadDirectionY);
         spreadDirectionYSpinner.setEditable(true);
         spreadDirectionYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.spreadDirectionY = newValue.floatValue();
             }
         });
@@ -1805,7 +1817,7 @@ public class Bsa {
         Spinner <Double> spreadDirectionZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.spreadDirectionZ);
         spreadDirectionZSpinner.setEditable(true);
         spreadDirectionZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null){
+            if (newValue != null) {
                 entry.spreadDirectionZ = newValue.floatValue();
             }
         });
@@ -1815,7 +1827,15 @@ public class Bsa {
         //spread direction z
         
         //movement
-        VBox movementVBox = new VBox(25, startTimeHBox, durationHBox, motionFlagsHBox, speedXHBox, speedYHBox, speedZHBox, accelerationXHBox, accelerationYHBox, accelerationZHBox, falloffStrengthHBox, spreadDirectionXHBox, spreadDirectionYHBox, spreadDirectionZHBox);
+        VBox movementVBox = new VBox(25, 
+            startTimeHBox, durationHBox, 
+            motionFlagsHBox, speedXHBox, 
+            speedYHBox, speedZHBox, 
+            accelerationXHBox, accelerationYHBox, 
+            accelerationZHBox, falloffStrengthHBox, 
+            spreadDirectionXHBox, spreadDirectionYHBox, 
+            spreadDirectionZHBox
+        );
         movementVBox.setPadding(new Insets(20, 0, 20, 16));
 
         Tab movementTab = new Tab("Movement", new ScrollPane(movementVBox));
@@ -1834,7 +1854,7 @@ public class Bsa {
         tabPane.getTabs().addAll(movementTab, unknownTab);
     }
 
-    public void createBsaType2(BsaType2Entry entry) {
+    private void createBsaType2(BsaType2Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(80);
@@ -1842,7 +1862,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true); 
         startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -1858,7 +1878,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue ,newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -1958,7 +1978,7 @@ public class Bsa {
         tabPane.getTabs().add(type2Tab);
     }
 
-    public void createBsaType3(BsaType3Entry entry) {
+    private void createBsaType3(BsaType3Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(120);
@@ -1966,7 +1986,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true);
         startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -1982,7 +2002,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -2035,7 +2055,7 @@ public class Bsa {
         i06_aSpinner.setEditable(true);
         i06_aSpinner.setPrefWidth(60);
         i06_aSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.i06_a = newValue.byteValue();
             }
         });
@@ -2048,7 +2068,7 @@ public class Bsa {
         i06_bSpinner.setEditable(true);
         i06_bSpinner.setPrefWidth(60);
         i06_bSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.i06_b = newValue.byteValue();
             }
         });
@@ -2061,7 +2081,7 @@ public class Bsa {
         i06_cSpinner.setEditable(true);
         i06_cSpinner.setPrefWidth(60);
         i06_cSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.i06_c = newValue.byteValue();
             }
         });
@@ -2074,7 +2094,7 @@ public class Bsa {
         i06_dSpinner.setEditable(true);
         i06_dSpinner.setPrefWidth(60);
         i06_dSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.i06_d = newValue.byteValue();
             }
         });
@@ -2091,7 +2111,7 @@ public class Bsa {
         Spinner <Double> positionXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionX);
         positionXSpinner.setEditable(true);
         positionXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.positionX = newValue.floatValue();
             }
         });
@@ -2107,7 +2127,7 @@ public class Bsa {
         Spinner <Double> positionYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionY);
         positionYSpinner.setEditable(true);
         positionYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.positionY = newValue.floatValue();
             }
         });
@@ -2123,7 +2143,7 @@ public class Bsa {
         Spinner <Double> positionZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionZ);
         positionZSpinner.setEditable(true);
         positionZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.positionZ = newValue.floatValue();
             }
         });
@@ -2139,7 +2159,7 @@ public class Bsa {
         Spinner <Double> hitboxScaleSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.hitboxScale);
         hitboxScaleSpinner.setEditable(true);
         hitboxScaleSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.hitboxScale = newValue.floatValue();
             }
         });
@@ -2155,7 +2175,7 @@ public class Bsa {
         Spinner <Double> maximumBoxXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.maximumX);
         maximumBoxXSpinner.setEditable(true); 
         maximumBoxXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.maximumX = newValue.floatValue();
             }
         });
@@ -2171,7 +2191,7 @@ public class Bsa {
         Spinner <Double> maximumBoxYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.maximumY);
         maximumBoxYSpinner.setEditable(true);
         maximumBoxYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.maximumY = newValue.floatValue();
             }
         });
@@ -2187,7 +2207,7 @@ public class Bsa {
         Spinner <Double> maximumBoxZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.maximumZ);
         maximumBoxZSpinner.setEditable(true);
         maximumBoxZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.maximumZ = newValue.floatValue();
             }
         });
@@ -2203,7 +2223,7 @@ public class Bsa {
         Spinner <Double> minimumBoxXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.minimumX);
         minimumBoxXSpinner.setEditable(true);
         minimumBoxXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.minimumX = newValue.floatValue();
             }
         });
@@ -2219,7 +2239,7 @@ public class Bsa {
         Spinner <Double> minimumBoxYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.minimumY);
         minimumBoxYSpinner.setEditable(true);
         minimumBoxYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.minimumY = newValue.floatValue();
             }
         });
@@ -2235,7 +2255,7 @@ public class Bsa {
         Spinner <Double> minimumBoxZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.minimumZ);
         minimumBoxZSpinner.setEditable(true);
         minimumBoxZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.minimumZ = newValue.floatValue();
             }
         });
@@ -2251,7 +2271,7 @@ public class Bsa {
         Spinner <Integer> hitAmountSpinner = new Spinner<>(0, 65535, entry.hitAmount);
         hitAmountSpinner.setEditable(true);
         hitAmountSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.hitAmount = newValue;
             }
         });
@@ -2267,7 +2287,7 @@ public class Bsa {
         Spinner <Integer> hitboxLifetimeSpinner = new Spinner<>(0, 65535, entry.hitboxLifetime);
         hitboxLifetimeSpinner.setEditable(true);
         hitboxLifetimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.hitboxLifetime = newValue;
             }
         });
@@ -2326,7 +2346,7 @@ public class Bsa {
                 return;
             }
             try {
-                entry.i04 = Integer.parseInt(newText); 
+                entry.i56 = Integer.parseInt(newText); 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -2343,7 +2363,7 @@ public class Bsa {
         Spinner <Integer> firstHitSpinner = new Spinner<>(0, 65535, entry.firstHit);
         firstHitSpinner.setEditable(true);
         firstHitSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.firstHit = newValue;
             }
         });
@@ -2359,7 +2379,7 @@ public class Bsa {
         Spinner <Integer> multipleHitsSpinner = new Spinner<>(0, 65535, entry.multipleHits);
         multipleHitsSpinner.setEditable(true);
         multipleHitsSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.multipleHits= newValue;
             }
         });
@@ -2375,7 +2395,7 @@ public class Bsa {
         Spinner <Integer> lastHitSpinner = new Spinner<>(0, 65535, entry.lastHit);
         lastHitSpinner.setEditable(true);
         lastHitSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.lastHit = newValue;
             }
         });
@@ -2385,7 +2405,14 @@ public class Bsa {
         //first hit
 
         //hitbox
-        VBox hitboxVBox = new VBox(25, startTimeHBox, durationHBox, i06HBox,positionXHBox, positionYHBox, positionZHBox, hitboxScaleHBox, hitAmountHBox, hitboxLifetimeHBox, firstHitHBox, multipleHitsHBox, lastHitHBox);
+        VBox hitboxVBox = new VBox(25, 
+            startTimeHBox, durationHBox, 
+            i06HBox, positionXHBox, positionYHBox, 
+            positionZHBox, hitboxScaleHBox, 
+            hitAmountHBox, hitboxLifetimeHBox, 
+            firstHitHBox, multipleHitsHBox, 
+            lastHitHBox
+        );
         hitboxVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab hitboxTab = new Tab("Hitbox", hitboxVBox);
@@ -2393,7 +2420,12 @@ public class Bsa {
         //hitbox
 
         //matrix
-        VBox matrixVBox = new VBox(25, matrixFlagsCheckBox, maximumBoxXHBox, maximumBoxYHBox, maximumBoxZHBox, minimumBoxXHBox, minimumBoxYHBox, minimumBoxZHBox);
+        VBox matrixVBox = new VBox(25, 
+            matrixFlagsCheckBox, maximumBoxXHBox, 
+            maximumBoxYHBox, maximumBoxZHBox, 
+            minimumBoxXHBox, minimumBoxYHBox, 
+            minimumBoxZHBox
+        );
         matrixVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab matrixTab = new Tab("Matrix", matrixVBox);
@@ -2411,7 +2443,7 @@ public class Bsa {
         tabPane.getTabs().addAll(hitboxTab, matrixTab, unknownTab);
     }
 
-    public void createBsaType4(BsaType4Entry entry) {
+    private void createBsaType4(BsaType4Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(80);
@@ -2419,7 +2451,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true);
         startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -2435,7 +2467,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -2765,19 +2797,27 @@ public class Bsa {
         //i54
 
         //deflection
-        VBox deflectionVBox = new VBox(25, startTimeHBox, durationHBox, i00HBox, i04HBox, i08HBox, f12HBox, f16HBox, f20HBox, i24HBox, i28HBox, i32HBox, i36HBox, i40HBox, i44HBox, i48HBox, i50HBox, i52HBox, i54HBox);
+        VBox deflectionVBox = new VBox(25, 
+            startTimeHBox, durationHBox, 
+            i00HBox, i04HBox, 
+            i08HBox, f12HBox, 
+            f16HBox, f20HBox, 
+            i24HBox, i28HBox, 
+            i32HBox, i36HBox, 
+            i40HBox, i44HBox, 
+            i48HBox, i50HBox, 
+            i52HBox, i54HBox
+        );
         deflectionVBox.setPadding(new Insets(20, 0, 20, 16));
 
-        ScrollPane deflectionScrollPane = new ScrollPane(deflectionVBox);
-
-        Tab deflectionTab = new Tab("Deflection", deflectionScrollPane);
+        Tab deflectionTab = new Tab("Deflection", new ScrollPane(deflectionVBox));
         deflectionTab.setClosable(false);
         //deflection
 
         tabPane.getTabs().add(deflectionTab);
     }
 
-    public void createBsaType6(BsaType6Entry entry) {
+    private void createBsaType6(BsaType6Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(100);
@@ -2785,7 +2825,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true);
         startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -2801,7 +2841,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -2856,7 +2896,7 @@ public class Bsa {
         }
 
         eepkTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue.isSelected()){
+            if (newValue.isSelected()) {
                 if ((RadioButton) newValue == common) { 
                     entry.eepkType = 0;
                 }
@@ -2881,7 +2921,7 @@ public class Bsa {
                 else if ((RadioButton) newValue == kiBlastSkill) { 
                     entry.eepkType = 9;
                 }
-                else if ((RadioButton) newValue == stage){
+                else if ((RadioButton) newValue == stage) {
                     entry.eepkType = 11;
                 }
             }
@@ -2912,7 +2952,7 @@ public class Bsa {
         Spinner <Integer> skillIdSpinner = new Spinner<>(0, 65535, entry.skillId);
         skillIdSpinner.setEditable(true);
         skillIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.skillId = newValue;
             }
         });
@@ -2928,7 +2968,7 @@ public class Bsa {
         Spinner <Integer> effectIdSpinner = new Spinner<>(0, 65535, entry.effectId);
         effectIdSpinner.setEditable(true);
         effectIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.effectId = newValue;
             }
         });
@@ -2943,7 +2983,7 @@ public class Bsa {
 
         TextField i06TextField = new TextField(String.valueOf(entry.i06));
         i06TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i06TextField.getText().contains("-")) {
+            if (i06TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -2975,7 +3015,7 @@ public class Bsa {
         }
 
         effectSwtichGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue.isSelected()) {
+            if (newValue.isSelected()) {
                 if ((RadioButton) newValue == on) { 
                     entry.effectSwitch = 0;
                 }
@@ -2998,7 +3038,7 @@ public class Bsa {
 
         TextField i10TextField = new TextField(String.valueOf(entry.i10));
         i10TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i10TextField.getText().contains("-")) {
+            if (i10TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3019,7 +3059,7 @@ public class Bsa {
         Spinner <Double> positionXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionX);
         positionXSpinner.setEditable(true);
         positionXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.positionX = newValue.floatValue();
             }
         });
@@ -3035,7 +3075,7 @@ public class Bsa {
         Spinner <Double> positionYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionY);
         positionYSpinner.setEditable(true);
         positionYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.positionY = newValue.floatValue();
             }
         });
@@ -3051,7 +3091,7 @@ public class Bsa {
         Spinner <Double> positionZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionZ);
         positionZSpinner.setEditable(true);
         positionZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.positionZ = newValue.floatValue();
             }
         });
@@ -3079,7 +3119,7 @@ public class Bsa {
         tabPane.getTabs().addAll(effectTab, unknownTab);
     }
 
-    public void createBsaType7(BsaType7Entry entry) {
+    private void createBsaType7(BsaType7Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(100);
@@ -3087,7 +3127,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true);
         startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -3103,7 +3143,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -3165,7 +3205,7 @@ public class Bsa {
 
         TextField i02TextField = new TextField(String.valueOf(entry.i02));
         i02TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i02TextField.getText().contains("-")){
+            if (i02TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3186,7 +3226,7 @@ public class Bsa {
         Spinner <Integer> cueIdSpinner = new Spinner<>(0, 65535, entry.duration);
         cueIdSpinner.setEditable(true);
         cueIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -3201,7 +3241,7 @@ public class Bsa {
 
         TextField i06TextField = new TextField(String.valueOf(entry.i06));
         i06TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i06TextField.getText().contains("-")){
+            if (i06TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3234,7 +3274,7 @@ public class Bsa {
         tabPane.getTabs().addAll(soundTab, unknownTab);
     }
 
-    public void createBsaType8(BsaType8Entry entry){
+    private void createBsaType8(BsaType8Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(80);
@@ -3242,7 +3282,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true);
         startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -3258,7 +3298,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -3274,7 +3314,7 @@ public class Bsa {
         Spinner <Integer> bpeEffectIdSpinner = new Spinner<>(0, 65535, entry.bpeEffectId);
         bpeEffectIdSpinner.setEditable(true);
         bpeEffectIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.bpeEffectId = newValue;
             }
         });
@@ -3332,7 +3372,7 @@ public class Bsa {
 
         TextField i02TextField = new TextField(String.valueOf(entry.i02));
         i02TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i02TextField.getText().contains("-")) {
+            if (i02TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3352,7 +3392,7 @@ public class Bsa {
 
         TextField i04TextField = new TextField(String.valueOf(entry.i04));
         i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i04TextField.getText().contains("-")) {
+            if (i04TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3372,7 +3412,7 @@ public class Bsa {
 
         TextField i08TextField = new TextField(String.valueOf(entry.i08));
         i08TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i08TextField.getText().contains("-")){
+            if (i08TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3392,7 +3432,7 @@ public class Bsa {
 
         TextField i12TextField = new TextField(String.valueOf(entry.i12));
         i12TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i12TextField.getText().contains("-")) {
+            if (i12TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3412,7 +3452,7 @@ public class Bsa {
 
         TextField i16TextField = new TextField(String.valueOf(entry.i16));
         i16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i16TextField.getText().contains("-")) {
+            if (i16TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3432,7 +3472,7 @@ public class Bsa {
 
         TextField i20TextField = new TextField(String.valueOf(entry.i20));
         i20TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i20TextField.getText().contains("-")) {
+            if (i20TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3447,7 +3487,13 @@ public class Bsa {
         //i20
 
         //screen effect
-        VBox screenEffectVBox = new VBox(25, startTimeHBox, durationHBox, bpeEffectIdHBox, i02HBox, i04HBox, i08HBox, i12HBox, i16HBox, i20HBox);
+        VBox screenEffectVBox = new VBox(25, 
+            startTimeHBox, durationHBox, 
+            bpeEffectIdHBox, i02HBox, 
+            i04HBox, i08HBox, 
+            i12HBox, i16HBox, 
+            i20HBox
+        );
         screenEffectVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab screenEffectTab = new Tab("Screen Effect", screenEffectVBox);
@@ -3457,7 +3503,7 @@ public class Bsa {
         tabPane.getTabs().add(screenEffectTab);
     }
 
-    public void createBsaType10(BsaType10Entry entry){
+    private void createBsaType10(BsaType10Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(60);
@@ -3465,7 +3511,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true);
         startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -3481,7 +3527,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue,newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -3497,7 +3543,7 @@ public class Bsa {
         Spinner <Integer> skillIdSpinner = new Spinner<>(0, 65535, entry.skillId);
         skillIdSpinner.setEditable(true);
         skillIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.skillId = newValue;
             }
         });
@@ -3512,7 +3558,7 @@ public class Bsa {
 
         TextField i04TextField = new TextField(String.valueOf(entry.i04));
         i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i04TextField.getText().contains("-")) {
+            if (i04TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3532,7 +3578,7 @@ public class Bsa {
 
         TextField i06TextField = new TextField(String.valueOf(entry.i06));
         i06TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i06TextField.getText().contains("-")) {
+            if (i06TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3557,7 +3603,7 @@ public class Bsa {
         tabPane.getTabs().add(type10Tab);
     }
 
-    public void createBsaType12(BsaType12Entry entry) {
+    private void createBsaType12(BsaType12Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(80);
@@ -3565,7 +3611,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true);
         startTimeSpinner.valueProperty().addListener((obs,oldValue,newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -3581,7 +3627,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -3596,7 +3642,7 @@ public class Bsa {
 
         TextField f00TextField = new TextField(String.valueOf(entry.f00));
         f00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(f00TextField.getText().contains("-")) {
+            if (f00TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3656,7 +3702,7 @@ public class Bsa {
         }
 
         eepkTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue.isSelected()) {
+            if (newValue.isSelected()) {
                 if ((RadioButton) newValue == common) { 
                     entry.eepkType = 0;
                 }
@@ -3712,7 +3758,7 @@ public class Bsa {
         Spinner <Integer> skillIdSpinner = new Spinner<>(0, 65535, entry.skillId);
         skillIdSpinner.setEditable(true);
         skillIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.skillId = newValue;
             }
         });
@@ -3727,7 +3773,7 @@ public class Bsa {
 
         TextField i12TextField = new TextField(String.valueOf(entry.i12));
         i12TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(i12TextField.getText().contains("-")) {
+            if (i12TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3747,7 +3793,7 @@ public class Bsa {
 
         TextField f16TextField = new TextField(String.valueOf(entry.f16));
         f16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(f16TextField.getText().contains("-")) {
+            if (f16TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3770,7 +3816,7 @@ public class Bsa {
         tabPane.getTabs().add(type12Tab);
     }
 
-    public void createBsaType13(BsaType13Entry entry) {
+    private void createBsaType13(BsaType13Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(80);
@@ -3778,7 +3824,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true);
         startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -3794,7 +3840,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -3849,7 +3895,7 @@ public class Bsa {
 
         TextField f04TextField = new TextField(String.valueOf(entry.f04));
         f04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(f04TextField.getText().contains("-")) {
+            if (f04TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3869,7 +3915,7 @@ public class Bsa {
 
         TextField f08TextField = new TextField(String.valueOf(entry.f08));
         f08TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(f08TextField.getText().contains("-")) {
+            if (f08TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3908,7 +3954,7 @@ public class Bsa {
 
         TextField f16TextField = new TextField(String.valueOf(entry.f16));
         f16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(f16TextField.getText().contains("-")) {
+            if (f16TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -3983,7 +4029,14 @@ public class Bsa {
         //i28
 
         //type 13
-        VBox type13VBox = new VBox(25, startTimeHBox, durationHBox, i00HBox, i02HBox, f04HBox, f08HBox, i12HBox, f16HBox, i20HBox, i24HBox, i28HBox);
+        VBox type13VBox = new VBox(25,
+            startTimeHBox, durationHBox, 
+            i00HBox, i02HBox, 
+            f04HBox, f08HBox, 
+            i12HBox, f16HBox, 
+            i20HBox, i24HBox, 
+            i28HBox
+        );
         type13VBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab type13Tab = new Tab("Type 13", type13VBox);
@@ -3993,7 +4046,7 @@ public class Bsa {
         tabPane.getTabs().add(type13Tab);
     }
 
-    public void createBsaType14(BsaType14Entry entry) {
+    private void createBsaType14(BsaType14Entry entry) {
         //start time
         Label startTimeLabel = new Label("Start Time");
         startTimeLabel.setPrefWidth(80);
@@ -4001,7 +4054,7 @@ public class Bsa {
         Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
         startTimeSpinner.setEditable(true);
         startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.startTime = newValue;
             }
         });
@@ -4017,7 +4070,7 @@ public class Bsa {
         Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
         durationSpinner.setEditable(true);
         durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if(newValue != null) {
+            if (newValue != null) {
                 entry.duration = newValue;
             }
         });
@@ -4072,7 +4125,7 @@ public class Bsa {
 
         TextField f04TextField = new TextField(String.valueOf(entry.f04));
         f04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if(f04TextField.getText().contains("-")) {
+            if (f04TextField.getText().contains("-")) {
                 return;
             }
             try {
@@ -4487,7 +4540,21 @@ public class Bsa {
         //i84
 
         //type 14
-        VBox type14VBox = new VBox(25, startTimeHBox, durationHBox, i00HBox, i02HBox, f04HBox, i08HBox, f12HBox, i16HBox, f20HBox, i24HBox, f28HBox, i32HBox, i36HBox, i40HBox, f44HBox, i48HBox, f52HBox, i56HBox, f60HBox, i64HBox, f68HBox, i72HBox, i76HBox, i80HBox, i84HBox);
+        VBox type14VBox = new VBox(25, 
+            startTimeHBox, durationHBox, 
+            i00HBox, i02HBox, 
+            f04HBox, i08HBox, 
+            f12HBox, i16HBox, 
+            f20HBox, i24HBox, 
+            f28HBox, i32HBox, 
+            i36HBox, i40HBox, 
+            f44HBox, i48HBox, 
+            f52HBox, i56HBox, 
+            f60HBox, i64HBox, 
+            f68HBox, i72HBox, 
+            i76HBox, i80HBox, 
+            i84HBox
+        );
         type14VBox.setPadding(new Insets(20,0,20,16));
 
         Tab type14Tab = new Tab("Type 14", new ScrollPane(type14VBox));
@@ -4496,7 +4563,7 @@ public class Bsa {
         tabPane.getTabs().add(type14Tab);
     }
 
-    private void entriesActionListener(){
+    private void entriesActionListener() {
         addSubEntry.getItems().addAll(collisionMenuItem, expirationMenuItem, type0MenuItem, type1MenuItem, type2MenuItem, type3MenuItem, type4MenuItem, type6MenuItem, type7MenuItem, type8MenuItem, type10MenuItem, type12MenuItem, type13MenuItem, type14MenuItem);
 
         copiedItem.setVisible(false);
@@ -4523,9 +4590,9 @@ public class Bsa {
             noCopiedItemFound.setDisable(true);
             pasteItem.setDisable(true);
 
-            if(newValue == null) return;
+            if (newValue == null) return;
 
-            if(newValue.getValue().contains("Entry") && newValue.getParent() == treeView.getRoot()) {
+            if (newValue.getValue().contains("Entry") && newValue.getParent() == treeView.getRoot()) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4536,11 +4603,11 @@ public class Bsa {
 
                 addComment.setDisable(false);
 
-                if(pasteItem.getText().equals("Paste Entry")) {
+                if (pasteItem.getText().equals("Paste Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("Collision (After Effects)")) {
+            else if (newValue.getParent().getValue().equals("Collision (After Effects)")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4549,11 +4616,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
                 
-                if(pasteItem.getText().contains("Paste Collision")) {
+                if (pasteItem.getText().contains("Paste Collision")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("Expiration (After Effects)")) {
+            else if (newValue.getParent().getValue().equals("Expiration (After Effects)")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
                 
                 tabPane.getTabs().clear();
@@ -4562,11 +4629,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("Paste Expiration")) {
+                if (pasteItem.getText().contains("Paste Expiration")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("BSA Entry Passing")) {
+            else if (newValue.getParent().getValue().equals("BSA Entry Passing")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4575,11 +4642,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("Paste BSA Entry Passing")){
+                if (pasteItem.getText().contains("Paste BSA Entry Passing")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("Movement")) {
+            else if (newValue.getParent().getValue().equals("Movement")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4588,11 +4655,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("Movement")) {
+                if (pasteItem.getText().contains("Movement")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("BSA Type 2")) {
+            else if (newValue.getParent().getValue().equals("BSA Type 2")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4601,11 +4668,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("BSA Type 2")) {
+                if (pasteItem.getText().contains("BSA Type 2")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("Hitbox")) {
+            else if (newValue.getParent().getValue().equals("Hitbox")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4614,11 +4681,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("Hitbox")) {
+                if (pasteItem.getText().contains("Hitbox")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("Deflection")){
+            else if (newValue.getParent().getValue().equals("Deflection")) {
 
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
@@ -4628,11 +4695,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("Deflection")) {
+                if (pasteItem.getText().contains("Deflection")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("Effect")) {
+            else if (newValue.getParent().getValue().equals("Effect")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4641,11 +4708,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("Effect")) {
+                if (pasteItem.getText().contains("Effect")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("Sound")) {
+            else if (newValue.getParent().getValue().equals("Sound")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4654,11 +4721,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("Sound")) {
+                if (pasteItem.getText().contains("Sound")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("Screen Effect")) {
+            else if (newValue.getParent().getValue().equals("Screen Effect")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4667,11 +4734,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("Screen Effect")) {
+                if (pasteItem.getText().contains("Screen Effect")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("BSA Type 10")) {
+            else if (newValue.getParent().getValue().equals("BSA Type 10")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4680,11 +4747,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("BSA Type 10")) {
+                if (pasteItem.getText().contains("BSA Type 10")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("BSA Type 12")) {
+            else if (newValue.getParent().getValue().equals("BSA Type 12")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4693,11 +4760,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("BSA Type 12")) {
+                if (pasteItem.getText().contains("BSA Type 12")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("BSA Type 13")) {
+            else if (newValue.getParent().getValue().equals("BSA Type 13")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4706,11 +4773,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("BSA Type 13")) {
+                if (pasteItem.getText().contains("BSA Type 13")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if(newValue.getParent().getValue().equals("BSA Type 14")) {
+            else if (newValue.getParent().getValue().equals("BSA Type 14")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4719,7 +4786,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if(pasteItem.getText().contains("BSA Type 14")) {
+                if (pasteItem.getText().contains("BSA Type 14")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4727,68 +4794,68 @@ public class Bsa {
                 tabPane.getTabs().clear();
             } 
 
-            if(newValue.getValue().equals("Collision (After Effects)") && pasteItem.getText().contains("Collision List")) {
+            if (newValue.getValue().equals("Collision (After Effects)") && pasteItem.getText().contains("Collision List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("Expiration (After Effects)") && pasteItem.getText().contains("Expiration List")) {
+            else if (newValue.getValue().equals("Expiration (After Effects)") && pasteItem.getText().contains("Expiration List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("Movement") && pasteItem.getText().contains("Movement List")) {
+            else if (newValue.getValue().equals("Movement") && pasteItem.getText().contains("Movement List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("BSA Type 2") && pasteItem.getText().contains("Type 2 List")) {
+            else if (newValue.getValue().equals("BSA Type 2") && pasteItem.getText().contains("Type 2 List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("Hitbox") && pasteItem.getText().contains("Hitbox List")) {
+            else if (newValue.getValue().equals("Hitbox") && pasteItem.getText().contains("Hitbox List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("Deflection") && pasteItem.getText().contains("Deflection List")) {
+            else if (newValue.getValue().equals("Deflection") && pasteItem.getText().contains("Deflection List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("Effect") && pasteItem.getText().contains("Effect List")) {
+            else if (newValue.getValue().equals("Effect") && pasteItem.getText().contains("Effect List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("Sound") && pasteItem.getText().contains("Sound List")) {
+            else if (newValue.getValue().equals("Sound") && pasteItem.getText().contains("Sound List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("Screen Effect") && pasteItem.getText().contains("Screen Effect List")) {
+            else if (newValue.getValue().equals("Screen Effect") && pasteItem.getText().contains("Screen Effect List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("BSA Type 10") && pasteItem.getText().contains("Type 10 List")) {
+            else if (newValue.getValue().equals("BSA Type 10") && pasteItem.getText().contains("Type 10 List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("BSA Type 11") && pasteItem.getText().contains("Type 11 List")) {
+            else if (newValue.getValue().equals("BSA Type 11") && pasteItem.getText().contains("Type 11 List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("BSA Type 12") && pasteItem.getText().contains("Type 12 List")) {
+            else if (newValue.getValue().equals("BSA Type 12") && pasteItem.getText().contains("Type 12 List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("BSA Type 13") && pasteItem.getText().contains("Type 13 List")) {
+            else if (newValue.getValue().equals("BSA Type 13") && pasteItem.getText().contains("Type 13 List")) {
                 pasteItem.setDisable(false);
             }
-            else if(newValue.getValue().equals("BSA Type 14") && pasteItem.getText().contains("Type 14 List")) {
+            else if (newValue.getValue().equals("BSA Type 14") && pasteItem.getText().contains("Type 14 List")) {
                 pasteItem.setDisable(false);
             }
         });
         treeView.setOnMouseClicked(e -> {
-            if(e.getButton() == MouseButton.SECONDARY){
+            if (e.getButton() == MouseButton.SECONDARY) {
                 contextMenu.setOnAction(event -> {
-                    if(event.getTarget() == addEntry) {
+                    if (event.getTarget() == addEntry) {
                         AddEntry();
                     }
-                    if(event.getTarget() == copy) {
+                    if (event.getTarget() == copy) {
                         Copy();
                     }
-                    if(event.getTarget() == delete) {
+                    if (event.getTarget() == delete) {
                         Delete();
                     }
-                    if(event.getTarget() == addComment) {
+                    if (event.getTarget() == addComment) {
                         AddComment();
                     }
-                    if(event.getTarget() == pasteItem) {
+                    if (event.getTarget() == pasteItem) {
                         Paste();
                     }
-                    if(event.getTarget() == addItemCopy) {
+                    if (event.getTarget() == addItemCopy) {
                         AddItemCopy();
                     }
                 });
@@ -5374,26 +5441,26 @@ public class Bsa {
 
     private void entriesKyesListener() {
         treeView.setOnKeyPressed(e -> {
-            if(e.isControlDown()&&e.getCode() == KeyCode.C) {
+            if (e.isControlDown()&&e.getCode() == KeyCode.C) {
                 Copy();
             }
-            if(e.isControlDown()&&e.getCode() == KeyCode.V) {
+            if (e.isControlDown()&&e.getCode() == KeyCode.V) {
                 Paste();
             }
-            if(e.getCode()==KeyCode.DELETE){
+            if (e.getCode()==KeyCode.DELETE) {
                 Delete();
             }
-            if(e.isControlDown()&&e.getCode() == KeyCode.A) {
+            if (e.isControlDown()&&e.getCode() == KeyCode.A) {
                 AddItemCopy();
             }
-            if(e.isControlDown()&&e.getCode() == KeyCode.Q) {
+            if (e.isControlDown()&&e.getCode() == KeyCode.Q) {
                 AddComment();
             }
         });
     }
 
-    public void AddEntry() {
-        if(treeView.getSelectionModel().getSelectedIndex() < 0) return;
+    private void AddEntry() {
+        if (treeView.getSelectionModel().getSelectedIndex() < 0) return;
 
         allEntries.add(new TreeItem<>("Entry "+ bsaMainHashMap.size()));
 
@@ -5405,7 +5472,7 @@ public class Bsa {
     }
 
 
-    public void Copy() {
+    private void Copy() {
         copiedItem.setText("Copied %s");
         pasteItem.setText("Paste %s  Ctrl+V");
         addItemCopy.setText("Add %s Copy  Ctrl+A");
@@ -5416,7 +5483,7 @@ public class Bsa {
         addItemCopy.setVisible(true);
 
         pasteItem.setDisable(false);
-        if(currentEntry.getParent() == treeView.getRoot()) {
+        if (currentEntry.getParent() == treeView.getRoot()) {
             copiedItem.setText(String.format(copiedItem.getText(), "Entry"));
             pasteItem.setText(String.format(pasteItem.getText(), "Entry"));
             addItemCopy.setText(String.format(addItemCopy.getText(), "Entry"));
@@ -5426,102 +5493,102 @@ public class Bsa {
 
             copyContainer = new BsaMainEntry(bsaMainHashMap.get(currentEntry));
             
-            for(int i = 0; i < currentEntry.getChildren().size(); i++) {
+            for (int i = 0; i < currentEntry.getChildren().size(); i++) {
                 switch (currentEntry.getChildren().get(i).getValue()) {
                     case "Collision (After Effects)" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaCollisionEntry(bsaCollisionHashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("Collision (After Effects)");
                     }
                     case "Expiration (After Effects)" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaExpirationEntry(bsaExpirationHashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("Expiration (After Effects)");
                     }
                     case "BSA Entry Passing" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType0Entry(bsaType0HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("BSA Entry Passing");
                     }
                     case "Movement" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType1Entry(bsaType1HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("Movement");
                     }
                     case "BSA Type 2" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType2Entry(bsaType2HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("BSA Type 2");
                     }
                     case "Hitbox" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType3Entry(bsaType3HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("Hitbox");
                     }
                     case "Deflection" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType4Entry(bsaType4HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("Deflection");
                     }
                     case "Effect" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType6Entry(bsaType6HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("Effect");
                     }
                     case "Sound" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType7Entry(bsaType7HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("Sound");
                     }
                     case "Screen Effect" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType8Entry(bsaType8HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("Screen Effect");
                     }
                     case "BSA Type 10" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType10Entry(bsaType10HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("BSA Type 10");
                     }
                     case "BSA Type 12" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType12Entry(bsaType12HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("BSA Type 12");
                     }
                     case "BSA Type 13" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType13Entry(bsaType13HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("BSA Type 13");
                     }
                     case "BSA Type 14" -> {
                         copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for(int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ){
+                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
                             copyListContainer.get(i)[j] = new BsaType14Entry(bsaType14HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
                         copyTypesContainer.add("BSA Type 14");
@@ -5529,7 +5596,7 @@ public class Bsa {
                 }
             }
         }
-        else if(currentEntry.getChildren().isEmpty()) {
+        else if (currentEntry.getChildren().isEmpty()) {
             switch (currentEntry.getParent().getValue()) {
                 case "Collision (After Effects)" -> {
                     copyContainer = new BsaCollisionEntry(bsaCollisionHashMap.get(currentEntry));
@@ -5636,7 +5703,7 @@ public class Bsa {
             copyListContainer.add(new Object[currentEntry.getChildren().size()]);
             switch (currentEntry.getValue()) {
                 case "Collision (After Effects)" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaCollisionEntry(bsaCollisionHashMap.get(child));
                     }
 
@@ -5645,7 +5712,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "Collision List"));
                 }
                 case "Expiration (After Effects)" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaExpirationEntry(bsaExpirationHashMap.get(child));
                     }
 
@@ -5654,7 +5721,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "Expiration"));
                 }
                 case "BSA Entry Passing" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType0Entry(bsaType0HashMap.get(child));
                     }
 
@@ -5663,7 +5730,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Entry Passing List"));
                 }
                 case "Movement" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType1Entry(bsaType1HashMap.get(child));
                     }
 
@@ -5672,7 +5739,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "Movement List"));
                 }
                 case "BSA Type 2" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType2Entry(bsaType2HashMap.get(child));
                     }
 
@@ -5681,7 +5748,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 2 List"));
                 }
                 case "Hitbox" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType3Entry(bsaType3HashMap.get(child));
                     }
 
@@ -5690,7 +5757,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "Hitbox List"));
                 }
                 case "Deflection" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType4Entry(bsaType4HashMap.get(child));
                     }
 
@@ -5699,7 +5766,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "Deflection List"));
                 }
                 case "Effect" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType6Entry(bsaType6HashMap.get(child));
                     }
 
@@ -5708,7 +5775,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "Effect List"));
                 }
                 case "Sound" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType7Entry(bsaType7HashMap.get(child));
                     }
 
@@ -5717,7 +5784,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "Sound List"));
                 }
                 case "Screen Effect" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType8Entry(bsaType8HashMap.get(child));
                     }
 
@@ -5726,7 +5793,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "Screen Effect List"));
                 }
                 case "BSA Type 10" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType10Entry(bsaType10HashMap.get(child));
                     }
 
@@ -5735,7 +5802,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 10 List"));
                 }
                 case "BSA Type 12" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType12Entry(bsaType12HashMap.get(child));
                     }
 
@@ -5744,7 +5811,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 12 List"));
                 }
                 case "BSA Type 13" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType13Entry(bsaType13HashMap.get(child));
                     }
 
@@ -5753,7 +5820,7 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 13 List"));
                 }
                 case "BSA Type 14" -> {
-                    for(TreeItem<String> child : currentEntry.getChildren()){
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
                         copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType14Entry(bsaType14HashMap.get(child));
                     }
 
@@ -5765,16 +5832,16 @@ public class Bsa {
         }
     }
 
-    public void Paste() {
-        if(currentEntry.getParent() == treeView.getRoot()) {
+    private void Paste() {
+        if (currentEntry.getParent() == treeView.getRoot()) {
             currentEntry.getChildren().clear();
             bsaMainHashMap.put(currentEntry, (BsaMainEntry) copyContainer);
-            for(int i = 0; i < copyTypesContainer.size(); i++) {
+            for (int i = 0; i < copyTypesContainer.size(); i++) {
                 switch (copyTypesContainer.get(i)) {
                     case "Collision (After Effects)" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Collision (After Effects)"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaCollisionHashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaCollisionEntry) copyListContainer.get(i)[j]);
@@ -5783,7 +5850,7 @@ public class Bsa {
                     case "Expiration (After Effects)" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Expiration (After Effects)"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaExpirationHashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaExpirationEntry) copyListContainer.get(i)[j]);
@@ -5792,7 +5859,7 @@ public class Bsa {
                     case "BSA Entry Passing" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Entry Passing"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType0HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType0Entry) copyListContainer.get(i)[j]);
@@ -5801,7 +5868,7 @@ public class Bsa {
                     case "Movement" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Movement"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType1HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType1Entry) copyListContainer.get(i)[j]);
@@ -5810,7 +5877,7 @@ public class Bsa {
                     case "BSA Type 2" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 2"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType2HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType2Entry) copyListContainer.get(i)[j]);
@@ -5819,7 +5886,7 @@ public class Bsa {
                     case "Hitbox" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Hitbox"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType3HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType3Entry) copyListContainer.get(i)[j]);
@@ -5828,7 +5895,7 @@ public class Bsa {
                     case "Deflection" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Deflection"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType4HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType4Entry) copyListContainer.get(i)[j]);
@@ -5837,7 +5904,7 @@ public class Bsa {
                     case "Effect" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Effect"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType6HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType6Entry) copyListContainer.get(i)[j]);
@@ -5846,7 +5913,7 @@ public class Bsa {
                     case "Sound" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Sound"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType7HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType7Entry) copyListContainer.get(i)[j]);
@@ -5855,7 +5922,7 @@ public class Bsa {
                     case "Screen Effect" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Screen Effect"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType8HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType8Entry) copyListContainer.get(i)[j]);
@@ -5864,7 +5931,7 @@ public class Bsa {
                     case "BSA Type 10" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 10"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType10HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType10Entry) copyListContainer.get(i)[j]);
@@ -5873,7 +5940,7 @@ public class Bsa {
                     case "BSA Type 12" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 12"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType12HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType12Entry) copyListContainer.get(i)[j]);
@@ -5882,7 +5949,7 @@ public class Bsa {
                     case "BSA Type 13" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 13"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType13HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType13Entry) copyListContainer.get(i)[j]);
@@ -5891,7 +5958,7 @@ public class Bsa {
                     case "BSA Type 14" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 14"));
 
-                        for(int j = 0; j < copyListContainer.get(i).length; j++){
+                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                             bsaType14HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), (BsaType14Entry) copyListContainer.get(i)[j]);
@@ -5904,7 +5971,7 @@ public class Bsa {
             createBsaMain(bsaMainHashMap.get(currentEntry));
             tabPane.getSelectionModel().select(tabPane.getSelectionModel().getSelectedIndex());
         }
-        else if(currentEntry.getChildren().isEmpty()) {
+        else if (currentEntry.getChildren().isEmpty()) {
             switch (currentEntry.getParent().getValue()) {
                 case "Collision (After Effects)" -> {
                     bsaCollisionHashMap.put(currentEntry, (BsaCollisionEntry) copyContainer);
@@ -6010,98 +6077,98 @@ public class Bsa {
             currentEntry.getChildren().clear();
             switch (currentEntry.getValue()) {
                 case "Collision (After Effects)" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaCollisionHashMap.put(currentEntry.getChildren().get(i), (BsaCollisionEntry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "Expiration (After Effects)" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaExpirationHashMap.put(currentEntry.getChildren().get(i), (BsaExpirationEntry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "BSA Entry Passing" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType0HashMap.put(currentEntry.getChildren().get(i), (BsaType0Entry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "Movement" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType1HashMap.put(currentEntry.getChildren().get(i), (BsaType1Entry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "BSA Type 2" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType2HashMap.put(currentEntry.getChildren().get(i), (BsaType2Entry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "Hitbox" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType3HashMap.put(currentEntry.getChildren().get(i), (BsaType3Entry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "Deflection" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType4HashMap.put(currentEntry.getChildren().get(i), (BsaType4Entry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "Effect" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType4HashMap.put(currentEntry.getChildren().get(i), (BsaType4Entry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "Sound" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType7HashMap.put(currentEntry.getChildren().get(i), (BsaType7Entry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "Screen Effect" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType8HashMap.put(currentEntry.getChildren().get(i), (BsaType8Entry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "BSA Type 10" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType10HashMap.put(currentEntry.getChildren().get(i), (BsaType10Entry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "BSA Type 12" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType12HashMap.put(currentEntry.getChildren().get(i), (BsaType12Entry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "BSA Type 13" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType13HashMap.put(currentEntry.getChildren().get(i), (BsaType13Entry) copyListContainer.get(0)[i]);
                     }
                 }
                 case "BSA Type 14" -> {
-                    for(int i = 0; i < copyListContainer.get(0).length; i++){
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType14HashMap.put(currentEntry.getChildren().get(i), (BsaType14Entry) copyListContainer.get(0)[i]);
@@ -6121,12 +6188,12 @@ public class Bsa {
 
                 bsaMainHashMap.put(newEntry, (BsaMainEntry) copyContainer);
 
-                for(int i = 0; i < copyTypesContainer.size(); i++) {
+                for (int i = 0; i < copyTypesContainer.size(); i++) {
                     switch (copyTypesContainer.get(i)) {
                         case "Collision (After Effects)" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Collision (After Effects)"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaCollisionHashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaCollisionEntry) copyListContainer.get(i)[j]);
@@ -6135,7 +6202,7 @@ public class Bsa {
                         case "Expiration (After Effects)" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Expiration (After Effects)"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaExpirationHashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaExpirationEntry) copyListContainer.get(i)[j]);
@@ -6144,7 +6211,7 @@ public class Bsa {
                         case "BSA Entry Passing" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Entry Passing"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType0HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType0Entry) copyListContainer.get(i)[j]);
@@ -6153,7 +6220,7 @@ public class Bsa {
                         case "Movement" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Movement"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType1HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType1Entry) copyListContainer.get(i)[j]);
@@ -6162,7 +6229,7 @@ public class Bsa {
                         case "BSA Type 2" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Type 2"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType2HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType2Entry) copyListContainer.get(i)[j]);
@@ -6171,7 +6238,7 @@ public class Bsa {
                         case "Hitbox" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Hitbox"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType3HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType3Entry) copyListContainer.get(i)[j]);
@@ -6180,7 +6247,7 @@ public class Bsa {
                         case "Deflection" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Deflection"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType4HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType4Entry) copyListContainer.get(i)[j]);
@@ -6189,7 +6256,7 @@ public class Bsa {
                         case "Effect" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Effect"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType6HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType6Entry) copyListContainer.get(i)[j]);
@@ -6198,7 +6265,7 @@ public class Bsa {
                         case "Sound" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Sound"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType7HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType7Entry) copyListContainer.get(i)[j]);
@@ -6207,7 +6274,7 @@ public class Bsa {
                         case "Screen Effect" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Screen Effect"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType8HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType8Entry) copyListContainer.get(i)[j]);
@@ -6216,7 +6283,7 @@ public class Bsa {
                         case "BSA Type 10" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Type 10"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType10HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType10Entry) copyListContainer.get(i)[j]);
@@ -6225,7 +6292,7 @@ public class Bsa {
                         case "BSA Type 12" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Type 12"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType12HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType12Entry) copyListContainer.get(i)[j]);
@@ -6234,7 +6301,7 @@ public class Bsa {
                         case "BSA Type 13" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Type 13"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType13HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType13Entry) copyListContainer.get(i)[j]);
@@ -6243,7 +6310,7 @@ public class Bsa {
                         case "BSA Type 14" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Type 14"));
 
-                            for(int j = 0; j < copyListContainer.get(i).length; j++){
+                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
                                 bsaType14HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), (BsaType14Entry) copyListContainer.get(i)[j]);
@@ -6312,7 +6379,7 @@ public class Bsa {
                 if (hasCollision) {
                     TreeItem<String> getParent = grandParentEntry.getChildren().get(0);
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -6323,7 +6390,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Collision (After Effects)"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -6398,7 +6465,7 @@ public class Bsa {
                 }
                 if (hasExpiration) {
                     TreeItem<String> getParent = expirationIndex;
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -6409,7 +6476,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Expiration (After Effects)"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -6481,7 +6548,7 @@ public class Bsa {
                 }
                 if (hasType0) {
                     TreeItem<String> getParent = type0Index;
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -6492,7 +6559,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Entry Passing"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -6569,7 +6636,7 @@ public class Bsa {
                 if (hastype1) {
                     TreeItem<String> getParent = type1Index;
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -6580,7 +6647,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Movement"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -6658,7 +6725,7 @@ public class Bsa {
                 if (hasType2) {
                     TreeItem<String> getParent = type2Index;
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -6669,7 +6736,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 2"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -6746,7 +6813,7 @@ public class Bsa {
                 }
                 if (hasType3) {
                     TreeItem<String> getParent = type3Index;
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -6757,7 +6824,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Hitbox"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -6835,7 +6902,7 @@ public class Bsa {
                 if (hasType4) {
                     TreeItem<String> getParent = type4Index;
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -6846,7 +6913,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Deflection"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -6924,7 +6991,7 @@ public class Bsa {
                 if (hasType6) {
                     TreeItem<String> getParent = type6Index;
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -6935,7 +7002,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Effect"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -7013,7 +7080,7 @@ public class Bsa {
                 if (hasType7) {
                     TreeItem<String> getParent = type7Index;
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -7024,7 +7091,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Movement"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -7102,7 +7169,7 @@ public class Bsa {
                 if (hasType8) {
                     TreeItem<String> getParent = type8Index;
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -7113,7 +7180,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Screen Effect"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -7191,7 +7258,7 @@ public class Bsa {
                 if (hastype10) {
                     TreeItem<String> getParent = type10Index;
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -7202,7 +7269,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 10"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -7280,7 +7347,7 @@ public class Bsa {
                 if (hastype12) {
                     TreeItem<String> getParent = type12Index;
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -7291,7 +7358,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 12"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -7369,7 +7436,7 @@ public class Bsa {
                 if (hastype13) {
                     TreeItem<String> getParent = type13Index;
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -7380,7 +7447,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 13"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -7457,7 +7524,7 @@ public class Bsa {
                 }
                 if (hastype14) {
                     TreeItem<String> getParent = type14Index;
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
@@ -7468,7 +7535,7 @@ public class Bsa {
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 14"));
 
-                    for(int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
@@ -7482,81 +7549,81 @@ public class Bsa {
         }
     }
 
-    public void Delete() {
-        if(currentEntry.getParent() == treeView.getRoot()) {
+    private void Delete() {
+        if (currentEntry.getParent() == treeView.getRoot()) {
             bsaMainHashMap.remove(currentEntry);
 
             TreeItem<String> getGrandParent = currentEntry;
 
-            for(TreeItem<String> getParent : getGrandParent.getChildren()) {
+            for (TreeItem<String> getParent : getGrandParent.getChildren()) {
                 switch (getParent.getValue()) {
                     case "Collision (After Effects)" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaCollisionHashMap.remove(child);
                         }
                     }
                     case "Expiration (After Effects)" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaExpirationHashMap.remove(child);
                         }
                     }
                     case "BSA Entry Passing" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType0HashMap.remove(child);
                         }
                     }
                     case "Movement" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType1HashMap.remove(child);
                         }
                     }
                     case "BSA Type 2" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType2HashMap.remove(child);
                         }
                     }
                     case "Hitbox" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType3HashMap.remove(child);
                         }
                     }
                     case "Deflection" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType4HashMap.remove(child);
                         }
                     }
                     case "Effect" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType6HashMap.remove(child);
                         }
                     }
                     case "Sound" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType7HashMap.remove(child);
                         }
                     }
                     case "Screen Effect" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType8HashMap.remove(child);
                         }
                     }
                     case "BSA Type 10" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType10HashMap.remove(child);
                         }
                     }
                     case "BSA Type 12" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType12HashMap.remove(child);
                         }
                     }
                     case "BSA Type 13" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType13HashMap.remove(child);
                         }
                     }
                     case "BSA Type 14" -> {
-                        for(TreeItem<String> child : getParent.getChildren()) {
+                        for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType14HashMap.remove(child);
                         }
                     }
@@ -7570,7 +7637,7 @@ public class Bsa {
                 treeView.getRoot().getChildren().get(i).setValue("Entry " + i);
             }
         }
-        else if(currentEntry.getChildren().isEmpty() && currentEntry.getValue().startsWith("Entry")) {
+        else if (currentEntry.getChildren().isEmpty() && currentEntry.getValue().startsWith("Entry")) {
             TreeItem<String> getParent = currentEntry.getParent();
 
             switch (currentEntry.getParent().getValue()) {
@@ -7579,11 +7646,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
@@ -7592,11 +7659,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
@@ -7605,11 +7672,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
@@ -7618,11 +7685,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
@@ -7631,11 +7698,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     } 
                 }
@@ -7644,11 +7711,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     };
                 }
@@ -7657,11 +7724,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
@@ -7670,11 +7737,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
@@ -7683,11 +7750,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
@@ -7696,11 +7763,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
@@ -7709,11 +7776,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
@@ -7722,11 +7789,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     };
                 }
@@ -7735,11 +7802,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
@@ -7748,11 +7815,11 @@ public class Bsa {
 
                     getParent.getChildren().remove(currentEntry);
                     
-                    for(int i = 0; i < getParent.getChildren().size(); i++){
+                    for (int i = 0; i < getParent.getChildren().size(); i++) {
                         getParent.getChildren().get(i).setValue("Entry " + i);
                     }
 
-                    if(!getParent.getChildren().isEmpty()){
+                    if (!getParent.getChildren().isEmpty()) {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
@@ -7763,98 +7830,98 @@ public class Bsa {
 
             switch (currentEntry.getValue()) {
                 case "Collision (After Effects)" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaCollisionHashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "Expiration (After Effects)" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaExpirationHashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "BSA Entry Passing" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType0HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "Movement" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType1HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "BSA Type 2" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType2HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "Hitbox" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType3HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "Deflection" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType4HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "Effect" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType6HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "Sound" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType7HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "Screen Effect" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType8HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "BSA Type 10" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType10HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "BSA Type 12" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType12HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "BSA Type 13" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType13HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
                 case "BSA Type 14" -> {
-                    for(TreeItem<String> child : getParent.getChildren()) {
+                    for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType14HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
@@ -7865,8 +7932,8 @@ public class Bsa {
         
     }
 
-    public void AddComment() {
-        if(currentEntry == null) return;
+    private void AddComment() {
+        if (currentEntry == null) return;
 
         TextInputDialog textInputDialog=new TextInputDialog();
         textInputDialog.setTitle("Comment");
@@ -7877,7 +7944,7 @@ public class Bsa {
         });
     }
 
-    public void sortTreeItems(TreeItem<String> treeItem) {
+    private void sortTreeItems(TreeItem<String> treeItem) {
 
         List<String> bsaTypesList = Arrays.asList(
             "Collision (After Effects)",
@@ -7920,9 +7987,9 @@ public class Bsa {
             int collisionEntriesCount;
             int expirationEntriesCount;
 
-            ByteBuffer byteBuffer=ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
-            ByteBuffer shortBuffer=ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
-            ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer byteBuffer = ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer shortBuffer = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
             
             channel.position(18);
             shortBuffer.clear();
@@ -7930,14 +7997,15 @@ public class Bsa {
             shortBuffer.flip();
             bsaEntries = shortBuffer.getShort();
 
-            if(bsaEntries > 0) {
+            if (bsaEntries > 0) {
                 treeView.setRoot(new TreeItem<>("dummy"));
                 treeView.setShowRoot(false);
             }
 
             allEntries = new ArrayList<>(bsaEntries);
-            for(int i=0;i<bsaEntries;i++) {
-                allEntries.add(new TreeItem<>("Entry "+ i));
+
+            for (int i = 0 ; i < bsaEntries; i++) {
+                allEntries.add(new TreeItem<>("Entry " + i));
                 treeView.getRoot().getChildren().add(allEntries.get(i));
             }
 
@@ -7947,13 +8015,13 @@ public class Bsa {
             intBuffer.flip();
             offset = intBuffer.getInt();
 
-            for(int i = 0; i < bsaEntries; i++) {
+            for (int i = 0; i < bsaEntries; i++) {
                 BsaMainEntry bsaMainEntry = new BsaMainEntry();
                 bsaMainHashMap.put(allEntries.get(i), bsaMainEntry);
 
                 int index = 0;
 
-                channel.position(offset + i*4);
+                channel.position(offset + i * 4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
@@ -7984,57 +8052,59 @@ public class Bsa {
                 collisionOffset = intBuffer.getInt();
                 collisionOffset += entryOffset;
 
-                if(collisionEntriesCount > 0) {
+                if (collisionEntriesCount > 0) {
                     allEntries.get(i).getChildren().add(new TreeItem<>("Collision (After Effects)"));
 
-                    for(int j = 0; j < collisionEntriesCount; j++){
+                    for (int j = 0; j < collisionEntriesCount; j++) {
                         BsaCollisionEntry bsaCollisionEntry = new BsaCollisionEntry();
+
                         allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ j));
+
                         bsaCollisionHashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(j), bsaCollisionEntry);
 
-                        channel.position(collisionOffset + j*24);
+                        channel.position(collisionOffset + j * 24);
                         shortBuffer.clear();
                         channel.read(shortBuffer);
                         shortBuffer.flip();
                         bsaCollisionEntry.eepkType = toUShort(shortBuffer.getShort());
 
-                        channel.position(collisionOffset + j*24 + 2);
+                        channel.position(collisionOffset + j * 24 + 2);
                         shortBuffer.clear();
                         channel.read(shortBuffer);
                         shortBuffer.flip();
                         bsaCollisionEntry.skillId = toUShort(shortBuffer.getShort());
 
-                        channel.position(collisionOffset + j*24 + 4);
+                        channel.position(collisionOffset + j * 24 + 4);
                         shortBuffer.clear();
                         channel.read(shortBuffer);
                         shortBuffer.flip();
                         bsaCollisionEntry.effectId = toUShort(shortBuffer.getShort());
 
-                        channel.position(collisionOffset+ j*24 + 6);
+                        channel.position(collisionOffset + j * 24 + 6);
                         shortBuffer.clear();
                         channel.read(shortBuffer);
                         shortBuffer.flip();
                         bsaCollisionEntry.i06 = toUShort(shortBuffer.getShort());
 
-                        channel.position(collisionOffset + j*24 + 8);
+                        channel.position(collisionOffset + j * 24 + 8);
                         intBuffer.clear();
                         channel.read(intBuffer);
                         intBuffer.flip();
                         bsaCollisionEntry.i08 = intBuffer.getInt();
 
-                        channel.position(collisionOffset + j*24 + 12);
+                        channel.position(collisionOffset + j * 24 + 12);
                         intBuffer.clear();
                         channel.read(intBuffer);
                         intBuffer.flip();
                         bsaCollisionEntry.i12 = intBuffer.getInt();
 
-                        channel.position(collisionOffset + j*24 + 16);
+                        channel.position(collisionOffset + j * 24 + 16);
                         intBuffer.clear();
                         channel.read(intBuffer);
                         intBuffer.flip();
                         bsaCollisionEntry.i16 = intBuffer.getInt();
 
-                        channel.position(collisionOffset+ j*24 + 20);
+                        channel.position(collisionOffset+ j * 24 + 20);
                         intBuffer.clear();
                         channel.read(intBuffer);
                         intBuffer.flip();
@@ -8051,35 +8121,35 @@ public class Bsa {
                 expirationOffset = intBuffer.getInt();
                 expirationOffset += entryOffset;
 
-                if(expirationEntriesCount > 0){
+                if (expirationEntriesCount > 0) {
                     allEntries.get(i).getChildren().add(new TreeItem<>("Expiration (After Effects)"));
 
-                    for(int j = 0;j < expirationEntriesCount; j++){
+                    for (int j = 0; j < expirationEntriesCount; j++) {
                         BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
 
-                        allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ j));
+                        allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + j));
 
                         bsaExpirationHashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(j), bsaExpirationEntry);
                         
-                        channel.position(expirationOffset + j*8);
+                        channel.position(expirationOffset + j * 8);
                         shortBuffer.clear();
                         channel.read(shortBuffer);
                         shortBuffer.flip();
                         bsaExpirationEntry.i00 = toUShort(shortBuffer.getShort());
 
-                        channel.position(expirationOffset + j*8 + 2);
+                        channel.position(expirationOffset + j * 8 + 2);
                         shortBuffer.clear();
                         channel.read(shortBuffer);
                         shortBuffer.flip();
                         bsaExpirationEntry.i02 = toUShort(shortBuffer.getShort());
 
-                        channel.position(expirationOffset + j*8 + 4);
+                        channel.position(expirationOffset + j * 8 + 4);
                         shortBuffer.clear();
                         channel.read(shortBuffer);
                         shortBuffer.flip();
                         bsaExpirationEntry.i04 = toUShort(shortBuffer.getShort());
 
-                        channel.position(expirationOffset + j*8 + 6);
+                        channel.position(expirationOffset + j * 8 + 6);
                         shortBuffer.clear();
                         channel.read(shortBuffer);
                         shortBuffer.flip();
@@ -8176,26 +8246,26 @@ public class Bsa {
                 intBuffer.flip();
                 bsaMainEntry.i48 = intBuffer.getInt();
 
-                for(int j = 0; j < typesCount; j++){
-                    channel.position(typesOffset + j*16);
+                for (int j = 0; j < typesCount; j++) {
+                    channel.position(typesOffset + j * 16);
                     shortBuffer.clear();
                     channel.read(shortBuffer);
                     shortBuffer.flip();
                     type = shortBuffer.getShort();
 
-                    channel.position(typesOffset + j*16 + 6);
+                    channel.position(typesOffset + j * 16 + 6);
                     shortBuffer.clear();
                     channel.read(shortBuffer);
                     shortBuffer.flip();
                     typeCount = shortBuffer.getShort();
 
-                    channel.position(typesOffset + j*16+ 8);
+                    channel.position(typesOffset + j * 16+ 8);
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
                     hdrOffset = intBuffer.getInt();
 
-                    channel.position(typesOffset + j*16 + 12);
+                    channel.position(typesOffset + j * 16 + 12);
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
@@ -8205,56 +8275,56 @@ public class Bsa {
                         case 0 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("BSA Entry Passing"));
 
-                            for(int k = 0; k < typeCount; k++) {
+                            for (int k = 0; k < typeCount; k++) {
                                 BsaType0Entry bsaType0Entry = new BsaType0Entry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
                                 bsaType0HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType0Entry);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType0Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType0Entry.duration = toUShort((short)(shortBuffer.getShort()- bsaType0Entry.startTime));
                                 
-                                channel.position(typesOffset + dataOffset + j*16 + k*16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 16);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType0Entry.firstCondition = toUShort(shortBuffer.getShort());
                                 
-                                channel.position(typesOffset + dataOffset + j*16 + k*16 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType0Entry.secondCondition = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*16 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType0Entry.bsaEntryId = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*16 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 6);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType0Entry.i06 = shortBuffer.getShort();
-
-                                channel.position(typesOffset + dataOffset + j*16 + k*16 + 8);
+ 
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 8);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType0Entry.bacCondition = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*16 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 12);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
@@ -8266,92 +8336,92 @@ public class Bsa {
                         case 1 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("Movement"));
 
-                            for(int k = 0;k < typeCount; k++) {
+                            for (int k = 0; k < typeCount; k++) {
                                 BsaType1Entry bsaType1Entry = new BsaType1Entry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
                                 bsaType1HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType1Entry);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType1Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType1Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType1Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType1Entry.motionFlags = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16+ k*48 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16+ k * 48 + 4);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType1Entry.speedZ = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 8);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType1Entry.speedX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 12);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType1Entry.speedY = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 16);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType1Entry.f16 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 20);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType1Entry.accelerationZ = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 24);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType1Entry.accelerationX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 28);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 28);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType1Entry.accelerationY = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 32);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 32);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType1Entry.fallofStrength = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 36);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 36);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType1Entry.spreadDirectionX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 40);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 40);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType1Entry.spreadDirectionY = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 44);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 44);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
@@ -8363,44 +8433,44 @@ public class Bsa {
                         case 2 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 2"));
 
-                            for(int k = 0;k < typeCount; k++) {
+                            for (int k = 0; k < typeCount; k++) {
                                 BsaType2Entry bsaType2Entry = new BsaType2Entry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
                                 bsaType2HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType2Entry);
                                 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType2Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType2Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType2Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType2Entry.i00 = shortBuffer.getShort();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType2Entry.i02 = shortBuffer.getShort();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType2Entry.i04 = shortBuffer.getShort();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
@@ -8412,38 +8482,38 @@ public class Bsa {
                         case 3 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("Hitbox"));
 
-                            for(int k = 0; k < typeCount; k++) {
+                            for (int k = 0; k < typeCount; k++) {
                                 BsaType3Entry bsaType3Entry = new BsaType3Entry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
                                 bsaType3HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType3Entry);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k  *4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType3Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType3Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType3Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType3Entry.matrixFlag = (intBuffer.getInt() == 1);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType3Entry.i04 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 6);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
@@ -8455,109 +8525,109 @@ public class Bsa {
                                 shortBuffer.flip();
                                 bsaType3Entry.i06_d = (byte)((shortBuffer.getShort() >> 12) & 0x0F);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 8);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType3Entry.positionX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 12);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType3Entry.positionY = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 16);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType3Entry.positionZ = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 20);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType3Entry.hitboxScale = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 24);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType3Entry.maximumX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 28);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 28);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType3Entry.maximumY = intBuffer.getFloat();
                                 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 32);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 32);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType3Entry.maximumZ = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 36);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 36);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType3Entry.minimumX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 40);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 40);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType3Entry.minimumY = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 44);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 44);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType3Entry.minimumZ = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 48);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 48);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType3Entry.hitAmount = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 50);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 50);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType3Entry.hitboxLifetime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 52);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 52);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType3Entry.i52 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 54);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 54);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType3Entry.i54 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 56);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 56);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType3Entry.i56 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 58);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 58);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType3Entry.firstHit = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 60);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 60);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType3Entry.multipleHits = toUShort(shortBuffer.getShort());;
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 62);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 62);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
@@ -8569,116 +8639,116 @@ public class Bsa {
                         case 4 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("Deflection"));
 
-                            for(int k = 0; k < typeCount; k++) {
+                            for (int k = 0; k < typeCount; k++) {
                                 BsaType4Entry bsaType4Entry = new BsaType4Entry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
                                 bsaType4HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType4Entry);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType4Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType4Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType4Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.i00 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 4);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.i04 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 8);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.i08 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 12);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.f12 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 16);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.f16 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 20);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.f20 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 24);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.i24 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 28);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 28);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.i28 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 32);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 32);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.i32 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 36);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 36);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.i36 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 40);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 40);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.i40 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 44);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 44);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType4Entry.i44 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 48);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 48);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType4Entry.i48 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 50);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 50);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType4Entry.i50 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 52);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 52);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType4Entry.i52 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 54);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 54);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
@@ -8690,74 +8760,74 @@ public class Bsa {
                         case 6 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("Effect"));
 
-                            for(int k = 0; k < typeCount; k++) {
+                            for (int k = 0; k < typeCount; k++) {
                                 BsaType6Entry bsaType6Entry = new BsaType6Entry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
                                 bsaType6HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType6Entry);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType6Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType6Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType6Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType6Entry.eepkType = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType6Entry.skillId = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType6Entry.effectId = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 6);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType6Entry.i06 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType6Entry.effectSwitch = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 10);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 10);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType6Entry.i10 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType6Entry.positionX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType6Entry.positionY = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 20);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
@@ -8769,44 +8839,44 @@ public class Bsa {
                         case 7 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("Sound"));
 
-                            for(int k = 0; k < typeCount; k++) {
+                            for (int k = 0; k < typeCount; k++) {
                                 BsaType7Entry bsaType7Entry = new BsaType7Entry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
                                 bsaType7HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType7Entry);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType7Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType7Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType7Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType7Entry.acbType = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType7Entry.i02 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType7Entry.cueId = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
@@ -8818,62 +8888,62 @@ public class Bsa {
                         case 8 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("Screen Effect"));
 
-                            for(int k = 0; k < typeCount; k++) {
+                            for (int k = 0; k < typeCount; k++) {
                                 BsaType8Entry bsaType8Entry = new BsaType8Entry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
                                 bsaType8HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType8Entry);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType8Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType8Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType8Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType8Entry.bpeEffectId = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType8Entry.i02 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType8Entry.i04 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType8Entry.i08 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType8Entry.i12 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType8Entry.i16 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 20);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
@@ -8885,38 +8955,38 @@ public class Bsa {
                         case 10 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 10"));
 
-                            for(int k=0; k < typeCount; k++) {
+                            for (int k=0; k < typeCount; k++) {
                                 BsaType10Entry bsaType10Entry = new BsaType10Entry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
                                 bsaType10HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType10Entry);
                                 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType10Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType10Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType10Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType10Entry.skillId = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType10Entry.i04 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
@@ -8928,50 +8998,50 @@ public class Bsa {
                         case 12 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 12"));
 
-                            for(int k = 0; k < typeCount; k++) {
+                            for (int k = 0; k < typeCount; k++) {
                                 BsaType12Entry bsaType12Entry = new BsaType12Entry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
                                 bsaType12HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType12Entry);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType12Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType12Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType12Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 20);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType12Entry.f00 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*20 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 4);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType12Entry.eepkType = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*20 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 8);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType12Entry.skillId = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*20 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 12);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType12Entry.i12 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*20 +16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 +16);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
@@ -8983,74 +9053,74 @@ public class Bsa {
                         case 13 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 13"));
 
-                            for(int k = 0; k < typeCount; k++) {
+                            for (int k = 0; k < typeCount; k++) {
                                 BsaType13Entry bsaType13Entry = new BsaType13Entry();
 
                                 allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
 
                                 bsaType13HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType13Entry);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType13Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType13Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType13Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType13Entry.i00 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType13Entry.i02 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 4);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType13Entry.f04 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 8);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType13Entry.f08 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 12);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType13Entry.i12 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 16);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType13Entry.f16 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 20);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType13Entry.i20 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 24);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType13Entry.i24 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 28);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 28);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
@@ -9062,158 +9132,158 @@ public class Bsa {
                         case 14 -> {
                             allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 14"));
 
-                            for(int k = 0;k < typeCount; k++) {
+                            for (int k = 0;k < typeCount; k++) {
                                 BsaType14Entry bsaType14Entry = new BsaType14Entry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
                                 bsaType14HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType14Entry);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType14Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType14Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType14Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType14Entry.i00 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 2);
                                 shortBuffer.clear();
                                 channel.read(shortBuffer);
                                 shortBuffer.flip();
                                 bsaType14Entry.i02 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 4);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.f04 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 8);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i08 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 12);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.f12 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 16);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i16 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 20);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.f20 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 24);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i24 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 28);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 28);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.f28 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 32);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 32);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i32 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 36);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 36);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i36 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 40);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 40);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i40 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 44);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 44);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.f44 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 48);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 48);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i48 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 52);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 52);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.f52 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 56);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 56);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i56 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 60);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 60);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.f60 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 64);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 64);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i64 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 68);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 68);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.f68 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 72);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 72);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i72 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 76);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 76);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i76 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 80);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 80);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
                                 bsaType14Entry.i80 = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 84);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 84);
                                 intBuffer.clear();
                                 channel.read(intBuffer);
                                 intBuffer.flip();
@@ -9226,7 +9296,7 @@ public class Bsa {
                 }
             }
         }
-        catch(IOException e){
+        catch(IOException e) {
             e.printStackTrace();
         }
     }
@@ -9247,15 +9317,15 @@ public class Bsa {
             int typeSize = 0;
             int entrySize = 0;
             
-            ByteBuffer byteBuffer=ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
-            ByteBuffer shortBuffer=ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
-            ByteBuffer intBuffer=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer byteBuffer = ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer shortBuffer = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
 
             channel.position(0);
             channel.write(ByteBuffer.wrap(new byte[] {0x23, 0x42, 0x53, 0x41}));
 
             channel.position(4);
-            channel.write(ByteBuffer.wrap(new byte[]{(byte)0xFE,(byte)0xFF}));
+            channel.write(ByteBuffer.wrap(new byte[]{(byte)0xFE, (byte)0xFF}));
 
             channel.position(6);
             channel.write(ByteBuffer.wrap(new byte[] {0x18}));
@@ -9291,7 +9361,7 @@ public class Bsa {
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                if(allEntries.get(i).getChildren().get(index).getValue().equals("Collision (After Effects)")) {
+                if (allEntries.get(i).getChildren().get(index).getValue().equals("Collision (After Effects)")) {
                     collisionEntriesCount = allEntries.get(i).getChildren().get(index).getChildren().size();
                 }
                 else {
@@ -9312,54 +9382,54 @@ public class Bsa {
                 channel.write(intBuffer);
                 collisionOffset += entryOffset;
                 
-                if(collisionEntriesCount > 0) {
-                    for(int j = 0; j < collisionEntriesCount; j++) {
+                if (collisionEntriesCount > 0) {
+                    for (int j = 0; j < collisionEntriesCount; j++) {
                         BsaCollisionEntry bsaCollisionEntry = new BsaCollisionEntry();
                         bsaCollisionEntry = bsaCollisionHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
 
-                        channel.position(collisionOffset + j*24);
+                        channel.position(collisionOffset + j * 24);
                         shortBuffer.clear();
                         shortBuffer.putShort((short) bsaCollisionEntry.eepkType);
                         shortBuffer.flip();
                         channel.write(shortBuffer);
 
-                        channel.position(collisionOffset + j*24 + 2);
+                        channel.position(collisionOffset + j * 24 + 2);
                         shortBuffer.clear();
                         shortBuffer.putShort((short) bsaCollisionEntry.skillId);
                         shortBuffer.flip();
                         channel.write(shortBuffer);
 
-                        channel.position(collisionOffset + j*24 + 4);
+                        channel.position(collisionOffset + j * 24 + 4);
                         shortBuffer.clear();
                         shortBuffer.putShort((short) bsaCollisionEntry.effectId);;
                         shortBuffer.flip();
                         channel.write(shortBuffer);
 
-                        channel.position(collisionOffset + j*24 + 6);
+                        channel.position(collisionOffset + j * 24 + 6);
                         shortBuffer.clear();
                         shortBuffer.putShort((short) bsaCollisionEntry.i06);
                         shortBuffer.flip();
                         channel.write(shortBuffer);
 
-                        channel.position(collisionOffset + j*24 + 8);
+                        channel.position(collisionOffset + j * 24 + 8);
                         intBuffer.clear();
                         intBuffer.putInt(bsaCollisionEntry.i08);
                         intBuffer.flip();
                         channel.write(intBuffer);
 
-                        channel.position(collisionOffset + j*24 + 12);
+                        channel.position(collisionOffset + j * 24 + 12);
                         intBuffer.clear();
                         intBuffer.putInt(bsaCollisionEntry.i12);
                         intBuffer.flip();
                         channel.write(intBuffer);
 
-                        channel.position(collisionOffset + j*24 + 16);
+                        channel.position(collisionOffset + j * 24 + 16);
                         intBuffer.clear();
                         intBuffer.putInt(bsaCollisionEntry.i16);
                         intBuffer.flip();
                         channel.write(intBuffer);
 
-                        channel.position(collisionOffset + j*24 + 20);
+                        channel.position(collisionOffset + j * 24 + 20);
                         intBuffer.clear();
                         intBuffer.putInt(bsaCollisionEntry.i20);
                         intBuffer.flip();
@@ -9373,7 +9443,7 @@ public class Bsa {
                     index++;
                 } 
                 
-                if(allEntries.get(i).getChildren().get(index).getValue().equals("Expiration (After Effects)")) {
+                if (allEntries.get(i).getChildren().get(index).getValue().equals("Expiration (After Effects)")) {
                     expirationEntriesCount = allEntries.get(i).getChildren().get(index).getChildren().size();
                 }
                 else {
@@ -9394,30 +9464,30 @@ public class Bsa {
                 channel.write(intBuffer);
                 expirationOffset += entryOffset;
 
-                if(expirationEntriesCount > 0) {
-                    for(int j = 0;j < expirationEntriesCount; j++) {
+                if (expirationEntriesCount > 0) {
+                    for (int j = 0;j < expirationEntriesCount; j++) {
                         BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
                         bsaExpirationEntry = bsaExpirationHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
                     
-                        channel.position(expirationOffset + j*8);
+                        channel.position(expirationOffset + j * 8);
                         shortBuffer.clear();
                         shortBuffer.putShort((short) bsaExpirationEntry.i00);
                         shortBuffer.flip();
                         channel.write(shortBuffer);
 
-                        channel.position(expirationOffset + j*8 + 2);
+                        channel.position(expirationOffset + j * 8 + 2);
                         shortBuffer.clear();
                         shortBuffer.putShort((short) bsaExpirationEntry.i02);
                         shortBuffer.flip();
                         channel.write(shortBuffer);
 
-                        channel.position(expirationOffset+j*8+4);
+                        channel.position(expirationOffset + j * 8 + 4);
                         shortBuffer.clear();
                         shortBuffer.putShort((short) bsaExpirationEntry.i04);
                         shortBuffer.flip();
                         channel.write(shortBuffer);
 
-                        channel.position(expirationOffset+j*8+6);
+                        channel.position(expirationOffset + j * 8 + 6);
                         shortBuffer.clear();
                         shortBuffer.putShort((short) bsaExpirationEntry.i06);
                         shortBuffer.flip();
@@ -9432,7 +9502,7 @@ public class Bsa {
                 
                 channel.position(entryOffset + 16);
                 byteBuffer.clear();
-                byteBuffer.put((byte) (bsaMainEntry.i16_a | (bsaMainEntry.i16_b << 4)));
+                byteBuffer.put((byte) (bsaMainEntry.i16_a | bsaMainEntry.i16_b << 4));
                 byteBuffer.flip();
                 channel.write(byteBuffer);
 
@@ -9484,13 +9554,13 @@ public class Bsa {
                 shortBuffer.flip();
                 channel.write(shortBuffer);
                 
-                for(int j = 0; j < allEntries.get(i).getChildren().size(); j++) {
-                    if(allEntries.get(i).getChildren().get(j).getValue() != "Collision (After Effects)" && allEntries.get(i).getChildren().get(j).getValue() != "Expiration (After Effects)") {
+                for (int j = 0; j < allEntries.get(i).getChildren().size(); j++) {
+                    if (allEntries.get(i).getChildren().get(j).getValue() != "Collision (After Effects)" && allEntries.get(i).getChildren().get(j).getValue() != "Expiration (After Effects)") {
                         typesCount++;
                     }
                 }
 
-                hdrOffset = typesCount*16;
+                hdrOffset = typesCount * 16;
                 
                 channel.position(entryOffset + 34);
                 shortBuffer.clear();
@@ -9524,7 +9594,8 @@ public class Bsa {
                 channel.write(intBuffer);
 
                 entrySize += 52;
-                for(int j = 0; j < typesCount; j++) {
+
+                for (int j = 0; j < typesCount; j++) {
                     switch(allEntries.get(i).getChildren().get(index).getValue()) {
                         case "BSA Entry Passing" -> {
                             type = 0;
@@ -9578,73 +9649,74 @@ public class Bsa {
 
                     typeCount = (short) allEntries.get(i).getChildren().get(index).getChildren().size();
                     
-                    channel.position(typesOffset + j*16);
+                    channel.position(typesOffset + j * 16);
                     shortBuffer.clear();
                     shortBuffer.putShort(type);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
-                    channel.position(typesOffset + j*16 + 6);
+                    channel.position(typesOffset + j * 16 + 6);
                     shortBuffer.clear();
                     shortBuffer.putShort(typeCount);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
-                    channel.position(typesOffset + j*16 + 8);
+                    channel.position(typesOffset + j * 16 + 8);
                     intBuffer.clear();
                     intBuffer.putInt(hdrOffset);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     dataOffset = hdrOffset + typeCount * 4;
-                    for(int k = 0; k < typeCount; k++) {
+
+                    for (int k = 0; k < typeCount; k++) {
                         switch (type) {
                             case 0 -> {
                                 BsaType0Entry bsaType0Entry = bsaType0HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType0Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType0Entry.duration + bsaType0Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset  +dataOffset + j*16 + k*16);
+                                channel.position(typesOffset  +dataOffset + j * 16 + k * 16);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType0Entry.firstCondition);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
                                 
-                                channel.position(typesOffset + dataOffset + j*16 + k*16 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType0Entry.secondCondition);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset+dataOffset + j*16 + k*16 + 4);
+                                channel.position(typesOffset+dataOffset + j * 16 + k * 16 + 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short)bsaType0Entry.bsaEntryId);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*16 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 6);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short)bsaType0Entry.i06);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 +k*16 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 8);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType0Entry.bacCondition);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset+dataOffset + j*16 + k*16 + 12);
+                                channel.position(typesOffset+dataOffset + j * 16 + k * 16 + 12);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType0Entry.f12);
                                 intBuffer.flip();
@@ -9655,85 +9727,85 @@ public class Bsa {
                             case 1 -> {
                                 BsaType1Entry bsaType1Entry = bsaType1HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType1Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset+hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset+hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType1Entry.duration + bsaType1Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType1Entry.motionFlags);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 4);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType1Entry.speedZ);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 8);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType1Entry.speedX);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 12);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType1Entry.speedY);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 16);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType1Entry.f16);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 20);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType1Entry.accelerationZ);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 24);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType1Entry.accelerationX);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 28);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 28);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType1Entry.accelerationY);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 32);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 32);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType1Entry.fallofStrength);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 36);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 36);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType1Entry.spreadDirectionX);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 40);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 40);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType1Entry.spreadDirectionY);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*48 + 44);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 44);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType1Entry.spreadDirectionZ);
                                 intBuffer.flip();
@@ -9744,37 +9816,37 @@ public class Bsa {
                             case 2 -> {
                                 BsaType2Entry bsaType2Entry = bsaType2HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType2Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType2Entry.duration + bsaType2Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
                                 shortBuffer.clear();
                                 shortBuffer.putShort(bsaType2Entry.i00);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8+ 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8+ 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort(bsaType2Entry.i02);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort(bsaType2Entry.i04);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16+ k*8 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
                                 shortBuffer.clear();
                                 shortBuffer.putShort(bsaType2Entry.i06);
                                 shortBuffer.flip();
@@ -9785,139 +9857,139 @@ public class Bsa {
                             case 3 -> {
                                 BsaType3Entry bsaType3Entry = bsaType3HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType3Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + hdrOffset + j*16+ k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType3Entry.duration + bsaType3Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType3Entry.matrixFlag ? 1 : 0);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType3Entry.i04);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 6);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType3Entry.i06_a | bsaType3Entry.i06_b << 4 | bsaType3Entry.i06_c << 8 | bsaType3Entry.i06_d << 12));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 8);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType3Entry.positionX);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 12);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType3Entry.positionY);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 16);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType3Entry.positionZ);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 20);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType3Entry.hitboxScale);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 24);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType3Entry.maximumX);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 28);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 28);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType3Entry.maximumY);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
                                 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 32);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 32);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType3Entry.maximumZ);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 36);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 36);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType3Entry.minimumX);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset  + dataOffset + j*16 + k*64 + 40);
+                                channel.position(typesOffset  + dataOffset + j * 16 + k * 64 + 40);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType3Entry.minimumY);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 44);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 44);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType3Entry.minimumZ);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 48);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 48);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType3Entry.hitAmount);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 50);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 50);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType3Entry.hitboxLifetime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 52);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 52);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType3Entry.i52);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16+ k*64 + 54);
+                                channel.position(typesOffset + dataOffset + j * 16+ k * 64 + 54);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType3Entry.i54);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset+dataOffset+j*16+k*64+56);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 56);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType3Entry.i56);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset+dataOffset+j*16+k*64+58);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 58);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType3Entry.firstHit);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 60);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 60);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType3Entry.multipleHits);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*64 + 62);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 62);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType3Entry.lastHit);
                                 shortBuffer.flip();
@@ -9928,109 +10000,109 @@ public class Bsa {
                             case 4 -> {
                                 BsaType4Entry bsaType4Entry = bsaType4HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
                                 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType4Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + hdrOffset + j*16+ k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType4Entry.duration + bsaType4Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType4Entry.i00);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 4);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType4Entry.i04);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 8);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType4Entry.i08);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 12);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType4Entry.f12);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 16);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType4Entry.f16);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 20);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType4Entry.f20);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 24);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType4Entry.i24);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 28);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 28);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType4Entry.i28);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 32);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 32);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType4Entry.i32);
                                 intBuffer.flip();
                                 channel.write(intBuffer);;
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 36);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 36);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType4Entry.i36);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 40);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 40);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType4Entry.i40);
                                 intBuffer.flip();
                                 channel.write(intBuffer);;
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 44);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 44);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType4Entry.i44);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 48);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 48);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType4Entry.i48);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 50);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 50);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType4Entry.i50);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 52);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 52);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType4Entry.i52);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*56 + 54);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 54);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType4Entry.i54);
                                 shortBuffer.flip();
@@ -10041,67 +10113,67 @@ public class Bsa {
                             case 6 -> {
                                 BsaType6Entry bsaType6Entry = bsaType6HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType6Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + hdrOffset + j*16+ k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType6Entry.duration + bsaType6Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType6Entry.eepkType);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType6Entry.skillId);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType6Entry.effectId);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 6);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType6Entry.i06);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType6Entry.effectSwitch);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset+dataOffset+j*16+k*24+10);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 10);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType6Entry.i10);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType6Entry.positionX);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType6Entry.positionY);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 20);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType6Entry.positionZ);
                                 intBuffer.flip();
@@ -10112,37 +10184,37 @@ public class Bsa {
                             case 7 -> {
                                 BsaType7Entry bsaType7Entry = bsaType7HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType7Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + hdrOffset + j*16+ k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType7Entry.duration + bsaType7Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType7Entry.acbType);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType7Entry.i02);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType7Entry.cueId);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType7Entry.i06);
                                 shortBuffer.flip();
@@ -10153,55 +10225,55 @@ public class Bsa {
                             case 8 -> {
                                 BsaType8Entry bsaType8Entry = bsaType8HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType8Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + hdrOffset + j*16+ k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType8Entry.duration + bsaType8Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType8Entry.bpeEffectId);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType8Entry.i02);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType8Entry.i04);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType8Entry.i08);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType8Entry.i12);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType8Entry.i16);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*24+ 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 24+ 20);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType8Entry.i20);
                                 intBuffer.flip();
@@ -10212,31 +10284,31 @@ public class Bsa {
                             case 10 -> {
                                 BsaType10Entry bsaType10Entry = bsaType10HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType10Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + hdrOffset + j*16+ k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType10Entry.duration + bsaType10Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType10Entry.skillId);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*8 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType10Entry.i04);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16+ k*8 + 6);
+                                channel.position(typesOffset + dataOffset + j * 16+ k * 8 + 6);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType10Entry.i06);
                                 shortBuffer.flip();
@@ -10247,43 +10319,43 @@ public class Bsa {
                             case 12 -> {
                                 BsaType12Entry bsaType12Entry = bsaType12HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType12Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + hdrOffset + j*16+ k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType12Entry.duration + bsaType12Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 20);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType12Entry.f00);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*20 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 4);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType12Entry.eepkType);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*20 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 8);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType12Entry.skillId);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*20 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 12);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType12Entry.i12);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*20 +16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 +16);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType12Entry.f16);
                                 intBuffer.flip();
@@ -10294,67 +10366,67 @@ public class Bsa {
                             case 13 -> {
                                 BsaType13Entry bsaType13Entry = bsaType13HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType13Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + hdrOffset + j*16+ k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType13Entry.duration + bsaType13Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType13Entry.i00);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType13Entry.i02);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 4);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType13Entry.f04);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 8);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType13Entry.f08);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 12);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType13Entry.i12);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 16);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType13Entry.f16);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 20);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType13Entry.i20);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 24);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType13Entry.i24);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*32 + 28);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 28);
                                 intBuffer.clear();
                                 intBuffer.putInt(bsaType13Entry.i28);
                                 intBuffer.flip();
@@ -10365,151 +10437,151 @@ public class Bsa {
                             case 14 -> {
                                 BsaType14Entry bsaType14Entry = bsaType14HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
 
-                                channel.position(typesOffset + hdrOffset + j*16 + k*4);
+                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType14Entry.startTime);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + hdrOffset + j*16+ k*4 + 2);
+                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) (bsaType14Entry.duration + bsaType14Entry.startTime));
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType14Entry.i00);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 2);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 2);
                                 shortBuffer.clear();
                                 shortBuffer.putShort((short) bsaType14Entry.i02);
                                 shortBuffer.flip();
                                 channel.write(shortBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 4);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 4);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType14Entry.f04);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 8);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 8);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i08);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 12);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 12);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType14Entry.f12);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 16);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 16);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i16);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 20);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 20);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType14Entry.f20);
                                 intBuffer.flip();
                                 channel.write(intBuffer);;
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 24);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 24);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i24);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 28);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 28);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType14Entry.f28);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 32);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 32);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i32);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 36);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 36);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i36);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 40);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 40);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i40);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 44);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 44);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType14Entry.f44);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 48);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 48);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i48);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 52);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 52);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType14Entry.f52);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 56);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 56);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i56);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 60);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 60);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType14Entry.f60);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 64);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 64);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i64);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 68);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 68);
                                 intBuffer.clear();
                                 intBuffer.putFloat(bsaType14Entry.f68);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 72);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 72);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i72);
                                 intBuffer.flip();
                                 channel.write(intBuffer);;
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 76);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 76);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i76);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 80);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 80);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i80);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
-                                channel.position(typesOffset + dataOffset + j*16 + k*88 + 84);
+                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 84);
                                 intBuffer.clear();
                                 intBuffer.putInt((int) bsaType14Entry.i84);
                                 intBuffer.flip();
@@ -10522,9 +10594,9 @@ public class Bsa {
 
                     index++;
                     
-                    hdrOffset += ((typeCount*typeSize) - 16);
+                    hdrOffset += ((typeCount * typeSize) - 16);
                 
-                    channel.position(typesOffset + j*16 +12);
+                    channel.position(typesOffset + j * 16 + 12);
                     intBuffer.clear();
                     intBuffer.putInt(dataOffset);
                     intBuffer.flip();
@@ -10540,7 +10612,7 @@ public class Bsa {
                 typesOffset = 52;
             }
         }
-        catch(IOException e){
+        catch(IOException e) {
             e.printStackTrace();
         }
     }
@@ -10683,8 +10755,8 @@ class BsaType2Entry {
     public short i04;
     public short i06;
     
-    public BsaType2Entry (){}
-    public BsaType2Entry (BsaType2Entry other){
+    public BsaType2Entry () {}
+    public BsaType2Entry (BsaType2Entry other) {
         this.startTime = other.startTime;
         this.duration = other.duration;
         this.i00 = other.i00;
@@ -10774,7 +10846,7 @@ class BsaType4Entry {
     int i54;
 
     public BsaType4Entry() {}
-    public BsaType4Entry(BsaType4Entry other){
+    public BsaType4Entry(BsaType4Entry other) {
         this.startTime = other.startTime;
         this.duration = other.duration;
         this.i00 = other.i00;
@@ -10833,7 +10905,7 @@ class BsaType7Entry {
     int i06;
 
     BsaType7Entry() {}
-    BsaType7Entry(BsaType7Entry other){
+    BsaType7Entry(BsaType7Entry other) {
         this.startTime = other.startTime;
         this.duration = other.duration;
         this.acbType = other.acbType;
@@ -10876,7 +10948,7 @@ class BsaType10Entry {
     int i06;
 
     BsaType10Entry() {}
-    BsaType10Entry(BsaType10Entry other){
+    BsaType10Entry(BsaType10Entry other) {
         this.startTime = other.startTime;
         this.duration = other.duration;
         this.skillId = other.skillId;
