@@ -364,7 +364,7 @@ public class Bsa {
         //i48
 
         //entry
-        VBox entryVBox = new VBox(25, 
+        VBox entryVBox = new VBox(30, 
             impactPropertiesHBox, lifetimeHBox, 
             expiresHBox, impactProjectileHBox, 
             impactEnemyHBox, impactGroundHBox
@@ -376,7 +376,7 @@ public class Bsa {
         //entry
 
         //unknown
-        VBox unknownVBox = new VBox(25, 
+        VBox unknownVBox = new VBox(30, 
             i00HBox, i17HBox, 
             i18HBox, i24HBox, 
             i40HBox, i44HBox, 
@@ -619,7 +619,7 @@ public class Bsa {
         //i20
 
         //collision
-        VBox collisionVBox = new VBox(25, eepkTypeHBox, skillIdHBox, effectIdHBox);
+        VBox collisionVBox = new VBox(30, eepkTypeHBox, skillIdHBox, effectIdHBox);
         collisionVBox.setPadding(new Insets(20, 0, 0, 16));
  
         Tab collisionTab = new Tab("Collision", collisionVBox);
@@ -627,7 +627,7 @@ public class Bsa {
         //collison
 
         //unknown
-        VBox unknownVBox = new VBox(25, i06HBox, i08HBox, i12HBox, i16HBox, i20HBox);
+        VBox unknownVBox = new VBox(30, i06HBox, i08HBox, i12HBox, i16HBox, i20HBox);
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
@@ -719,7 +719,7 @@ public class Bsa {
         //i06
 
         //expiration
-        VBox expirationVBox = new VBox(25, i00HBox, i02HBox, i04HBox, i06HBox);
+        VBox expirationVBox = new VBox(30, i00HBox, i02HBox, i04HBox, i06HBox);
         expirationVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab expirationTab = new Tab("Expiration", expirationVBox);
@@ -742,7 +742,7 @@ public class Bsa {
             }
         });
 
-        HBox startTimeHBox = new HBox(5,startTimeLabel,startTimeSpinner);
+        HBox startTimeHBox = new HBox(15,startTimeLabel,startTimeSpinner);
         startTimeHBox.setAlignment(Pos.CENTER_LEFT);
         //start time
 
@@ -758,7 +758,7 @@ public class Bsa {
             }
         });
 
-        HBox durationHBox = new HBox(5, durationLabel, durationSpinner);
+        HBox durationHBox = new HBox(15, durationLabel, durationSpinner);
         durationHBox.setAlignment(Pos.CENTER_LEFT);
         //duration
 
@@ -787,13 +787,13 @@ public class Bsa {
             }, firstConditonSpinner.valueProperty())
         );
         
-        HBox firstConditionHBox=new HBox(5, firstConditionLabel, firstConditonSpinner, firstConditionIndicatorLabel);
+        HBox firstConditionHBox = new HBox(15, firstConditionLabel, firstConditonSpinner, firstConditionIndicatorLabel);
         firstConditionHBox.setAlignment(Pos.CENTER_LEFT);
         //first condition
 
         //second condition
         Label secondConditionLabel = new Label("Second Condition");
-        secondConditionLabel.setPrefWidth(120);
+        secondConditionLabel.setPrefWidth(130);
 
         //option 1
         Label option1Label = new Label("Option 1");
@@ -1047,7 +1047,7 @@ public class Bsa {
             }
         });
 
-        HBox bsaEntryIdHBox = new HBox(5, bsaEntryIdLabel, bsaEntryIdSpinner);
+        HBox bsaEntryIdHBox = new HBox(15, bsaEntryIdLabel, bsaEntryIdSpinner);
         bsaEntryIdHBox.setAlignment(Pos.CENTER_LEFT);
         //bsa entry id
 
@@ -1063,7 +1063,7 @@ public class Bsa {
             }
         });
 
-        HBox i06HBox = new HBox(5, i06Label, i06Spinner);
+        HBox i06HBox = new HBox(15, i06Label, i06Spinner);
         i06HBox.setAlignment(Pos.CENTER_LEFT);
         //jump to bac entry id
 
@@ -1079,7 +1079,7 @@ public class Bsa {
             }
         });
 
-        HBox bacConditionHBox = new HBox(5, bacConditionLabel, bacConditionSpinner);
+        HBox bacConditionHBox = new HBox(15, bacConditionLabel, bacConditionSpinner);
         bacConditionHBox.setAlignment(Pos.CENTER_LEFT);
         //bac condition
 
@@ -1104,7 +1104,7 @@ public class Bsa {
         //f12
 
         //entry passing
-        VBox entryPassingVBox = new VBox(25, startTimeHBox, durationHBox, 
+        VBox entryPassingVBox = new VBox(35, startTimeHBox, durationHBox, 
             firstConditionHBox, secondConditionHBox, 
             bsaEntryIdHBox, i06HBox, 
             bacConditionHBox
@@ -1116,7 +1116,7 @@ public class Bsa {
         //entry passing
 
         //unknown
-        VBox unknownVBox = new VBox(25, f12HBox);
+        VBox unknownVBox = new VBox(35, f12HBox);
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
@@ -1827,7 +1827,7 @@ public class Bsa {
         //spread direction z
         
         //movement
-        VBox movementVBox = new VBox(25, 
+        VBox movementVBox = new VBox(35, 
             startTimeHBox, durationHBox, 
             motionFlagsHBox, speedXHBox, 
             speedYHBox, speedZHBox, 
@@ -1844,7 +1844,7 @@ public class Bsa {
         //movement
 
         //unknown
-        VBox unknownVBox = new VBox(25, f16HBox);
+        VBox unknownVBox = new VBox(30, f16HBox);
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
@@ -1968,7 +1968,7 @@ public class Bsa {
         //i06
 
         //type 2
-        VBox type2VBox = new VBox(25,startTimeHBox, durationHBox, i00HBox, i02HBox, i04HBox, i06HBox);
+        VBox type2VBox = new VBox(30,startTimeHBox, durationHBox, i00HBox, i02HBox, i04HBox, i06HBox);
         type2VBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab type2Tab = new Tab("Type 2", type2VBox);
@@ -2405,7 +2405,7 @@ public class Bsa {
         //first hit
 
         //hitbox
-        VBox hitboxVBox = new VBox(25, 
+        VBox hitboxVBox = new VBox(40, 
             startTimeHBox, durationHBox, 
             i06HBox, positionXHBox, positionYHBox, 
             positionZHBox, hitboxScaleHBox, 
@@ -2420,7 +2420,7 @@ public class Bsa {
         //hitbox
 
         //matrix
-        VBox matrixVBox = new VBox(25, 
+        VBox matrixVBox = new VBox(30, 
             matrixFlagsCheckBox, maximumBoxXHBox, 
             maximumBoxYHBox, maximumBoxZHBox, 
             minimumBoxXHBox, minimumBoxYHBox, 
@@ -2433,7 +2433,7 @@ public class Bsa {
         //matrix
 
         //unknown
-        VBox unknownVBox = new VBox(25, i04HBox, i52HBox, i54HBox, i56HBox);
+        VBox unknownVBox = new VBox(30, i04HBox, i52HBox, i54HBox, i56HBox);
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
@@ -2797,7 +2797,7 @@ public class Bsa {
         //i54
 
         //deflection
-        VBox deflectionVBox = new VBox(25, 
+        VBox deflectionVBox = new VBox(30, 
             startTimeHBox, durationHBox, 
             i00HBox, i04HBox, 
             i08HBox, f12HBox, 
@@ -3101,7 +3101,7 @@ public class Bsa {
         //position z
 
         //effect
-        VBox effectVBox = new VBox(25, startTimeHBox, durationHBox, eepkTypeHBox, skillIdHBox, effectIdHBox, effectsSwitchHBox, positionXHBox, positionYHBox, positionZHBox);
+        VBox effectVBox = new VBox(45, startTimeHBox, durationHBox, eepkTypeHBox, skillIdHBox, effectIdHBox, effectsSwitchHBox, positionXHBox, positionYHBox, positionZHBox);
         effectVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab effectTab = new Tab("Effect", effectVBox);
@@ -3109,7 +3109,7 @@ public class Bsa {
         //effect
 
         //unknown
-        VBox unknownVBox = new VBox(25, i06HBox, i10HBox);
+        VBox unknownVBox = new VBox(30, i06HBox, i10HBox);
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
@@ -3256,7 +3256,7 @@ public class Bsa {
         //i06
 
         //sound
-        VBox soundVBox = new VBox(25, startTimeHBox, durationHBox, acbTypeHBox, cueIdHBox);
+        VBox soundVBox = new VBox(30, startTimeHBox, durationHBox, acbTypeHBox, cueIdHBox);
         soundVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab soundTab = new Tab("Sound",soundVBox);
@@ -3264,7 +3264,7 @@ public class Bsa {
         //sound
 
         //unknown
-        VBox unknownVBox = new VBox(25, i02HBox, i06HBox);
+        VBox unknownVBox = new VBox(30, i02HBox, i06HBox);
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
@@ -3287,7 +3287,7 @@ public class Bsa {
             }
         });
 
-        HBox startTimeHBox = new HBox(5, startTimeLabel, startTimeSpinner);
+        HBox startTimeHBox = new HBox(15, startTimeLabel, startTimeSpinner);
         startTimeHBox.setAlignment(Pos.CENTER_LEFT);
         //start time
 
@@ -3303,7 +3303,7 @@ public class Bsa {
             }
         });
 
-        HBox durationHBox = new HBox(5, durationLabel, durationSpinner);
+        HBox durationHBox = new HBox(15, durationLabel, durationSpinner);
         durationHBox.setAlignment(Pos.CENTER_LEFT);
         //duration
 
@@ -3362,7 +3362,7 @@ public class Bsa {
             }, bpeEffectIdSpinner.valueProperty())
         );
 
-        HBox bpeEffectIdHBox = new HBox(5, bpeEffectIdLabel, bpeEffectIdSpinner, bpeEffectIdIndicatorLabel);
+        HBox bpeEffectIdHBox = new HBox(15, bpeEffectIdLabel, bpeEffectIdSpinner, bpeEffectIdIndicatorLabel);
         bpeEffectIdHBox.setAlignment(Pos.CENTER_LEFT);
         //bpe effect id
 
@@ -3382,7 +3382,7 @@ public class Bsa {
             }
         });
 
-        HBox i02HBox = new HBox(5, i02Label, i02TextField);
+        HBox i02HBox = new HBox(15, i02Label, i02TextField);
         i02HBox.setAlignment(Pos.CENTER_LEFT);
         //i02
 
@@ -3402,7 +3402,7 @@ public class Bsa {
             }
         });
 
-        HBox i04HBox = new HBox(5, i04Label, i04TextField);
+        HBox i04HBox = new HBox(15, i04Label, i04TextField);
         i04HBox.setAlignment(Pos.CENTER_LEFT);
         //i04
 
@@ -3422,7 +3422,7 @@ public class Bsa {
             }
         });
 
-        HBox i08HBox = new HBox(5, i08Label, i08TextField);
+        HBox i08HBox = new HBox(15, i08Label, i08TextField);
         i08HBox.setAlignment(Pos.CENTER_LEFT);
         //i08
 
@@ -3442,7 +3442,7 @@ public class Bsa {
             }
         });
 
-        HBox i12HBox = new HBox(5, i12Label, i12TextField);
+        HBox i12HBox = new HBox(15, i12Label, i12TextField);
         i12HBox.setAlignment(Pos.CENTER_LEFT);
         //i12
 
@@ -3462,7 +3462,7 @@ public class Bsa {
             }
         });
 
-        HBox i16HBox = new HBox(5, i16Label, i16TextField);
+        HBox i16HBox = new HBox(15, i16Label, i16TextField);
         i16HBox.setAlignment(Pos.CENTER_LEFT);
         //i16
 
@@ -3482,12 +3482,12 @@ public class Bsa {
             }
         });
 
-        HBox i20HBox = new HBox(5, i20Label, i20TextField);
+        HBox i20HBox = new HBox(15, i20Label, i20TextField);
         i20HBox.setAlignment(Pos.CENTER_LEFT);
         //i20
 
         //screen effect
-        VBox screenEffectVBox = new VBox(25, 
+        VBox screenEffectVBox = new VBox(35, 
             startTimeHBox, durationHBox, 
             bpeEffectIdHBox, i02HBox, 
             i04HBox, i08HBox, 
@@ -3593,7 +3593,7 @@ public class Bsa {
         //i06
 
         //type 10
-        VBox type10VBox = new VBox(25, startTimeHBox, durationHBox, skillIdHBox, i04HBox, i06HBox);
+        VBox type10VBox = new VBox(30, startTimeHBox, durationHBox, skillIdHBox, i04HBox, i06HBox);
         type10VBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab type10Tab = new Tab("Type 10", type10VBox);
@@ -3807,7 +3807,7 @@ public class Bsa {
         f16HBox.setAlignment(Pos.CENTER_LEFT);
         //f16
 
-        VBox type12VBox = new VBox(25, startTimeHBox, durationHBox, f00HBox, eepkTypeHBox, skillIdHBox, i12HBox, f16HBox);
+        VBox type12VBox = new VBox(40, startTimeHBox, durationHBox, f00HBox, eepkTypeHBox, skillIdHBox, i12HBox, f16HBox);
         type12VBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab type12Tab = new Tab("Type 12", type12VBox);
@@ -4029,7 +4029,7 @@ public class Bsa {
         //i28
 
         //type 13
-        VBox type13VBox = new VBox(25,
+        VBox type13VBox = new VBox(40,
             startTimeHBox, durationHBox, 
             i00HBox, i02HBox, 
             f04HBox, f08HBox, 
@@ -4540,7 +4540,7 @@ public class Bsa {
         //i84
 
         //type 14
-        VBox type14VBox = new VBox(25, 
+        VBox type14VBox = new VBox(30, 
             startTimeHBox, durationHBox, 
             i00HBox, i02HBox, 
             f04HBox, i08HBox, 
