@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.sound.midi.SysexMessage;
+
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -100,7 +103,7 @@ public class Bsa {
     }
 
     public SplitPane createSplitPane() {
-        SplitPane splitPane =new SplitPane();
+        SplitPane splitPane = new SplitPane();
 
         splitPane.getItems().addAll(treeView, tabPane);
         splitPane.setDividerPositions(0.245);
@@ -5462,7 +5465,7 @@ public class Bsa {
     private void AddEntry() {
         if (treeView.getSelectionModel().getSelectedIndex() < 0) return;
 
-        allEntries.add(new TreeItem<>("Entry "+ bsaMainHashMap.size()));
+        allEntries.add(new TreeItem<>("Entry "+ allEntries.size()));
 
         BsaMainEntry bsaMainEntry = new BsaMainEntry();
 
@@ -8004,11 +8007,6 @@ public class Bsa {
 
             allEntries = new ArrayList<>(bsaEntries);
 
-            for (int i = 0 ; i < bsaEntries; i++) {
-                allEntries.add(new TreeItem<>("Entry " + i));
-                treeView.getRoot().getChildren().add(allEntries.get(i));
-            }
-
             channel.position(20);
             intBuffer.clear();
             channel.read(intBuffer);
@@ -8016,9 +8014,6 @@ public class Bsa {
             offset = intBuffer.getInt();
 
             for (int i = 0; i < bsaEntries; i++) {
-                BsaMainEntry bsaMainEntry = new BsaMainEntry();
-                bsaMainHashMap.put(allEntries.get(i), bsaMainEntry);
-
                 int index = 0;
 
                 channel.position(offset + i * 4);
@@ -8027,1272 +8022,1283 @@ public class Bsa {
                 intBuffer.flip();
                 entryOffset = intBuffer.getInt();
 
-                channel.position(entryOffset);
-                intBuffer.clear();
-                channel.read(intBuffer);
-                intBuffer.flip();
-                bsaMainEntry.i00 = intBuffer.getInt();
+                if(entryOffset != 0) {
+                    allEntries.add(new TreeItem<>("Entry " + i));
+                    treeView.getRoot().getChildren().add(allEntries.get(i));
 
-                channel.position(entryOffset + 4);
-                shortBuffer.clear();
-                channel.read(shortBuffer);
-                shortBuffer.flip();
-                collisionEntriesCount = toUShort(shortBuffer.getShort());
-                
-                channel.position(entryOffset + 6);
-                shortBuffer.clear();
-                channel.read(shortBuffer);
-                shortBuffer.flip();
-                expirationEntriesCount = toUShort(shortBuffer.getShort());
-                
-                channel.position(entryOffset + 8);
-                intBuffer.clear();
-                channel.read(intBuffer);
-                intBuffer.flip();
-                collisionOffset = intBuffer.getInt();
-                collisionOffset += entryOffset;
+                    BsaMainEntry bsaMainEntry = new BsaMainEntry();
+                    bsaMainHashMap.put(allEntries.get(i), bsaMainEntry);
 
-                if (collisionEntriesCount > 0) {
-                    allEntries.get(i).getChildren().add(new TreeItem<>("Collision (After Effects)"));
-
-                    for (int j = 0; j < collisionEntriesCount; j++) {
-                        BsaCollisionEntry bsaCollisionEntry = new BsaCollisionEntry();
-
-                        allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ j));
-
-                        bsaCollisionHashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(j), bsaCollisionEntry);
-
-                        channel.position(collisionOffset + j * 24);
-                        shortBuffer.clear();
-                        channel.read(shortBuffer);
-                        shortBuffer.flip();
-                        bsaCollisionEntry.eepkType = toUShort(shortBuffer.getShort());
-
-                        channel.position(collisionOffset + j * 24 + 2);
-                        shortBuffer.clear();
-                        channel.read(shortBuffer);
-                        shortBuffer.flip();
-                        bsaCollisionEntry.skillId = toUShort(shortBuffer.getShort());
-
-                        channel.position(collisionOffset + j * 24 + 4);
-                        shortBuffer.clear();
-                        channel.read(shortBuffer);
-                        shortBuffer.flip();
-                        bsaCollisionEntry.effectId = toUShort(shortBuffer.getShort());
-
-                        channel.position(collisionOffset + j * 24 + 6);
-                        shortBuffer.clear();
-                        channel.read(shortBuffer);
-                        shortBuffer.flip();
-                        bsaCollisionEntry.i06 = toUShort(shortBuffer.getShort());
-
-                        channel.position(collisionOffset + j * 24 + 8);
-                        intBuffer.clear();
-                        channel.read(intBuffer);
-                        intBuffer.flip();
-                        bsaCollisionEntry.i08 = intBuffer.getInt();
-
-                        channel.position(collisionOffset + j * 24 + 12);
-                        intBuffer.clear();
-                        channel.read(intBuffer);
-                        intBuffer.flip();
-                        bsaCollisionEntry.i12 = intBuffer.getInt();
-
-                        channel.position(collisionOffset + j * 24 + 16);
-                        intBuffer.clear();
-                        channel.read(intBuffer);
-                        intBuffer.flip();
-                        bsaCollisionEntry.i16 = intBuffer.getInt();
-
-                        channel.position(collisionOffset+ j * 24 + 20);
-                        intBuffer.clear();
-                        channel.read(intBuffer);
-                        intBuffer.flip();
-                        bsaCollisionEntry.i20 = intBuffer.getInt();
-                    }
-
-                    index++;
-                } 
-
-                channel.position(entryOffset + 12);
-                intBuffer.clear();
-                channel.read(intBuffer);
-                intBuffer.flip();
-                expirationOffset = intBuffer.getInt();
-                expirationOffset += entryOffset;
-
-                if (expirationEntriesCount > 0) {
-                    allEntries.get(i).getChildren().add(new TreeItem<>("Expiration (After Effects)"));
-
-                    for (int j = 0; j < expirationEntriesCount; j++) {
-                        BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
-
-                        allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + j));
-
-                        bsaExpirationHashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(j), bsaExpirationEntry);
-                        
-                        channel.position(expirationOffset + j * 8);
-                        shortBuffer.clear();
-                        channel.read(shortBuffer);
-                        shortBuffer.flip();
-                        bsaExpirationEntry.i00 = toUShort(shortBuffer.getShort());
-
-                        channel.position(expirationOffset + j * 8 + 2);
-                        shortBuffer.clear();
-                        channel.read(shortBuffer);
-                        shortBuffer.flip();
-                        bsaExpirationEntry.i02 = toUShort(shortBuffer.getShort());
-
-                        channel.position(expirationOffset + j * 8 + 4);
-                        shortBuffer.clear();
-                        channel.read(shortBuffer);
-                        shortBuffer.flip();
-                        bsaExpirationEntry.i04 = toUShort(shortBuffer.getShort());
-
-                        channel.position(expirationOffset + j * 8 + 6);
-                        shortBuffer.clear();
-                        channel.read(shortBuffer);
-                        shortBuffer.flip();
-                        bsaExpirationEntry.i06 = toUShort(shortBuffer.getShort());
-                    }
-
-                    index++;
-                } 
-
-                channel.position(entryOffset + 16);
-                byteBuffer.clear();
-                channel.read(byteBuffer);
-                byteBuffer.flip();
-                bsaMainEntry.i16_a = (byte) (byteBuffer.get() & 0x0F);
-                byteBuffer.flip();
-                bsaMainEntry.i16_b = (byte)((byteBuffer.get() >> 4) & 0x0F);
-
-                channel.position(entryOffset + 17);
-                byteBuffer.clear();
-                channel.read(byteBuffer);
-                byteBuffer.flip();
-                bsaMainEntry.i17 = toUByte(byteBuffer.get());
-
-                channel.position(entryOffset + 18);
-                intBuffer.clear();
-                channel.read(intBuffer);
-                intBuffer.flip();
-                bsaMainEntry.i18 = intBuffer.getInt();
-
-                channel.position(entryOffset + 22);
-                shortBuffer.clear();
-                channel.read(shortBuffer);
-                shortBuffer.flip();
-                bsaMainEntry.lifetime = toUShort(shortBuffer.getShort());
-
-                channel.position(entryOffset + 24);
-                shortBuffer.clear();
-                channel.read(shortBuffer);
-                shortBuffer.flip();
-                bsaMainEntry.i24 = toUShort(shortBuffer.getShort());
-
-                channel.position(entryOffset + 26);
-                shortBuffer.clear();
-                channel.read(shortBuffer);
-                shortBuffer.flip();
-                bsaMainEntry.expires = toUShort(shortBuffer.getShort());
-
-                channel.position(entryOffset + 28);
-                shortBuffer.clear();
-                channel.read(shortBuffer);
-                shortBuffer.flip();
-                bsaMainEntry.impactProjectile = toUShort(shortBuffer.getShort());
-
-                channel.position(entryOffset + 30);
-                shortBuffer.clear();
-                channel.read(shortBuffer);
-                shortBuffer.flip();
-                bsaMainEntry.impactEnemy = toUShort(shortBuffer.getShort());
-
-                channel.position(entryOffset + 32);
-                shortBuffer.clear();
-                channel.read(shortBuffer);
-                shortBuffer.flip();
-                bsaMainEntry.impactGround = toUShort(shortBuffer.getShort());
-
-                channel.position(entryOffset + 34);
-                shortBuffer.clear();
-                channel.read(shortBuffer);
-                shortBuffer.flip();
-                typesCount = shortBuffer.getShort();
-
-                channel.position(entryOffset + 36);
-                intBuffer.clear();
-                channel.read(intBuffer);
-                intBuffer.flip();
-                typesOffset = intBuffer.getInt();
-                typesOffset += entryOffset;
-
-                channel.position(entryOffset + 40);
-                intBuffer.clear();
-                channel.read(intBuffer);
-                intBuffer.flip();
-                bsaMainEntry.i40 = intBuffer.getInt();
-
-                channel.position(entryOffset + 44);
-                intBuffer.clear();
-                channel.read(intBuffer);
-                intBuffer.flip();
-                bsaMainEntry.i44 = intBuffer.getInt();
-
-                channel.position(entryOffset + 48);
-                intBuffer.clear();
-                channel.read(intBuffer);
-                intBuffer.flip();
-                bsaMainEntry.i48 = intBuffer.getInt();
-
-                for (int j = 0; j < typesCount; j++) {
-                    channel.position(typesOffset + j * 16);
-                    shortBuffer.clear();
-                    channel.read(shortBuffer);
-                    shortBuffer.flip();
-                    type = shortBuffer.getShort();
-
-                    channel.position(typesOffset + j * 16 + 6);
-                    shortBuffer.clear();
-                    channel.read(shortBuffer);
-                    shortBuffer.flip();
-                    typeCount = shortBuffer.getShort();
-
-                    channel.position(typesOffset + j * 16+ 8);
+                    channel.position(entryOffset);
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
-                    hdrOffset = intBuffer.getInt();
+                    bsaMainEntry.i00 = intBuffer.getInt();
 
-                    channel.position(typesOffset + j * 16 + 12);
+                    channel.position(entryOffset + 4);
+                    shortBuffer.clear();
+                    channel.read(shortBuffer);
+                    shortBuffer.flip();
+                    collisionEntriesCount = toUShort(shortBuffer.getShort());
+                    
+                    channel.position(entryOffset + 6);
+                    shortBuffer.clear();
+                    channel.read(shortBuffer);
+                    shortBuffer.flip();
+                    expirationEntriesCount = toUShort(shortBuffer.getShort());
+
+                    channel.position(entryOffset + 8);
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
-                    dataOffset = intBuffer.getInt();
+                    collisionOffset = intBuffer.getInt();
+                    collisionOffset += entryOffset;
 
-                    switch (type) {
-                        case 0 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("BSA Entry Passing"));
+                    if (collisionEntriesCount > 0) {
+                        allEntries.get(i).getChildren().add(new TreeItem<>("Collision (After Effects)"));
 
-                            for (int k = 0; k < typeCount; k++) {
-                                BsaType0Entry bsaType0Entry = new BsaType0Entry();
+                        for (int j = 0; j < collisionEntriesCount; j++) {
+                            BsaCollisionEntry bsaCollisionEntry = new BsaCollisionEntry();
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                            allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ j));
 
-                                bsaType0HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType0Entry);
+                            bsaCollisionHashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(j), bsaCollisionEntry);
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType0Entry.startTime = toUShort(shortBuffer.getShort());
+                            channel.position(collisionOffset + j * 24);
+                            shortBuffer.clear();
+                            channel.read(shortBuffer);
+                            shortBuffer.flip();
+                            bsaCollisionEntry.eepkType = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType0Entry.duration = toUShort((short)(shortBuffer.getShort()- bsaType0Entry.startTime));
-                                
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 16);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType0Entry.firstCondition = toUShort(shortBuffer.getShort());
-                                
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType0Entry.secondCondition = toUShort(shortBuffer.getShort());
+                            channel.position(collisionOffset + j * 24 + 2);
+                            shortBuffer.clear();
+                            channel.read(shortBuffer);
+                            shortBuffer.flip();
+                            bsaCollisionEntry.skillId = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType0Entry.bsaEntryId = toUShort(shortBuffer.getShort());
+                            channel.position(collisionOffset + j * 24 + 4);
+                            shortBuffer.clear();
+                            channel.read(shortBuffer);
+                            shortBuffer.flip();
+                            bsaCollisionEntry.effectId = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 6);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType0Entry.i06 = shortBuffer.getShort();
- 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 8);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType0Entry.bacCondition = intBuffer.getFloat();
+                            channel.position(collisionOffset + j * 24 + 6);
+                            shortBuffer.clear();
+                            channel.read(shortBuffer);
+                            shortBuffer.flip();
+                            bsaCollisionEntry.i06 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 12);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType0Entry.f12 = intBuffer.getFloat();
-                            }
+                            channel.position(collisionOffset + j * 24 + 8);
+                            intBuffer.clear();
+                            channel.read(intBuffer);
+                            intBuffer.flip();
+                            bsaCollisionEntry.i08 = intBuffer.getInt();
 
-                            index++;
+                            channel.position(collisionOffset + j * 24 + 12);
+                            intBuffer.clear();
+                            channel.read(intBuffer);
+                            intBuffer.flip();
+                            bsaCollisionEntry.i12 = intBuffer.getInt();
+
+                            channel.position(collisionOffset + j * 24 + 16);
+                            intBuffer.clear();
+                            channel.read(intBuffer);
+                            intBuffer.flip();
+                            bsaCollisionEntry.i16 = intBuffer.getInt();
+
+                            channel.position(collisionOffset+ j * 24 + 20);
+                            intBuffer.clear();
+                            channel.read(intBuffer);
+                            intBuffer.flip();
+                            bsaCollisionEntry.i20 = intBuffer.getInt();
                         }
-                        case 1 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("Movement"));
 
-                            for (int k = 0; k < typeCount; k++) {
-                                BsaType1Entry bsaType1Entry = new BsaType1Entry();
+                        index++;
+                    } 
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                    channel.position(entryOffset + 12);
+                    intBuffer.clear();
+                    channel.read(intBuffer);
+                    intBuffer.flip();
+                    expirationOffset = intBuffer.getInt();
+                    expirationOffset += entryOffset;
 
-                                bsaType1HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType1Entry);
+                    if (expirationEntriesCount > 0) {
+                        allEntries.get(i).getChildren().add(new TreeItem<>("Expiration (After Effects)"));
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType1Entry.startTime = toUShort(shortBuffer.getShort());
+                        for (int j = 0; j < expirationEntriesCount; j++) {
+                            BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType1Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType1Entry.startTime));
+                            allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + j));
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.motionFlags = toUint32(intBuffer.getInt());
+                            bsaExpirationHashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(j), bsaExpirationEntry);
+                            
+                            channel.position(expirationOffset + j * 8);
+                            shortBuffer.clear();
+                            channel.read(shortBuffer);
+                            shortBuffer.flip();
+                            bsaExpirationEntry.i00 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16+ k * 48 + 4);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.speedZ = intBuffer.getFloat();
+                            channel.position(expirationOffset + j * 8 + 2);
+                            shortBuffer.clear();
+                            channel.read(shortBuffer);
+                            shortBuffer.flip();
+                            bsaExpirationEntry.i02 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 8);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.speedX = intBuffer.getFloat();
+                            channel.position(expirationOffset + j * 8 + 4);
+                            shortBuffer.clear();
+                            channel.read(shortBuffer);
+                            shortBuffer.flip();
+                            bsaExpirationEntry.i04 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 12);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.speedY = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 16);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.f16 = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 20);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.accelerationZ = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 24);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.accelerationX = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 28);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.accelerationY = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 32);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.fallofStrength = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 36);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.spreadDirectionX = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 40);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.spreadDirectionY = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 44);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType1Entry.spreadDirectionZ = intBuffer.getFloat();
-                            }
-
-                            index++;
+                            channel.position(expirationOffset + j * 8 + 6);
+                            shortBuffer.clear();
+                            channel.read(shortBuffer);
+                            shortBuffer.flip();
+                            bsaExpirationEntry.i06 = toUShort(shortBuffer.getShort());
                         }
-                        case 2 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 2"));
 
-                            for (int k = 0; k < typeCount; k++) {
-                                BsaType2Entry bsaType2Entry = new BsaType2Entry();
+                        index++;
+                    } 
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                    channel.position(entryOffset + 16);
+                    byteBuffer.clear();
+                    channel.read(byteBuffer);
+                    byteBuffer.flip();
+                    bsaMainEntry.i16_a = (byte) (byteBuffer.get() & 0x0F);
+                    byteBuffer.flip();
+                    bsaMainEntry.i16_b = (byte)((byteBuffer.get() >> 4) & 0x0F);
 
-                                bsaType2HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType2Entry);
-                                
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType2Entry.startTime = toUShort(shortBuffer.getShort());
+                    channel.position(entryOffset + 17);
+                    byteBuffer.clear();
+                    channel.read(byteBuffer);
+                    byteBuffer.flip();
+                    bsaMainEntry.i17 = toUByte(byteBuffer.get());
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType2Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType2Entry.startTime));
+                    channel.position(entryOffset + 18);
+                    intBuffer.clear();
+                    channel.read(intBuffer);
+                    intBuffer.flip();
+                    bsaMainEntry.i18 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType2Entry.i00 = shortBuffer.getShort();
+                    channel.position(entryOffset + 22);
+                    shortBuffer.clear();
+                    channel.read(shortBuffer);
+                    shortBuffer.flip();
+                    bsaMainEntry.lifetime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType2Entry.i02 = shortBuffer.getShort();
+                    channel.position(entryOffset + 24);
+                    shortBuffer.clear();
+                    channel.read(shortBuffer);
+                    shortBuffer.flip();
+                    bsaMainEntry.i24 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType2Entry.i04 = shortBuffer.getShort();
+                    channel.position(entryOffset + 26);
+                    shortBuffer.clear();
+                    channel.read(shortBuffer);
+                    shortBuffer.flip();
+                    bsaMainEntry.expires = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType2Entry.i06 = shortBuffer.getShort();
+                    channel.position(entryOffset + 28);
+                    shortBuffer.clear();
+                    channel.read(shortBuffer);
+                    shortBuffer.flip();
+                    bsaMainEntry.impactProjectile = toUShort(shortBuffer.getShort());
+
+                    channel.position(entryOffset + 30);
+                    shortBuffer.clear();
+                    channel.read(shortBuffer);
+                    shortBuffer.flip();
+                    bsaMainEntry.impactEnemy = toUShort(shortBuffer.getShort());
+
+                    channel.position(entryOffset + 32);
+                    shortBuffer.clear();
+                    channel.read(shortBuffer);
+                    shortBuffer.flip();
+                    bsaMainEntry.impactGround = toUShort(shortBuffer.getShort());
+
+                    channel.position(entryOffset + 34);
+                    shortBuffer.clear();
+                    channel.read(shortBuffer);
+                    shortBuffer.flip();
+                    typesCount = shortBuffer.getShort();
+
+                    channel.position(entryOffset + 36);
+                    intBuffer.clear();
+                    channel.read(intBuffer);
+                    intBuffer.flip();
+                    typesOffset = intBuffer.getInt();
+                    typesOffset += entryOffset;
+
+                    channel.position(entryOffset + 40);
+                    intBuffer.clear();
+                    channel.read(intBuffer);
+                    intBuffer.flip();
+                    bsaMainEntry.i40 = intBuffer.getInt();
+
+                    channel.position(entryOffset + 44);
+                    intBuffer.clear();
+                    channel.read(intBuffer);
+                    intBuffer.flip();
+                    bsaMainEntry.i44 = intBuffer.getInt();
+
+                    channel.position(entryOffset + 48);
+                    intBuffer.clear();
+                    channel.read(intBuffer);
+                    intBuffer.flip();
+                    bsaMainEntry.i48 = intBuffer.getInt();
+
+                    for (int j = 0; j < typesCount; j++) {
+                        channel.position(typesOffset + j * 16);
+                        shortBuffer.clear();
+                        channel.read(shortBuffer);
+                        shortBuffer.flip();
+                        type = shortBuffer.getShort();
+
+                        channel.position(typesOffset + j * 16 + 6);
+                        shortBuffer.clear();
+                        channel.read(shortBuffer);
+                        shortBuffer.flip();
+                        typeCount = shortBuffer.getShort();
+
+                        channel.position(typesOffset + j * 16+ 8);
+                        intBuffer.clear();
+                        channel.read(intBuffer);
+                        intBuffer.flip();
+                        hdrOffset = intBuffer.getInt();
+
+                        channel.position(typesOffset + j * 16 + 12);
+                        intBuffer.clear();
+                        channel.read(intBuffer);
+                        intBuffer.flip();
+                        dataOffset = intBuffer.getInt();
+
+                        switch (type) {
+                            case 0 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Entry Passing"));
+
+                                for (int k = 0; k < typeCount; k++) {
+                                    BsaType0Entry bsaType0Entry = new BsaType0Entry();
+
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+
+                                    bsaType0HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType0Entry);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType0Entry.startTime = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType0Entry.duration = toUShort((short)(shortBuffer.getShort()- bsaType0Entry.startTime));
+                                    
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 16);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType0Entry.firstCondition = toUShort(shortBuffer.getShort());
+                                    
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType0Entry.secondCondition = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType0Entry.bsaEntryId = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 6);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType0Entry.i06 = shortBuffer.getShort();
+    
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 8);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType0Entry.bacCondition = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 12);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType0Entry.f12 = intBuffer.getFloat();
+                                }
+
+                                index++;
                             }
+                            case 1 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("Movement"));
 
-                            index++;
-                        }
-                        case 3 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("Hitbox"));
+                                for (int k = 0; k < typeCount; k++) {
+                                    BsaType1Entry bsaType1Entry = new BsaType1Entry();
 
-                            for (int k = 0; k < typeCount; k++) {
-                                BsaType3Entry bsaType3Entry = new BsaType3Entry();
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    bsaType1HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType1Entry);
 
-                                bsaType3HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType3Entry);
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType1Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k  *4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.startTime = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType1Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType1Entry.startTime));
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType3Entry.startTime));
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.motionFlags = toUint32(intBuffer.getInt());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType3Entry.matrixFlag = (intBuffer.getInt() == 1);
+                                    channel.position(typesOffset + dataOffset + j * 16+ k * 48 + 4);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.speedZ = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.i04 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 8);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.speedX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 6);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.i06_a = (byte) (shortBuffer.getShort() & 0x0F);
-                                shortBuffer.flip();
-                                bsaType3Entry.i06_b = (byte)((shortBuffer.getShort() >> 4) & 0x0F);
-                                shortBuffer.flip();
-                                bsaType3Entry.i06_c = (byte)((shortBuffer.getShort() >> 8) & 0x0F);
-                                shortBuffer.flip();
-                                bsaType3Entry.i06_d = (byte)((shortBuffer.getShort() >> 12) & 0x0F);
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 12);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.speedY = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 8);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType3Entry.positionX = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 16);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.f16 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 12);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType3Entry.positionY = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 20);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.accelerationZ = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 16);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType3Entry.positionZ = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 24);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.accelerationX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 20);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType3Entry.hitboxScale = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 28);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.accelerationY = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 24);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType3Entry.maximumX = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 32);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.fallofStrength = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 28);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType3Entry.maximumY = intBuffer.getFloat();
-                                
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 32);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType3Entry.maximumZ = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 36);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.spreadDirectionX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 36);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType3Entry.minimumX = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 40);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.spreadDirectionY = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 40);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType3Entry.minimumY = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 44);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType1Entry.spreadDirectionZ = intBuffer.getFloat();
+                                }
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 44);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType3Entry.minimumZ = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 48);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.hitAmount = toUShort(shortBuffer.getShort());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 50);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.hitboxLifetime = toUShort(shortBuffer.getShort());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 52);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.i52 = toUShort(shortBuffer.getShort());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 54);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.i54 = toUShort(shortBuffer.getShort());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 56);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.i56 = toUShort(shortBuffer.getShort());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 58);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.firstHit = toUShort(shortBuffer.getShort());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 60);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.multipleHits = toUShort(shortBuffer.getShort());;
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 62);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType3Entry.lastHit = toUShort(shortBuffer.getShort());
+                                index++;
                             }
+                            case 2 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 2"));
 
-                            index++;
-                        } 
-                        case 4 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("Deflection"));
+                                for (int k = 0; k < typeCount; k++) {
+                                    BsaType2Entry bsaType2Entry = new BsaType2Entry();
 
-                            for (int k = 0; k < typeCount; k++) {
-                                BsaType4Entry bsaType4Entry = new BsaType4Entry();
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    bsaType2HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType2Entry);
+                                    
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType2Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                bsaType4HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType4Entry);
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType2Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType2Entry.startTime));
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType4Entry.startTime = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType2Entry.i00 = shortBuffer.getShort();
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType4Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType4Entry.startTime));
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType2Entry.i02 = shortBuffer.getShort();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.i00 = intBuffer.getInt();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType2Entry.i04 = shortBuffer.getShort();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 4);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.i04 = intBuffer.getInt();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType2Entry.i06 = shortBuffer.getShort();
+                                }
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 8);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.i08 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 12);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.f12 = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 16);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.f16 = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 20);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.f20 = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 24);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.i24 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 28);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.i28 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 32);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.i32 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 36);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.i36 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 40);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.i40 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 44);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType4Entry.i44 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 48);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType4Entry.i48 = toUShort(shortBuffer.getShort());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 50);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType4Entry.i50 = toUShort(shortBuffer.getShort());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 52);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType4Entry.i52 = toUShort(shortBuffer.getShort());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 54);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType4Entry.i54 = toUShort(shortBuffer.getShort());
+                                index++;
                             }
+                            case 3 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("Hitbox"));
 
-                            index++;
-                        }
-                        case 6 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("Effect"));
+                                for (int k = 0; k < typeCount; k++) {
+                                    BsaType3Entry bsaType3Entry = new BsaType3Entry();
 
-                            for (int k = 0; k < typeCount; k++) {
-                                BsaType6Entry bsaType6Entry = new BsaType6Entry();
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    bsaType3HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType3Entry);
 
-                                bsaType6HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType6Entry);
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k  *4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType6Entry.startTime = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType3Entry.startTime));
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType6Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType6Entry.startTime));
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType3Entry.matrixFlag = (intBuffer.getInt() == 1);
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType6Entry.eepkType = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.i04 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType6Entry.skillId = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 6);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.i06_a = (byte) (shortBuffer.getShort() & 0x0F);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.i06_b = (byte)((shortBuffer.getShort() >> 4) & 0x0F);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.i06_c = (byte)((shortBuffer.getShort() >> 8) & 0x0F);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.i06_d = (byte)((shortBuffer.getShort() >> 12) & 0x0F);
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType6Entry.effectId = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 8);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType3Entry.positionX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 6);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType6Entry.i06 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 12);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType3Entry.positionY = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType6Entry.effectSwitch = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 16);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType3Entry.positionZ = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 10);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType6Entry.i10 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 20);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType3Entry.hitboxScale = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType6Entry.positionX = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 24);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType3Entry.maximumX = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType6Entry.positionY = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 28);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType3Entry.maximumY = intBuffer.getFloat();
+                                    
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 32);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType3Entry.maximumZ = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 20);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType6Entry.positionZ = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 36);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType3Entry.minimumX = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 40);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType3Entry.minimumY = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 44);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType3Entry.minimumZ = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 48);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.hitAmount = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 50);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.hitboxLifetime = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 52);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.i52 = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 54);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.i54 = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 56);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.i56 = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 58);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.firstHit = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 60);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.multipleHits = toUShort(shortBuffer.getShort());;
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 62);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.lastHit = toUShort(shortBuffer.getShort());
+                                }
+
+                                index++;
+                            } 
+                            case 4 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("Deflection"));
+
+                                for (int k = 0; k < typeCount; k++) {
+                                    BsaType4Entry bsaType4Entry = new BsaType4Entry();
+
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+
+                                    bsaType4HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType4Entry);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType4Entry.startTime = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType4Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType4Entry.startTime));
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.i00 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 4);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.i04 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 8);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.i08 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 12);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.f12 = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 16);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.f16 = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 20);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.f20 = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 24);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.i24 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 28);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.i28 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 32);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.i32 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 36);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.i36 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 40);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.i40 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 44);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType4Entry.i44 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 48);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType4Entry.i48 = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 50);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType4Entry.i50 = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 52);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType4Entry.i52 = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 54);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType4Entry.i54 = toUShort(shortBuffer.getShort());
+                                }
+
+                                index++;
                             }
+                            case 6 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("Effect"));
 
-                            index++;
-                        }
-                        case 7 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("Sound"));
+                                for (int k = 0; k < typeCount; k++) {
+                                    BsaType6Entry bsaType6Entry = new BsaType6Entry();
 
-                            for (int k = 0; k < typeCount; k++) {
-                                BsaType7Entry bsaType7Entry = new BsaType7Entry();
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    bsaType6HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType6Entry);
 
-                                bsaType7HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType7Entry);
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType6Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType7Entry.startTime = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType6Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType6Entry.startTime));
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType7Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType7Entry.startTime));
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType6Entry.eepkType = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType7Entry.acbType = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType6Entry.skillId = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType7Entry.i02 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType6Entry.effectId = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType7Entry.cueId = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 6);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType6Entry.i06 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType7Entry.i06 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType6Entry.effectSwitch = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 10);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType6Entry.i10 = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType6Entry.positionX = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType6Entry.positionY = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 20);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType6Entry.positionZ = intBuffer.getFloat();
+                                }
+
+                                index++;
                             }
+                            case 7 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("Sound"));
 
-                            index++;
-                        }
-                        case 8 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("Screen Effect"));
+                                for (int k = 0; k < typeCount; k++) {
+                                    BsaType7Entry bsaType7Entry = new BsaType7Entry();
 
-                            for (int k = 0; k < typeCount; k++) {
-                                BsaType8Entry bsaType8Entry = new BsaType8Entry();
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    bsaType7HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType7Entry);
 
-                                bsaType8HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType8Entry);
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType7Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType8Entry.startTime = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType7Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType7Entry.startTime));
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType8Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType8Entry.startTime));
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType7Entry.acbType = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType8Entry.bpeEffectId = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType7Entry.i02 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType8Entry.i02 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType7Entry.cueId = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType8Entry.i04 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType7Entry.i06 = toUShort(shortBuffer.getShort());
+                                }
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType8Entry.i08 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType8Entry.i12 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType8Entry.i16 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 20);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType8Entry.i20 = intBuffer.getInt();
+                                index++;
                             }
+                            case 8 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("Screen Effect"));
 
-                            index++;
-                        }
-                        case 10 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 10"));
+                                for (int k = 0; k < typeCount; k++) {
+                                    BsaType8Entry bsaType8Entry = new BsaType8Entry();
 
-                            for (int k=0; k < typeCount; k++) {
-                                BsaType10Entry bsaType10Entry = new BsaType10Entry();
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    bsaType8HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType8Entry);
 
-                                bsaType10HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType10Entry);
-                                
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType10Entry.startTime = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType8Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType10Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType10Entry.startTime));
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType8Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType8Entry.startTime));
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType10Entry.skillId = intBuffer.getInt();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType8Entry.bpeEffectId = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType10Entry.i04 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType8Entry.i02 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType10Entry.i06 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType8Entry.i04 = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType8Entry.i08 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType8Entry.i12 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType8Entry.i16 = intBuffer.getInt();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 20);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType8Entry.i20 = intBuffer.getInt();
+                                }
+
+                                index++;
                             }
+                            case 10 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 10"));
 
-                            index++;
-                        }
-                        case 12 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 12"));
+                                for (int k=0; k < typeCount; k++) {
+                                    BsaType10Entry bsaType10Entry = new BsaType10Entry();
 
-                            for (int k = 0; k < typeCount; k++) {
-                                BsaType12Entry bsaType12Entry = new BsaType12Entry();
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    bsaType10HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType10Entry);
+                                    
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType10Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                bsaType12HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType12Entry);
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType10Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType10Entry.startTime));
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType12Entry.startTime = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType10Entry.skillId = intBuffer.getInt();
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType12Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType12Entry.startTime));
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType10Entry.i04 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 20);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType12Entry.f00 = intBuffer.getInt();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType10Entry.i06 = toUShort(shortBuffer.getShort());
+                                }
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 4);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType12Entry.eepkType = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 8);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType12Entry.skillId = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 12);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType12Entry.i12 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 +16);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType12Entry.f16 = intBuffer.getInt();
+                                index++;
                             }
+                            case 12 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 12"));
 
-                            index++;
-                        }
-                        case 13 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 13"));
+                                for (int k = 0; k < typeCount; k++) {
+                                    BsaType12Entry bsaType12Entry = new BsaType12Entry();
 
-                            for (int k = 0; k < typeCount; k++) {
-                                BsaType13Entry bsaType13Entry = new BsaType13Entry();
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                    bsaType12HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType12Entry);
 
-                                bsaType13HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType13Entry);
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType12Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType13Entry.startTime = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType12Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType12Entry.startTime));
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType13Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType13Entry.startTime));
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 20);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType12Entry.f00 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType13Entry.i00 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 4);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType12Entry.eepkType = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType13Entry.i02 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 8);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType12Entry.skillId = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 4);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType13Entry.f04 = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 12);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType12Entry.i12 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 8);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType13Entry.f08 = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 20 +16);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType12Entry.f16 = intBuffer.getInt();
+                                }
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 12);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType13Entry.i12 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 16);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType13Entry.f16 = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 20);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType13Entry.i20 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 24);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType13Entry.i24 = intBuffer.getInt();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 28);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType13Entry.i28 = intBuffer.getInt();
+                                index++;
                             }
+                            case 13 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 13"));
 
-                            index++;
-                        }
-                        case 14 -> {
-                            allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 14"));
+                                for (int k = 0; k < typeCount; k++) {
+                                    BsaType13Entry bsaType13Entry = new BsaType13Entry();
 
-                            for (int k = 0;k < typeCount; k++) {
-                                BsaType14Entry bsaType14Entry = new BsaType14Entry();
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
 
-                                allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    bsaType13HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType13Entry);
 
-                                bsaType14HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType14Entry);
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType13Entry.startTime = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType14Entry.startTime = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType13Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType13Entry.startTime));
 
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType14Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType14Entry.startTime));
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType13Entry.i00 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType14Entry.i00 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType13Entry.i02 = toUShort(shortBuffer.getShort());
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 2);
-                                shortBuffer.clear();
-                                channel.read(shortBuffer);
-                                shortBuffer.flip();
-                                bsaType14Entry.i02 = toUShort(shortBuffer.getShort());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 4);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType13Entry.f04 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 4);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.f04 = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 8);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType13Entry.f08 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 8);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i08 = toUint32(intBuffer.getInt());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 12);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType13Entry.i12 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 12);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.f12 = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 16);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType13Entry.f16 = intBuffer.getFloat();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 16);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i16 = toUint32(intBuffer.getInt());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 20);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType13Entry.i20 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 20);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.f20 = intBuffer.getFloat();
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 24);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType13Entry.i24 = intBuffer.getInt();
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 24);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i24 = toUint32(intBuffer.getInt());
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 28);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType13Entry.i28 = intBuffer.getInt();
+                                }
 
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 28);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.f28 = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 32);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i32 = toUint32(intBuffer.getInt());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 36);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i36 = toUint32(intBuffer.getInt());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 40);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i40 = toUint32(intBuffer.getInt());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 44);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.f44 = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 48);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i48 = toUint32(intBuffer.getInt());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 52);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.f52 = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 56);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i56 = toUint32(intBuffer.getInt());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 60);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.f60 = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 64);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i64 = toUint32(intBuffer.getInt());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 68);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.f68 = intBuffer.getFloat();
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 72);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i72 = toUint32(intBuffer.getInt());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 76);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i76 = toUint32(intBuffer.getInt());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 80);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i80 = toUint32(intBuffer.getInt());
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 84);
-                                intBuffer.clear();
-                                channel.read(intBuffer);
-                                intBuffer.flip();
-                                bsaType14Entry.i84 = toUint32(intBuffer.getInt());
+                                index++;
                             }
+                            case 14 -> {
+                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 14"));
 
-                            index++;
+                                for (int k = 0;k < typeCount; k++) {
+                                    BsaType14Entry bsaType14Entry = new BsaType14Entry();
+
+                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+
+                                    bsaType14HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType14Entry);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType14Entry.startTime = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType14Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType14Entry.startTime));
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType14Entry.i00 = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType14Entry.i02 = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 4);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.f04 = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 8);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i08 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 12);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.f12 = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 16);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i16 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 20);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.f20 = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 24);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i24 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 28);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.f28 = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 32);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i32 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 36);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i36 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 40);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i40 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 44);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.f44 = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 48);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i48 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 52);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.f52 = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 56);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i56 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 60);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.f60 = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 64);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i64 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 68);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.f68 = intBuffer.getFloat();
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 72);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i72 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 76);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i76 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 80);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i80 = toUint32(intBuffer.getInt());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 84);
+                                    intBuffer.clear();
+                                    channel.read(intBuffer);
+                                    intBuffer.flip();
+                                    bsaType14Entry.i84 = toUint32(intBuffer.getInt());
+                                }
+
+                                index++;
+                            }
                         }
                     }
+                }
+                else {
+                    allEntries.add(new TreeItem<>(null));
                 }
             }
         }
@@ -9304,14 +9310,14 @@ public class Bsa {
     public void bsaWriter(Path path) {
         try(FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             int offset = 24;
-            int entryOffset = 40;
+            int entryOffset = 24 + allEntries.size() * 4;
             int collisionOffset = 52;
             int expirationOffset = 52;
             int  typesOffset = 52;
             short type = 0;
             short typeCount;
             int hdrOffset = 192;
-            int dataOffset =0;
+            int dataOffset = 0;
             int collisionEntriesCount = 0;
             int expirationEntriesCount = 0;
             int typeSize = 0;
@@ -9332,7 +9338,7 @@ public class Bsa {
 
             channel.position(18);
             shortBuffer.clear();
-            shortBuffer.putShort((short)bsaMainHashMap.size());
+            shortBuffer.putShort((short)allEntries.size());
             shortBuffer.flip();
             channel.write(shortBuffer);
 
@@ -9342,1274 +9348,1280 @@ public class Bsa {
             intBuffer.flip();
             channel.write(intBuffer);
             
-            for (int i = 0; i < bsaMainHashMap.size(); i++) {
-                BsaMainEntry bsaMainEntry = new BsaMainEntry();
-                bsaMainEntry = bsaMainHashMap.get(allEntries.get(i));
+            for (int i = 0; i < allEntries.size(); i++) {
+                if(allEntries.get(i).getValue() != null) {
+                    BsaMainEntry bsaMainEntry = new BsaMainEntry();
+                    bsaMainEntry = bsaMainHashMap.get(allEntries.get(i));
 
-                int index = 0;
-                short typesCount = 0;
-                
-                channel.position(offset + i*4);
-                intBuffer.clear();
-                intBuffer.putInt(entryOffset);
-                intBuffer.flip();
-                channel.write(intBuffer);
-
-                channel.position(entryOffset);
-                intBuffer.clear();
-                intBuffer.putInt(bsaMainEntry.i00);
-                intBuffer.flip();
-                channel.write(intBuffer);
-
-                if (allEntries.get(i).getChildren().get(index).getValue().equals("Collision (After Effects)")) {
-                    collisionEntriesCount = allEntries.get(i).getChildren().get(index).getChildren().size();
-                }
-                else {
-                    collisionEntriesCount = 0;
-                    collisionOffset = 0;
-                }
-                
-                channel.position(entryOffset + 4);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) collisionEntriesCount);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
-
-                channel.position(entryOffset + 8);
-                intBuffer.clear();
-                intBuffer.putInt(collisionOffset);
-                intBuffer.flip();
-                channel.write(intBuffer);
-                collisionOffset += entryOffset;
-                
-                if (collisionEntriesCount > 0) {
-                    for (int j = 0; j < collisionEntriesCount; j++) {
-                        BsaCollisionEntry bsaCollisionEntry = new BsaCollisionEntry();
-                        bsaCollisionEntry = bsaCollisionHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
-
-                        channel.position(collisionOffset + j * 24);
-                        shortBuffer.clear();
-                        shortBuffer.putShort((short) bsaCollisionEntry.eepkType);
-                        shortBuffer.flip();
-                        channel.write(shortBuffer);
-
-                        channel.position(collisionOffset + j * 24 + 2);
-                        shortBuffer.clear();
-                        shortBuffer.putShort((short) bsaCollisionEntry.skillId);
-                        shortBuffer.flip();
-                        channel.write(shortBuffer);
-
-                        channel.position(collisionOffset + j * 24 + 4);
-                        shortBuffer.clear();
-                        shortBuffer.putShort((short) bsaCollisionEntry.effectId);;
-                        shortBuffer.flip();
-                        channel.write(shortBuffer);
-
-                        channel.position(collisionOffset + j * 24 + 6);
-                        shortBuffer.clear();
-                        shortBuffer.putShort((short) bsaCollisionEntry.i06);
-                        shortBuffer.flip();
-                        channel.write(shortBuffer);
-
-                        channel.position(collisionOffset + j * 24 + 8);
-                        intBuffer.clear();
-                        intBuffer.putInt(bsaCollisionEntry.i08);
-                        intBuffer.flip();
-                        channel.write(intBuffer);
-
-                        channel.position(collisionOffset + j * 24 + 12);
-                        intBuffer.clear();
-                        intBuffer.putInt(bsaCollisionEntry.i12);
-                        intBuffer.flip();
-                        channel.write(intBuffer);
-
-                        channel.position(collisionOffset + j * 24 + 16);
-                        intBuffer.clear();
-                        intBuffer.putInt(bsaCollisionEntry.i16);
-                        intBuffer.flip();
-                        channel.write(intBuffer);
-
-                        channel.position(collisionOffset + j * 24 + 20);
-                        intBuffer.clear();
-                        intBuffer.putInt(bsaCollisionEntry.i20);
-                        intBuffer.flip();
-                        channel.write(intBuffer);
-
-                        expirationOffset += 24;
-                        typesOffset += 24;
-                        entrySize += 24;
-                    }
-
-                    index++;
-                } 
-                
-                if (allEntries.get(i).getChildren().get(index).getValue().equals("Expiration (After Effects)")) {
-                    expirationEntriesCount = allEntries.get(i).getChildren().get(index).getChildren().size();
-                }
-                else {
-                    expirationEntriesCount = 0;
-                    expirationOffset = 0;
-                }
-
-                channel.position(entryOffset + 6);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) expirationEntriesCount);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
-                
-                channel.position(entryOffset + 12);
-                intBuffer.clear();
-                intBuffer.putInt(expirationOffset);
-                intBuffer.flip();
-                channel.write(intBuffer);
-                expirationOffset += entryOffset;
-
-                if (expirationEntriesCount > 0) {
-                    for (int j = 0;j < expirationEntriesCount; j++) {
-                        BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
-                        bsaExpirationEntry = bsaExpirationHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
+                    int index = 0;
+                    short typesCount = 0;
                     
-                        channel.position(expirationOffset + j * 8);
-                        shortBuffer.clear();
-                        shortBuffer.putShort((short) bsaExpirationEntry.i00);
-                        shortBuffer.flip();
-                        channel.write(shortBuffer);
-
-                        channel.position(expirationOffset + j * 8 + 2);
-                        shortBuffer.clear();
-                        shortBuffer.putShort((short) bsaExpirationEntry.i02);
-                        shortBuffer.flip();
-                        channel.write(shortBuffer);
-
-                        channel.position(expirationOffset + j * 8 + 4);
-                        shortBuffer.clear();
-                        shortBuffer.putShort((short) bsaExpirationEntry.i04);
-                        shortBuffer.flip();
-                        channel.write(shortBuffer);
-
-                        channel.position(expirationOffset + j * 8 + 6);
-                        shortBuffer.clear();
-                        shortBuffer.putShort((short) bsaExpirationEntry.i06);
-                        shortBuffer.flip();
-                        channel.write(shortBuffer);
-
-                        typesOffset += 8;
-                        entrySize += 8;
-                    }
-
-                    index++;
-                } 
-                
-                channel.position(entryOffset + 16);
-                byteBuffer.clear();
-                byteBuffer.put((byte) (bsaMainEntry.i16_a | bsaMainEntry.i16_b << 4));
-                byteBuffer.flip();
-                channel.write(byteBuffer);
-
-                channel.position(entryOffset + 17);
-                byteBuffer.clear();
-                byteBuffer.put((byte) bsaMainEntry.i17);
-                byteBuffer.flip();
-                channel.write(byteBuffer);
-
-                channel.position(entryOffset + 18);
-                intBuffer.clear();
-                intBuffer.putInt(bsaMainEntry.i18);
-                intBuffer.flip();
-                channel.write(intBuffer);
-
-                channel.position(entryOffset + 22);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) bsaMainEntry.lifetime);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
-
-                channel.position(entryOffset + 24);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) bsaMainEntry.i24);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
-
-                channel.position(entryOffset + 26);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) bsaMainEntry.expires);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
-
-                channel.position(entryOffset + 28);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) bsaMainEntry.impactProjectile);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
-
-                channel.position(entryOffset + 30);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) bsaMainEntry.impactEnemy);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
-
-                channel.position(entryOffset + 32);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) bsaMainEntry.impactGround);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
-                
-                for (int j = 0; j < allEntries.get(i).getChildren().size(); j++) {
-                    if (allEntries.get(i).getChildren().get(j).getValue() != "Collision (After Effects)" && allEntries.get(i).getChildren().get(j).getValue() != "Expiration (After Effects)") {
-                        typesCount++;
-                    }
-                }
-
-                hdrOffset = typesCount * 16;
-                
-                channel.position(entryOffset + 34);
-                shortBuffer.clear();
-                shortBuffer.putShort(typesCount);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
-
-                channel.position(entryOffset + 36);
-                intBuffer.clear();
-                intBuffer.putInt(typesOffset);
-                intBuffer.flip();
-                channel.write(intBuffer);
-                typesOffset += entryOffset;
-
-                channel.position(entryOffset + 40);
-                intBuffer.clear();
-                intBuffer.putInt(bsaMainEntry.i40);
-                intBuffer.flip();
-                channel.write(intBuffer);
-
-                channel.position(entryOffset + 44);
-                intBuffer.clear();
-                intBuffer.putInt(bsaMainEntry.i44);
-                intBuffer.flip();
-                channel.write(intBuffer);
-
-                channel.position(entryOffset + 48);
-                intBuffer.clear();
-                intBuffer.putInt(bsaMainEntry.i48);
-                intBuffer.flip();
-                channel.write(intBuffer);
-
-                entrySize += 52;
-
-                for (int j = 0; j < typesCount; j++) {
-                    switch(allEntries.get(i).getChildren().get(index).getValue()) {
-                        case "BSA Entry Passing" -> {
-                            type = 0;
-                            typeSize = 20;
-                        } 
-                        case "Movement" -> {
-                            type = 1;
-                            typeSize = 52;
-                        }        
-                        case "BSA Type 2" -> {
-                            type = 2;
-                            typeSize = 12;
-                        }      
-                        case "Hitbox" -> {
-                            type = 3;
-                            typeSize = 68;
-                        }           
-                        case "Deflection" -> {
-                            type = 4;
-                            typeSize = 60;
-                        }        
-                        case "Effect" -> {
-                            type = 6;
-                            typeSize = 28;
-                        }           
-                        case "Sound" -> {
-                            type = 7;
-                            typeSize = 12;
-                        }            
-                        case "Screen Effect" -> {
-                            type = 8;
-                            typeSize = 28;
-                        }     
-                        case "BSA Type 10" -> {
-                            type = 10;
-                            typeSize = 12;
-                        }      
-                        case "BSA Type 12" -> {
-                            type = 12;
-                            typeSize = 24;
-                        }       
-                        case "BSA Type 13" -> {
-                            type = 13;
-                            typeSize = 36;
-                        }       
-                        case "BSA Type 14" -> {
-                            type = 14;
-                            typeSize = 92;
-                        }      
-                    }
-
-                    typeCount = (short) allEntries.get(i).getChildren().get(index).getChildren().size();
-                    
-                    channel.position(typesOffset + j * 16);
-                    shortBuffer.clear();
-                    shortBuffer.putShort(type);
-                    shortBuffer.flip();
-                    channel.write(shortBuffer);
-
-                    channel.position(typesOffset + j * 16 + 6);
-                    shortBuffer.clear();
-                    shortBuffer.putShort(typeCount);
-                    shortBuffer.flip();
-                    channel.write(shortBuffer);
-
-                    channel.position(typesOffset + j * 16 + 8);
+                    channel.position(offset + i * 4);
                     intBuffer.clear();
-                    intBuffer.putInt(hdrOffset);
+                    intBuffer.putInt(entryOffset);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
-                    dataOffset = hdrOffset + typeCount * 4;
-
-                    for (int k = 0; k < typeCount; k++) {
-                        switch (type) {
-                            case 0 -> {
-                                BsaType0Entry bsaType0Entry = bsaType0HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType0Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType0Entry.duration + bsaType0Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset  +dataOffset + j * 16 + k * 16);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType0Entry.firstCondition);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-                                
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType0Entry.secondCondition);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset+dataOffset + j * 16 + k * 16 + 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short)bsaType0Entry.bsaEntryId);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 6);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short)bsaType0Entry.i06);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 8);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType0Entry.bacCondition);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset+dataOffset + j * 16 + k * 16 + 12);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType0Entry.f12);
-                                intBuffer.flip();
-                                channel.write(intBuffer); 
-
-                                entrySize += 20;
-                            }
-                            case 1 -> {
-                                BsaType1Entry bsaType1Entry = bsaType1HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType1Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset+hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType1Entry.duration + bsaType1Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType1Entry.motionFlags);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 4);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType1Entry.speedZ);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 8);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType1Entry.speedX);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 12);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType1Entry.speedY);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 16);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType1Entry.f16);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 20);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType1Entry.accelerationZ);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 24);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType1Entry.accelerationX);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 28);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType1Entry.accelerationY);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 32);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType1Entry.fallofStrength);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 36);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType1Entry.spreadDirectionX);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 40);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType1Entry.spreadDirectionY);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 44);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType1Entry.spreadDirectionZ);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                entrySize += 52;
-                            }
-                            case 2 -> {
-                                BsaType2Entry bsaType2Entry = bsaType2HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType2Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType2Entry.duration + bsaType2Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
-                                shortBuffer.clear();
-                                shortBuffer.putShort(bsaType2Entry.i00);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8+ 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort(bsaType2Entry.i02);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort(bsaType2Entry.i04);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
-                                shortBuffer.clear();
-                                shortBuffer.putShort(bsaType2Entry.i06);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                entrySize += 12;
-                            }
-                            case 3 -> {
-                                BsaType3Entry bsaType3Entry = bsaType3HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType3Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType3Entry.duration + bsaType3Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType3Entry.matrixFlag ? 1 : 0);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType3Entry.i04);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 6);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType3Entry.i06_a | bsaType3Entry.i06_b << 4 | bsaType3Entry.i06_c << 8 | bsaType3Entry.i06_d << 12));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 8);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType3Entry.positionX);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 12);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType3Entry.positionY);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 16);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType3Entry.positionZ);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 20);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType3Entry.hitboxScale);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 24);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType3Entry.maximumX);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 28);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType3Entry.maximumY);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-                                
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 32);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType3Entry.maximumZ);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 36);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType3Entry.minimumX);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset  + dataOffset + j * 16 + k * 64 + 40);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType3Entry.minimumY);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 44);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType3Entry.minimumZ);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 48);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType3Entry.hitAmount);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 50);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType3Entry.hitboxLifetime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 52);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType3Entry.i52);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16+ k * 64 + 54);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType3Entry.i54);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 56);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType3Entry.i56);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 58);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType3Entry.firstHit);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 60);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType3Entry.multipleHits);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 62);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType3Entry.lastHit);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                entrySize += 68;
-                            }
-                            case 4 -> {
-                                BsaType4Entry bsaType4Entry = bsaType4HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-                                
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType4Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType4Entry.duration + bsaType4Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType4Entry.i00);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 4);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType4Entry.i04);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 8);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType4Entry.i08);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 12);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType4Entry.f12);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 16);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType4Entry.f16);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 20);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType4Entry.f20);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 24);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType4Entry.i24);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 28);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType4Entry.i28);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 32);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType4Entry.i32);
-                                intBuffer.flip();
-                                channel.write(intBuffer);;
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 36);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType4Entry.i36);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 40);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType4Entry.i40);
-                                intBuffer.flip();
-                                channel.write(intBuffer);;
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 44);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType4Entry.i44);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 48);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType4Entry.i48);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 50);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType4Entry.i50);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 52);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType4Entry.i52);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 54);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType4Entry.i54);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-                                
-                                entrySize += 60;
-                            }
-                            case 6 -> {
-                                BsaType6Entry bsaType6Entry = bsaType6HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType6Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType6Entry.duration + bsaType6Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType6Entry.eepkType);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType6Entry.skillId);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType6Entry.effectId);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 6);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType6Entry.i06);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType6Entry.effectSwitch);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 10);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType6Entry.i10);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType6Entry.positionX);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType6Entry.positionY);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 20);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType6Entry.positionZ);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                entrySize += 28;
-                            }
-                            case 7 -> {
-                                BsaType7Entry bsaType7Entry = bsaType7HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType7Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType7Entry.duration + bsaType7Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType7Entry.acbType);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType7Entry.i02);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType7Entry.cueId);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType7Entry.i06);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                entrySize += 12;
-                            }
-                            case 8 -> {
-                                BsaType8Entry bsaType8Entry = bsaType8HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType8Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType8Entry.duration + bsaType8Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType8Entry.bpeEffectId);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType8Entry.i02);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType8Entry.i04);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType8Entry.i08);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType8Entry.i12);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType8Entry.i16);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 24+ 20);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType8Entry.i20);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                entrySize += 28;
-                            }
-                            case 10 -> {
-                                BsaType10Entry bsaType10Entry = bsaType10HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType10Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType10Entry.duration + bsaType10Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType10Entry.skillId);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType10Entry.i04);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16+ k * 8 + 6);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType10Entry.i06);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                entrySize += 12;
-                            }
-                            case 12 -> {
-                                BsaType12Entry bsaType12Entry = bsaType12HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType12Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType12Entry.duration + bsaType12Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 20);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType12Entry.f00);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 4);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType12Entry.eepkType);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 8);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType12Entry.skillId);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 12);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType12Entry.i12);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 20 +16);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType12Entry.f16);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                entrySize += 24;
-                            }
-                            case 13 -> {
-                                BsaType13Entry bsaType13Entry = bsaType13HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType13Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType13Entry.duration + bsaType13Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType13Entry.i00);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType13Entry.i02);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 4);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType13Entry.f04);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 8);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType13Entry.f08);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 12);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType13Entry.i12);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 16);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType13Entry.f16);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 20);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType13Entry.i20);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 24);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType13Entry.i24);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 28);
-                                intBuffer.clear();
-                                intBuffer.putInt(bsaType13Entry.i28);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                entrySize += 36;
-                            }
-                            case 14 -> {
-                                BsaType14Entry bsaType14Entry = bsaType14HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
-
-                                channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType14Entry.startTime);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) (bsaType14Entry.duration + bsaType14Entry.startTime));
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType14Entry.i00);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 2);
-                                shortBuffer.clear();
-                                shortBuffer.putShort((short) bsaType14Entry.i02);
-                                shortBuffer.flip();
-                                channel.write(shortBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 4);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType14Entry.f04);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 8);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i08);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 12);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType14Entry.f12);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 16);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i16);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 20);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType14Entry.f20);
-                                intBuffer.flip();
-                                channel.write(intBuffer);;
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 24);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i24);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 28);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType14Entry.f28);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 32);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i32);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 36);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i36);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 40);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i40);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 44);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType14Entry.f44);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 48);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i48);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 52);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType14Entry.f52);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 56);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i56);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 60);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType14Entry.f60);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 64);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i64);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 68);
-                                intBuffer.clear();
-                                intBuffer.putFloat(bsaType14Entry.f68);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 72);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i72);
-                                intBuffer.flip();
-                                channel.write(intBuffer);;
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 76);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i76);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 80);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i80);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 84);
-                                intBuffer.clear();
-                                intBuffer.putInt((int) bsaType14Entry.i84);
-                                intBuffer.flip();
-                                channel.write(intBuffer);
-
-                                entrySize += 92;
-                            }
+                    channel.position(entryOffset);
+                    intBuffer.clear();
+                    intBuffer.putInt(bsaMainEntry.i00);
+                    intBuffer.flip();
+                    channel.write(intBuffer);
+
+                    if (allEntries.get(i).getChildren().get(index).getValue().equals("Collision (After Effects)")) {
+                        collisionEntriesCount = allEntries.get(i).getChildren().get(index).getChildren().size();
+                    }
+                    else {
+                        collisionEntriesCount = 0;
+                        collisionOffset = 0;
+                    }
+                    
+                    channel.position(entryOffset + 4);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) collisionEntriesCount);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
+
+                    channel.position(entryOffset + 8);
+                    intBuffer.clear();
+                    intBuffer.putInt(collisionOffset);
+                    intBuffer.flip();
+                    channel.write(intBuffer);
+                    collisionOffset += entryOffset;
+                    
+                    if (collisionEntriesCount > 0) {
+                        for (int j = 0; j < collisionEntriesCount; j++) {
+                            BsaCollisionEntry bsaCollisionEntry = new BsaCollisionEntry();
+                            bsaCollisionEntry = bsaCollisionHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
+
+                            channel.position(collisionOffset + j * 24);
+                            shortBuffer.clear();
+                            shortBuffer.putShort((short) bsaCollisionEntry.eepkType);
+                            shortBuffer.flip();
+                            channel.write(shortBuffer);
+
+                            channel.position(collisionOffset + j * 24 + 2);
+                            shortBuffer.clear();
+                            shortBuffer.putShort((short) bsaCollisionEntry.skillId);
+                            shortBuffer.flip();
+                            channel.write(shortBuffer);
+
+                            channel.position(collisionOffset + j * 24 + 4);
+                            shortBuffer.clear();
+                            shortBuffer.putShort((short) bsaCollisionEntry.effectId);;
+                            shortBuffer.flip();
+                            channel.write(shortBuffer);
+
+                            channel.position(collisionOffset + j * 24 + 6);
+                            shortBuffer.clear();
+                            shortBuffer.putShort((short) bsaCollisionEntry.i06);
+                            shortBuffer.flip();
+                            channel.write(shortBuffer);
+
+                            channel.position(collisionOffset + j * 24 + 8);
+                            intBuffer.clear();
+                            intBuffer.putInt(bsaCollisionEntry.i08);
+                            intBuffer.flip();
+                            channel.write(intBuffer);
+
+                            channel.position(collisionOffset + j * 24 + 12);
+                            intBuffer.clear();
+                            intBuffer.putInt(bsaCollisionEntry.i12);
+                            intBuffer.flip();
+                            channel.write(intBuffer);
+
+                            channel.position(collisionOffset + j * 24 + 16);
+                            intBuffer.clear();
+                            intBuffer.putInt(bsaCollisionEntry.i16);
+                            intBuffer.flip();
+                            channel.write(intBuffer);
+
+                            channel.position(collisionOffset + j * 24 + 20);
+                            intBuffer.clear();
+                            intBuffer.putInt(bsaCollisionEntry.i20);
+                            intBuffer.flip();
+                            channel.write(intBuffer);
+
+                            expirationOffset += 24;
+                            typesOffset += 24;
+                            entrySize += 24;
+                        }
+
+                        index++;
+                    } 
+                    
+                    if (allEntries.get(i).getChildren().get(index).getValue().equals("Expiration (After Effects)")) {
+                        expirationEntriesCount = allEntries.get(i).getChildren().get(index).getChildren().size();
+                    }
+                    else {
+                        expirationEntriesCount = 0;
+                        expirationOffset = 0;
+                    }
+
+                    channel.position(entryOffset + 6);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) expirationEntriesCount);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
+                    
+                    channel.position(entryOffset + 12);
+                    intBuffer.clear();
+                    intBuffer.putInt(expirationOffset);
+                    intBuffer.flip();
+                    channel.write(intBuffer);
+                    expirationOffset += entryOffset;
+
+                    if (expirationEntriesCount > 0) {
+                        for (int j = 0;j < expirationEntriesCount; j++) {
+                            BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
+                            bsaExpirationEntry = bsaExpirationHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
+                        
+                            channel.position(expirationOffset + j * 8);
+                            shortBuffer.clear();
+                            shortBuffer.putShort((short) bsaExpirationEntry.i00);
+                            shortBuffer.flip();
+                            channel.write(shortBuffer);
+
+                            channel.position(expirationOffset + j * 8 + 2);
+                            shortBuffer.clear();
+                            shortBuffer.putShort((short) bsaExpirationEntry.i02);
+                            shortBuffer.flip();
+                            channel.write(shortBuffer);
+
+                            channel.position(expirationOffset + j * 8 + 4);
+                            shortBuffer.clear();
+                            shortBuffer.putShort((short) bsaExpirationEntry.i04);
+                            shortBuffer.flip();
+                            channel.write(shortBuffer);
+
+                            channel.position(expirationOffset + j * 8 + 6);
+                            shortBuffer.clear();
+                            shortBuffer.putShort((short) bsaExpirationEntry.i06);
+                            shortBuffer.flip();
+                            channel.write(shortBuffer);
+
+                            typesOffset += 8;
+                            entrySize += 8;
+                        }
+
+                        index++;
+                    } 
+                    
+                    channel.position(entryOffset + 16);
+                    byteBuffer.clear();
+                    byteBuffer.put((byte) (bsaMainEntry.i16_a | bsaMainEntry.i16_b << 4));
+                    byteBuffer.flip();
+                    channel.write(byteBuffer);
+
+                    channel.position(entryOffset + 17);
+                    byteBuffer.clear();
+                    byteBuffer.put((byte) bsaMainEntry.i17);
+                    byteBuffer.flip();
+                    channel.write(byteBuffer);
+
+                    channel.position(entryOffset + 18);
+                    intBuffer.clear();
+                    intBuffer.putInt(bsaMainEntry.i18);
+                    intBuffer.flip();
+                    channel.write(intBuffer);
+
+                    channel.position(entryOffset + 22);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) bsaMainEntry.lifetime);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
+
+                    channel.position(entryOffset + 24);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) bsaMainEntry.i24);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
+
+                    channel.position(entryOffset + 26);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) bsaMainEntry.expires);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
+
+                    channel.position(entryOffset + 28);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) bsaMainEntry.impactProjectile);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
+
+                    channel.position(entryOffset + 30);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) bsaMainEntry.impactEnemy);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
+
+                    channel.position(entryOffset + 32);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) bsaMainEntry.impactGround);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
+                    
+                    for (int j = 0; j < allEntries.get(i).getChildren().size(); j++) {
+                        if (allEntries.get(i).getChildren().get(j).getValue() != "Collision (After Effects)" && allEntries.get(i).getChildren().get(j).getValue() != "Expiration (After Effects)") {
+                            typesCount++;
                         }
                     }
 
-                    index++;
+                    hdrOffset = typesCount * 16;
                     
-                    hdrOffset += ((typeCount * typeSize) - 16);
-                
-                    channel.position(typesOffset + j * 16 + 12);
+                    channel.position(entryOffset + 34);
+                    shortBuffer.clear();
+                    shortBuffer.putShort(typesCount);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
+
+                    channel.position(entryOffset + 36);
                     intBuffer.clear();
-                    intBuffer.putInt(dataOffset);
+                    intBuffer.putInt(typesOffset);
+                    intBuffer.flip();
+                    channel.write(intBuffer);
+                    typesOffset += entryOffset;
+
+                    channel.position(entryOffset + 40);
+                    intBuffer.clear();
+                    intBuffer.putInt(bsaMainEntry.i40);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
-                    entrySize += 16;
-                }
+                    channel.position(entryOffset + 44);
+                    intBuffer.clear();
+                    intBuffer.putInt(bsaMainEntry.i44);
+                    intBuffer.flip();
+                    channel.write(intBuffer);
 
-                entryOffset += entrySize;
-                entrySize = 0;
-                collisionOffset = 52;
-                expirationOffset = 52;
-                typesOffset = 52;
+                    channel.position(entryOffset + 48);
+                    intBuffer.clear();
+                    intBuffer.putInt(bsaMainEntry.i48);
+                    intBuffer.flip();
+                    channel.write(intBuffer);
+
+                    entrySize += 52;
+
+                    for (int j = 0; j < typesCount; j++) {
+                        switch(allEntries.get(i).getChildren().get(index).getValue()) {
+                            case "BSA Entry Passing" -> {
+                                type = 0;
+                                typeSize = 20;
+                            } 
+                            case "Movement" -> {
+                                type = 1;
+                                typeSize = 52;
+                            }        
+                            case "BSA Type 2" -> {
+                                type = 2;
+                                typeSize = 12;
+                            }      
+                            case "Hitbox" -> {
+                                type = 3;
+                                typeSize = 68;
+                            }           
+                            case "Deflection" -> {
+                                type = 4;
+                                typeSize = 60;
+                            }        
+                            case "Effect" -> {
+                                type = 6;
+                                typeSize = 28;
+                            }           
+                            case "Sound" -> {
+                                type = 7;
+                                typeSize = 12;
+                            }            
+                            case "Screen Effect" -> {
+                                type = 8;
+                                typeSize = 28;
+                            }     
+                            case "BSA Type 10" -> {
+                                type = 10;
+                                typeSize = 12;
+                            }      
+                            case "BSA Type 12" -> {
+                                type = 12;
+                                typeSize = 24;
+                            }       
+                            case "BSA Type 13" -> {
+                                type = 13;
+                                typeSize = 36;
+                            }       
+                            case "BSA Type 14" -> {
+                                type = 14;
+                                typeSize = 92;
+                            }      
+                        }
+
+                        typeCount = (short) allEntries.get(i).getChildren().get(index).getChildren().size();
+                        
+                        channel.position(typesOffset + j * 16);
+                        shortBuffer.clear();
+                        shortBuffer.putShort(type);
+                        shortBuffer.flip();
+                        channel.write(shortBuffer);
+
+                        channel.position(typesOffset + j * 16 + 6);
+                        shortBuffer.clear();
+                        shortBuffer.putShort(typeCount);
+                        shortBuffer.flip();
+                        channel.write(shortBuffer);
+
+                        channel.position(typesOffset + j * 16 + 8);
+                        intBuffer.clear();
+                        intBuffer.putInt(hdrOffset);
+                        intBuffer.flip();
+                        channel.write(intBuffer);
+
+                        dataOffset = hdrOffset + typeCount * 4;
+
+                        for (int k = 0; k < typeCount; k++) {
+                            switch (type) {
+                                case 0 -> {
+                                    BsaType0Entry bsaType0Entry = bsaType0HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType0Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType0Entry.duration + bsaType0Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset  +dataOffset + j * 16 + k * 16);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType0Entry.firstCondition);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+                                    
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType0Entry.secondCondition);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset+dataOffset + j * 16 + k * 16 + 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short)bsaType0Entry.bsaEntryId);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 6);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short)bsaType0Entry.i06);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 8);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType0Entry.bacCondition);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset+dataOffset + j * 16 + k * 16 + 12);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType0Entry.f12);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer); 
+
+                                    entrySize += 20;
+                                }
+                                case 1 -> {
+                                    BsaType1Entry bsaType1Entry = bsaType1HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType1Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset+hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType1Entry.duration + bsaType1Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType1Entry.motionFlags);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 4);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType1Entry.speedZ);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 8);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType1Entry.speedX);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 12);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType1Entry.speedY);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 16);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType1Entry.f16);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 20);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType1Entry.accelerationZ);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 24);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType1Entry.accelerationX);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 28);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType1Entry.accelerationY);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 32);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType1Entry.fallofStrength);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 36);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType1Entry.spreadDirectionX);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 40);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType1Entry.spreadDirectionY);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 48 + 44);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType1Entry.spreadDirectionZ);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    entrySize += 52;
+                                }
+                                case 2 -> {
+                                    BsaType2Entry bsaType2Entry = bsaType2HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType2Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType2Entry.duration + bsaType2Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort(bsaType2Entry.i00);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8+ 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort(bsaType2Entry.i02);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort(bsaType2Entry.i04);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort(bsaType2Entry.i06);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    entrySize += 12;
+                                }
+                                case 3 -> {
+                                    BsaType3Entry bsaType3Entry = bsaType3HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType3Entry.duration + bsaType3Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType3Entry.matrixFlag ? 1 : 0);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.i04);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 6);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType3Entry.i06_a | bsaType3Entry.i06_b << 4 | bsaType3Entry.i06_c << 8 | bsaType3Entry.i06_d << 12));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 8);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType3Entry.positionX);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 12);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType3Entry.positionY);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 16);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType3Entry.positionZ);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 20);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType3Entry.hitboxScale);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 24);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType3Entry.maximumX);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 28);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType3Entry.maximumY);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+                                    
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 32);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType3Entry.maximumZ);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 36);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType3Entry.minimumX);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset  + dataOffset + j * 16 + k * 64 + 40);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType3Entry.minimumY);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 44);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType3Entry.minimumZ);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 48);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.hitAmount);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 50);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.hitboxLifetime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 52);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.i52);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16+ k * 64 + 54);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.i54);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 56);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.i56);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 58);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.firstHit);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 60);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.multipleHits);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 62);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.lastHit);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    entrySize += 68;
+                                }
+                                case 4 -> {
+                                    BsaType4Entry bsaType4Entry = bsaType4HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType4Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType4Entry.duration + bsaType4Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType4Entry.i00);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 4);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType4Entry.i04);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 8);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType4Entry.i08);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 12);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType4Entry.f12);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 16);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType4Entry.f16);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 20);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType4Entry.f20);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 24);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType4Entry.i24);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 28);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType4Entry.i28);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 32);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType4Entry.i32);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);;
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 36);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType4Entry.i36);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 40);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType4Entry.i40);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);;
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 44);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType4Entry.i44);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 48);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType4Entry.i48);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 50);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType4Entry.i50);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 52);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType4Entry.i52);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 56 + 54);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType4Entry.i54);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+                                    
+                                    entrySize += 60;
+                                }
+                                case 6 -> {
+                                    BsaType6Entry bsaType6Entry = bsaType6HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType6Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType6Entry.duration + bsaType6Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType6Entry.eepkType);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType6Entry.skillId);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType6Entry.effectId);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 6);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType6Entry.i06);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType6Entry.effectSwitch);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 10);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType6Entry.i10);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType6Entry.positionX);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType6Entry.positionY);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 20);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType6Entry.positionZ);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    entrySize += 28;
+                                }
+                                case 7 -> {
+                                    BsaType7Entry bsaType7Entry = bsaType7HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType7Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType7Entry.duration + bsaType7Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType7Entry.acbType);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType7Entry.i02);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType7Entry.cueId);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType7Entry.i06);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    entrySize += 12;
+                                }
+                                case 8 -> {
+                                    BsaType8Entry bsaType8Entry = bsaType8HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType8Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType8Entry.duration + bsaType8Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType8Entry.bpeEffectId);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType8Entry.i02);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType8Entry.i04);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 8);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType8Entry.i08);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 12);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType8Entry.i12);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 16);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType8Entry.i16);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 24+ 20);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType8Entry.i20);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    entrySize += 28;
+                                }
+                                case 10 -> {
+                                    BsaType10Entry bsaType10Entry = bsaType10HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType10Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType10Entry.duration + bsaType10Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType10Entry.skillId);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType10Entry.i04);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16+ k * 8 + 6);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType10Entry.i06);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    entrySize += 12;
+                                }
+                                case 12 -> {
+                                    BsaType12Entry bsaType12Entry = bsaType12HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType12Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType12Entry.duration + bsaType12Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 20);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType12Entry.f00);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 4);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType12Entry.eepkType);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 8);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType12Entry.skillId);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 12);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType12Entry.i12);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 20 +16);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType12Entry.f16);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    entrySize += 24;
+                                }
+                                case 13 -> {
+                                    BsaType13Entry bsaType13Entry = bsaType13HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType13Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType13Entry.duration + bsaType13Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType13Entry.i00);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType13Entry.i02);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 4);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType13Entry.f04);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 8);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType13Entry.f08);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 12);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType13Entry.i12);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 16);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType13Entry.f16);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 20);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType13Entry.i20);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 24);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType13Entry.i24);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 28);
+                                    intBuffer.clear();
+                                    intBuffer.putInt(bsaType13Entry.i28);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    entrySize += 36;
+                                }
+                                case 14 -> {
+                                    BsaType14Entry bsaType14Entry = bsaType14HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+
+                                    channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType14Entry.startTime);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + hdrOffset + j * 16+ k * 4 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) (bsaType14Entry.duration + bsaType14Entry.startTime));
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType14Entry.i00);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType14Entry.i02);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 4);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType14Entry.f04);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 8);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i08);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 12);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType14Entry.f12);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 16);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i16);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 20);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType14Entry.f20);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);;
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 24);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i24);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 28);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType14Entry.f28);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 32);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i32);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 36);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i36);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 40);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i40);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 44);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType14Entry.f44);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 48);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i48);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 52);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType14Entry.f52);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 56);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i56);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 60);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType14Entry.f60);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 64);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i64);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 68);
+                                    intBuffer.clear();
+                                    intBuffer.putFloat(bsaType14Entry.f68);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 72);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i72);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);;
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 76);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i76);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 80);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i80);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 84);
+                                    intBuffer.clear();
+                                    intBuffer.putInt((int) bsaType14Entry.i84);
+                                    intBuffer.flip();
+                                    channel.write(intBuffer);
+
+                                    entrySize += 92;
+                                }
+                            }
+                        }
+
+                        index++;
+                        
+                        hdrOffset += ((typeCount * typeSize) - 16);
+                    
+                        channel.position(typesOffset + j * 16 + 12);
+                        intBuffer.clear();
+                        intBuffer.putInt(dataOffset);
+                        intBuffer.flip();
+                        channel.write(intBuffer);
+
+                        entrySize += 16;
+                    }
+
+                    entryOffset += entrySize;
+                    entrySize = 0;
+                    collisionOffset = 52;
+                    expirationOffset = 52;
+                    typesOffset = 52;
+
+                }
+                else {
+
+                }
             }
         }
         catch(IOException e) {
