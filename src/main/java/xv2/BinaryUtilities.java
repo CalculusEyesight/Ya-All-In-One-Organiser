@@ -1,6 +1,5 @@
 package xv2;
 public class BinaryUtilities {
-
     public static int toUByte(byte value) {
         return value & 0xFF;
     }
