@@ -240,7 +240,7 @@ public class Aur {
     }
 
     private ToolBar createToolBarRight() {
-        Button insertEntry = new Button("Insert ID");
+        Button insertEntry = new Button("Insert Chara ID");
         insertEntry.setOnAction(event -> {
             AurCharaEntry newCharaEntry = new AurCharaEntry();
             charaEntries.add(newCharaEntry);
