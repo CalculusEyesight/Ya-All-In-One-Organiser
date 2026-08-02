@@ -546,7 +546,7 @@ class CatEntry{
     public int costume;
     public int i04;
     public int skillId2;
-    public String charaCode = new String();
+    public String charaCode;
     public int i12;
     public int i16;
     public int i20;
