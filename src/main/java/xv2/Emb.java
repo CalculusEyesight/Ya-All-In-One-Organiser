@@ -139,7 +139,7 @@ public class Emb {
 
     private StackPane createImageView(int i) {
         ImageView imageView = new ImageView();
-        ByteArrayInputStream byteArrayInputStream=new ByteArrayInputStream(allImages.get(i));
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(allImages.get(i));
 
         try {
             BufferedImage bufferedImage = ImageIO.read(byteArrayInputStream);
@@ -151,6 +151,7 @@ public class Emb {
             Image image = new Image(getClass().getResourceAsStream("/default question mark.png"));
 
             imageView.setImage(image);
+            e.printStackTrace();
         }
         
         StackPane imageContainer = new StackPane(imageView);
@@ -309,8 +310,8 @@ public class Emb {
         );
         fileChooser.setInitialFileName(listView.getSelectionModel().getSelectedItem());
 
-        File selectedFile = fileChooser.showSaveDialog(null)
-        ;
+        File selectedFile = fileChooser.showSaveDialog(null);
+
         if (selectedFile != null) {
             if (!isPortrait){
                 try(FileChannel channel = FileChannel.open(selectedFile.toPath(), StandardOpenOption.WRITE, StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -467,7 +468,6 @@ public class Emb {
         }
         catch(IOException e) {
             e.printStackTrace();
-
         }
     }
 
