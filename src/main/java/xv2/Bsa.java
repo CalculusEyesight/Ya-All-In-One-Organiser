@@ -7997,7 +7997,7 @@ public class Bsa {
             shortBuffer.flip();
             bsaEntries = shortBuffer.getShort();
 
-            if (bsaEntries > 0) {
+            if (bsaEntries != 0) {
                 treeView.setRoot(new TreeItem<>("dummy"));
                 treeView.setShowRoot(false);
             }
@@ -8051,7 +8051,7 @@ public class Bsa {
                     collisionOffset = intBuffer.getInt();
                     collisionOffset += entryOffset;
 
-                    if (collisionEntriesCount > 0) {
+                    if (collisionEntriesCount != 0) {
                         allEntries.get(i).getChildren().add(new TreeItem<>("Collision (After Effects)"));
 
                         for (int j = 0; j < collisionEntriesCount; j++) {
@@ -8120,7 +8120,7 @@ public class Bsa {
                     expirationOffset = intBuffer.getInt();
                     expirationOffset += entryOffset;
 
-                    if (expirationEntriesCount > 0) {
+                    if (expirationEntriesCount != 0) {
                         allEntries.get(i).getChildren().add(new TreeItem<>("Expiration (After Effects)"));
 
                         for (int j = 0; j < expirationEntriesCount; j++) {
@@ -9386,7 +9386,7 @@ public class Bsa {
                     channel.write(intBuffer);
                     collisionOffset += entryOffset;
                     
-                    if (collisionEntriesCount > 0) {
+                    if (collisionEntriesCount != 0) {
                         for (int j = 0; j < collisionEntriesCount; j++) {
                             BsaCollisionEntry bsaCollisionEntry = new BsaCollisionEntry();
                             bsaCollisionEntry = bsaCollisionHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
@@ -9468,7 +9468,7 @@ public class Bsa {
                     channel.write(intBuffer);
                     expirationOffset += entryOffset;
 
-                    if (expirationEntriesCount > 0) {
+                    if (expirationEntriesCount != 0) {
                         for (int j = 0;j < expirationEntriesCount; j++) {
                             BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
                             bsaExpirationEntry = bsaExpirationHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
