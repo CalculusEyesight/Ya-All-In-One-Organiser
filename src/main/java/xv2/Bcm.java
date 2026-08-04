@@ -3501,7 +3501,7 @@ public class Bcm {
         treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue == null)  return;
             
-            currentEntry=newValue;
+            currentEntry = newValue;
 
             tabPane.getTabs().get(0).setContent(createInputsVBox(bcmEntries.get(treeView.getRow(newValue))));
             tabPane.getTabs().get(1).setContent(createActivatorScrollPane(bcmEntries.get(treeView.getRow(newValue))));
@@ -3554,13 +3554,13 @@ public class Bcm {
             if (e.isControlDown() && e.getCode() == KeyCode.A) {
                 Append();
             }
-            if (e.isControlDown() && e.getCode()==KeyCode.I) {
+            if (e.isControlDown() && e.getCode() == KeyCode.I) {
                 Insert();
             }
-            if (e.isControlDown() && e.getCode()==KeyCode.N) {
+            if (e.isControlDown() && e.getCode() == KeyCode.N) {
                 AddNewChild();
             }
-            if (e.isControlDown() && e.getCode()==KeyCode.Q) {
+            if (e.isControlDown() && e.getCode() == KeyCode.Q) {
                 AddComment();
             }
         });
