@@ -9386,7 +9386,7 @@ public class Bsa {
                     channel.write(intBuffer);
                     collisionOffset += entryOffset;
                     
-                    if (collisionEntriesCount != 0) {
+                    if (collisionEntriesCount > 0) {
                         for (int j = 0; j < collisionEntriesCount; j++) {
                             BsaCollisionEntry bsaCollisionEntry = new BsaCollisionEntry();
                             bsaCollisionEntry = bsaCollisionHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
@@ -9468,7 +9468,7 @@ public class Bsa {
                     channel.write(intBuffer);
                     expirationOffset += entryOffset;
 
-                    if (expirationEntriesCount != 0) {
+                    if (expirationEntriesCount > 0) {
                         for (int j = 0;j < expirationEntriesCount; j++) {
                             BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
                             bsaExpirationEntry = bsaExpirationHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
