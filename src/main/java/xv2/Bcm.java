@@ -1298,7 +1298,7 @@ public class Bcm {
             }
         });
 
-        VBox chargeTypeBox = new VBox(2, automatic, manual, unknown18HDC, unknown19HDC, unknown20HDC );
+        VBox chargeTypeBox = new VBox(2, automatic, manual, unknown18HDC, unknown19HDC, unknown20HDC);
         chargeTypeBox.addEventHandler(ActionEvent.ACTION, event -> {
             if (manual.isSelected() || unknown18HDC.isSelected() || unknown19HDC.isSelected() || unknown20HDC.isSelected()) {
                 automatic.setSelected(false);
@@ -1306,7 +1306,6 @@ public class Bcm {
             else {
                 automatic.setSelected(true);
             }
-        
         });
 
         VBox borderContainerChargeType = new VBox(chargeTypeBox);
