@@ -1033,14 +1033,6 @@ public class Bcm {
             continueUntilReleased.setSelected(true);
         }
 
-        continueUntilReleased.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (delayUntilReleased.isSelected() || unknown2HDC.isSelected() || stopSkillFromActivating.isSelected() || unknown4HDC.isSelected()) {
-                continueUntilReleased.setSelected(false);
-            }
-            else {
-                continueUntilReleased.setSelected(true);
-            }  
-        });
         delayUntilReleased.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
                 entry.holdDownConditions |= 1L;
@@ -1071,8 +1063,8 @@ public class Bcm {
         });
 
         VBox actionBox = new VBox(2, continueUntilReleased, delayUntilReleased, unknown2HDC, stopSkillFromActivating,unknown4HDC);
-        actionBox.addEventHandler(ActionEvent.ACTION,event -> {
-            if (delayUntilReleased.isSelected()|| unknown2HDC.isSelected()||stopSkillFromActivating.isSelected()||unknown4HDC.isSelected()) {
+        actionBox.addEventHandler(ActionEvent.ACTION, event -> {
+            if (delayUntilReleased.isSelected() || unknown2HDC.isSelected()|| stopSkillFromActivating.isSelected()|| unknown4HDC.isSelected()) {
                 continueUntilReleased.setSelected(false);
             }
             else {
@@ -1277,14 +1269,6 @@ public class Bcm {
             automatic.setSelected(true);
         }
 
-        automatic.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (manual.isSelected() || unknown18HDC.isSelected() || unknown19HDC.isSelected() || unknown20HDC.isSelected()) {
-                automatic.setSelected(false);
-            }
-            else {
-                automatic.setSelected(true);
-            }
-        });
         manual.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
                 entry.holdDownConditions |= 65536L;
