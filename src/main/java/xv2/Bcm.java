@@ -1020,8 +1020,7 @@ public class Bcm {
         CheckBox unknown2HDC = new CheckBox("Unknown 2");
         CheckBox stopSkillFromActivating = new CheckBox("Stop Skill From Activating");
         CheckBox unknown4HDC = new CheckBox("Unknown 4");
-
-        continueUntilReleased.setSelected(true); 
+ 
         delayUntilReleased.setSelected((entry.holdDownConditions & 1L) != 0);       
         unknown2HDC.setSelected((entry.holdDownConditions & 2L) != 0);              
         stopSkillFromActivating.setSelected((entry.holdDownConditions& 4L) != 0);  
@@ -1029,6 +1028,9 @@ public class Bcm {
 
         if (delayUntilReleased.isSelected() || unknown2HDC.isSelected() || stopSkillFromActivating.isSelected() || unknown4HDC.isSelected()) {
             continueUntilReleased.setSelected(false);
+        }
+        else {
+            continueUntilReleased.setSelected(true);
         }
 
         continueUntilReleased.selectedProperty().addListener((obs, oldValue, newValue) -> {
@@ -1262,7 +1264,6 @@ public class Bcm {
         CheckBox unknown18HDC = new CheckBox("Unknown 18");
         CheckBox unknown19HDC = new CheckBox("Unknown 19");
         CheckBox unknown20HDC = new CheckBox("Unknown 20");
-        automatic.setSelected(true);
 
         manual.setSelected((entry.holdDownConditions & 65536L) != 0);   
         unknown18HDC.setSelected((entry.holdDownConditions & 131072L) != 0);  
@@ -1271,7 +1272,9 @@ public class Bcm {
 
         if (manual.isSelected() || unknown18HDC.isSelected() || unknown19HDC.isSelected() || unknown20HDC.isSelected()) {
             automatic.setSelected(false);
-
+        }
+        else {
+            automatic.setSelected(true);
         }
 
         automatic.selectedProperty().addListener((obs, oldValue, newValue) -> {
