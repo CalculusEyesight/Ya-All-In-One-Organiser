@@ -469,10 +469,8 @@ public class Bsa {
             }
         });
 
-        GridPane eepkTypeGridPane = new GridPane();
+        GridPane eepkTypeGridPane = new GridPane(10, 10);
         eepkTypeGridPane.getStyleClass().add("titled-address-box");
-        eepkTypeGridPane.setHgap(10);
-        eepkTypeGridPane.setVgap(10);
         eepkTypeGridPane.add(common, 0, 0);   
         eepkTypeGridPane.add(stageBG, 1, 0);          
         eepkTypeGridPane.add(character, 2, 0);          
@@ -1629,9 +1627,7 @@ public class Bsa {
         option8Label.setTranslateX(10);
         //option 8
 
-        GridPane motionFlagsGridPane = new GridPane();
-        motionFlagsGridPane.setVgap(10);
-        motionFlagsGridPane.setHgap(10);
+        GridPane motionFlagsGridPane = new GridPane(10, 10);
         motionFlagsGridPane.add(option1BoxStackPane, 0, 0);
         motionFlagsGridPane.add(option2BoxStackPane, 1, 0);
         motionFlagsGridPane.add(option3BoxStackPane, 2, 0);
@@ -2927,10 +2923,8 @@ public class Bsa {
             }
         });
 
-        GridPane eepkTypeGridPane = new GridPane();
+        GridPane eepkTypeGridPane = new GridPane(10, 10);
         eepkTypeGridPane.getStyleClass().add("titled-address-box");
-        eepkTypeGridPane.setHgap(10);
-        eepkTypeGridPane.setVgap(10);
         eepkTypeGridPane.add(common, 0, 0);   
         eepkTypeGridPane.add(stageBG, 1, 0);          
         eepkTypeGridPane.add(character, 2, 0);          
@@ -3733,10 +3727,8 @@ public class Bsa {
             }
         });
 
-        GridPane eepkTypeGridPane = new GridPane();
+        GridPane eepkTypeGridPane = new GridPane(10, 10);
         eepkTypeGridPane.getStyleClass().add("titled-address-box");
-        eepkTypeGridPane.setHgap(10);
-        eepkTypeGridPane.setVgap(10);
         eepkTypeGridPane.add(common, 0, 0);   
         eepkTypeGridPane.add(stageBG, 1, 0);          
         eepkTypeGridPane.add(character, 2, 0);          
