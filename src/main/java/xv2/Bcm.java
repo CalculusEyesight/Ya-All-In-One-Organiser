@@ -3447,7 +3447,7 @@ public class Bcm {
         i88HBox.setAlignment(Pos.CENTER_LEFT);
         //i88
 
-        //i04
+        //i104
         Label i104Label = new Label("Skill Upgrade Value?");
         i104Label.setPrefWidth(130);
 
@@ -3465,7 +3465,7 @@ public class Bcm {
         
         HBox i104HBox = new HBox(i104Label, i104TextField);
         i104HBox.setAlignment(Pos.CENTER_LEFT);
-        //i04
+        //i104
 
         VBox unknownVBox = new VBox(30,
             i00HBox, i36HBox,
