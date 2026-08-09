@@ -4580,6 +4580,7 @@ public class Bsa {
             
             addComment.setDisable(true);
             noCopiedItemFound.setDisable(true);
+            pasteItem.setDisable(true);
 
             if (newValue == null) return;
 
@@ -4594,7 +4595,7 @@ public class Bsa {
 
                 addComment.setDisable(false);
 
-                if (pasteItem.getText().equals("Paste Entry")) {
+                if (pasteItem.getText().equals("Paste Entry  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4607,7 +4608,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
                 
-                if (pasteItem.getText().contains("Paste Collision")) {
+                if (pasteItem.getText().contains("Paste Collision  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4620,7 +4621,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Paste Expiration")) {
+                if (pasteItem.getText().contains("Paste Expiration  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4633,7 +4634,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Paste BSA Entry Passing")) {
+                if (pasteItem.getText().contains("Paste BSA Entry Passing  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4646,7 +4647,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Movement")) {
+                if (pasteItem.getText().contains("Movement  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4659,7 +4660,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("BSA Type 2")) {
+                if (pasteItem.getText().contains("BSA Type 2  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4672,7 +4673,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Hitbox")) {
+                if (pasteItem.getText().contains("Hitbox  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4686,7 +4687,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Deflection")) {
+                if (pasteItem.getText().contains("Deflection  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4699,7 +4700,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Effect")) {
+                if (pasteItem.getText().contains("Effect  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4712,7 +4713,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Sound")) {
+                if (pasteItem.getText().contains("Sound  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4725,7 +4726,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Screen Effect")) {
+                if (pasteItem.getText().contains("Screen Effect  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4738,7 +4739,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("BSA Type 10")) {
+                if (pasteItem.getText().contains("BSA Type 10  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4751,7 +4752,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("BSA Type 12")) {
+                if (pasteItem.getText().contains("BSA Type 12  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4764,7 +4765,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("BSA Type 13")) {
+                if (pasteItem.getText().contains("BSA Type 13  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4777,7 +4778,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("BSA Type 14")) {
+                if (pasteItem.getText().contains("BSA Type 14  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -5825,8 +5826,85 @@ public class Bsa {
 
     private void Paste() {
         if (currentEntry.getParent() == treeView.getRoot()) {
+            for (TreeItem<String> parent : grandParentEntry.getChildren()) {
+                switch (parent.getValue()) {
+                    case "Collision (After Effects)" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaCollisionHashMap.remove(child);
+                        }
+                    }
+                    case "Expiration (After Effects)" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaExpirationHashMap.remove(child);
+                        }
+                    }
+                    case "BSA Entry Passing" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType0HashMap.remove(child);
+                        }
+                    }
+                    case "Movement" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType1HashMap.remove(child);
+                        }
+                    }
+                    case "BSA Type 2" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType2HashMap.remove(child);
+                        }
+                    }
+                    case "Hitbox" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType3HashMap.remove(child);
+                        }
+                    }
+                    case "Deflection" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType4HashMap.remove(child);
+                        }
+                    }
+                    case "Effect" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType6HashMap.remove(child);
+                        }
+                    }
+                    case "Sound" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType7HashMap.remove(child);
+                        }
+                    }
+                    case "Screen Effect" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType8HashMap.remove(child);
+                        }
+                    }
+                    case "BSA Type 10" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType10HashMap.remove(child);
+                        }
+                    }
+                    case "BSA Type 12" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType12HashMap.remove(child);
+                        }
+                    }
+                    case "BSA Type 13" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType13HashMap.remove(child);
+                        }
+                    }
+                    case "BSA Type 14" -> {
+                        for (TreeItem<String> child : parent.getChildren()) {
+                            bsaType14HashMap.remove(child);
+                        }
+                    }
+                }
+            }
+
             currentEntry.getChildren().clear();
+
             bsaMainHashMap.put(currentEntry, (BsaMainEntry) copyContainer);
+
             for (int i = 0; i < copyTypesContainer.size(); i++) {
                 switch (copyTypesContainer.get(i)) {
                     case "Collision (After Effects)" -> {
@@ -6065,7 +6143,81 @@ public class Bsa {
             }
         }
         else {
+            switch (currentEntry.getValue()) {
+                case "Collision (After Effects)" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaCollisionHashMap.remove(child);
+                    }
+                }
+                case "Expiration (After Effects)" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaExpirationHashMap.remove(child);
+                    }
+                }
+                case "BSA Entry Passing" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType0HashMap.remove(child);
+                    }
+                }
+                case "Movement" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType1HashMap.remove(child);
+                    }
+                }
+                case "BSA Type 2" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType2HashMap.remove(child);
+                    }
+                }
+                case "Hitbox" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType3HashMap.remove(child);
+                    }
+                }
+                case "Deflection" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType4HashMap.remove(child);
+                    }
+                }
+                case "Effect" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType6HashMap.remove(child);
+                    }
+                }
+                case "Sound" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType7HashMap.remove(child);
+                    }
+                }
+                case "Screen Effect" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType8HashMap.remove(child);
+                    }
+                }
+                case "BSA Type 10" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType10HashMap.remove(child);
+                    }
+                }
+                case "BSA Type 12" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType12HashMap.remove(child);
+                    }
+                }
+                case "BSA Type 13" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType13HashMap.remove(child);
+                    }
+                }
+                case "BSA Type 14" -> {
+                    for (TreeItem<String> child : currentEntry.getChildren()) {
+                        bsaType14HashMap.remove(child);
+                    }
+                }
+            }
+
             currentEntry.getChildren().clear();
+
             switch (currentEntry.getValue()) {
                 case "Collision (After Effects)" -> {
                     for (int i = 0; i < copyListContainer.get(0).length; i++) {
