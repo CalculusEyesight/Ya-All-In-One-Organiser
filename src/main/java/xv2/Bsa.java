@@ -4580,7 +4580,6 @@ public class Bsa {
             
             addComment.setDisable(true);
             noCopiedItemFound.setDisable(true);
-            pasteItem.setDisable(true);
 
             if (newValue == null) return;
 
@@ -6174,7 +6173,7 @@ public class Bsa {
         TreeItem<String> searchItem = grandParentEntry;
         switch (addItemCopy.getText()) {
             case "Add Entry Copy  Ctrl+A" -> {
-                TreeItem<String> newEntry = new TreeItem<>("Entry " + bsaMainHashMap.size());
+                TreeItem<String> newEntry = new TreeItem<>("Entry " + allEntries.size());
 
                 treeView.getRoot().getChildren().add(newEntry);
 
