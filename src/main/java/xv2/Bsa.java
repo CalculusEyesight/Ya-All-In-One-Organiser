@@ -4567,6 +4567,8 @@ public class Bsa {
 
         treeView.setContextMenu(contextMenu);
         treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue == null) return;
+
             currentEntry = newValue;
             grandParentEntry = newValue;
             
@@ -4581,8 +4583,6 @@ public class Bsa {
             addComment.setDisable(true);
             noCopiedItemFound.setDisable(true);
             pasteItem.setDisable(true);
-
-            if (newValue == null) return;
 
             if (newValue.getValue().contains("Entry") && newValue.getParent() == treeView.getRoot()) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
