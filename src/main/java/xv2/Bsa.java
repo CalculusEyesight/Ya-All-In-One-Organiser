@@ -96,7 +96,7 @@ public class Bsa {
 
     public Bsa() {
         entriesActionListener();
-        entriesKyesListener();
+        entriesKeysListener();
     }
 
     public SplitPane createSplitPane() {
@@ -5431,7 +5431,7 @@ public class Bsa {
         });
     }
 
-    private void entriesKyesListener() {
+    private void entriesKeysListener() {
         treeView.setOnKeyPressed(e -> {
             if (e.isControlDown()&&e.getCode() == KeyCode.C) {
                 Copy();
