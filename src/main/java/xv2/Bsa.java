@@ -6328,6 +6328,7 @@ public class Bsa {
                 TreeItem<String> newEntry = new TreeItem<>("Entry " + allEntries.size());
 
                 treeView.getRoot().getChildren().add(newEntry);
+                allEntries.add(newEntry);
 
                 bsaMainHashMap.put(newEntry, (BsaMainEntry) copyContainer);
 
