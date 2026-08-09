@@ -2398,7 +2398,7 @@ public class Bdm {
     private void Paste() {
         if (copyContainer.isEmpty()) return;
 
-        bdmEntries.set(listView.getSelectionModel().getSelectedIndex(),copyContainer.get(0));
+        bdmEntries.set(listView.getSelectionModel().getSelectedIndex(), new BdmEntry(copyContainer.get(0)));
 
         ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(0).setContent(createMainVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
         ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(1).setContent(createAnimationVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
