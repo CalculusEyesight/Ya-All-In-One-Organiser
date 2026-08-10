@@ -21,7 +21,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 public class Cat {
-    ArrayList<String> allEntries;
     ArrayList <CatEntry> catEntries = new ArrayList<>();
 
     ListView <String> listView = new ListView<>();
@@ -332,27 +331,23 @@ public class Cat {
         catEntries.remove(listView.getSelectionModel().getSelectedIndex());
 
         for (int i = 0; i < listView.getItems().size(); i++) {
-            allEntries.set(i,new String("Entry: " + i));
-            listView.getItems().set(i,allEntries.get(i));
+            listView.getItems().set(i, "Entry " + i);
         }
     }
 
     private void Append() {
         catEntries.add(listView.getSelectionModel().getSelectedIndex() + 1, new CatEntry());
-        allEntries.add(new String("Entry " + listView.getItems().size()));
-        listView.getItems().add(allEntries.getLast());
+        listView.getItems().add("Entry " + listView.getItems().size());
     }
 
     private void Insert() {
         if (listView.getSelectionModel().getSelectedIndex() > 0) {
             catEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new CatEntry());
-            allEntries.add(new String("Entry " + listView.getItems().size()));
-            listView.getItems().add(allEntries.getLast());
+            listView.getItems().add("Entry " + listView.getItems().size());
         }
         else if (listView.getSelectionModel().getSelectedIndex() == 0) {
             catEntries.add(listView.getSelectionModel().getSelectedIndex(), new CatEntry());
-            allEntries.add(new String("Entry " + listView.getItems().size()));
-            listView.getItems().add(allEntries.getLast());
+            listView.getItems().add("Entry " + listView.getItems().size());
         }
     }
 
@@ -371,11 +366,8 @@ public class Cat {
             shortBuffer.flip();
             catEntriesCount = shortBuffer.getShort();
 
-            allEntries = new ArrayList<>(catEntriesCount);
-
             for (int i = 0; i < catEntriesCount; i++) {
-                allEntries.add(new String("Entry " + i));
-                listView.getItems().add(allEntries.get(i));
+                listView.getItems().add("Entry " + i);
             }
 
             for (int i = 0; i < catEntriesCount; i++) {
@@ -463,7 +455,7 @@ public class Cat {
         
             channel.position(6);
             shortBuffer.clear();
-            shortBuffer.putShort((short)allEntries.size());
+            shortBuffer.putShort((short) listView.getItems().size());
             shortBuffer.flip();
             channel.write(shortBuffer);
 
@@ -473,7 +465,7 @@ public class Cat {
             intBuffer.flip();
             channel.write(intBuffer);
 
-            for (int i = 0; i < allEntries.size(); i++) {
+            for (int i = 0; i < listView.getItems().size(); i++) {
                 CatEntry catEntry = catEntries.get(i);
 
                 channel.position(entriesOffset + i * 24);
