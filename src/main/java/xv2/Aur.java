@@ -389,26 +389,26 @@ public class Aur {
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
 
         for (int i = 0; i < listView.getItems().size(); i++) {
-            listView.getItems().set(i, new String("Aura ID " + i));
+            listView.getItems().set(i, "Aura ID " + i);
         }
     }
 
     private void Append() {
         auraEntries.add(listView.getSelectionModel().getSelectedIndex() + 1, new AurAuraEntry());
 
-        listView.getItems().add(new String("Aura ID " + listView.getItems().size()));
+        listView.getItems().add("Aura ID " + listView.getItems().size());
     }
 
     private void Insert() {
         if (listView.getSelectionModel().getSelectedIndex() > 0) {
             auraEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new AurAuraEntry());
 
-            listView.getItems().add(new String("Aura ID " + listView.getItems().size()));
+            listView.getItems().add("Aura ID " + listView.getItems().size());
         }
         else if (listView.getSelectionModel().getSelectedIndex() == 0) {
             auraEntries.add(listView.getSelectionModel().getSelectedIndex(), new AurAuraEntry());
 
-            listView.getItems().add(new String("Aura ID " + listView.getItems().size()));
+            listView.getItems().add("Aura ID " + listView.getItems().size());
         }
     }
 
@@ -429,7 +429,7 @@ public class Aur {
 
 
             for (int i = 0; i < auraEntriesCount; i++) {
-                listView.getItems().add(new String("Aura ID " + i));
+                listView.getItems().add("Aura ID " + i);
             }
 
             channel.position(24);

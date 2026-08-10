@@ -2416,7 +2416,7 @@ public class Bdm {
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
 
         for (int i = 0; i < listView.getItems().size(); i++) {
-            listView.getItems().set(i, new String("Entry: " + i));
+            listView.getItems().set(i, "Entry: " + i);
         }
     }
 
@@ -2458,7 +2458,7 @@ public class Bdm {
                         BdmEntry bdmEntry = new BdmEntry();
                         bdmEntries.add(bdmEntry);
 
-                        listView.getItems().add(new String("Entry " + i));
+                        listView.getItems().add("Entry " + i);
 
                         for (int j = 0; j < 10; j++) {
                             BdmSubEntry subEntry = bdmEntry.subEntries[j];
