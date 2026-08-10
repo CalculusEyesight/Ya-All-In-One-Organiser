@@ -3662,7 +3662,7 @@ public class Bcm {
 
     public void bcmReader(Path path) {
         try(FileChannel channel = FileChannel.open(path, StandardOpenOption.READ)) {
-            int entries;
+            int bcmEntryCount;
 
             ByteBuffer shortBuffer = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
             ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
@@ -3671,19 +3671,19 @@ public class Bcm {
             intBuffer.clear();
             channel.read(intBuffer);
             intBuffer.flip();
-            entries = intBuffer.getInt();
+            bcmEntryCount = intBuffer.getInt();
             
-            allEntries = new ArrayList<>(entries);
+            allEntries = new ArrayList<>(bcmEntryCount);
 
-            for (int i = 0; i < entries; i++) {
-                allEntries.add(new TreeItem<>("Entry "+i));
+            for (int i = 0; i < bcmEntryCount; i++) {
+                allEntries.add(new TreeItem<>("Entry " + i));
             }
 
-            if (entries > 0) {
+            if (bcmEntryCount > 0) {
                 treeView.setRoot(allEntries.get(0));
             }
 
-            for (int i = 0; i < entries; i++) {
+            for (int i = 0; i < bcmEntryCount; i++) {
                 BcmEntry bcmEntry = new BcmEntry();
                 bcmEntries.add(bcmEntry);
 
@@ -3803,11 +3803,9 @@ public class Bcm {
                     TreeItem<String> newSiblingEntry = allEntries.get(i).getParent();
 
                     if (newSiblingEntry != null) {
-                        int siblingEntry = (siblingPointer-16)/112;
+                        int siblingEntry = (siblingPointer - 16) / 112;
 
-                        if (allEntries.get(i).getParent() != null) {
-                            allEntries.get(i).getParent().getChildren().add(allEntries.get(siblingEntry));
-                        }
+                        allEntries.get(i).getParent().getChildren().add(allEntries.get(siblingEntry));
                     }
                 }
                    
@@ -4071,7 +4069,7 @@ public class Bcm {
                 intBuffer.clear();
                 if (allEntries.indexOf(allEntries.get(i).getParent()) == 0 && i != 0) {
                     intBuffer.putInt(allEntries.indexOf(allEntries.get(i)) * 112 + 16);
-                    currentParent = allEntries.indexOf(allEntries.get(i))*112+16;
+                    currentParent = allEntries.indexOf(allEntries.get(i))* 112 + 16;
                     intBuffer.flip();
                     channel.write(intBuffer);
                 }
