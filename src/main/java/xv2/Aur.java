@@ -29,7 +29,6 @@ public class Aur {
     HBox hBox = new HBox(10);
     ListView<String> listView = new ListView<>();
 
-    ArrayList<String> allEntries;
     ArrayList<AurAuraEntry> auraEntries = new ArrayList<>();
     ArrayList<AurCharaEntry> charaEntries = new ArrayList<>();
 
@@ -387,31 +386,29 @@ public class Aur {
         if (listView.getSelectionModel().getSelectedIndex() == 0) return;
         
         auraEntries.remove(listView.getSelectionModel().getSelectedIndex());
-        allEntries.remove(listView.getSelectionModel().getSelectedIndex());
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
 
         for (int i = 0; i < listView.getItems().size(); i++) {
-            allEntries.set(i, new String("Aura ID " + i));
-            listView.getItems().set(i,allEntries.get(i));
+            listView.getItems().set(i, new String("Aura ID " + i));
         }
     }
 
     private void Append() {
-        auraEntries.add(listView.getSelectionModel().getSelectedIndex()+1,new AurAuraEntry());
-        allEntries.add(new String("Aura ID "+ listView.getItems().size()));
-        listView.getItems().add(allEntries.getLast());
+        auraEntries.add(listView.getSelectionModel().getSelectedIndex() + 1, new AurAuraEntry());
+
+        listView.getItems().add(new String("Aura ID " + listView.getItems().size()));
     }
 
     private void Insert() {
         if (listView.getSelectionModel().getSelectedIndex() > 0) {
             auraEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new AurAuraEntry());
-            allEntries.add(new String("Aura ID " + listView.getItems().size()));
-            listView.getItems().add(allEntries.getLast());
+
+            listView.getItems().add(new String("Aura ID " + listView.getItems().size()));
         }
         else if (listView.getSelectionModel().getSelectedIndex() == 0) {
             auraEntries.add(listView.getSelectionModel().getSelectedIndex(), new AurAuraEntry());
-            allEntries.add(new String("Aura ID " + listView.getItems().size()));
-            listView.getItems().add(allEntries.getLast());
+
+            listView.getItems().add(new String("Aura ID " + listView.getItems().size()));
         }
     }
 
@@ -430,11 +427,9 @@ public class Aur {
             intBuffer.flip();
             auraEntriesCount = intBuffer.getInt();
 
-            allEntries = new ArrayList<>(auraEntriesCount);
 
             for (int i = 0; i < auraEntriesCount; i++) {
-                allEntries.add(new String("Aura ID " + i));
-                listView.getItems().add(allEntries.get(i));
+                listView.getItems().add(new String("Aura ID " + i));
             }
 
             channel.position(24);
@@ -547,8 +542,8 @@ public class Aur {
         try(FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             int effectCount = 7;
             int auraOffset = 32;
-            int auraTypeOffset = 32 + allEntries.size() * 72;
-            int charaOffset = 32 + allEntries.size() * 72 + 120;
+            int auraTypeOffset = 32 + listView.getItems().size() * 72;
+            int charaOffset = 32 + listView.getItems().size() * 72 + 120;
             String auraTypes =  
             "BoostStart\0" + 
             "BoostLoop\0" + 
@@ -570,7 +565,7 @@ public class Aur {
 
             channel.position(8);
             intBuffer.clear();
-            intBuffer.putInt(allEntries.size());
+            intBuffer.putInt(listView.getItems().size());
             intBuffer.flip();
             channel.write(intBuffer);
 
@@ -649,12 +644,12 @@ public class Aur {
             channel.position(auraTypeOffset + 28);
             channel.write(ByteBuffer.wrap(auraTypes.getBytes(StandardCharsets.ISO_8859_1)));
 
-            for (int i = 0; i < allEntries.size(); i++) {
+            for (int i = 0; i < listView.getItems().size(); i++) {
                 AurAuraEntry auraEntry = auraEntries.get(i);
    
                 channel.position(auraOffset + i * 16);
                 intBuffer.clear();
-                intBuffer.putInt(allEntries.indexOf(allEntries.get(i)));
+                intBuffer.putInt(listView.getItems().indexOf(listView.getItems().get(i)));
                 intBuffer.flip();
                 channel.write(intBuffer);
 
@@ -672,65 +667,65 @@ public class Aur {
                 
                 channel.position(auraOffset+ i * 16 + 12);
                 intBuffer.clear();
-                intBuffer.putInt(allEntries.size() * 16 + 32 + i * 56);
+                intBuffer.putInt(listView.getItems().size() * 16 + 32 + i * 56);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 4);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 4);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.boostStart);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 8);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 8);
                 channel.write(ByteBuffer.wrap(new byte[]{0x01, 0x00, 0x00, 0x00}));
 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 12);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 12);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.boostLoop);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 16);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 16);
                 channel.write(ByteBuffer.wrap(new byte[]{0x02, 0x00, 0x00, 0x00}));
                 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 20);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 20);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.boostEnd);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 24);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 24);
                 channel.write(ByteBuffer.wrap(new byte[]{0x03, 0x00, 0x00, 0x00}));
 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 28);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 28);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.kiaiCharge);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 32);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 32);
                 channel.write(ByteBuffer.wrap(new byte[]{0x04, 0x00, 0x00, 0x00}));
                 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 36);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 36);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.kiryokuMax);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 40);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 40);
                 channel.write(ByteBuffer.wrap(new byte[]{0x05 ,0x00,0x00,0x00}));
 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 44);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 44);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.henshinStart);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 48);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 48);
                 channel.write(ByteBuffer.wrap(new byte[]{0x06, 0x00, 0x00, 0x00}));
 
-                channel.position(allEntries.size() * 16 + 32 + i * 56 + 52);
+                channel.position(listView.getItems().size() * 16 + 32 + i * 56 + 52);
                 intBuffer.clear();
                 intBuffer.putInt(auraEntry.henshinEnd);
                 intBuffer.flip();
