@@ -33,7 +33,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class Bdm {
-    ArrayList <String> allEntries;
     ArrayList<BdmEntry> bdmEntries = new ArrayList<>();
 
     ListView <String> listView = new ListView<>();
@@ -2414,12 +2413,10 @@ public class Bdm {
         if (listView.getSelectionModel().getSelectedIndex() < 0) return;
 
         bdmEntries.remove(listView.getSelectionModel().getSelectedIndex());
-        allEntries.remove(listView.getSelectionModel().getSelectedIndex());
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
 
         for (int i = 0; i < listView.getItems().size(); i++) {
-            allEntries.set(i, new String("Entry: " + i));
-            listView.getItems().set(i, allEntries.get(i));
+            listView.getItems().set(i, new String("Entry: " + i));
         }
     }
 
@@ -2427,19 +2424,16 @@ public class Bdm {
         if (listView.getSelectionModel().getSelectedIndex() < 0) return;
         
         bdmEntries.add(listView.getSelectionModel().getSelectedIndex() + 1, new BdmEntry());
-        allEntries.add(new String("Entry " + listView.getItems().size()));
         listView.getItems().add("Entry " + listView.getItems().size());
     }
 
     private void Insert() {
         if (listView.getSelectionModel().getSelectedIndex() > 0) {
             bdmEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new BdmEntry());
-            allEntries.add(new String("Entry " + listView.getItems().size()));
             listView.getItems().add("Entry " + listView.getItems().size());
         } 
         else if (listView.getSelectionModel().getSelectedIndex() == 0) {
             bdmEntries.add(listView.getSelectionModel().getSelectedIndex(), new BdmEntry());
-            allEntries.add(new String("Entry " + listView.getItems().size()));
             listView.getItems().add("Entry " + listView.getItems().size());
         }
     }
@@ -2460,14 +2454,11 @@ public class Bdm {
 
             switch ((int)((path.toFile().length() - 16) / bdmEntriesCount)) {
                 case 1284 -> {
-                    allEntries = new ArrayList<>(bdmEntriesCount);
-
                     for (int i = 0; i < bdmEntriesCount; i++) {
                         BdmEntry bdmEntry = new BdmEntry();
                         bdmEntries.add(bdmEntry);
 
-                        allEntries.add(new String("Entry " + i));
-                        listView.getItems().add(allEntries.get(i));
+                        listView.getItems().add(new String("Entry " + i));
 
                         for (int j = 0; j < 10; j++) {
                             BdmSubEntry subEntry = bdmEntry.subEntries[j];
@@ -2828,7 +2819,7 @@ public class Bdm {
 
             channel.position(8);
             intBuffer.clear();
-            intBuffer.putInt(allEntries.size());
+            intBuffer.putInt(listView.getItems().size());
             intBuffer.flip();
             channel.write(intBuffer);
 
@@ -2838,7 +2829,7 @@ public class Bdm {
             intBuffer.flip();
             channel.write(intBuffer);
 
-            for (int i = 0; i < allEntries.size(); i++) {
+            for (int i = 0; i < listView.getItems().size(); i++) {
                 BdmEntry bdmEntry = bdmEntries.get(i);
 
                 channel.position(entryOffset + i * 1284);
