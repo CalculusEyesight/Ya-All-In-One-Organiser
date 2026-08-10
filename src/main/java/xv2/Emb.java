@@ -32,7 +32,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 public class Emb {
-    ArrayList<String> allEntries;
     ArrayList<byte []> allImages;
 
     HBox hBox = new HBox();
@@ -67,8 +66,7 @@ public class Emb {
                 if (selectedFiles != null) {
                     for (File file: selectedFiles) {
                         allImages.add(Files.readAllBytes(file.toPath()));
-                        allEntries.add(new String(file.getName() + "\0"));
-                        listView.getItems().add(allEntries.getLast());
+                        listView.getItems().add(file.getName() + "\0");
                     }
                 }
             } catch (Exception e) {
@@ -83,7 +81,7 @@ public class Emb {
             if(selectedDirectory != null) {
                 for (int i = 0; i < allImages.size(); i++) {
                     if(!isPortrait){
-                        try(FileChannel channel = FileChannel.open(selectedDirectory.toPath().resolve(allEntries.get(i) + ".dds"), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+                        try(FileChannel channel = FileChannel.open(selectedDirectory.toPath().resolve(listView.getItems().get(i) + ".dds"), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
                             ByteBuffer dynamicBuffer = ByteBuffer.allocate(allImages.get(i).length);
 
                             dynamicBuffer.clear();
@@ -95,7 +93,7 @@ public class Emb {
                         }
                     }
                     else {
-                        try(FileChannel channel = FileChannel.open(selectedDirectory.toPath().resolve(allEntries.get(i).replace("\0", "").trim()), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+                        try(FileChannel channel = FileChannel.open(selectedDirectory.toPath().resolve(listView.getItems().get(i).replace("\0", "").trim()), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
                             ByteBuffer dynamicBuffer = ByteBuffer.allocate(allImages.get(i).length);
 
                             dynamicBuffer.clear();
@@ -125,7 +123,7 @@ public class Emb {
             File selectedFile = fileChooser.showOpenDialog(null);
 
             if (selectedFile != null) {
-                embReader(selectedFile.toPath(), allEntries.size());
+                embReader(selectedFile.toPath(), listView.getItems().size());
             }
         });
 
@@ -231,7 +229,6 @@ public class Emb {
     }
 
     private void Delete() { 
-        allEntries.remove(listView.getSelectionModel().getSelectedIndex());
         allImages.remove(listView.getSelectionModel().getSelectedIndex());
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
     }
@@ -248,8 +245,7 @@ public class Emb {
         if (selectedFile != null) {
             try {
                 allImages.add((listView.getSelectionModel().getSelectedIndex() + 1), Files.readAllBytes(selectedFile.toPath()));
-                allEntries.add((listView.getSelectionModel().getSelectedIndex() + 1), new String(selectedFile.getName()));
-                listView.getItems().add((listView.getSelectionModel().getSelectedIndex() + 1),(allEntries.get(listView.getSelectionModel().getSelectedIndex() + 1)));
+                listView.getItems().add((listView.getSelectionModel().getSelectedIndex() + 1), selectedFile.getName().replace(".dds", ""));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -268,8 +264,7 @@ public class Emb {
         if (selectedFile != null) {
             try {
                 allImages.add((listView.getSelectionModel().getSelectedIndex()), Files.readAllBytes(selectedFile.toPath()));
-                allEntries.add((listView.getSelectionModel().getSelectedIndex()), new String(selectedFile.getName()));
-                listView.getItems().add((listView.getSelectionModel().getSelectedIndex()), (allEntries.get(listView.getSelectionModel().getSelectedIndex())));
+                listView.getItems().add((listView.getSelectionModel().getSelectedIndex()), selectedFile.getName().replace(".dds", ""));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -288,10 +283,8 @@ public class Emb {
         if (selectedFile != null) {
             try {
                 allImages.add((listView.getSelectionModel().getSelectedIndex() + 1), Files.readAllBytes(selectedFile.toPath()));
-                allEntries.add((listView.getSelectionModel().getSelectedIndex() + 1), new String(selectedFile.getName()));
-                listView.getItems().add(listView.getSelectionModel().getSelectedIndex() + 1, allEntries.get(listView.getSelectionModel().getSelectedIndex() + 1));
+                listView.getItems().add(listView.getSelectionModel().getSelectedIndex() + 1, selectedFile.getName().replace(".dds", ""));
 
-                allEntries.remove(listView.getSelectionModel().getSelectedIndex());
                 allImages.remove(listView.getSelectionModel().getSelectedIndex());
                 listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
 
@@ -375,7 +368,6 @@ public class Emb {
             intBuffer.flip();
             filesOffset = intBuffer.getInt();
 
-            allEntries = new ArrayList<>(embEntries);
             allImages = new ArrayList<>(embEntries);
 
             for (int i = 0; i < embEntries; i++) {
@@ -405,8 +397,7 @@ public class Emb {
                     channel.read(dynamicStringBuffer);
                     dynamicStringBuffer.flip();
 
-                    allEntries.add(new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1));
-                    listView.getItems().add(allEntries.get(i));
+                    listView.getItems().add(new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1));
 
                     channel.position(entriesOffset + i * 8);
                     intBuffer.clear();
@@ -440,8 +431,7 @@ public class Emb {
                         dataString = "DATA"; 
                     }
 
-                    allEntries.add(new String(dataString + i)); 
-                    listView.getItems().add(allEntries.get(i));
+                    listView.getItems().add(dataString + i);
 
                     channel.position(entriesOffset + i * 8);
                     intBuffer.clear();
@@ -496,7 +486,6 @@ public class Emb {
             intBuffer.flip();
             filesOffset = intBuffer.getInt();
 
-            allEntries.ensureCapacity(embEntries + initialEntries);
             allImages.ensureCapacity(embEntries + initialEntries);
 
             for (int i = 0; i < embEntries; i++) {
@@ -524,8 +513,7 @@ public class Emb {
                     channel.read(dynamicStringBuffer);
                     dynamicStringBuffer.flip();
 
-                    allEntries.add(new String(dynamicStringBuffer.array(),StandardCharsets.ISO_8859_1));
-                    listView.getItems().add(allEntries.getLast());
+                    listView.getItems().add(new String(dynamicStringBuffer.array(),StandardCharsets.ISO_8859_1));
 
                     channel.position(entriesOffset + i * 8);
                     intBuffer.clear();
@@ -559,8 +547,7 @@ public class Emb {
                         dataString = "DATA"; 
                     }
 
-                    allEntries.add(new String(dataString + (initialEntries + i)));
-                    listView.getItems().add(allEntries.getLast());
+                    listView.getItems().add(dataString + (initialEntries + i));
 
                     channel.position(entriesOffset + i * 8);
                     intBuffer.clear();
@@ -594,8 +581,8 @@ public class Emb {
         try(FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             int entriesOffset = 32;
             int imageSizeOffset = entriesOffset + 4;
-            int filesOffset= 32 + allEntries.size() * 8;
-            int absoluteDataStart = 32 + allEntries.size() * 12;
+            int filesOffset= 32 + listView.getItems().size() * 8;
+            int absoluteDataStart = 32 + listView.getItems().size() * 12;
             int byteBoundary64 = 64;
 
             ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
@@ -625,7 +612,7 @@ public class Emb {
 
             channel.position(12);
             intBuffer.clear();
-            intBuffer.putInt(allEntries.size());
+            intBuffer.putInt(listView.getItems().size());
             intBuffer.flip();
             channel.write(intBuffer);
             
@@ -644,18 +631,18 @@ public class Emb {
                 intBuffer.flip();
                 channel.write(intBuffer);
 
-                for (int i = 0; i < allEntries.size(); i++) {
+                for (int i = 0; i < listView.getItems().size(); i++) {
                     channel.position(filesOffset + i * 4);
                     intBuffer.clear();
                     intBuffer.putInt(fileNamesOffset);
                     intBuffer.flip();
                     channel.write(intBuffer);
                     
-                    dynamicStringBuffer = ByteBuffer.allocate(allEntries.get(i).length());
+                    dynamicStringBuffer = ByteBuffer.allocate(listView.getItems().get(i).length());
 
                     channel.position(fileNamesOffset);
                     dynamicStringBuffer.clear();
-                    dynamicStringBuffer = ByteBuffer.wrap(allEntries.get(i).getBytes());
+                    dynamicStringBuffer = ByteBuffer.wrap(listView.getItems().get(i).getBytes());
                     channel.write(dynamicStringBuffer);
 
                     channel.position(entriesOffset + i * 8);
@@ -677,13 +664,13 @@ public class Emb {
                     dynamicImageBuffer = ByteBuffer.wrap(allImages.get(i));
                     channel.write(dynamicImageBuffer);
 
-                    fileNamesOffset += allEntries.get(i).length();
+                    fileNamesOffset += listView.getItems().get(i).length();
                     absoluteDataStart += allImages.get(i).length;
                     imageOffset += (allImages.get(i).length);
                 }
             }
             else{
-               for (int i = 0; i < allEntries.size(); i++) {
+               for (int i = 0; i < listView.getItems().size(); i++) {
                     channel.position(entriesOffset + i * 8);
                     intBuffer.clear();
                     intBuffer.putInt(imageOffset - i * 8);
