@@ -41,8 +41,6 @@ import javafx.scene.paint.Color;
 public class Bsa {
     TreeView<String> treeView = new TreeView<>();
 
-    ArrayList<TreeItem<String>> allEntries;
-    
     HashMap<TreeItem<String>, BsaMainEntry> bsaMainHashMap = new HashMap<>();
     HashMap<TreeItem<String>, BsaCollisionEntry> bsaCollisionHashMap = new HashMap<>();
     HashMap<TreeItem<String>, BsaExpirationEntry> bsaExpirationHashMap = new HashMap<>();
@@ -93,6 +91,8 @@ public class Bsa {
     Object copyContainer = new Object();
     ArrayList<Object[]> copyListContainer = new ArrayList<>();
     ArrayList<String> copyTypesContainer = new ArrayList<>();
+
+    int allEntries;
 
     public Bsa() {
         entriesActionListener();
@@ -4792,6 +4792,9 @@ public class Bsa {
             else if (newValue.getValue().equals("Expiration (After Effects)") && pasteItem.getText().contains("Expiration List")) {
                 pasteItem.setDisable(false);
             }
+            else if (newValue.getValue().equals("BSA Entry Passing") && pasteItem.getText().contains("BSA Entry Passing List")) {
+                pasteItem.setDisable(false);
+            }
             else if (newValue.getValue().equals("Movement") && pasteItem.getText().contains("Movement List")) {
                 pasteItem.setDisable(false);
             }
@@ -5439,7 +5442,7 @@ public class Bsa {
             if (e.isControlDown()&&e.getCode() == KeyCode.V) {
                 Paste();
             }
-            if (e.getCode()==KeyCode.DELETE) {
+            if (e.getCode() == KeyCode.DELETE) {
                 Delete();
             }
             if (e.isControlDown()&&e.getCode() == KeyCode.A) {
@@ -5454,13 +5457,13 @@ public class Bsa {
     private void AddEntry() {
         if (treeView.getSelectionModel().getSelectedIndex() < 0) return;
 
-        allEntries.add(new TreeItem<>("Entry "+ allEntries.size()));
+        treeView.getRoot().getChildren().add(new TreeItem<>("Entry "+ allEntries));
+
+        allEntries++;
 
         BsaMainEntry bsaMainEntry = new BsaMainEntry();
 
-        bsaMainHashMap.put(allEntries.getLast(), bsaMainEntry);
-
-        treeView.getRoot().getChildren().add(allEntries.getLast());
+        bsaMainHashMap.put(treeView.getRoot().getChildren().getLast(), bsaMainEntry);
     }
 
 
@@ -6323,14 +6326,16 @@ public class Bsa {
 
     private void AddItemCopy() {
         TreeItem<String> searchItem = grandParentEntry;
+        
         switch (addItemCopy.getText()) {
             case "Add Entry Copy  Ctrl+A" -> {
-                TreeItem<String> newEntry = new TreeItem<>("Entry " + allEntries.size());
+                TreeItem<String> newEntry = new TreeItem<>("Entry " + allEntries);
 
                 treeView.getRoot().getChildren().add(newEntry);
-                allEntries.add(newEntry);
 
                 bsaMainHashMap.put(newEntry, new BsaMainEntry((BsaMainEntry) copyContainer));
+
+                allEntries++;
 
                 for (int i = 0; i < copyTypesContainer.size(); i++) {
                     switch (copyTypesContainer.get(i)) {
@@ -7774,12 +7779,16 @@ public class Bsa {
                 }
             }
 
-            treeView.getRoot().getChildren().remove(getGrandParent);
-            allEntries.remove(getGrandParent);
+            for (int i = treeView.getRoot().getChildren().indexOf(getGrandParent.nextSibling()); i < treeView.getRoot().getChildren().size(); i++) {
 
-            for (int i = 0; i < treeView.getRoot().getChildren().size(); i++) {
-                treeView.getRoot().getChildren().get(i).setValue("Entry " + i);
+                int entryIndex = Integer.parseInt(treeView.getRoot().getChildren().get(i).getValue().toString().replaceAll("\\D+", ""));
+
+                treeView.getRoot().getChildren().get(i).setValue("Entry " + (entryIndex - 1));
             }
+
+            treeView.getRoot().getChildren().remove(getGrandParent);
+
+            allEntries--;
         }
         else if (currentEntry.getChildren().isEmpty() && currentEntry.getValue().startsWith("Entry")) {
             TreeItem<String> getParent = currentEntry.getParent();
@@ -8140,19 +8149,20 @@ public class Bsa {
             channel.read(shortBuffer);
             shortBuffer.flip();
             bsaEntries = shortBuffer.getShort();
+            allEntries = bsaEntries;
 
             if (bsaEntries > 0) {
                 treeView.setRoot(new TreeItem<>("dummy"));
                 treeView.setShowRoot(false);
             }
 
-            allEntries = new ArrayList<>(bsaEntries);
-
             channel.position(20);
             intBuffer.clear();
             channel.read(intBuffer);
             intBuffer.flip();
             offset = intBuffer.getInt();
+
+            int mainIndex = 0;
 
             for (int i = 0; i < bsaEntries; i++) {
                 int index = 0;
@@ -8164,11 +8174,10 @@ public class Bsa {
                 entryOffset = intBuffer.getInt();
 
                 if(entryOffset != 0) {
-                    allEntries.add(new TreeItem<>("Entry " + i));
-                    treeView.getRoot().getChildren().add(allEntries.get(i));
+                    treeView.getRoot().getChildren().add(new TreeItem<>("Entry " + i));
 
                     BsaMainEntry bsaMainEntry = new BsaMainEntry();
-                    bsaMainHashMap.put(allEntries.get(i), bsaMainEntry);
+                    bsaMainHashMap.put(treeView.getRoot().getChildren().get(mainIndex), bsaMainEntry);
 
                     channel.position(entryOffset);
                     intBuffer.clear();
@@ -8196,14 +8205,14 @@ public class Bsa {
                     collisionOffset += entryOffset;
 
                     if (collisionEntriesCount > 0) {
-                        allEntries.get(i).getChildren().add(new TreeItem<>("Collision (After Effects)"));
+                        treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Collision (After Effects)"));
 
                         for (int j = 0; j < collisionEntriesCount; j++) {
                             BsaCollisionEntry bsaCollisionEntry = new BsaCollisionEntry();
 
-                            allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ j));
+                            treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ j));
 
-                            bsaCollisionHashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(j), bsaCollisionEntry);
+                            bsaCollisionHashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j), bsaCollisionEntry);
 
                             channel.position(collisionOffset + j * 24);
                             shortBuffer.clear();
@@ -8265,14 +8274,14 @@ public class Bsa {
                     expirationOffset += entryOffset;
 
                     if (expirationEntriesCount > 0) {
-                        allEntries.get(i).getChildren().add(new TreeItem<>("Expiration (After Effects)"));
+                        treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Expiration (After Effects)"));
 
                         for (int j = 0; j < expirationEntriesCount; j++) {
                             BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
 
-                            allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + j));
+                            treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + j));
 
-                            bsaExpirationHashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(j), bsaExpirationEntry);
+                            bsaExpirationHashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j), bsaExpirationEntry);
                             
                             channel.position(expirationOffset + j * 8);
                             shortBuffer.clear();
@@ -8416,14 +8425,14 @@ public class Bsa {
 
                         switch (type) {
                             case 0 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Entry Passing"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("BSA Entry Passing"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType0Entry bsaType0Entry = new BsaType0Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                    bsaType0HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType0Entry);
+                                    bsaType0HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType0Entry);
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -8477,14 +8486,14 @@ public class Bsa {
                                 index++;
                             }
                             case 1 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("Movement"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Movement"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType1Entry bsaType1Entry = new BsaType1Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                    bsaType1HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType1Entry);
+                                    bsaType1HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType1Entry);
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -8574,14 +8583,14 @@ public class Bsa {
                                 index++;
                             }
                             case 2 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 2"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("BSA Type 2"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType2Entry bsaType2Entry = new BsaType2Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                    bsaType2HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType2Entry);
+                                    bsaType2HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType2Entry);
                                     
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -8623,14 +8632,14 @@ public class Bsa {
                                 index++;
                             }
                             case 3 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("Hitbox"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Hitbox"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType3Entry bsaType3Entry = new BsaType3Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                    bsaType3HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType3Entry);
+                                    bsaType3HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType3Entry);
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k  *4);
                                     shortBuffer.clear();
@@ -8780,14 +8789,14 @@ public class Bsa {
                                 index++;
                             } 
                             case 4 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("Deflection"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Deflection"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType4Entry bsaType4Entry = new BsaType4Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                    bsaType4HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType4Entry);
+                                    bsaType4HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType4Entry);
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -8901,14 +8910,14 @@ public class Bsa {
                                 index++;
                             }
                             case 6 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("Effect"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Effect"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType6Entry bsaType6Entry = new BsaType6Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                    bsaType6HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType6Entry);
+                                    bsaType6HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType6Entry);
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -8980,14 +8989,14 @@ public class Bsa {
                                 index++;
                             }
                             case 7 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("Sound"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Sound"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType7Entry bsaType7Entry = new BsaType7Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                    bsaType7HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType7Entry);
+                                    bsaType7HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType7Entry);
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -9029,14 +9038,14 @@ public class Bsa {
                                 index++;
                             }
                             case 8 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("Screen Effect"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Screen Effect"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType8Entry bsaType8Entry = new BsaType8Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                    bsaType8HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType8Entry);
+                                    bsaType8HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType8Entry);
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -9096,14 +9105,14 @@ public class Bsa {
                                 index++;
                             }
                             case 10 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 10"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("BSA Type 10"));
 
                                 for (int k=0; k < typeCount; k++) {
                                     BsaType10Entry bsaType10Entry = new BsaType10Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                    bsaType10HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType10Entry);
+                                    bsaType10HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType10Entry);
                                     
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -9139,14 +9148,14 @@ public class Bsa {
                                 index++;
                             }
                             case 12 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 12"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("BSA Type 12"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType12Entry bsaType12Entry = new BsaType12Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                    bsaType12HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType12Entry);
+                                    bsaType12HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType12Entry);
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -9194,14 +9203,14 @@ public class Bsa {
                                 index++;
                             }
                             case 13 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 13"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("BSA Type 13"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType13Entry bsaType13Entry = new BsaType13Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry "+ k));
 
-                                    bsaType13HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType13Entry);
+                                    bsaType13HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType13Entry);
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -9273,14 +9282,14 @@ public class Bsa {
                                 index++;
                             }
                             case 14 -> {
-                                allEntries.get(i).getChildren().add(new TreeItem<>("BSA Type 14"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("BSA Type 14"));
 
                                 for (int k = 0;k < typeCount; k++) {
                                     BsaType14Entry bsaType14Entry = new BsaType14Entry();
 
-                                    allEntries.get(i).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
+                                    treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                    bsaType14HashMap.put(allEntries.get(i).getChildren().get(index).getChildren().get(k), bsaType14Entry);
+                                    bsaType14HashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k), bsaType14Entry);
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -9437,10 +9446,9 @@ public class Bsa {
                             }
                         }
                     }
-                }
-                else {
-                    allEntries.add(new TreeItem<>(null));
-                }
+
+                    mainIndex++;
+                } 
             }
         }
         catch(IOException e) {
@@ -9451,7 +9459,7 @@ public class Bsa {
     public void bsaWriter(Path path) {
         try(FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             int offset = 24;
-            int entryOffset = 24 + allEntries.size() * 4;
+            int entryOffset = 24 + allEntries * 4;
             int collisionOffset = 52;
             int expirationOffset = 52;
             int  typesOffset = 52;
@@ -9479,7 +9487,7 @@ public class Bsa {
 
             channel.position(18);
             shortBuffer.clear();
-            shortBuffer.putShort((short)allEntries.size());
+            shortBuffer.putShort((short) allEntries);
             shortBuffer.flip();
             channel.write(shortBuffer);
 
@@ -9488,15 +9496,18 @@ public class Bsa {
             intBuffer.putInt(offset);
             intBuffer.flip();
             channel.write(intBuffer);
-            
-            for (int i = 0; i < allEntries.size(); i++) {
-                if(allEntries.get(i).getValue() != null) {
+
+            int mainIndex = 0;
+
+            for (int i = 0; i < allEntries; i++) {
+
+                if(Integer.parseInt(treeView.getRoot().getChildren().get(mainIndex).getValue().toString().replaceAll("\\D+", "")) == i) {
                     BsaMainEntry bsaMainEntry = new BsaMainEntry();
-                    bsaMainEntry = bsaMainHashMap.get(allEntries.get(i));
+                    bsaMainEntry = bsaMainHashMap.get(treeView.getRoot().getChildren().get(mainIndex));
 
                     int index = 0;
                     short typesCount = 0;
-                    
+
                     channel.position(offset + i * 4);
                     intBuffer.clear();
                     intBuffer.putInt(entryOffset);
@@ -9509,8 +9520,8 @@ public class Bsa {
                     intBuffer.flip();
                     channel.write(intBuffer);
 
-                    if (allEntries.get(i).getChildren().get(index).getValue().equals("Collision (After Effects)")) {
-                        collisionEntriesCount = allEntries.get(i).getChildren().get(index).getChildren().size();
+                    if (treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getValue().equals("Collision (After Effects)")) {
+                        collisionEntriesCount = treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().size();
                     }
                     else {
                         collisionEntriesCount = 0;
@@ -9533,7 +9544,7 @@ public class Bsa {
                     if (collisionEntriesCount > 0) {
                         for (int j = 0; j < collisionEntriesCount; j++) {
                             BsaCollisionEntry bsaCollisionEntry = new BsaCollisionEntry();
-                            bsaCollisionEntry = bsaCollisionHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
+                            bsaCollisionEntry = bsaCollisionHashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j));
 
                             channel.position(collisionOffset + j * 24);
                             shortBuffer.clear();
@@ -9591,8 +9602,8 @@ public class Bsa {
                         index++;
                     } 
                     
-                    if (allEntries.get(i).getChildren().get(index).getValue().equals("Expiration (After Effects)")) {
-                        expirationEntriesCount = allEntries.get(i).getChildren().get(index).getChildren().size();
+                    if (treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getValue().equals("Expiration (After Effects)")) {
+                        expirationEntriesCount = treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().size();
                     }
                     else {
                         expirationEntriesCount = 0;
@@ -9615,7 +9626,7 @@ public class Bsa {
                     if (expirationEntriesCount > 0) {
                         for (int j = 0;j < expirationEntriesCount; j++) {
                             BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
-                            bsaExpirationEntry = bsaExpirationHashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(j));
+                            bsaExpirationEntry = bsaExpirationHashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j));
                         
                             channel.position(expirationOffset + j * 8);
                             shortBuffer.clear();
@@ -9702,8 +9713,8 @@ public class Bsa {
                     shortBuffer.flip();
                     channel.write(shortBuffer);
                     
-                    for (int j = 0; j < allEntries.get(i).getChildren().size(); j++) {
-                        if (allEntries.get(i).getChildren().get(j).getValue() != "Collision (After Effects)" && allEntries.get(i).getChildren().get(j).getValue() != "Expiration (After Effects)") {
+                    for (int j = 0; j < treeView.getRoot().getChildren().get(mainIndex).getChildren().size(); j++) {
+                        if (treeView.getRoot().getChildren().get(mainIndex).getChildren().get(j).getValue() != "Collision (After Effects)" && treeView.getRoot().getChildren().get(mainIndex).getChildren().get(j).getValue() != "Expiration (After Effects)") {
                             typesCount++;
                         }
                     }
@@ -9744,7 +9755,7 @@ public class Bsa {
                     entrySize += 52;
 
                     for (int j = 0; j < typesCount; j++) {
-                        switch(allEntries.get(i).getChildren().get(index).getValue()) {
+                        switch(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getValue()) {
                             case "BSA Entry Passing" -> {
                                 type = 0;
                                 typeSize = 20;
@@ -9795,7 +9806,7 @@ public class Bsa {
                             }      
                         }
 
-                        typeCount = (short) allEntries.get(i).getChildren().get(index).getChildren().size();
+                        typeCount = (short) treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().size();
                         
                         channel.position(typesOffset + j * 16);
                         shortBuffer.clear();
@@ -9820,7 +9831,7 @@ public class Bsa {
                         for (int k = 0; k < typeCount; k++) {
                             switch (type) {
                                 case 0 -> {
-                                    BsaType0Entry bsaType0Entry = bsaType0HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType0Entry bsaType0Entry = bsaType0HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -9873,7 +9884,7 @@ public class Bsa {
                                     entrySize += 20;
                                 }
                                 case 1 -> {
-                                    BsaType1Entry bsaType1Entry = bsaType1HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType1Entry bsaType1Entry = bsaType1HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -9962,7 +9973,7 @@ public class Bsa {
                                     entrySize += 52;
                                 }
                                 case 2 -> {
-                                    BsaType2Entry bsaType2Entry = bsaType2HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType2Entry bsaType2Entry = bsaType2HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -10003,7 +10014,7 @@ public class Bsa {
                                     entrySize += 12;
                                 }
                                 case 3 -> {
-                                    BsaType3Entry bsaType3Entry = bsaType3HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType3Entry bsaType3Entry = bsaType3HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -10146,7 +10157,7 @@ public class Bsa {
                                     entrySize += 68;
                                 }
                                 case 4 -> {
-                                    BsaType4Entry bsaType4Entry = bsaType4HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType4Entry bsaType4Entry = bsaType4HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
                                     
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -10259,7 +10270,7 @@ public class Bsa {
                                     entrySize += 60;
                                 }
                                 case 6 -> {
-                                    BsaType6Entry bsaType6Entry = bsaType6HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType6Entry bsaType6Entry = bsaType6HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -10330,7 +10341,7 @@ public class Bsa {
                                     entrySize += 28;
                                 }
                                 case 7 -> {
-                                    BsaType7Entry bsaType7Entry = bsaType7HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType7Entry bsaType7Entry = bsaType7HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -10371,7 +10382,7 @@ public class Bsa {
                                     entrySize += 12;
                                 }
                                 case 8 -> {
-                                    BsaType8Entry bsaType8Entry = bsaType8HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType8Entry bsaType8Entry = bsaType8HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -10430,7 +10441,7 @@ public class Bsa {
                                     entrySize += 28;
                                 }
                                 case 10 -> {
-                                    BsaType10Entry bsaType10Entry = bsaType10HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType10Entry bsaType10Entry = bsaType10HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -10465,7 +10476,7 @@ public class Bsa {
                                     entrySize += 12;
                                 }
                                 case 12 -> {
-                                    BsaType12Entry bsaType12Entry = bsaType12HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType12Entry bsaType12Entry = bsaType12HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -10512,7 +10523,7 @@ public class Bsa {
                                     entrySize += 24;
                                 }
                                 case 13 -> {
-                                    BsaType13Entry bsaType13Entry = bsaType13HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType13Entry bsaType13Entry = bsaType13HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -10583,7 +10594,7 @@ public class Bsa {
                                     entrySize += 36;
                                 }
                                 case 14 -> {
-                                    BsaType14Entry bsaType14Entry = bsaType14HashMap.get(allEntries.get(i).getChildren().get(index).getChildren().get(k));
+                                    BsaType14Entry bsaType14Entry = bsaType14HashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(k));
 
                                     channel.position(typesOffset + hdrOffset + j * 16 + k * 4);
                                     shortBuffer.clear();
@@ -10759,9 +10770,7 @@ public class Bsa {
                     expirationOffset = 52;
                     typesOffset = 52;
 
-                }
-                else {
-
+                    mainIndex++;
                 }
             }
         }
