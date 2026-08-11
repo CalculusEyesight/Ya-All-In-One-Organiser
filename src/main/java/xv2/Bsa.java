@@ -4883,8 +4883,6 @@ public class Bsa {
 
                                 bsaCollisionHashMap.put(newChild, new BsaCollisionEntry());
 
-                                sortTreeItems(grandParentEntry);
-
                                 treeView.getSelectionModel().select(newChild);
                             }
                         }
@@ -6392,8 +6390,6 @@ public class Bsa {
 
                     bsaCollisionHashMap.put(newChild, new BsaCollisionEntry((BsaCollisionEntry) copyContainer));
 
-                    sortTreeItems(grandParentEntry);
-
                     treeView.getSelectionModel().select(newChild);
                 }
             }
@@ -6426,8 +6422,6 @@ public class Bsa {
 
                         bsaCollisionHashMap.put(newChild, new BsaCollisionEntry((BsaCollisionEntry) copyListContainer.get(0)[i]));
                     }
-
-                    sortTreeItems(grandParentEntry);
                 }
             }
             case "Add Expiration Copy  Ctrl+A" -> {
