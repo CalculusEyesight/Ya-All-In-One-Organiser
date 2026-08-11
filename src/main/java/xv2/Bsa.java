@@ -4855,23 +4855,14 @@ public class Bsa {
                     }
                 });
                 addSubEntry.setOnAction(ev -> {
-                    TreeItem<String> searchItem = grandParentEntry;
-                    
                     switch (addSubEntry.getItems().indexOf(ev.getTarget())) {
                         case 0 -> {
                             boolean hasCollision = false;
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("Collision (After Effects)")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasCollision = true;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("Collision (After Effects)")) {
+                                    hasCollision = true;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasCollision) {
                                 TreeItem<String> getParent = grandParentEntry.getChildren().get(0);
@@ -4900,19 +4891,12 @@ public class Bsa {
                         case 1 -> {
                             boolean hasExpiration = false;
                             TreeItem<String> expirationIndex = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("Expiration (After Effects)")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasExpiration = true;
-                                            expirationIndex = child;
-                                        }
-                                    }
+                            
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("Expiration (After Effects)")) {
+                                    hasExpiration = true;
+                                    expirationIndex = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasExpiration) {
                                 TreeItem<String> getParent = expirationIndex;
@@ -4940,19 +4924,12 @@ public class Bsa {
                         case 2 -> {
                             boolean hasType0 = false;
                             TreeItem<String> type0Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("BSA Entry Passing")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType0 = true;
-                                            type0Index = child;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("BSA Entry Passing")) {
+                                    hasType0 = true;
+                                    type0Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType0) {
                                 TreeItem<String> getParent = type0Index;
@@ -4980,19 +4957,12 @@ public class Bsa {
                         case 3 -> {
                             boolean hasType1 = false;
                             TreeItem<String> type1Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("Movement")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType1 = true;
-                                            type1Index = child;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("Movement")) {
+                                    hasType1 = true;
+                                    type1Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType1) {
                                 TreeItem<String> getParent = type1Index;
@@ -5021,19 +4991,12 @@ public class Bsa {
                         case 4 -> {
                             boolean hasType2 = false;
                             TreeItem<String> type2Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("BSA Type 2")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType2 = true;
-                                            type2Index = child;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("BSA Type 2")) {
+                                    hasType2 = true;
+                                    type2Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType2) {
                                 TreeItem<String> getParent = type2Index;
@@ -5062,19 +5025,12 @@ public class Bsa {
                         case 5 -> {
                             boolean hasType3 = false;
                             TreeItem<String> type3Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("Hitbox")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType3 = true;
-                                            type3Index = child;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("Hitbox")) {
+                                    hasType3 = true;
+                                    type3Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType3) {
                                 TreeItem<String> getParent = type3Index;
@@ -5103,19 +5059,12 @@ public class Bsa {
                         case 6 -> {
                             boolean hasType4 = false;
                             TreeItem<String> type4Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("Deflection")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType4 = true;
-                                            type4Index = child;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("Deflection")) {
+                                    hasType4 = true;
+                                    type4Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType4) {
                                 TreeItem<String> getParent = type4Index;
@@ -5144,19 +5093,12 @@ public class Bsa {
                         case 7 -> {
                             boolean hasType6 = false;
                             TreeItem<String> type6Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("Effect")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType6 = true;
-                                            type6Index = child;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("Effect")) {
+                                    hasType6 = true;
+                                    type6Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType6) {
                                 TreeItem<String> getParent = type6Index;
@@ -5185,19 +5127,12 @@ public class Bsa {
                         case 8 -> {
                             boolean hasType7 = false;
                             TreeItem<String> type7Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("Sound")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType7 = true;
-                                            type7Index = child;
-                                        }
-                                    }
+
+                           for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("Sound")) {
+                                    hasType7 = true;
+                                    type7Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType7) {
                                 TreeItem<String> getParent = type7Index;
@@ -5226,19 +5161,12 @@ public class Bsa {
                         case 9 -> {
                             boolean hasType8 = false;
                             TreeItem<String> type8Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("Screen Effect")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType8 = true;
-                                            type8Index = child;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("Screen Effect")) {
+                                    hasType8 = true;
+                                    type8Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType8) {
                                 TreeItem<String> getParent = type8Index;
@@ -5267,19 +5195,12 @@ public class Bsa {
                         case 10 -> {
                             boolean hasType10 = false;
                             TreeItem<String> type10Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("BSA Type 10")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType10 = true;
-                                            type10Index = child;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("BSA Type 10")) {
+                                    hasType10 = true;
+                                    type10Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType10) {
                                 TreeItem<String> getParent = type10Index;
@@ -5308,19 +5229,12 @@ public class Bsa {
                         case 11 -> {
                             boolean hasType12 = false;
                             TreeItem<String> type12Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("BSA Type 12")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType12 = true;
-                                            type12Index = child;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("BSA Type 12")) {
+                                    hasType12 = true;
+                                    type12Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType12) {
                                 TreeItem<String> getParent = type12Index;
@@ -5349,19 +5263,12 @@ public class Bsa {
                         case 12 -> {
                             boolean hasType13 = false;
                             TreeItem<String> type13Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("BSA Type 13")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType13 = true;
-                                            type13Index = child;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("BSA Type 13")) {
+                                    hasType13 = true;
+                                    type13Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType13) {
                                 TreeItem<String> getParent = type13Index;
@@ -5390,19 +5297,12 @@ public class Bsa {
                         case 13 -> {
                             boolean hasType14 = false;
                             TreeItem<String> type14Index = new TreeItem<>();
-                            while (searchItem != null) {
-                                for (TreeItem<String> child : searchItem.getChildren()) {
-                                    if (child.getValue().equals("BSA Type 14")) {
-                                        if (searchItem == grandParentEntry) {
-                                            hasType14 = true;
-                                            type14Index = child;
-                                        }
-                                    }
+
+                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                                if (child.getValue().equals("BSA Type 14")) {
+                                    hasType14 = true;
+                                    type14Index = child;
                                 }
-                                if (searchItem.previousSibling() == null) {
-                                    break;
-                                }
-                                searchItem = searchItem.previousSibling();
                             }
                             if (hasType14) {
                                 TreeItem<String> getParent = type14Index;
@@ -6325,8 +6225,6 @@ public class Bsa {
     }
 
     private void AddItemCopy() {
-        TreeItem<String> searchItem = grandParentEntry;
-        
         switch (addItemCopy.getText()) {
             case "Add Entry Copy  Ctrl+A" -> {
                 TreeItem<String> newEntry = new TreeItem<>("Entry " + allEntries);
@@ -6471,19 +6369,10 @@ public class Bsa {
             case "Add Collision Copy  Ctrl+A" -> {
                 boolean hasCollision = false;
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Collision (After Effects)")) {
-                            if (searchItem == grandParentEntry) {
-                                hasCollision = true;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Collision (After Effects)")) {
+                        hasCollision = true;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasCollision) {
                     TreeItem<String> getParent = grandParentEntry.getChildren().get(0);
@@ -6511,19 +6400,10 @@ public class Bsa {
             case "Add Collision List Copy  Ctrl+A" -> {
                 boolean hasCollision = false;
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Collision (After Effects)")) {
-                            if (searchItem == grandParentEntry) {
-                                hasCollision = true;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Collision (After Effects)")) {
+                        hasCollision = true;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasCollision) {
                     TreeItem<String> getParent = grandParentEntry.getChildren().get(0);
@@ -6552,23 +6432,13 @@ public class Bsa {
             }
             case "Add Expiration Copy  Ctrl+A" -> {
                 boolean hasExpiration = false;
-
                 TreeItem<String> expirationIndex = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Expiration (After Effects)")) {
-                            if (searchItem == grandParentEntry) {
-                                hasExpiration = true;
-                                expirationIndex = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Expiration (After Effects)")) {
+                        hasExpiration = true;
+                        expirationIndex = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasExpiration) {
                     TreeItem<String> getParent = expirationIndex;
@@ -6598,19 +6468,12 @@ public class Bsa {
             case "Add Expiration List Copy  Ctrl+A" -> {
                 boolean hasExpiration = false;
                 TreeItem<String> expirationIndex = new TreeItem<>();
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Expiration (After Effects)")) {
-                            if (searchItem == grandParentEntry) {
-                                hasExpiration = true;
-                                expirationIndex = child;
-                            }
-                        }
+
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Expiration (After Effects)")) {
+                        hasExpiration = true;
+                        expirationIndex = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasExpiration) {
                     TreeItem<String> getParent = expirationIndex;
@@ -6639,19 +6502,12 @@ public class Bsa {
             case "Add BSA Entry Passing Copy  Ctrl+A" -> {
                 boolean hasType0 = false;
                 TreeItem<String> type0Index = new TreeItem<>();
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Entry Passing")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType0 = true;
-                                type0Index = child;
-                            }
-                        }
+
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Entry Passing")) {
+                        hasType0 = true;
+                        type0Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType0) {
                     TreeItem<String> getParent = type0Index;
@@ -6678,22 +6534,13 @@ public class Bsa {
             }
             case "Add BSA Entry Passing List Copy  Ctrl+A" -> {
                 boolean hasType0 = false;
-
                 TreeItem<String> type0Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Entry Passing")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType0 = true;
-                                type0Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Entry Passing")) {
+                        hasType0 = true;
+                        type0Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType0) {
                     TreeItem<String> getParent = type0Index;
@@ -6721,22 +6568,13 @@ public class Bsa {
             }
             case "Add Movement Copy  Ctrl+A" -> {
                 boolean hasType1 = false;
-
                 TreeItem<String> type1Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Movement")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType1 = true;
-                                type1Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Movement")) {
+                        hasType1 = true;
+                        type1Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType1) {
                     TreeItem<String> getParent = type1Index;
@@ -6763,26 +6601,16 @@ public class Bsa {
                 }
             }
             case "Add Movement List Copy  Ctrl+A" -> {
-                boolean hastype1 = false;
-
+                boolean hasType1 = false;
                 TreeItem<String> type1Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Movement")) {
-                            if (searchItem == grandParentEntry) {
-                                hastype1 = true;
-                                type1Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Movement")) {
+                        hasType1 = true;
+                        type1Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
-                if (hastype1) {
+                if (hasType1) {
                     TreeItem<String> getParent = type1Index;
 
                     for (int i = 0; i < copyListContainer.get(0).length; i++) {
@@ -6812,20 +6640,11 @@ public class Bsa {
 
                 TreeItem<String> type2Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Type 2")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType2 = true;
-                                type2Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Type 2")) {
+                        hasType2 = true;
+                        type2Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType2) {
                     TreeItem<String> getParent = type2Index;
@@ -6856,20 +6675,11 @@ public class Bsa {
 
                 TreeItem<String> type2Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Type 2")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType2 = true;
-                                type2Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Type 2")) {
+                        hasType2 = true;
+                        type2Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType2) {
                     TreeItem<String> getParent = type2Index;
@@ -6898,23 +6708,13 @@ public class Bsa {
             }
             case "Add Hitbox Copy  Ctrl+A" -> {
                 boolean hasType3 = false;
-
                 TreeItem<String> type3Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Hitbox")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType3 = true;
-                                type3Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Hitbox")) {
+                        hasType3 = true;
+                        type3Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType3) {
                     TreeItem<String> getParent = type3Index;
@@ -6942,23 +6742,13 @@ public class Bsa {
             }
             case "Add Hitbox List Copy  Ctrl+A" -> {
                 boolean hasType3 = false;
-
                 TreeItem<String> type3Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Hitbox")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType3 = true;
-                                type3Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Hitbox")) {
+                        hasType3 = true;
+                        type3Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType3) {
                     TreeItem<String> getParent = type3Index;
@@ -6986,23 +6776,13 @@ public class Bsa {
             }
             case "Add Deflection Copy  Ctrl+A" -> {
                 boolean hasType4 = false;
-
                 TreeItem<String> type4Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Deflection")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType4 = true;
-                                type4Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Deflection")) {
+                        hasType4 = true;
+                        type4Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType4) {
                     TreeItem<String> getParent = type4Index;
@@ -7033,20 +6813,11 @@ public class Bsa {
 
                 TreeItem<String> type4Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Deflection")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType4 = true;
-                                type4Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Deflection")) {
+                        hasType4 = true;
+                        type4Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType4) {
                     TreeItem<String> getParent = type4Index;
@@ -7075,23 +6846,13 @@ public class Bsa {
             }
             case "Add Effect Copy  Ctrl+A" -> {
                 boolean hasType6 = false;
-
                 TreeItem<String> type6Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Effect")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType6 = true;
-                                type6Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Effect")) {
+                        hasType6 = true;
+                        type6Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType6) {
                     TreeItem<String> getParent = type6Index;
@@ -7119,23 +6880,13 @@ public class Bsa {
             }
             case "Add Effect List Copy  Ctrl+A" -> {
                 boolean hasType6 = false;
-
                 TreeItem<String> type6Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Effect")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType6 = true;
-                                type6Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Effect")) {
+                        hasType6 = true;
+                        type6Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType6) {
                     TreeItem<String> getParent = type6Index;
@@ -7164,23 +6915,13 @@ public class Bsa {
             }
             case "Add Sound Copy  Ctrl+A" -> {
                 boolean hasType7 = false;
-
                 TreeItem<String> type7Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Sound")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType7 = true;
-                                type7Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Sound")) {
+                        hasType7 = true;
+                        type7Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType7) {
                     TreeItem<String> getParent = type7Index;
@@ -7208,23 +6949,13 @@ public class Bsa {
             }
             case "Add Sound List Copy  Ctrl+A" -> {
                 boolean hasType7 = false;
-
                 TreeItem<String> type7Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Sound")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType7 = true;
-                                type7Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Sound")) {
+                        hasType7 = true;
+                        type7Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType7) {
                     TreeItem<String> getParent = type7Index;
@@ -7253,23 +6984,13 @@ public class Bsa {
             }
             case "Add Screen Effect Copy  Ctrl+A" -> {
                 boolean hasType8 = false;
-
                 TreeItem<String> type8Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Screen Effect")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType8 = true;
-                                type8Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Screen Effect")) {
+                        hasType8 = true;
+                        type8Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType8) {
                     TreeItem<String> getParent = type8Index;
@@ -7297,23 +7018,13 @@ public class Bsa {
             }
             case "Add Screen Effect List Copy  Ctrl+A" -> {
                 boolean hasType8 = false;
-
                 TreeItem<String> type8Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("Screen Effect")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType8 = true;
-                                type8Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("Screen Effect")) {
+                        hasType8 = true;
+                        type8Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType8) {
                     TreeItem<String> getParent = type8Index;
@@ -7342,23 +7053,13 @@ public class Bsa {
             }
             case "Add BSA Type 10 Copy  Ctrl+A" -> {
                 boolean hasType10 = false;
-
                 TreeItem<String> type10Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Type 10")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType10 = true;
-                                type10Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Type 10")) {
+                        hasType10 = true;
+                        type10Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType10) {
                     TreeItem<String> getParent = type10Index;
@@ -7385,26 +7086,16 @@ public class Bsa {
                 }
             }
             case "Add BSA Type 10 List Copy  Ctrl+A" -> {
-                boolean hastype10 = false;
-
+                boolean hasType10 = false;
                 TreeItem<String> type10Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Type 10")) {
-                            if (searchItem == grandParentEntry) {
-                                hastype10 = true;
-                                type10Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Type 10")) {
+                        hasType10 = true;
+                        type10Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
-                if (hastype10) {
+                if (hasType10) {
                     TreeItem<String> getParent = type10Index;
 
                     for (int i = 0; i < copyListContainer.get(0).length; i++) {
@@ -7434,20 +7125,11 @@ public class Bsa {
 
                 TreeItem<String> type12Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Type 12")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType12 = true;
-                                type12Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Type 12")) {
+                        hasType12 = true;
+                        type12Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType12) {
                     TreeItem<String> getParent = type12Index;
@@ -7474,26 +7156,16 @@ public class Bsa {
                 }
             }
             case "Add BSA Type 12 List Copy  Ctrl+A" -> {
-                boolean hastype12 = false;
-
+                boolean hasType12 = false;
                 TreeItem<String> type12Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Type 12")) {
-                            if (searchItem == grandParentEntry) {
-                                hastype12 = true;
-                                type12Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Type 12")) {
+                        hasType12 = true;
+                        type12Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
-                if (hastype12) {
+                if (hasType12) {
                     TreeItem<String> getParent = type12Index;
 
                     for (int i = 0; i < copyListContainer.get(0).length; i++) {
@@ -7520,23 +7192,13 @@ public class Bsa {
             }
             case "Add BSA Type 13 Copy  Ctrl+A" -> {
                 boolean hasType13 = false;
-
                 TreeItem<String> type13Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Type 13")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType13 = true;
-                                type13Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Type 13")) {
+                        hasType13 = true;
+                        type13Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType13) {
                     TreeItem<String> getParent = type13Index;
@@ -7563,26 +7225,16 @@ public class Bsa {
                 }
             }
             case "Add BSA Type 13 List Copy  Ctrl+A" -> {
-                boolean hastype13 = false;
-
+                boolean hasType13 = false;
                 TreeItem<String> type13Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Type 13")) {
-                            if (searchItem == grandParentEntry) {
-                                hastype13 = true;
-                                type13Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Type 13")) {
+                        hasType13 = true;
+                        type13Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
-                if (hastype13) {
+                if (hasType13) {
                     TreeItem<String> getParent = type13Index;
 
                     for (int i = 0; i < copyListContainer.get(0).length; i++) {
@@ -7609,23 +7261,13 @@ public class Bsa {
             }
             case "Add BSA Type 14 Copy  Ctrl+A" -> {
                 boolean hasType14 = false;
-
                 TreeItem<String> type14Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Type 14")) {
-                            if (searchItem == grandParentEntry) {
-                                hasType14 = true;
-                                type14Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Type 14")) {
+                        hasType14 = true;
+                        type14Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
                 if (hasType14) {
                     TreeItem<String> getParent = type14Index;
@@ -7652,26 +7294,16 @@ public class Bsa {
                 }
             }
             case "Add BSA Type 14 List Copy  Ctrl+A" -> {
-                boolean hastype14 = false;
-
+                boolean hasType14 = false;
                 TreeItem<String> type14Index = new TreeItem<>();
 
-                while (searchItem != null) {
-                    for (TreeItem<String> child : searchItem.getChildren()) {
-                        if (child.getValue().equals("BSA Type 14")) {
-                            if (searchItem == grandParentEntry) {
-                                hastype14 = true;
-                                type14Index = child;
-                            }
-                        }
+                for (TreeItem<String> child : grandParentEntry.getChildren()) {
+                    if (child.getValue().equals("BSA Type 14")) {
+                        hasType14 = true;
+                        type14Index = child;
                     }
-                    if (searchItem.previousSibling() == null) {
-                        break;
-                    }
-
-                    searchItem = searchItem.previousSibling();
                 }
-                if (hastype14) {
+                if (hasType14) {
                     TreeItem<String> getParent = type14Index;
                     for (int i = 0; i < copyListContainer.get(0).length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
