@@ -7779,13 +7779,15 @@ public class Bsa {
                 }
             }
 
-            for (int i = treeView.getRoot().getChildren().indexOf(getGrandParent.nextSibling()); i < treeView.getRoot().getChildren().size(); i++) {
+            if (getGrandParent.nextSibling() != null) {
+                for (int i = treeView.getRoot().getChildren().indexOf(getGrandParent.nextSibling()); i < treeView.getRoot().getChildren().size(); i++) {
 
-                int entryIndex = Integer.parseInt(treeView.getRoot().getChildren().get(i).getValue().toString().replaceAll("\\D+", ""));
+                    int entryIndex = Integer.parseInt(treeView.getRoot().getChildren().get(i).getValue().toString().replaceAll("\\D+", ""));
 
-                treeView.getRoot().getChildren().get(i).setValue("Entry " + (entryIndex - 1));
+                    treeView.getRoot().getChildren().get(i).setValue("Entry " + (entryIndex - 1));
+                }
             }
-
+            
             treeView.getRoot().getChildren().remove(getGrandParent);
 
             allEntries--;
