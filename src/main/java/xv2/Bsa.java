@@ -7314,9 +7314,7 @@ public class Bsa {
         if (currentEntry.getParent() == treeView.getRoot()) {
             bsaMainHashMap.remove(currentEntry);
 
-            TreeItem<String> getGrandParent = currentEntry;
-
-            for (TreeItem<String> getParent : getGrandParent.getChildren()) {
+            for (TreeItem<String> getParent : grandParentEntry.getChildren()) {
                 switch (getParent.getValue()) {
                     case "Collision (After Effects)" -> {
                         for (TreeItem<String> child : getParent.getChildren()) {
@@ -7391,8 +7389,8 @@ public class Bsa {
                 }
             }
 
-            if (getGrandParent.nextSibling() != null) {
-                for (int i = treeView.getRoot().getChildren().indexOf(getGrandParent.nextSibling()); i < treeView.getRoot().getChildren().size(); i++) {
+            if (grandParentEntry.nextSibling() != null) {
+                for (int i = treeView.getRoot().getChildren().indexOf(grandParentEntry.nextSibling()); i < treeView.getRoot().getChildren().size(); i++) {
 
                     int entryIndex = Integer.parseInt(treeView.getRoot().getChildren().get(i).getValue().toString().replaceAll("\\D+", ""));
 
@@ -7400,7 +7398,7 @@ public class Bsa {
                 }
             }
             
-            treeView.getRoot().getChildren().remove(getGrandParent);
+            treeView.getRoot().getChildren().remove(grandParentEntry);
 
             allEntries--;
         }
