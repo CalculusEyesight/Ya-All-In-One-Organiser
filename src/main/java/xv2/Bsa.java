@@ -5475,7 +5475,7 @@ public class Bsa {
                 }
             }
         }
-        else if (currentEntry.getChildren().isEmpty()) {
+        else if (currentEntry.getChildren().isEmpty() && currentEntry.getValue().startsWith("Entry")) {
             switch (currentEntry.getParent().getValue()) {
                 case "Collision (After Effects)" -> {
                     copyContainer = new BsaCollisionEntry(bsaCollisionHashMap.get(currentEntry));
@@ -5576,6 +5576,14 @@ public class Bsa {
                     addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 14"));
                 }
             }
+        }
+        else if (currentEntry.getChildren().isEmpty() && currentEntry.getParent().getValue().startsWith("Entry")) {
+            copiedItem.setText(String.format(copiedItem.getText(), "Null"));
+            pasteItem.setText(String.format(pasteItem.getText(), "Null"));
+            addItemCopy.setText(String.format(addItemCopy.getText(), "Null"));
+
+            pasteItem.setDisable(true);
+            addItemCopy.setDisable(true);
         }
         else {
             copyListContainer = new Object[1][currentEntry.getChildren().size()];
