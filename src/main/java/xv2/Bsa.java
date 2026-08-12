@@ -8,7 +8,6 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -89,8 +88,8 @@ public class Bsa {
     TabPane tabPane = new TabPane();
 
     Object copyContainer = new Object();
-    ArrayList<Object[]> copyListContainer = new ArrayList<>();
-    ArrayList<String> copyTypesContainer = new ArrayList<>();
+    Object[][] copyListContainer;
+    String [] copyTypesContainer;
 
     int allEntries;
 
@@ -5381,110 +5380,97 @@ public class Bsa {
             pasteItem.setText(String.format(pasteItem.getText(), "Entry"));
             addItemCopy.setText(String.format(addItemCopy.getText(), "Entry"));
 
-            copyListContainer.clear();
-            copyTypesContainer.clear();
-
+            copyTypesContainer = new String[currentEntry.getChildren().size()];
             copyContainer = new BsaMainEntry(bsaMainHashMap.get(currentEntry));
-            
+            copyListContainer = new Object[currentEntry.getChildren().size()][];
+
             for (int i = 0; i < currentEntry.getChildren().size(); i++) {
+                copyListContainer[i] = new Object[currentEntry.getChildren().get(i).getChildren().size()];
+
                 switch (currentEntry.getChildren().get(i).getValue()) {
                     case "Collision (After Effects)" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaCollisionEntry(bsaCollisionHashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
+                            copyListContainer[i][j] = new BsaCollisionEntry(bsaCollisionHashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("Collision (After Effects)");
+                        copyTypesContainer[i] = "Collision (After Effects)";
                     }
                     case "Expiration (After Effects)" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaExpirationEntry(bsaExpirationHashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
+                            copyListContainer[i][j] = new BsaExpirationEntry(bsaExpirationHashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("Expiration (After Effects)");
+                        copyTypesContainer[i] = "Expiration (After Effects)";
                     }
                     case "BSA Entry Passing" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType0Entry(bsaType0HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
+                            copyListContainer[i][j] = new BsaType0Entry(bsaType0HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("BSA Entry Passing");
+                        copyTypesContainer[i] = "BSA Entry Passing";
                     }
                     case "Movement" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType1Entry(bsaType1HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
+                            copyListContainer[i][j] = new BsaType1Entry(bsaType1HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("Movement");
+                        copyTypesContainer[i] = "Movement";
                     }
                     case "BSA Type 2" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType2Entry(bsaType2HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
+                            copyListContainer[i][j] = new BsaType2Entry(bsaType2HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("BSA Type 2");
+                        copyTypesContainer[i] = "BSA Type 2";
                     }
                     case "Hitbox" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType3Entry(bsaType3HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
+                            copyListContainer[i][j] = new BsaType3Entry(bsaType3HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("Hitbox");
+                        copyTypesContainer[i] = "Hitbox";
                     }
                     case "Deflection" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType4Entry(bsaType4HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
+                            copyListContainer[i][j] = new BsaType4Entry(bsaType4HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("Deflection");
+                        copyTypesContainer[i] = "Deflection";
                     }
                     case "Effect" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType6Entry(bsaType6HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
+                            copyListContainer[i][j] = new BsaType6Entry(bsaType6HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("Effect");
+                        copyTypesContainer[i] = "Effect";
                     }
                     case "Sound" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
                         for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType7Entry(bsaType7HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                            copyListContainer[i][j] = new BsaType7Entry(bsaType7HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("Sound");
+                        copyTypesContainer[i] = "Sound";
                     }
                     case "Screen Effect" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
                         for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType8Entry(bsaType8HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                            copyListContainer[i][j] = new BsaType8Entry(bsaType8HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("Screen Effect");
+                        copyTypesContainer[i] = "Screen Effect";
                     }
                     case "BSA Type 10" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
                         for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType10Entry(bsaType10HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                            copyListContainer[i][j] = new BsaType10Entry(bsaType10HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("BSA Type 10");
+                        copyTypesContainer[i] = "BSA Type 10";
                     }
                     case "BSA Type 12" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
                         for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType12Entry(bsaType12HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                            copyListContainer[i][j] = new BsaType12Entry(bsaType12HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("BSA Type 12");
+                        copyTypesContainer[i] = "BSA Type 12";
                     }
                     case "BSA Type 13" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
                         for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType13Entry(bsaType13HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                            copyListContainer[i][j] = new BsaType13Entry(bsaType13HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("BSA Type 13");
+                        copyTypesContainer[i] = "BSA Type 13";
                     }
                     case "BSA Type 14" -> {
-                        copyListContainer.add(new Object[currentEntry.getChildren().get(i).getChildren().size()]);
                         for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer.get(i)[j] = new BsaType14Entry(bsaType14HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
+                            copyListContainer[i][j] = new BsaType14Entry(bsaType14HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
                         }
-                        copyTypesContainer.add("BSA Type 14");
+                        copyTypesContainer[i] = "BSA Type 14";
                     }
                 }
             }
@@ -5592,12 +5578,12 @@ public class Bsa {
             }
         }
         else {
-            copyListContainer.clear();
-            copyListContainer.add(new Object[currentEntry.getChildren().size()]);
+            copyListContainer = new Object[1][currentEntry.getChildren().size()];
+
             switch (currentEntry.getValue()) {
                 case "Collision (After Effects)" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaCollisionEntry(bsaCollisionHashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaCollisionEntry(bsaCollisionHashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "Collision List"));
@@ -5606,7 +5592,7 @@ public class Bsa {
                 }
                 case "Expiration (After Effects)" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaExpirationEntry(bsaExpirationHashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaExpirationEntry(bsaExpirationHashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "Expiration List"));
@@ -5615,7 +5601,7 @@ public class Bsa {
                 }
                 case "BSA Entry Passing" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType0Entry(bsaType0HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType0Entry(bsaType0HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "BSA Entry Passing List"));
@@ -5624,7 +5610,7 @@ public class Bsa {
                 }
                 case "Movement" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType1Entry(bsaType1HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType1Entry(bsaType1HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "Movement List"));
@@ -5633,7 +5619,7 @@ public class Bsa {
                 }
                 case "BSA Type 2" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType2Entry(bsaType2HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType2Entry(bsaType2HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 2 List"));
@@ -5642,7 +5628,7 @@ public class Bsa {
                 }
                 case "Hitbox" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType3Entry(bsaType3HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType3Entry(bsaType3HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "Hitbox List"));
@@ -5651,7 +5637,7 @@ public class Bsa {
                 }
                 case "Deflection" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType4Entry(bsaType4HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType4Entry(bsaType4HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "Deflection List"));
@@ -5660,7 +5646,7 @@ public class Bsa {
                 }
                 case "Effect" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType6Entry(bsaType6HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType6Entry(bsaType6HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "Effect List"));
@@ -5669,7 +5655,7 @@ public class Bsa {
                 }
                 case "Sound" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType7Entry(bsaType7HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType7Entry(bsaType7HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "Sound List"));
@@ -5678,7 +5664,7 @@ public class Bsa {
                 }
                 case "Screen Effect" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType8Entry(bsaType8HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType8Entry(bsaType8HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "Screen Effect List"));
@@ -5687,7 +5673,7 @@ public class Bsa {
                 }
                 case "BSA Type 10" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType10Entry(bsaType10HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType10Entry(bsaType10HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 10 List"));
@@ -5696,7 +5682,7 @@ public class Bsa {
                 }
                 case "BSA Type 12" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType12Entry(bsaType12HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType12Entry(bsaType12HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 12 List"));
@@ -5705,7 +5691,7 @@ public class Bsa {
                 }
                 case "BSA Type 13" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType13Entry(bsaType13HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType13Entry(bsaType13HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 13 List"));
@@ -5714,7 +5700,7 @@ public class Bsa {
                 }
                 case "BSA Type 14" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer.get(0)[currentEntry.getChildren().indexOf(child)] = new BsaType14Entry(bsaType14HashMap.get(child));
+                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType14Entry(bsaType14HashMap.get(child));
                     }
 
                     copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 14 List"));
@@ -5806,132 +5792,132 @@ public class Bsa {
 
             bsaMainHashMap.put(currentEntry, new BsaMainEntry((BsaMainEntry) copyContainer));
 
-            for (int i = 0; i < copyTypesContainer.size(); i++) {
-                switch (copyTypesContainer.get(i)) {
+            for (int i = 0; i < copyTypesContainer.length; i++) {
+                switch (copyTypesContainer[i]) {
                     case "Collision (After Effects)" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Collision (After Effects)"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaCollisionHashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaCollisionEntry((BsaCollisionEntry) copyListContainer.get(i)[j]));
+                            bsaCollisionHashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[i][j]));
                         }
                     }
                     case "Expiration (After Effects)" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Expiration (After Effects)"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaExpirationHashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaExpirationEntry((BsaExpirationEntry) copyListContainer.get(i)[j]));
+                            bsaExpirationHashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaExpirationEntry((BsaExpirationEntry) copyListContainer[i][j]));
                         }
                     }
                     case "BSA Entry Passing" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Entry Passing"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType0HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType0Entry((BsaType0Entry) copyListContainer.get(i)[j]));
+                            bsaType0HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType0Entry((BsaType0Entry) copyListContainer[i][j]));
                         }
                     }
                     case "Movement" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Movement"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType1HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType1Entry((BsaType1Entry) copyListContainer.get(i)[j]));
+                            bsaType1HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType1Entry((BsaType1Entry) copyListContainer[i][j]));
                         }
                     }
                     case "BSA Type 2" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 2"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType2HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType2Entry((BsaType2Entry) copyListContainer.get(i)[j]));
+                            bsaType2HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType2Entry((BsaType2Entry) copyListContainer[i][j]));
                         }
                     }
                     case "Hitbox" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Hitbox"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType3HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType3Entry((BsaType3Entry) copyListContainer.get(i)[j]));
+                            bsaType3HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType3Entry((BsaType3Entry) copyListContainer[i][j]));
                         }
                     }
                     case "Deflection" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Deflection"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType4HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType4Entry((BsaType4Entry) copyListContainer.get(i)[j]));
+                            bsaType4HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType4Entry((BsaType4Entry) copyListContainer[i][j]));
                         }
                     }
                     case "Effect" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Effect"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType6HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType6Entry((BsaType6Entry) copyListContainer.get(i)[j]));
+                            bsaType6HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType6Entry((BsaType6Entry) copyListContainer[i][j]));
                         }
                     }
                     case "Sound" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Sound"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType7HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType7Entry((BsaType7Entry) copyListContainer.get(i)[j]));
+                            bsaType7HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType7Entry((BsaType7Entry) copyListContainer[i][j]));
                         }
                     }
                     case "Screen Effect" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("Screen Effect"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType8HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType8Entry((BsaType8Entry) copyListContainer.get(i)[j]));
+                            bsaType8HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType8Entry((BsaType8Entry) copyListContainer[i][j]));
                         }
                     }
                     case "BSA Type 10" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 10"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType10HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType10Entry((BsaType10Entry) copyListContainer.get(i)[j]));
+                            bsaType10HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType10Entry((BsaType10Entry) copyListContainer[i][j]));
                         }
                     }
                     case "BSA Type 12" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 12"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType12HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType12Entry((BsaType12Entry) copyListContainer.get(i)[j]));
+                            bsaType12HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType12Entry((BsaType12Entry) copyListContainer[i][j]));
                         }
                     }
                     case "BSA Type 13" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 13"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType13HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType13Entry((BsaType13Entry) copyListContainer.get(i)[j]));
+                            bsaType13HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType13Entry((BsaType13Entry) copyListContainer[i][j]));
                         }
                     }
                     case "BSA Type 14" -> {
                         currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 14"));
 
-                        for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaType14HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType14Entry((BsaType14Entry) copyListContainer.get(i)[j]));
+                            bsaType14HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType14Entry((BsaType14Entry) copyListContainer[i][j]));
                         }
                     }
                 }
@@ -6121,101 +6107,101 @@ public class Bsa {
 
             switch (currentEntry.getValue()) {
                 case "Collision (After Effects)" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaCollisionHashMap.put(currentEntry.getChildren().get(i), new BsaCollisionEntry((BsaCollisionEntry) copyListContainer.get(0)[i]));
+                        bsaCollisionHashMap.put(currentEntry.getChildren().get(i), new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[0][i]));
                     }
                 }
                 case "Expiration (After Effects)" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaExpirationHashMap.put(currentEntry.getChildren().get(i), new BsaExpirationEntry((BsaExpirationEntry) copyListContainer.get(0)[i]));
+                        bsaExpirationHashMap.put(currentEntry.getChildren().get(i), new BsaExpirationEntry((BsaExpirationEntry) copyListContainer[0][i]));
                     }
                 }
                 case "BSA Entry Passing" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType0HashMap.put(currentEntry.getChildren().get(i), new BsaType0Entry((BsaType0Entry) copyListContainer.get(0)[i]));
+                        bsaType0HashMap.put(currentEntry.getChildren().get(i), new BsaType0Entry((BsaType0Entry) copyListContainer[0][i]));
                     }
                 }
                 case "Movement" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType1HashMap.put(currentEntry.getChildren().get(i), new BsaType1Entry((BsaType1Entry) copyListContainer.get(0)[i]));
+                        bsaType1HashMap.put(currentEntry.getChildren().get(i), new BsaType1Entry((BsaType1Entry) copyListContainer[0][i]));
                     }
                 }
                 case "BSA Type 2" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType2HashMap.put(currentEntry.getChildren().get(i), new BsaType2Entry((BsaType2Entry) copyListContainer.get(0)[i]));
+                        bsaType2HashMap.put(currentEntry.getChildren().get(i), new BsaType2Entry((BsaType2Entry) copyListContainer[0][i]));
                     }
                 }
                 case "Hitbox" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType3HashMap.put(currentEntry.getChildren().get(i), new BsaType3Entry((BsaType3Entry) copyListContainer.get(0)[i]));
+                        bsaType3HashMap.put(currentEntry.getChildren().get(i), new BsaType3Entry((BsaType3Entry) copyListContainer[0][i]));
                     }
                 }
                 case "Deflection" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType4HashMap.put(currentEntry.getChildren().get(i), new BsaType4Entry((BsaType4Entry) copyListContainer.get(0)[i]));
+                        bsaType4HashMap.put(currentEntry.getChildren().get(i), new BsaType4Entry((BsaType4Entry) copyListContainer[0][i]));
                     }
                 }
                 case "Effect" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType6HashMap.put(currentEntry.getChildren().get(i), new BsaType6Entry((BsaType6Entry) copyListContainer.get(0)[i]));
+                        bsaType6HashMap.put(currentEntry.getChildren().get(i), new BsaType6Entry((BsaType6Entry) copyListContainer[0][i]));
                     }
                 }
                 case "Sound" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType7HashMap.put(currentEntry.getChildren().get(i), new BsaType7Entry((BsaType7Entry) copyListContainer.get(0)[i]));
+                        bsaType7HashMap.put(currentEntry.getChildren().get(i), new BsaType7Entry((BsaType7Entry) copyListContainer[0][i]));
                     }
                 }
                 case "Screen Effect" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType8HashMap.put(currentEntry.getChildren().get(i), new BsaType8Entry((BsaType8Entry) copyListContainer.get(0)[i]));
+                        bsaType8HashMap.put(currentEntry.getChildren().get(i), new BsaType8Entry((BsaType8Entry) copyListContainer[0][i]));
                     }
                 }
                 case "BSA Type 10" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType10HashMap.put(currentEntry.getChildren().get(i), new BsaType10Entry((BsaType10Entry) copyListContainer.get(0)[i]));
+                        bsaType10HashMap.put(currentEntry.getChildren().get(i), new BsaType10Entry((BsaType10Entry) copyListContainer[0][i]));
                     }
                 }
                 case "BSA Type 12" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType12HashMap.put(currentEntry.getChildren().get(i), new BsaType12Entry((BsaType12Entry) copyListContainer.get(0)[i]));
+                        bsaType12HashMap.put(currentEntry.getChildren().get(i), new BsaType12Entry((BsaType12Entry) copyListContainer[0][i]));
                     }
                 }
                 case "BSA Type 13" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType13HashMap.put(currentEntry.getChildren().get(i), new BsaType13Entry((BsaType13Entry) copyListContainer.get(0)[i]));
+                        bsaType13HashMap.put(currentEntry.getChildren().get(i), new BsaType13Entry((BsaType13Entry) copyListContainer[0][i]));
                     }
                 }
                 case "BSA Type 14" -> {
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaType14HashMap.put(currentEntry.getChildren().get(i), new BsaType14Entry((BsaType14Entry) copyListContainer.get(0)[i]));
+                        bsaType14HashMap.put(currentEntry.getChildren().get(i), new BsaType14Entry((BsaType14Entry) copyListContainer[0][i]));
                     }
                 }
             }
@@ -6232,133 +6218,133 @@ public class Bsa {
                 bsaMainHashMap.put(newEntry, new BsaMainEntry((BsaMainEntry) copyContainer));
 
                 allEntries++;
-
-                for (int i = 0; i < copyTypesContainer.size(); i++) {
-                    switch (copyTypesContainer.get(i)) {
+                
+                for (int i = 0; i < copyTypesContainer.length; i++) {
+                    switch (copyTypesContainer[i]) {
                         case "Collision (After Effects)" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Collision (After Effects)"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaCollisionHashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaCollisionEntry((BsaCollisionEntry) copyListContainer.get(i)[j]));
+                                bsaCollisionHashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[i][j]));
                             }
                         }
                         case "Expiration (After Effects)" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Expiration (After Effects)"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaExpirationHashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaExpirationEntry((BsaExpirationEntry) copyListContainer.get(i)[j]));
+                                bsaExpirationHashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaExpirationEntry((BsaExpirationEntry) copyListContainer[i][j]));
                             }
                         }
                         case "BSA Entry Passing" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Entry Passing"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType0HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType0Entry((BsaType0Entry) copyListContainer.get(i)[j]));
+                                bsaType0HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType0Entry((BsaType0Entry) copyListContainer[i][j]));
                             }
                         }
                         case "Movement" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Movement"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType1HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType1Entry((BsaType1Entry) copyListContainer.get(i)[j]));
+                                bsaType1HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType1Entry((BsaType1Entry) copyListContainer[i][j]));
                             }
                         }
                         case "BSA Type 2" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Type 2"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType2HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType2Entry((BsaType2Entry) copyListContainer.get(i)[j]));
+                                bsaType2HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType2Entry((BsaType2Entry) copyListContainer[i][j]));
                             }
                         }
                         case "Hitbox" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Hitbox"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType3HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType3Entry((BsaType3Entry) copyListContainer.get(i)[j]));
+                                bsaType3HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType3Entry((BsaType3Entry) copyListContainer[i][j]));
                             }
                         }
                         case "Deflection" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Deflection"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType4HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType4Entry((BsaType4Entry) copyListContainer.get(i)[j]));
+                                bsaType4HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType4Entry((BsaType4Entry) copyListContainer[i][j]));
                             }
                         }
                         case "Effect" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Effect"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType6HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType6Entry((BsaType6Entry) copyListContainer.get(i)[j]));
+                                bsaType6HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType6Entry((BsaType6Entry) copyListContainer[i][j]));
                             }
                         }
                         case "Sound" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Sound"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType7HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType7Entry((BsaType7Entry) copyListContainer.get(i)[j]));
+                                bsaType7HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType7Entry((BsaType7Entry) copyListContainer[i][j]));
                             }
                         }
                         case "Screen Effect" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("Screen Effect"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType8HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType8Entry((BsaType8Entry) copyListContainer.get(i)[j]));
+                                bsaType8HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType8Entry((BsaType8Entry) copyListContainer[i][j]));
                             }
                         }
                         case "BSA Type 10" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Type 10"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType10HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType10Entry((BsaType10Entry) copyListContainer.get(i)[j]));
+                                bsaType10HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType10Entry((BsaType10Entry) copyListContainer[i][j]));
                             }
                         }
                         case "BSA Type 12" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Type 12"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType12HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType12Entry((BsaType12Entry) copyListContainer.get(i)[j]));
+                                bsaType12HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType12Entry((BsaType12Entry) copyListContainer[i][j]));
                             }
                         }
                         case "BSA Type 13" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Type 13"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType13HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType13Entry((BsaType13Entry) copyListContainer.get(i)[j]));
+                                bsaType13HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType13Entry((BsaType13Entry) copyListContainer[i][j]));
                             }
                         }
                         case "BSA Type 14" -> {
                             newEntry.getChildren().add(i, new TreeItem<>("BSA Type 14"));
 
-                            for (int j = 0; j < copyListContainer.get(i).length; j++) {
+                            for (int j = 0; j < copyListContainer[i].length; j++) {
                                 newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType14HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType14Entry((BsaType14Entry) copyListContainer.get(i)[j]));
+                                bsaType14HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType14Entry((BsaType14Entry) copyListContainer[i][j]));
                             }
                         }
                     }
@@ -6404,23 +6390,23 @@ public class Bsa {
                 if (hasCollision) {
                     TreeItem<String> getParent = grandParentEntry.getChildren().get(0);
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaCollisionHashMap.put(newChild, new BsaCollisionEntry((BsaCollisionEntry) copyListContainer.get(0)[i]));
+                        bsaCollisionHashMap.put(newChild, new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Collision (After Effects)"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaCollisionHashMap.put(newChild, new BsaCollisionEntry((BsaCollisionEntry) copyListContainer.get(0)[i]));
+                        bsaCollisionHashMap.put(newChild, new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[0][i]));
                     }
                 }
             }
@@ -6471,23 +6457,23 @@ public class Bsa {
                 }
                 if (hasExpiration) {
                     TreeItem<String> getParent = expirationIndex;
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaExpirationHashMap.put(newChild, new BsaExpirationEntry((BsaExpirationEntry) copyListContainer.get(0)[i]));
+                        bsaExpirationHashMap.put(newChild, new BsaExpirationEntry((BsaExpirationEntry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Expiration (After Effects)"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaExpirationHashMap.put(newChild, new BsaExpirationEntry((BsaExpirationEntry) copyListContainer.get(0)[i]));
+                        bsaExpirationHashMap.put(newChild, new BsaExpirationEntry((BsaExpirationEntry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -6538,23 +6524,23 @@ public class Bsa {
                 }
                 if (hasType0) {
                     TreeItem<String> getParent = type0Index;
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType0HashMap.put(newChild, new BsaType0Entry((BsaType0Entry) copyListContainer.get(0)[i]));
+                        bsaType0HashMap.put(newChild, new BsaType0Entry((BsaType0Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Entry Passing"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType0HashMap.put(newChild, new BsaType0Entry((BsaType0Entry) copyListContainer.get(0)[i]));
+                        bsaType0HashMap.put(newChild, new BsaType0Entry((BsaType0Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -6607,23 +6593,23 @@ public class Bsa {
                 if (hasType1) {
                     TreeItem<String> getParent = type1Index;
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType1HashMap.put(newChild, new BsaType1Entry((BsaType1Entry) copyListContainer.get(0)[i]));
+                        bsaType1HashMap.put(newChild, new BsaType1Entry((BsaType1Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Movement"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType1HashMap.put(newChild, new BsaType1Entry((BsaType1Entry) copyListContainer.get(0)[i]));
+                        bsaType1HashMap.put(newChild, new BsaType1Entry((BsaType1Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -6678,23 +6664,23 @@ public class Bsa {
                 if (hasType2) {
                     TreeItem<String> getParent = type2Index;
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType2HashMap.put(newChild, new BsaType2Entry((BsaType2Entry) copyListContainer.get(0)[i]));
+                        bsaType2HashMap.put(newChild, new BsaType2Entry((BsaType2Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 2"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType2HashMap.put(newChild, new BsaType2Entry((BsaType2Entry) copyListContainer.get(0)[i]));
+                        bsaType2HashMap.put(newChild, new BsaType2Entry((BsaType2Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -6746,23 +6732,23 @@ public class Bsa {
                 }
                 if (hasType3) {
                     TreeItem<String> getParent = type3Index;
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType3HashMap.put(newChild, new BsaType3Entry((BsaType3Entry) copyListContainer.get(0)[i]));
+                        bsaType3HashMap.put(newChild, new BsaType3Entry((BsaType3Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Hitbox"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType3HashMap.put(newChild, new BsaType3Entry((BsaType3Entry) copyListContainer.get(0)[i]));
+                        bsaType3HashMap.put(newChild, new BsaType3Entry((BsaType3Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -6816,23 +6802,23 @@ public class Bsa {
                 if (hasType4) {
                     TreeItem<String> getParent = type4Index;
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType4HashMap.put(newChild, new BsaType4Entry((BsaType4Entry) copyListContainer.get(0)[i]));
+                        bsaType4HashMap.put(newChild, new BsaType4Entry((BsaType4Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Deflection"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType4HashMap.put(newChild, new BsaType4Entry((BsaType4Entry) copyListContainer.get(0)[i]));
+                        bsaType4HashMap.put(newChild, new BsaType4Entry((BsaType4Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -6885,23 +6871,23 @@ public class Bsa {
                 if (hasType6) {
                     TreeItem<String> getParent = type6Index;
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType6HashMap.put(newChild, new BsaType6Entry((BsaType6Entry) copyListContainer.get(0)[i]));
+                        bsaType6HashMap.put(newChild, new BsaType6Entry((BsaType6Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Effect"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType6HashMap.put(newChild, new BsaType6Entry((BsaType6Entry) copyListContainer.get(0)[i]));
+                        bsaType6HashMap.put(newChild, new BsaType6Entry((BsaType6Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -6954,23 +6940,23 @@ public class Bsa {
                 if (hasType7) {
                     TreeItem<String> getParent = type7Index;
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType7HashMap.put(newChild, new BsaType7Entry((BsaType7Entry) copyListContainer.get(0)[i]));
+                        bsaType7HashMap.put(newChild, new BsaType7Entry((BsaType7Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Movement"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType7HashMap.put(newChild, new BsaType7Entry((BsaType7Entry) copyListContainer.get(0)[i]));
+                        bsaType7HashMap.put(newChild, new BsaType7Entry((BsaType7Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -7023,23 +7009,23 @@ public class Bsa {
                 if (hasType8) {
                     TreeItem<String> getParent = type8Index;
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType8HashMap.put(newChild, new BsaType8Entry((BsaType8Entry) copyListContainer.get(0)[i]));
+                        bsaType8HashMap.put(newChild, new BsaType8Entry((BsaType8Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("Screen Effect"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType8HashMap.put(newChild, new BsaType8Entry((BsaType8Entry) copyListContainer.get(0)[i]));
+                        bsaType8HashMap.put(newChild, new BsaType8Entry((BsaType8Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -7092,23 +7078,23 @@ public class Bsa {
                 if (hasType10) {
                     TreeItem<String> getParent = type10Index;
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType10HashMap.put(newChild, new BsaType10Entry((BsaType10Entry) copyListContainer.get(0)[i]));
+                        bsaType10HashMap.put(newChild, new BsaType10Entry((BsaType10Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 10"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType10HashMap.put(newChild, new BsaType10Entry((BsaType10Entry) copyListContainer.get(0)[i]));
+                        bsaType10HashMap.put(newChild, new BsaType10Entry((BsaType10Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -7162,23 +7148,23 @@ public class Bsa {
                 if (hasType12) {
                     TreeItem<String> getParent = type12Index;
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType12HashMap.put(newChild, new BsaType12Entry((BsaType12Entry) copyListContainer.get(0)[i]));
+                        bsaType12HashMap.put(newChild, new BsaType12Entry((BsaType12Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 12"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType12HashMap.put(newChild, new BsaType12Entry((BsaType12Entry) copyListContainer.get(0)[i]));
+                        bsaType12HashMap.put(newChild, new BsaType12Entry((BsaType12Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -7231,23 +7217,23 @@ public class Bsa {
                 if (hasType13) {
                     TreeItem<String> getParent = type13Index;
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType13HashMap.put(newChild, new BsaType13Entry((BsaType13Entry) copyListContainer.get(0)[i]));
+                        bsaType13HashMap.put(newChild, new BsaType13Entry((BsaType13Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 13"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType13HashMap.put(newChild, new BsaType13Entry((BsaType13Entry) copyListContainer.get(0)[i]));
+                        bsaType13HashMap.put(newChild, new BsaType13Entry((BsaType13Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
@@ -7299,23 +7285,23 @@ public class Bsa {
                 }
                 if (hasType14) {
                     TreeItem<String> getParent = type14Index;
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
 
                         getParent.getChildren().add(newChild);
 
-                        bsaType14HashMap.put(newChild, new BsaType14Entry((BsaType14Entry) copyListContainer.get(0)[i]));
+                        bsaType14HashMap.put(newChild, new BsaType14Entry((BsaType14Entry) copyListContainer[0][i]));
                     }
                 } 
                 else {
                     grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 14"));
 
-                    for (int i = 0; i < copyListContainer.get(0).length; i++) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
                         TreeItem<String> newChild = new TreeItem<>("Entry " + i);
 
                         grandParentEntry.getChildren().get(0).getChildren().add(newChild);
 
-                        bsaType14HashMap.put(newChild, new BsaType14Entry((BsaType14Entry) copyListContainer.get(0)[i]));
+                        bsaType14HashMap.put(newChild, new BsaType14Entry((BsaType14Entry) copyListContainer[0][i]));
                     }
 
                     sortTreeItems(grandParentEntry);
