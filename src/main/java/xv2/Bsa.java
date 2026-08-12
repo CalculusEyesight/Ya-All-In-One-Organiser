@@ -5577,13 +5577,10 @@ public class Bsa {
                 }
             }
         }
-        else if (currentEntry.getChildren().isEmpty() && currentEntry.getParent().getValue().startsWith("Entry")) {
+        else if (currentEntry.getChildren().isEmpty()) {
             copiedItem.setText(String.format(copiedItem.getText(), "Null"));
             pasteItem.setText(String.format(pasteItem.getText(), "Null"));
             addItemCopy.setText(String.format(addItemCopy.getText(), "Null"));
-
-            pasteItem.setDisable(true);
-            addItemCopy.setDisable(true);
         }
         else {
             copyListContainer = new Object[1][currentEntry.getChildren().size()];
