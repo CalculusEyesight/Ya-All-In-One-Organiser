@@ -39,7 +39,6 @@
             <version>${javafx.version}</version>
         </dependency>
 
- 
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-dds</artifactId>

@@ -137,6 +137,7 @@ public class Emb {
 
     private StackPane createImageView(int i) {
         ImageView imageView = new ImageView();
+
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(allImages.get(i));
 
         try {
