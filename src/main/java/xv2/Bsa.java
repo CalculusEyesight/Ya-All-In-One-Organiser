@@ -6426,11 +6426,9 @@ public class Bsa {
                     }
                 }
                 if (hasExpiration) {
-                    TreeItem<String> getParent = expirationIndex;
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + expirationIndex.getChildren().size());
 
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                    getParent.getChildren().add(newChild);
+                    expirationIndex.getChildren().add(newChild);
 
                     bsaExpirationHashMap.put(newChild, new BsaExpirationEntry((BsaExpirationEntry) copyContainer));
 
@@ -6461,11 +6459,10 @@ public class Bsa {
                     }
                 }
                 if (hasExpiration) {
-                    TreeItem<String> getParent = expirationIndex;
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + expirationIndex.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        expirationIndex.getChildren().add(newChild);
 
                         bsaExpirationHashMap.put(newChild, new BsaExpirationEntry((BsaExpirationEntry) copyListContainer[0][i]));
                     }
@@ -6495,10 +6492,9 @@ public class Bsa {
                     }
                 }
                 if (hasType0) {
-                    TreeItem<String> getParent = type0Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type0Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type0Index.getChildren().add(newChild);
 
                     bsaType0HashMap.put(newChild, new BsaType0Entry((BsaType0Entry) copyContainer));
 
@@ -6528,11 +6524,10 @@ public class Bsa {
                     }
                 }
                 if (hasType0) {
-                    TreeItem<String> getParent = type0Index;
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type0Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type0Index.getChildren().add(newChild);
 
                         bsaType0HashMap.put(newChild, new BsaType0Entry((BsaType0Entry) copyListContainer[0][i]));
                     }
@@ -6562,10 +6557,9 @@ public class Bsa {
                     }
                 }
                 if (hasType1) {
-                    TreeItem<String> getParent = type1Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type1Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type1Index.getChildren().add(newChild);
 
                     bsaType1HashMap.put(newChild, new BsaType1Entry((BsaType1Entry) copyContainer));
 
@@ -6596,12 +6590,10 @@ public class Bsa {
                     }
                 }
                 if (hasType1) {
-                    TreeItem<String> getParent = type1Index;
-
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type1Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type1Index.getChildren().add(newChild);
 
                         bsaType1HashMap.put(newChild, new BsaType1Entry((BsaType1Entry) copyListContainer[0][i]));
                     }
@@ -6622,7 +6614,6 @@ public class Bsa {
             }
             case "Add BSA Type 2 Copy  Ctrl+A" -> {
                 boolean hasType2 = false;
-
                 TreeItem<String> type2Index = new TreeItem<>();
 
                 for (TreeItem<String> child : grandParentEntry.getChildren()) {
@@ -6632,10 +6623,9 @@ public class Bsa {
                     }
                 }
                 if (hasType2) {
-                    TreeItem<String> getParent = type2Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type2Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type2Index.getChildren().add(newChild);
 
                     bsaType2HashMap.put(newChild, new BsaType2Entry((BsaType2Entry) copyContainer));
 
@@ -6657,7 +6647,6 @@ public class Bsa {
             }
             case "Add BSA Type 2 List Copy  Ctrl+A" -> {
                 boolean hasType2 = false;
-
                 TreeItem<String> type2Index = new TreeItem<>();
 
                 for (TreeItem<String> child : grandParentEntry.getChildren()) {
@@ -6667,12 +6656,10 @@ public class Bsa {
                     }
                 }
                 if (hasType2) {
-                    TreeItem<String> getParent = type2Index;
-
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type2Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type2Index.getChildren().add(newChild);
 
                         bsaType2HashMap.put(newChild, new BsaType2Entry((BsaType2Entry) copyListContainer[0][i]));
                     }
@@ -6702,10 +6689,9 @@ public class Bsa {
                     }
                 }
                 if (hasType3) {
-                    TreeItem<String> getParent = type3Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type3Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type3Index.getChildren().add(newChild);
 
                     bsaType3HashMap.put(newChild, new BsaType3Entry((BsaType3Entry) copyContainer));
 
@@ -6736,11 +6722,10 @@ public class Bsa {
                     }
                 }
                 if (hasType3) {
-                    TreeItem<String> getParent = type3Index;
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type3Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type3Index.getChildren().add(newChild);
 
                         bsaType3HashMap.put(newChild, new BsaType3Entry((BsaType3Entry) copyListContainer[0][i]));
                     }
@@ -6770,10 +6755,9 @@ public class Bsa {
                     }
                 }
                 if (hasType4) {
-                    TreeItem<String> getParent = type4Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type4Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type4Index.getChildren().add(newChild);
 
                     bsaType4HashMap.put(newChild, new BsaType4Entry((BsaType4Entry) copyContainer));
 
@@ -6795,7 +6779,6 @@ public class Bsa {
             }
             case "Add Deflection List Copy  Ctrl+A" -> {
                 boolean hasType4 = false;
-
                 TreeItem<String> type4Index = new TreeItem<>();
 
                 for (TreeItem<String> child : grandParentEntry.getChildren()) {
@@ -6805,12 +6788,10 @@ public class Bsa {
                     }
                 }
                 if (hasType4) {
-                    TreeItem<String> getParent = type4Index;
-
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type4Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type4Index.getChildren().add(newChild);
 
                         bsaType4HashMap.put(newChild, new BsaType4Entry((BsaType4Entry) copyListContainer[0][i]));
                     }
@@ -6840,10 +6821,9 @@ public class Bsa {
                     }
                 }
                 if (hasType6) {
-                    TreeItem<String> getParent = type6Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type6Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type6Index.getChildren().add(newChild);
 
                     bsaType6HashMap.put(newChild, new BsaType6Entry((BsaType6Entry) copyContainer));
 
@@ -6874,12 +6854,10 @@ public class Bsa {
                     }
                 }
                 if (hasType6) {
-                    TreeItem<String> getParent = type6Index;
-
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type6Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type6Index.getChildren().add(newChild);
 
                         bsaType6HashMap.put(newChild, new BsaType6Entry((BsaType6Entry) copyListContainer[0][i]));
                     }
@@ -6909,10 +6887,9 @@ public class Bsa {
                     }
                 }
                 if (hasType7) {
-                    TreeItem<String> getParent = type7Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type7Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type7Index.getChildren().add(newChild);
 
                     bsaType7HashMap.put(newChild, new BsaType7Entry((BsaType7Entry) copyContainer));
 
@@ -6943,12 +6920,10 @@ public class Bsa {
                     }
                 }
                 if (hasType7) {
-                    TreeItem<String> getParent = type7Index;
-
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type7Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type7Index.getChildren().add(newChild);
 
                         bsaType7HashMap.put(newChild, new BsaType7Entry((BsaType7Entry) copyListContainer[0][i]));
                     }
@@ -6978,10 +6953,9 @@ public class Bsa {
                     }
                 }
                 if (hasType8) {
-                    TreeItem<String> getParent = type8Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type8Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type8Index.getChildren().add(newChild);
 
                     bsaType8HashMap.put(newChild, new BsaType8Entry((BsaType8Entry) copyContainer));
 
@@ -7012,12 +6986,10 @@ public class Bsa {
                     }
                 }
                 if (hasType8) {
-                    TreeItem<String> getParent = type8Index;
-
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type8Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type8Index.getChildren().add(newChild);
 
                         bsaType8HashMap.put(newChild, new BsaType8Entry((BsaType8Entry) copyListContainer[0][i]));
                     }
@@ -7047,10 +7019,9 @@ public class Bsa {
                     }
                 }
                 if (hasType10) {
-                    TreeItem<String> getParent = type10Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type10Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type10Index.getChildren().add(newChild);
 
                     bsaType10HashMap.put(newChild, new BsaType10Entry((BsaType10Entry) copyContainer));
 
@@ -7081,12 +7052,10 @@ public class Bsa {
                     }
                 }
                 if (hasType10) {
-                    TreeItem<String> getParent = type10Index;
-
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type10Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type10Index.getChildren().add(newChild);
 
                         bsaType10HashMap.put(newChild, new BsaType10Entry((BsaType10Entry) copyListContainer[0][i]));
                     }
@@ -7107,7 +7076,6 @@ public class Bsa {
             }
             case "Add BSA Type 12 Copy  Ctrl+A" -> {
                 boolean hasType12 = false;
-
                 TreeItem<String> type12Index = new TreeItem<>();
 
                 for (TreeItem<String> child : grandParentEntry.getChildren()) {
@@ -7117,10 +7085,9 @@ public class Bsa {
                     }
                 }
                 if (hasType12) {
-                    TreeItem<String> getParent = type12Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type12Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type12Index.getChildren().add(newChild);
 
                     bsaType12HashMap.put(newChild, new BsaType12Entry((BsaType12Entry) copyContainer));
 
@@ -7151,12 +7118,10 @@ public class Bsa {
                     }
                 }
                 if (hasType12) {
-                    TreeItem<String> getParent = type12Index;
-
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type12Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type12Index.getChildren().add(newChild);
 
                         bsaType12HashMap.put(newChild, new BsaType12Entry((BsaType12Entry) copyListContainer[0][i]));
                     }
@@ -7186,10 +7151,9 @@ public class Bsa {
                     }
                 }
                 if (hasType13) {
-                    TreeItem<String> getParent = type13Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type13Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type13Index.getChildren().add(newChild);
 
                     bsaType13HashMap.put(newChild, new BsaType13Entry((BsaType13Entry) copyContainer));
 
@@ -7220,12 +7184,10 @@ public class Bsa {
                     }
                 }
                 if (hasType13) {
-                    TreeItem<String> getParent = type13Index;
-
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type13Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type13Index.getChildren().add(newChild);
 
                         bsaType13HashMap.put(newChild, new BsaType13Entry((BsaType13Entry) copyListContainer[0][i]));
                     }
@@ -7255,10 +7217,9 @@ public class Bsa {
                     }
                 }
                 if (hasType14) {
-                    TreeItem<String> getParent = type14Index;
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + type14Index.getChildren().size());
 
-                    getParent.getChildren().add(newChild);
+                    type14Index.getChildren().add(newChild);
 
                     bsaType14HashMap.put(newChild, new BsaType14Entry((BsaType14Entry) copyContainer));
 
@@ -7289,11 +7250,10 @@ public class Bsa {
                     }
                 }
                 if (hasType14) {
-                    TreeItem<String> getParent = type14Index;
                     for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + type14Index.getChildren().size());
 
-                        getParent.getChildren().add(newChild);
+                        type14Index.getChildren().add(newChild);
 
                         bsaType14HashMap.put(newChild, new BsaType14Entry((BsaType14Entry) copyListContainer[0][i]));
                     }
