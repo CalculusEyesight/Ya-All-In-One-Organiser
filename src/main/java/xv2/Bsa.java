@@ -9076,10 +9076,8 @@ public class Bsa {
             int mainIndex = 0;
 
             for (int i = 0; i < allEntries; i++) {
-
                 if(Integer.parseInt(treeView.getRoot().getChildren().get(mainIndex).getValue().toString().replaceAll("\\D+", "")) == i) {
-                    BsaMainEntry bsaMainEntry = new BsaMainEntry();
-                    bsaMainEntry = bsaMainHashMap.get(treeView.getRoot().getChildren().get(mainIndex));
+                    BsaMainEntry bsaMainEntry = bsaMainHashMap.get(treeView.getRoot().getChildren().get(mainIndex));
 
                     int index = 0;
                     short typesCount = 0;
@@ -9119,8 +9117,7 @@ public class Bsa {
                     
                     if (collisionEntriesCount > 0) {
                         for (int j = 0; j < collisionEntriesCount; j++) {
-                            BsaCollisionEntry bsaCollisionEntry = new BsaCollisionEntry();
-                            bsaCollisionEntry = bsaCollisionHashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j));
+                            BsaCollisionEntry bsaCollisionEntry = bsaCollisionHashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j));
 
                             channel.position(collisionOffset + j * 24);
                             shortBuffer.clear();
@@ -9201,8 +9198,7 @@ public class Bsa {
 
                     if (expirationEntriesCount > 0) {
                         for (int j = 0;j < expirationEntriesCount; j++) {
-                            BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
-                            bsaExpirationEntry = bsaExpirationHashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j));
+                            BsaExpirationEntry bsaExpirationEntry = bsaExpirationHashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j));
                         
                             channel.position(expirationOffset + j * 8);
                             shortBuffer.clear();
