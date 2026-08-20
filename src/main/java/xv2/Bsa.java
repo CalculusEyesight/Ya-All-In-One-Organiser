@@ -5352,7 +5352,13 @@ public class Bsa {
     }
 
     private void AddEntry() {
-        if (treeView.getSelectionModel().getSelectedIndex() < 0) return;
+        if (treeView.getRoot() == null) {
+            treeView.setRoot(new TreeItem<>("dummy"));
+            treeView.setShowRoot(false);
+        }
+        else if (treeView.getRoot().getChildren().isEmpty()) {
+            allEntries = 0;
+        } 
 
         treeView.getRoot().getChildren().add(new TreeItem<>("Entry "+ allEntries));
 
@@ -6214,6 +6220,9 @@ public class Bsa {
     }
 
     private void AddItemCopy() {
+        if (treeView.getRoot().getChildren().isEmpty()) {
+            allEntries = 0;
+        } 
         switch (addItemCopy.getText()) {
             case "Add Entry Copy  Ctrl+A" -> {
                 TreeItem<String> newEntry = new TreeItem<>("Entry " + allEntries);

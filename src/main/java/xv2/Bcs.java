@@ -2781,6 +2781,9 @@ public class Bcs {
             partSetsTreeView.setRoot(new TreeItem<>("dummy"));
             partSetsTreeView.setShowRoot(false);
         }
+        else if (partSetsTreeView.getRoot().getChildren().isEmpty()) {
+            allPartSetEntries = 0;
+        } 
 
         TreeItem<String> partSet  = new TreeItem<>("Part Set " + allPartSetEntries);
 
@@ -4409,6 +4412,9 @@ public class Bcs {
     }
 
     private void AddPartSetItemCopy() {
+        if (partSetsTreeView.getRoot().getChildren().isEmpty()) {
+            allPartSetEntries = 0;
+        } 
         switch (addPartSetItemCopy.getText()) {
             case "Add Part Set Copy  Ctrl+A" -> {
                 partSetsTreeView.getRoot().getChildren().add(new TreeItem<>("Part Set " + allPartSetEntries));
@@ -5508,6 +5514,9 @@ public class Bcs {
             partColorsTreeView.setRoot(new TreeItem<>("dummy"));
             partColorsTreeView.setShowRoot(false);
         }
+        else if (partColorsTreeView.getRoot().getChildren().isEmpty()) {
+            allPartColorEntries = 0;
+        } 
 
         TreeItem<String> partColor  = new TreeItem<>("Part Color " + allPartColorEntries);
 
@@ -5635,6 +5644,9 @@ public class Bcs {
     }
 
     private void AddPartColorItemCopy() {
+        if (partColorsTreeView.getRoot().getChildren().isEmpty()) {
+            allPartColorEntries = 0;
+        } 
         switch (addPartColorItemCopy.getText()) {
             case "Add Part Color Copy  Ctrl+A" -> {
                 TreeItem<String> partColor = new TreeItem<>("Part Color " + allPartColorEntries);
@@ -5759,6 +5771,9 @@ public class Bcs {
             bodiesTreeView.setRoot(new TreeItem<>("dummy"));
             bodiesTreeView.setShowRoot(false);
         }
+        else if (bodiesTreeView.getRoot().getChildren().isEmpty()) {
+            allBodyEntries = 0;
+        } 
 
         TreeItem<String> body = new TreeItem<>("Body " + allBodyEntries);
 
@@ -5876,6 +5891,9 @@ public class Bcs {
     }
 
     private void AddBodyItemCopy() {
+        if (bodiesTreeView.getRoot().getChildren().isEmpty()) {
+            allBodyEntries = 0;
+        } 
         switch (addBodyItemCopy.getText()) {
             case "Add Body Copy  Ctrl+A" -> {
                 TreeItem<String> body = new TreeItem<>("Body " + allBodyEntries);
