@@ -5543,7 +5543,7 @@ public class Bcs {
 
         parent.getChildren().add(color);
 
-        colorsObservableList.get(parent.getParent().getChildren().indexOf(parent)).add("Color " + (parent.getChildren().size() - 1));
+        colorsObservableList.get(Integer.parseInt(partColorGrandParentEntry.getValue().toString().replaceAll("\\D+", ""))).add("Color " + (parent.getChildren().size() - 1));
 
         partColorsTreeView.getSelectionModel().select(color);
     }
@@ -5681,7 +5681,7 @@ public class Bcs {
 
                 bcsColorsHashMap.put(color, new BcsColor((BcsColor) copyContainer));
 
-                colorsObservableList.get(partColorGrandParentEntry.getParent().getChildren().indexOf(partColorGrandParentEntry)).add("Color " + (partColorGrandParentEntry.getChildren().size() - 1));
+                colorsObservableList.get(Integer.parseInt(partColorGrandParentEntry.getValue().toString().replaceAll("\\D+", ""))).add("Color " + (partColorGrandParentEntry.getChildren().size() - 1));
 
                 partColorsTreeView.getSelectionModel().select(color);
             }
