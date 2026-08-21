@@ -14,7 +14,7 @@ A big thank you to the people who have worked and have been updating the [Xv2Cor
 |.aur| ✅ | 
 |.bac| ❌ | 
 |.bcm| ✅ |
-|.bcs| ❌ |
+|.bcs| ✅ |
 |.bdm| ✅ |
 |.bsa| ✅ |
 |.cat| ✅ |
