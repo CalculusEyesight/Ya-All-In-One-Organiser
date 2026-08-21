@@ -906,28 +906,11 @@ public class Bcs {
     }
 
     private void createColorSelector(BcsColorSelector entry) {
-        //partColors
-        Label partColorsLabel = new Label("Part Colors");
-        partColorsLabel.setPrefWidth(80);
-
-        ComboBox<String> partColorsComboBox = new ComboBox<>(partColorsObservableList);
-        partColorsComboBox.getSelectionModel().select(entry.partColorGroup);
-        partColorsComboBox.setPrefWidth(120);
-        partColorsComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.partColorGroup = newValue.intValue();
-            }
-        });
-
-        HBox partColorsHBox = new HBox(partColorsLabel, partColorsComboBox);
-        partColorsHBox.setAlignment(Pos.CENTER_LEFT);
-        //partColors
-
         //color
         Label colorLabel = new Label("Color");
         colorLabel.setPrefWidth(80);
 
-        ComboBox<String> colorsComboBox = new ComboBox<>(colorsObservableList.get(0));
+        ComboBox<String> colorsComboBox = new ComboBox<>(colorsObservableList.get(entry.partColorGroup));
         colorsComboBox.getSelectionModel().select(entry.colorIndex);
         colorsComboBox.setPrefWidth(120);
         colorsComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
@@ -938,7 +921,26 @@ public class Bcs {
 
         HBox colorsHBox = new HBox(colorLabel, colorsComboBox);
         colorsHBox.setAlignment(Pos.CENTER_LEFT);
+        //color
 
+        //partColors
+        Label partColorsLabel = new Label("Part Colors");
+        partColorsLabel.setPrefWidth(80);
+
+        ComboBox<String> partColorsComboBox = new ComboBox<>(partColorsObservableList);
+        partColorsComboBox.getSelectionModel().select(entry.partColorGroup);
+        partColorsComboBox.setPrefWidth(120);
+        partColorsComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                entry.partColorGroup = newValue.intValue();
+                colorsComboBox.setItems(colorsObservableList.get(entry.partColorGroup));
+            }
+        });
+
+        HBox partColorsHBox = new HBox(partColorsLabel, partColorsComboBox);
+        partColorsHBox.setAlignment(Pos.CENTER_LEFT);
+        //partColors
+        
         VBox colorSelectorVBox = new VBox(25, partColorsHBox, colorsHBox);
         colorSelectorVBox.setPadding(new Insets(20, 0, 0, 16));
 
@@ -1694,6 +1696,7 @@ public class Bcs {
             }
             try {
                 entry.name = newText; 
+                partColorsObservableList.set(Integer.parseInt(partColorGrandParentEntry.getValue().toString().replaceAll("\\D+", "")), newText);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -5524,6 +5527,8 @@ public class Bcs {
 
         partColorsTreeView.getRoot().getChildren().add(partColor);
 
+        partColorsObservableList.add(new String("null"));
+
         allPartColorEntries++;
     }
 
@@ -5537,6 +5542,8 @@ public class Bcs {
         bcsColorsHashMap.put(color, new BcsColor());
 
         parent.getChildren().add(color);
+
+        colorsObservableList.get(parent.getParent().getChildren().indexOf(parent)).add("Color " + (parent.getChildren().size() - 1));
 
         partColorsTreeView.getSelectionModel().select(color);
     }
@@ -5653,7 +5660,11 @@ public class Bcs {
 
                 partColorsTreeView.getRoot().getChildren().add(partColor);
 
-                bcsPartColorsHashMap.put(partColor, new BcsPartColor((BcsPartColor) copyContainer));
+                BcsPartColor bcsPartColor = new BcsPartColor((BcsPartColor) copyContainer);
+
+                bcsPartColorsHashMap.put(partColor, bcsPartColor);
+
+                partColorsObservableList.add(bcsPartColor.name);
 
                 for (int i = 0; i < copyListContainer[0].length; i++) {
                     partColor.getChildren().add(i, new TreeItem<>("Color " + i));
@@ -5669,6 +5680,8 @@ public class Bcs {
                 partColorGrandParentEntry.getChildren().add(color);
 
                 bcsColorsHashMap.put(color, new BcsColor((BcsColor) copyContainer));
+
+                colorsObservableList.get(partColorGrandParentEntry.getParent().getChildren().indexOf(partColorGrandParentEntry)).add("Color " + (partColorGrandParentEntry.getChildren().size() - 1));
 
                 partColorsTreeView.getSelectionModel().select(color);
             }
