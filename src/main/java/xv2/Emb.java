@@ -181,7 +181,7 @@ public class Emb {
         listView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 ContextMenu contextMenu=new ContextMenu();
-                MenuItem delete=new MenuItem("Delete Delete");
+                MenuItem delete=new MenuItem("Delete Del");
                 MenuItem append=new MenuItem("Append Ctrl+A");
                 MenuItem insert=new MenuItem("Insert Ctrl+I");
                 MenuItem replace=new MenuItem("Replace Ctrl+R");
