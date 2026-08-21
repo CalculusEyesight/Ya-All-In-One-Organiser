@@ -8351,6 +8351,7 @@ public class Bcs {
                 int mainIndex = 0;
                 int boneScaleOffset = (bodiesTreeView.getRoot() != null && !bodiesTreeView.getRoot().getChildren().isEmpty()) ? bodiesTreeView.getRoot().getChildren().size() * 8 : 0;
                 int offset = thisBodyOffset;
+                int stableOffset = offset;
 
                 for (int i = 0; i < allBodyEntries; i++) {
                     if (thisBodyOffset != 0) {
@@ -8371,50 +8372,52 @@ public class Bcs {
 
                                 channel.position(offset + 4);
                                 intBuffer.clear();
-                                intBuffer.putInt(boneScaleOffset);
+                                intBuffer.putInt(boneScaleOffset - mainIndex * 8);
                                 intBuffer.flip();
                                 channel.write(intBuffer);
 
                                 for (int j = 0; j < boneScaleCount; j++) {
                                     BcsBoneScale bcsBoneScale = bcsBoneScalesHashMap.get(bodiesTreeView.getRoot().getChildren().get(mainIndex).getChildren().get(j));
 
-                                    channel.position(offset + boneScaleOffset + j * 16);
+                                    channel.position(stableOffset + boneScaleOffset + j * 16);
                                     intBuffer.clear();
                                     intBuffer.putFloat(bcsBoneScale.scaleX);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
-                                    channel.position(offset + boneScaleOffset + j * 16 + 4);
+                                    channel.position(stableOffset + boneScaleOffset + j * 16 + 4);
                                     intBuffer.clear();
                                     intBuffer.putFloat(bcsBoneScale.scaleY);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
-                                    channel.position(offset + boneScaleOffset + j * 16 + 8);
+                                    channel.position(stableOffset + boneScaleOffset + j * 16 + 8);
                                     intBuffer.clear();
                                     intBuffer.putFloat(bcsBoneScale.scaleZ);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
-                                    channel.position(offset + boneScaleOffset + j * 16 + 12);
-                                    intBuffer.clear();
-                                    intBuffer.putInt(typesSum - offset - boneScaleOffset - j * 16);
-                                    intBuffer.flip();
-                                    channel.write(intBuffer);
+                                    if (bcsBoneScale.boneName != null) {
+                                        channel.position(stableOffset + boneScaleOffset + j * 16 + 12);
+                                        intBuffer.clear();
+                                        intBuffer.putInt(typesSum - stableOffset - boneScaleOffset - j * 16);
+                                        intBuffer.flip();
+                                        channel.write(intBuffer);
 
-                                    dynamicStringBuffer = ByteBuffer.allocate(bcsBoneScale.boneName.getBytes().length);
+                                        dynamicStringBuffer = ByteBuffer.allocate(bcsBoneScale.boneName.getBytes().length);
 
-                                    channel.position(typesSum);
-                                    dynamicStringBuffer.clear();
-                                    dynamicStringBuffer = ByteBuffer.wrap(bcsBoneScale.boneName.getBytes());
-                                    channel.write(dynamicStringBuffer);
-                                    typesSum += bcsBoneScale.boneName.getBytes().length;
+                                        channel.position(typesSum);
+                                        dynamicStringBuffer.clear();
+                                        dynamicStringBuffer = ByteBuffer.wrap(bcsBoneScale.boneName.getBytes());
+                                        channel.write(dynamicStringBuffer);
+                                        typesSum += bcsBoneScale.boneName.getBytes().length;
+                                    } 
                                 }
 
+                                boneScaleOffset += boneScaleCount * 16;
                             }
 
                             offset += 8;
-                            boneScaleOffset += ((boneScaleCount + 1) * 8);
                             thisBodyOffset += 8;
                             mainIndex++;
                         }
@@ -8422,7 +8425,7 @@ public class Bcs {
                 }
 
                 thisSkeleton1Offset = thisBodyOffset;
-                thisSkeleton1Offset += boneScaleOffset;
+                thisSkeleton1Offset += (boneScaleOffset - bodiesTreeView.getRoot().getChildren().size() * 8);
             }
             if (skeleton1Offset != 0) {
                 if (version != 72) {
@@ -8432,21 +8435,10 @@ public class Bcs {
                     intBuffer.flip();
                     channel.write(intBuffer);
                 }
-                else {
-                    if (bodiesTreeView.getRoot() != null) {
-                        thisSkeleton1Offset -= bodiesTreeView.getRoot().getChildren().size() * 16;
-                    }
-                    else if (partColorsTreeView.getRoot() != null) {
-                        thisSkeleton1Offset -= partColorsTreeView.getRoot().getChildren().size() * 16;
-                    }
-                    else if (partSetsTreeView.getRoot() != null) {
-                        thisSkeleton1Offset -= partSetsTreeView.getRoot().getChildren().size() * 16;
-                    }
-                }
                 
                 BcsSkeleton bcsSkeleton = bcsSkeletonsHashMap.get(skeletonsTreeView.getRoot().getChildren().get(0));
                 int offset = version == 72 ? 64 : thisSkeleton1Offset; 
-                int boneOffset = version == 72 ? thisSkeleton1Offset : 8;
+                int boneOffset = version == 72 ? thisSkeleton1Offset - 32 : 8;
 
                 channel.position(offset);
                 shortBuffer.clear();
@@ -8469,15 +8461,7 @@ public class Bcs {
                 channel.write(intBuffer);
 
                 if (version == 72) {
-                    if (bodiesTreeView.getRoot() != null) {
-                        boneOffset -= bodiesTreeView.getRoot().getChildren().size() * 16;
-                    }
-                    else if (partColorsTreeView.getRoot() != null) {
-                        boneOffset -= partColorsTreeView.getRoot().getChildren().size() * 16;
-                    }
-                    else if (partSetsTreeView.getRoot() != null) {
-                        boneOffset -= partSetsTreeView.getRoot().getChildren().size() * 16;
-                    }
+                    boneOffset -= 32;
                 }
 
                 for (int i = 0; i < boneCount; i++) {
@@ -8980,7 +8964,7 @@ public class Bcs {
             channel.write(shortBuffer);
 
             if (physicsCount > 0) {
-                int physicsOffset = (version == 72 ? 80 : 88);
+                int physicsOffset = (version == 72 ? 80 + colorSelectorCount * 4 : 88 + colorSelectorCount * 4);
 
                 channel.position(mainOffset + 76);
                 intBuffer.clear();
@@ -9036,7 +9020,7 @@ public class Bcs {
                     if (bcsPhysics.emdName != null) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 40);
                         intBuffer.clear();
-                        intBuffer.putInt(typesSum - mainOffset - physicsOffset);
+                        intBuffer.putInt(typesSum - mainOffset - physicsOffset - j * 72);
                         intBuffer.flip();
                         channel.write(intBuffer);
                         
@@ -9053,7 +9037,7 @@ public class Bcs {
                     if (bcsPhysics.emmName != null) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 44);
                         intBuffer.clear();
-                        intBuffer.putInt(typesSum - mainOffset - physicsOffset);
+                        intBuffer.putInt(typesSum - mainOffset - physicsOffset - j * 72);
                         intBuffer.flip();
                         channel.write(intBuffer);
                         
@@ -9070,7 +9054,7 @@ public class Bcs {
                     if (bcsPhysics.embName != null) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 48);
                         intBuffer.clear();
-                        intBuffer.putInt(typesSum - mainOffset - physicsOffset);
+                        intBuffer.putInt(typesSum - mainOffset - physicsOffset - j * 72);
                         intBuffer.flip();
                         channel.write(intBuffer);
                         
@@ -9087,7 +9071,7 @@ public class Bcs {
                     if (bcsPhysics.eskName != null) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 52);
                         intBuffer.clear();
-                        intBuffer.putInt(typesSum - mainOffset - physicsOffset);
+                        intBuffer.putInt(typesSum - mainOffset - physicsOffset - j * 72);
                         intBuffer.flip();
                         channel.write(intBuffer);
                         
@@ -9104,7 +9088,7 @@ public class Bcs {
                     if (bcsPhysics.boneToAttach != null) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 56);
                         intBuffer.clear();
-                        intBuffer.putInt(typesSum - mainOffset  - physicsOffset);
+                        intBuffer.putInt(typesSum - mainOffset  - physicsOffset - j * 72);
                         intBuffer.flip();
                         channel.write(intBuffer);
                         
@@ -9121,7 +9105,7 @@ public class Bcs {
                     if (bcsPhysics.scdName != null) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 60);
                         intBuffer.clear();
-                        intBuffer.putInt(typesSum - mainOffset - physicsOffset);
+                        intBuffer.putInt(typesSum - mainOffset - physicsOffset - j * 72);
                         intBuffer.flip();
                         channel.write(intBuffer);
                         
@@ -9135,8 +9119,8 @@ public class Bcs {
                         typesSum += bcsPhysics.scdName.getBytes().length;
                     }
 
-                    thisPartSetOffset += 72;
-                    this.relativeOffset += 72;
+                    thisPartSetOffset +=  72;
+                    this.relativeOffset +=  72;
                 }
 
                 subPartIndex++;
@@ -9154,7 +9138,7 @@ public class Bcs {
                 channel.write(shortBuffer);
 
                 if (unknown3Count > 0) {
-                    int unknown3Offset = 88;
+                    int unknown3Offset = 88 + colorSelectorCount * 4 + physicsCount * 72;
 
                     channel.position(mainOffset + 84);
                     intBuffer.clear();
