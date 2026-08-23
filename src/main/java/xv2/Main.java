@@ -399,8 +399,6 @@ public class Main extends Application {
         
         primaryStage.setOnCloseRequest(event -> {
             executorService.shutdown();
-            event.consume();
-            Platform.exit();
         });  
     }
 
