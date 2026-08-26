@@ -7,11 +7,16 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -41,12 +46,18 @@ public class Aur {
     MenuItem delete = new MenuItem("Delete Del");
     MenuItem append = new MenuItem("Append Ctrl+A");
     MenuItem insert = new MenuItem("Insert Ctrl+I");
-    
+
+    int findIndex = 0;
+    String findText = null;
+    ArrayList<Object> indexList = new ArrayList<>();
+
     public Aur() {
         vBox.setPadding(new Insets(5, 5, 5, 5));
         entriesActionListener();
         entriesKeysListener();
         vBoxListener();
+        indexList.add(findIndex);
+        indexList.add(findText);
     }
 
     public SplitPane createSplitPane() {
@@ -346,10 +357,10 @@ public class Aur {
             if (e.getButton() == MouseButton.SECONDARY) {
                 contextMenu.setOnAction(event -> {
                     if (event.getTarget() == copy) Copy();
-                    if (event.getTarget() == paste) Paste();
-                    if (event.getTarget() == delete) Delete();
-                    if (event.getTarget() == append) Append();
-                    if (event.getTarget() == insert) Insert();
+                    else if (event.getTarget() == paste) Paste();
+                    else if (event.getTarget() == delete) Delete();
+                    else if (event.getTarget() == append) Append();
+                    else if (event.getTarget() == insert) Insert();
                 });
             }
         });
@@ -362,10 +373,198 @@ public class Aur {
     private void entriesKeysListener() {
         listView.setOnKeyPressed(e -> {
             if (e.isControlDown() && e.getCode() == KeyCode.C) Copy();
-            if (e.isControlDown() && e.getCode() == KeyCode.V) Paste();
-            if (e.getCode() == KeyCode.DELETE) Delete();
-            if (e.isControlDown() && e.getCode() == KeyCode.A) Append();
-            if (e.isControlDown() && e.getCode() == KeyCode.I) Insert();
+            else if (e.isControlDown() && e.getCode() == KeyCode.V) Paste();
+            else if (e.getCode() == KeyCode.DELETE) Delete();
+            else if (e.isControlDown() && e.getCode() == KeyCode.A) Append();
+            else if (e.isControlDown() && e.getCode() == KeyCode.I) Insert();
+            else if (e.isControlDown() && e.getCode() == KeyCode.F) {
+                ButtonType findNextButtonType = new ButtonType("Find Next", ButtonData.NEXT_FORWARD);
+                ButtonType cancelButtonType = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+                Dialog<String> dialog = new Dialog<>();
+                dialog.setTitle("Find");
+                dialog.getDialogPane().getButtonTypes().addAll(findNextButtonType, cancelButtonType);
+                dialog.getDialogPane().setContent(Popups.createFindDialog("Aura Entry: ", indexList, 
+                FXCollections.observableArrayList("I_04", 
+                "BoostStart", 
+                "BoostLoop", 
+                "BoostEnd", 
+                "KiaiCharge", 
+                "KiryokuMax", 
+                "HenshinStart", 
+                "HenshinEnd")));
+
+                final Button findbt = (Button) dialog.getDialogPane().lookupButton(findNextButtonType);
+                findbt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!findbt.isPressed()) {
+                        switch ((int) indexList.get(0)) {
+                            case 0 -> {
+                                int counter = 0;
+                                int index = listView.getSelectionModel().getSelectedIndex();
+                                boolean found = false;
+                                do {    
+                                    if (indexList.get(1) != null && auraEntries.get(index).i04 == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
+                                        listView.getSelectionModel().select(index);
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(0)).getChildren().get(1)).requestFocus();
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(0)).getChildren().get(1)).selectAll();
+                                        found = true;
+                                        break;
+                                    }
+                                    index ++;
+                                    counter++;
+                                    if (index == listView.getItems().size()) index = 0;
+                                } while (counter != listView.getItems().size());
+                                if (!found) {
+                                    Popups.ItemNotFound();
+                                }
+                            }
+                            case 1 -> {
+                                int counter = 0;
+                                int index = listView.getSelectionModel().getSelectedIndex();
+                                boolean found = false;
+                                do { 
+                                    if (auraEntries.get(index).boostStart == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
+                                        listView.getSelectionModel().select(index);
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(1)).getChildren().get(1)).requestFocus();
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(1)).getChildren().get(1)).selectAll();
+                                        found = true;
+                                        break;
+                                    }
+                                    index ++;
+                                    counter++;
+                                    if (index == listView.getItems().size()) index = 0;
+                                } while (counter != listView.getItems().size());
+                                if (!found) {
+                                    Popups.ItemNotFound();
+                                }
+                            }
+                            case 2 -> {
+                                int counter = 0;
+                                int index = listView.getSelectionModel().getSelectedIndex();
+                                boolean found = false;
+                                do {    
+                                    if (auraEntries.get(index).boostLoop == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
+                                        listView.getSelectionModel().select(index);
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(2)).getChildren().get(1)).requestFocus();
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(2)).getChildren().get(1)).selectAll();
+                                        found = true;
+                                        break;
+                                    }
+                                    index ++;
+                                    counter++;
+                                    if (index == listView.getItems().size()) index = 0;
+                                } while (counter != listView.getItems().size());
+                                if (!found) {
+                                    Popups.ItemNotFound();
+                                }
+                            }
+                            case 3 -> {
+                                int counter = 0;
+                                int index = listView.getSelectionModel().getSelectedIndex();
+                                boolean found = false;
+                                do {    
+                                    if (auraEntries.get(index).boostEnd == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
+                                        listView.getSelectionModel().select(index);
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(3)).getChildren().get(1)).requestFocus();
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(3)).getChildren().get(1)).selectAll();
+                                        found = true;
+                                        break;
+                                    }
+                                    index ++;
+                                    counter++;
+                                    if (index == listView.getItems().size()) index = 0;
+                                } while (counter != listView.getItems().size());
+                                if (!found) {
+                                    Popups.ItemNotFound();
+                                }
+                            }
+                            case 4 -> {
+                                int counter = 0;
+                                int index = listView.getSelectionModel().getSelectedIndex();
+                                boolean found = false;
+                                do {    
+                                    if (auraEntries.get(index).kiaiCharge == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
+                                        listView.getSelectionModel().select(index);
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(4)).getChildren().get(1)).requestFocus();
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(4)).getChildren().get(1)).selectAll();
+                                        found = true;
+                                        break;
+                                    }
+                                    index ++;
+                                    counter++;
+                                    if (index == listView.getItems().size()) index = 0;
+                                } while (counter != listView.getItems().size());
+                                if (!found) {
+                                    Popups.ItemNotFound();
+                                }
+                            }
+                            case 5 -> {
+                                int counter = 0;
+                                int index = listView.getSelectionModel().getSelectedIndex();
+                                boolean found = false;
+                                do {    
+                                    if (auraEntries.get(index).kiryokuMax == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
+                                        listView.getSelectionModel().select(index);
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(5)).getChildren().get(1)).requestFocus();
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(5)).getChildren().get(1)).selectAll();
+                                        found = true;
+                                        break;
+                                    }
+                                    index ++;
+                                    counter++;
+                                    if (index == listView.getItems().size()) index = 0;
+                                } while (counter != listView.getItems().size());
+                                if (!found) {
+                                    Popups.ItemNotFound();
+                                }
+                            }
+                            case 6 -> {
+                                int counter = 0;
+                                int index = listView.getSelectionModel().getSelectedIndex();
+                                boolean found = false;
+                                do {    
+                                    if (auraEntries.get(index).henshinStart == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
+                                        listView.getSelectionModel().select(index);
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(6)).getChildren().get(1)).requestFocus();
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(6)).getChildren().get(1)).selectAll();
+                                        found = true;
+                                        break;
+                                    }
+                                    index ++;
+                                    counter++;
+                                    if (index == listView.getItems().size()) index = 0;
+                                } while (counter != listView.getItems().size());
+                                if (!found) {
+                                    Popups.ItemNotFound();
+                                }
+                            }
+                            case 7 -> {
+                                int counter = 0;
+                                int index = listView.getSelectionModel().getSelectedIndex();
+                                boolean found = false;
+                                do {    
+                                    if (auraEntries.get(index).henshinEnd == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
+                                        listView.getSelectionModel().select(index);
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(7)).getChildren().get(1)).requestFocus();
+                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(7)).getChildren().get(1)).selectAll();
+                                        found = true;
+                                        break;
+                                    }
+                                    index ++;
+                                    counter++;
+                                    if (index == listView.getItems().size()) index = 0;
+                                } while (counter != listView.getItems().size());
+                                if (!found) {
+                                    Popups.ItemNotFound();
+                                }
+                            }
+                        }
+                        
+                        event.consume();
+                    }
+                });
+                dialog.showAndWait();
+            }
         });
     }
 
