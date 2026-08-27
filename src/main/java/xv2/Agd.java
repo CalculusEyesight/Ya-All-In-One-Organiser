@@ -34,7 +34,7 @@ class Agd {
         return new ScrollPane(this.vBox);
     }
 
-    private ToolBar createToolBar() {
+    private Button insertEntry() {
         Button insertEntry = new Button("Insert Entry");
 
         insertEntry.setOnAction(event -> {
@@ -44,6 +44,10 @@ class Agd {
             entries += 1;
         });
 
+        return insertEntry;
+    }
+
+    private Button removeEntry() {
         Button removeEntry = new Button("Remove Entry");
 
         removeEntry.setOnAction(event -> {
@@ -57,79 +61,57 @@ class Agd {
             }
         });
 
-        return new ToolBar(insertEntry, removeEntry);
+        return removeEntry;
+    }
+
+    private ToolBar createToolBar() {
+        return new ToolBar(insertEntry(), removeEntry());
     }
 
     private void createAgdVBox(AgdEntry entry) {
-        //level
-        Label levelLabel = new Label("Level");
-        TextField levelTextField = new TextField(String.valueOf(entry.level));
-        levelTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (levelTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.level = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        //level
-
-        //xptonextlevel
-        Label xpToNextLevelLabel = new Label("Xp To Next Level");
-        TextField xpToNextLevelTextField = new TextField(String.valueOf(entry.xpToNextLevel));
-        xpToNextLevelTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (xpToNextLevelTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.xpToNextLevel = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        //xptonextlevel
-        
-        //xptothislevel
-        Label xpToThisLevelLabel = new Label("Xp To This Level");
-        TextField xpToThisLevelTextField = new TextField(String.valueOf(entry.xpToThisLevel));
-        xpToThisLevelTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (xpToThisLevelTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.xpToThisLevel = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        //xptothislevel
-
-        //attributepointsgained
-        Label attributePointsGainedLabel = new Label("Attribute Points Gained");
-        TextField attributePointsGainedTextField = new TextField(String.valueOf(entry.attributePointsGained));
-        attributePointsGainedTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (attributePointsGainedTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.attributePointsGained = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        //attributepointsgained
-
+        System.out.println(agdEntries.indexOf(entry));
         HBox agdHBox = new HBox(30, 
-            levelLabel, levelTextField, 
-            xpToNextLevelLabel, xpToNextLevelTextField, 
-            xpToThisLevelLabel, xpToThisLevelTextField, 
-            attributePointsGainedLabel, attributePointsGainedTextField
+            createLabel("Level"), createTextField(agdEntries.indexOf(entry), AgdValues.level), 
+            createLabel("Xp To Next Level"), createTextField(agdEntries.indexOf(entry), AgdValues.xpToNextLevel), 
+            createLabel("Xp To This Level"), createTextField(agdEntries.indexOf(entry), AgdValues.xpToThisLevel), 
+            createLabel("Attribute Points Gained"),createTextField(agdEntries.indexOf(entry), AgdValues.attributePointsGained)
         );
         agdHBox.setAlignment(Pos.CENTER_LEFT);
 
         this.vBox.getChildren().add(agdHBox);
+    }
+
+    private Label createLabel(String value) {
+        return new Label(value);
+    }
+
+    private TextField createTextField(int i, AgdValues index) {
+        int value = 0;
+        switch (index) {
+            case AgdValues.level -> value = agdEntries.get(i).level;
+            case AgdValues.xpToNextLevel -> value = agdEntries.get(i).xpToNextLevel;
+            case AgdValues.xpToThisLevel -> value = agdEntries.get(i).xpToThisLevel;
+            case AgdValues.attributePointsGained -> value = agdEntries.get(i).attributePointsGained;
+        }
+
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (index) {
+                    case AgdValues.level -> agdEntries.get(i).level = Integer.parseInt(newText);
+                    case AgdValues.xpToNextLevel -> agdEntries.get(i).xpToNextLevel = Integer.parseInt(newText);
+                    case AgdValues.xpToThisLevel -> agdEntries.get(i).xpToThisLevel = Integer.parseInt(newText);
+                    case AgdValues.attributePointsGained -> agdEntries.get(i).attributePointsGained = Integer.parseInt(newText);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
     }
 
     private void vBoxListener() {
@@ -176,7 +158,7 @@ class Agd {
                 intBuffer.flip();
                 agdEntry.attributePointsGained = intBuffer.getInt();
 
-                createAgdVBox(agdEntry);
+                createAgdVBox(agdEntries.get(i));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -236,6 +218,19 @@ class Agd {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static enum AgdValues {
+        level(0),
+        xpToNextLevel(1),
+        xpToThisLevel(2),
+        attributePointsGained(3);
+
+        final int value;
+
+        AgdValues (int value) {
+            this.value = value;
         }
     }
 }
