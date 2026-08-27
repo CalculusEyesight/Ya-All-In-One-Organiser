@@ -51,10 +51,12 @@ public class Emb {
         return new VBox(createToolBar(), createHBox());
     }
 
-    private ToolBar createToolBar() {
-        Button addNewImage = new Button("Add New Images");
-        addNewImage.setOnAction(event -> {
+    private Button addNewImages() {
+        Button addNewImages = new Button("Add New Images");
+
+        addNewImages.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
+
             fileChooser.setTitle("Choose Image Files");
             fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("Image Files", "*.dds")
@@ -74,10 +76,17 @@ public class Emb {
             }
         });
 
+        return addNewImages;
+    }
+
+    private Button extractAllImages() {
         Button extractAllImages = new Button("Extract All Images");
+
         extractAllImages.setOnAction(event -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
+
             File selectedDirectory = directoryChooser.showDialog(null);
+            
             if(selectedDirectory != null) {
                 for (int i = 0; i < allImages.size(); i++) {
                     if(!isPortrait){
@@ -112,9 +121,15 @@ public class Emb {
             }
         });
 
-        Button mergeEmb = new Button("Merge embs");
-        mergeEmb.setOnAction(event -> {
+        return extractAllImages;
+    }
+
+    private Button mergeEmbs() {
+        Button mergeEmbs = new Button("Merge EMBs");
+
+        mergeEmbs.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
+            
             fileChooser.setTitle("Open Resource File");
             fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("Emb Files", "*.emb")
@@ -127,7 +142,11 @@ public class Emb {
             }
         });
 
-        return new ToolBar(addNewImage, extractAllImages, mergeEmb);
+        return mergeEmbs;
+    }
+
+    private ToolBar createToolBar() {
+        return new ToolBar(addNewImages(), extractAllImages(), mergeEmbs());
     }
 
     private HBox createHBox() {
@@ -178,6 +197,7 @@ public class Emb {
                 return;
             }
         });
+
         listView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 ContextMenu contextMenu=new ContextMenu();
@@ -189,21 +209,11 @@ public class Emb {
                 contextMenu.getItems().addAll(delete,append,insert,replace,extractImage);
                 listView.setContextMenu(contextMenu);
                 contextMenu.setOnAction(event -> {
-                    if (event.getTarget() == delete) {
-                       Delete();
-                    }
-                    if (event.getTarget() == append) {
-                        Append();
-                    }
-                    if (event.getTarget() == insert) {
-                        Insert();
-                    }
-                    if (event.getTarget() == replace) {
-                        Replace();
-                    }
-                    if (event.getTarget() == extractImage){
-                        ExtractImage();
-                    }
+                    if (event.getTarget() == delete) Delete();
+                    else if (event.getTarget() == append) Append();
+                    else if (event.getTarget() == insert) Insert();
+                    else if (event.getTarget() == replace) Replace();
+                    else if (event.getTarget() == extractImage) ExtractImage();
                 });
             }
         });
@@ -211,21 +221,11 @@ public class Emb {
 
     private void entriesKeysListener() {
         listView.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.DELETE) {
-                Delete();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.A) {
-                Append();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.I) {
-                Insert();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.R) {
-                Replace();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.E) {
-                ExtractImage();
-            }
+            if (e.getCode() == KeyCode.DELETE) Delete();
+            else if (e.isControlDown() && e.getCode() == KeyCode.A) Append();
+            else if (e.isControlDown() && e.getCode() == KeyCode.I) Insert();
+            else if (e.isControlDown() && e.getCode() == KeyCode.R) Replace();
+            else if (e.isControlDown() && e.getCode() == KeyCode.E) ExtractImage();
         });
     }
 
@@ -255,6 +255,7 @@ public class Emb {
 
     private void Insert() {
         FileChooser fileChooser = new FileChooser();
+
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
             new ExtensionFilter("Image Files", "*.dds")
@@ -274,6 +275,7 @@ public class Emb {
 
     private void Replace() {
         FileChooser fileChooser = new FileChooser();
+
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
             new ExtensionFilter("Image Files", "*.dds")
@@ -298,6 +300,7 @@ public class Emb {
 
     private void ExtractImage() {
         FileChooser fileChooser = new FileChooser();
+
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
             new ExtensionFilter("Image Files", "*.dds")
