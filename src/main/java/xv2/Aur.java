@@ -29,16 +29,16 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
 public class Aur {
     VBox vBox = new VBox(10);
     HBox hBox = new HBox(10);
     ListView<String> listView = new ListView<>();
 
-    ArrayList<AurAuraEntry> auraEntries = new ArrayList<>();
-    ArrayList<AurCharaEntry> charaEntries = new ArrayList<>();
+    ArrayList<AuraEntry> auraEntries = new ArrayList<>();
+    ArrayList<CharaEntry> charaEntries = new ArrayList<>();
 
-    AurAuraEntry copyContainer = null;
-    int characterEntries;
+    AuraEntry copyContainer = null;
 
     ContextMenu contextMenu = new ContextMenu();
     MenuItem copy = new MenuItem("Copy Ctrl+C");
@@ -49,192 +49,39 @@ public class Aur {
 
     int findIndex = 0;
     String findText = null;
-    ArrayList<Object> indexList = new ArrayList<>();
+    Object [] indexList = new Object[] {findIndex, findText};
 
     public Aur() {
         vBox.setPadding(new Insets(5, 5, 5, 5));
+
         entriesActionListener();
         entriesKeysListener();
         vBoxListener();
-        indexList.add(findIndex);
-        indexList.add(findText);
     }
 
     public SplitPane createSplitPane() {
-       SplitPane splitPane = new SplitPane(createHBoxLeft(), createVBoxRight());
+       SplitPane splitPane = new SplitPane(createAuraIDHBox(), createCharaIDVBox());
        splitPane.setDividerPositions(0.43);
+
        return splitPane;
     }
 
-    private HBox createHBoxLeft() {
+    private HBox createAuraIDHBox() {
         this.hBox.getChildren().addAll(listView, new VBox());
+
         return hBox;
     }
 
-    private VBox createAuraIdVBox(AurAuraEntry entry) {
-        //i04
-        Label i04Label = new Label("I_04");
-        i04Label.setPrefWidth(120);
-
-        TextField i04TextField = new TextField(String.valueOf(entry.i04));
-        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i04 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i04HBox = new HBox(i04Label, i04TextField);
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        //i04
-
-        //boostStart
-        Label boostStartLabel = new Label("BoostStart");
-        boostStartLabel.setPrefWidth(120);
-
-        TextField boostStartTextField = new TextField(String.valueOf(entry.boostStart));
-        boostStartTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (boostStartTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.boostStart = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox boostStartHBox = new HBox(boostStartLabel, boostStartTextField);
-        boostStartHBox.setAlignment(Pos.CENTER_LEFT);
-        //boostStart
-
-        //boostLoop
-        Label boostLoopLabel = new Label("BoostLoop");
-        boostLoopLabel.setPrefWidth(120);
-
-        TextField boostLoopTextField=new TextField(String.valueOf(entry.boostLoop));
-        boostLoopTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (boostLoopTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.boostLoop = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox boostLoopHBox = new HBox(boostLoopLabel, boostLoopTextField);
-        boostLoopHBox.setAlignment(Pos.CENTER_LEFT);
-        //boostLoop
-
-        //boostEnd
-        Label boostEndLabel = new Label("BoostEnd");
-        boostEndLabel.setPrefWidth(120);
-
-        TextField boostEndTextField = new TextField(String.valueOf(entry.boostEnd));
-        boostEndTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (boostEndTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.boostEnd = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox boostEndHBox = new HBox(boostEndLabel, boostEndTextField);
-        boostEndHBox.setAlignment(Pos.CENTER_LEFT);
-
-        //kiaiCharge
-        Label kiaiChargeLabel = new Label("KiaiCharge");
-        kiaiChargeLabel.setPrefWidth(120);
-
-        TextField kiaiChargeTextField = new TextField(String.valueOf(entry.kiaiCharge));
-        kiaiChargeTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (kiaiChargeTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.kiaiCharge = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox kiaiChargeHBox = new HBox(kiaiChargeLabel, kiaiChargeTextField);
-        kiaiChargeHBox.setAlignment(Pos.CENTER_LEFT);
-
-        //kiryokuMax
-        Label kiryokuMaxLabel = new Label("KiryokuMax");
-        kiryokuMaxLabel.setPrefWidth(120);
-
-        TextField txtKiryokuMax=new TextField(String.valueOf(entry.kiryokuMax));
-        txtKiryokuMax.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtKiryokuMax.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.kiryokuMax = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox kiryokuMaxHBox = new HBox(kiryokuMaxLabel, txtKiryokuMax);
-        kiryokuMaxHBox.setAlignment(Pos.CENTER_LEFT);
-        //kiryokuMax
-
-        //henshinStart
-        Label henshinStartLabel = new Label("HenshinStart");
-        henshinStartLabel.setPrefWidth(120);
-
-        TextField henshinStartTextField = new TextField(String.valueOf(entry.henshinStart));
-        henshinStartTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (henshinStartTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.henshinStart = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox henshinStartHBox = new HBox(henshinStartLabel, henshinStartTextField);
-        henshinStartHBox.setAlignment(Pos.CENTER_LEFT);
-        //henshinStart
-
-        //henshinEnd
-        Label henshinEndLabel = new Label("HenshinEnd");
-        henshinEndLabel.setPrefWidth(120);
-
-        TextField henshinEndTextField = new TextField(String.valueOf(entry.henshinEnd));
-        henshinEndTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (henshinEndTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.henshinEnd = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox henshinEndHBox = new HBox(henshinEndLabel, henshinEndTextField);
-        henshinEndHBox.setAlignment(Pos.CENTER_LEFT);
-        //henshinEnd
-
+    private VBox createAuraIdVBox(AuraEntry entry) {
         VBox auraIdVBox = new VBox(70, 
-            i04HBox, boostStartHBox,
-            boostLoopHBox, boostEndHBox,
-            kiaiChargeHBox, kiryokuMaxHBox,
-            henshinStartHBox, henshinEndHBox
+            createHBox(createLabel("I_04", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.I04)), 
+            createHBox(createLabel("BoostStart", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.BoostStart)),
+            createHBox(createLabel("BoostLoop", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.BoostLoop)), 
+            createHBox(createLabel("BoostEnd", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.BoostEnd)),
+            createHBox(createLabel("KiaiCharge", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.KiaiCharge)), 
+            createHBox(createLabel("KiryokuMax", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.KiryokuMax)),
+            createHBox(createLabel("HenshinStart", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.HenshinStart)), 
+            createHBox(createLabel("HenshinEnd", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.HenshinEnd))
         );
         auraIdVBox.setPadding(new Insets(20, 0, 0, 0));
 
@@ -245,96 +92,149 @@ public class Aur {
         return new ScrollPane(vBox);
     }
 
-    private VBox createVBoxRight() {
+    private VBox createCharaIDVBox() {
         return new VBox(createToolBarRight(), createScrollPane());
     }
 
-    private ToolBar createToolBarRight() {
-        Button insertEntry = new Button("Insert Chara ID");
-        insertEntry.setOnAction(event -> {
-            AurCharaEntry newCharaEntry = new AurCharaEntry();
-            charaEntries.add(newCharaEntry);
-            createCharaIdVBox(newCharaEntry);
-            characterEntries += 1;
+    private Label createLabel(String value, int width) {
+        Label label = new Label(value);
+        if (width != 0) label.setPrefWidth(width);
+
+        return label;
+    }
+
+    private TextField createAuraTextField(int i, AuraValues auraIndex) {
+        int value = 0;
+        switch (auraIndex) {
+            case AuraValues.I04 -> value = auraEntries.get(i).i04;
+            case AuraValues.BoostStart -> value = auraEntries.get(i).boostStart;
+            case AuraValues.BoostLoop -> value = auraEntries.get(i).boostLoop;
+            case AuraValues.BoostEnd -> value = auraEntries.get(i).boostEnd;
+            case AuraValues.KiaiCharge -> value = auraEntries.get(i).kiaiCharge;
+            case AuraValues.KiryokuMax -> value = auraEntries.get(i).kiryokuMax;
+            case AuraValues.HenshinStart -> value = auraEntries.get(i).henshinStart;
+            case AuraValues.HenshinEnd -> value = auraEntries.get(i).henshinEnd;
+        }
+
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (auraIndex) {
+                    case AuraValues.I04 -> auraEntries.get(i).i04 = Integer.parseInt(newText);
+                    case AuraValues.BoostStart -> auraEntries.get(i).boostStart = Integer.parseInt(newText);
+                    case AuraValues.BoostLoop -> auraEntries.get(i).boostLoop = Integer.parseInt(newText);
+                    case AuraValues.BoostEnd -> auraEntries.get(i).boostEnd = Integer.parseInt(newText);
+                    case AuraValues.KiaiCharge -> auraEntries.get(i).kiaiCharge = Integer.parseInt(newText);
+                    case AuraValues.KiryokuMax -> auraEntries.get(i).kiryokuMax = Integer.parseInt(newText);
+                    case AuraValues.HenshinStart -> auraEntries.get(i).henshinStart = Integer.parseInt(newText);
+                    case AuraValues.HenshinEnd -> auraEntries.get(i).henshinEnd = Integer.parseInt(newText);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         });
 
+        return textField;
+    }
+
+    private TextField createCharaTextField(int i, CharaValues charaIndex) {
+        int value = 0;
+        switch (charaIndex) {
+            case CharaValues.CharaID -> value = charaEntries.get(i).charaId;
+            case CharaValues.Costume -> value = charaEntries.get(i).costume;
+            case CharaValues.AuraID -> value = charaEntries.get(i).auraId;
+            default -> throw new IllegalArgumentException("Unexpected value: " + charaIndex);
+        }
+
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (charaIndex) {
+                    case CharaValues.CharaID -> charaEntries.get(i).charaId = Integer.parseInt(newText);
+                    case CharaValues.Costume -> charaEntries.get(i).costume = Integer.parseInt(newText);
+                    case CharaValues.AuraID -> charaEntries.get(i).auraId = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + charaIndex);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private CheckBox createCharaChekcBox(int i, CharaValues index) {
+        boolean value = false;
+        switch (index) {
+            case CharaValues.Glare -> value = charaEntries.get(i).glare;
+            default -> throw new IllegalArgumentException("Unexpected value: " + index);
+        }
+
+        CheckBox checkBox = new CheckBox("Glare");
+        checkBox.setSelected(value);
+        checkBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            switch (index) {
+                case CharaValues.Glare -> charaEntries.get(i).glare = newValue;
+                default -> throw new IllegalArgumentException("Unexpected value: " + index);
+            } 
+        });
+
+        return checkBox;
+    }
+
+    private HBox createHBox(Label label, TextField textField) {
+        HBox hBox = new HBox(label, textField);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        return hBox;
+    }
+
+    private Button insertEntry() {
+        Button insertEntry = new Button("Insert Chara ID");
+
+        insertEntry.setOnAction(event -> {
+            charaEntries.add(new CharaEntry());
+            createCharaIdVBox(charaEntries.getLast());
+        });
+
+        return insertEntry;
+    }
+
+    private Button removeEntry() {
         Button removeEntry = new Button("Remove Chara ID");
+
         removeEntry.setOnAction(event -> {
             try {
-                charaEntries.remove(characterEntries - 1);
-                vBox.getChildren().remove(characterEntries - 1);
-                characterEntries -= 1;
+                vBox.getChildren().remove(charaEntries.size() - 1);
+                charaEntries.remove(charaEntries.size() - 1);
             } catch (IndexOutOfBoundsException e) {
                 Popups.ErrorOutOfBounds();
                 e.printStackTrace();
             }
         });
 
-        return new ToolBar(insertEntry, removeEntry);
+        return removeEntry;
+    }
+
+    private ToolBar createToolBarRight() {
+        return new ToolBar(insertEntry(), removeEntry());
     }
     
-    private VBox createCharaIdVBox(AurCharaEntry entry) {
-        HBox hBox = new HBox(10);
-
-        //charaId
-        Label charaIdLabel = new Label("Chara ID");
-        TextField txtCharaId = new TextField(String.valueOf(entry.charaId));
-        txtCharaId.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtCharaId.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.charaId = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        //charaId
-
-        //costume
-        Label costumeLabel = new Label("Costume");
-        TextField costumeTextField = new TextField(String.valueOf(entry.costume));
-        costumeTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtCharaId.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.costume = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        //costume
-
-        //auraId
-        Label auraIdLabel = new Label("Aura ID");
-        TextField txtAuraId = new TextField(String.valueOf(entry.auraId));
-        txtAuraId.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtAuraId.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.auraId = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        //auraId
-
-        //glare
-        CheckBox glareCheckBox = new CheckBox("Glare");
-        glareCheckBox.setSelected(entry.glare);
-        glareCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            entry.glare = newValue; 
-        });
-        //glare
-
-        hBox.getChildren().addAll(
-            charaIdLabel, txtCharaId,
-            costumeLabel, costumeTextField,
-            auraIdLabel, txtAuraId ,glareCheckBox
+    private VBox createCharaIdVBox(CharaEntry entry) {
+        HBox hBox = new HBox(10,
+            createLabel("Chara ID", 0), createCharaTextField(charaEntries.indexOf(entry), CharaValues.CharaID),
+            createLabel("Costume", 0), createCharaTextField(charaEntries.indexOf(entry), CharaValues.Costume),
+            createLabel("Aura ID", 0), createCharaTextField(charaEntries.indexOf(entry), CharaValues.AuraID) ,
+                                                    createCharaChekcBox(charaEntries.indexOf(entry), CharaValues.Glare)
         );
         hBox.setAlignment(Pos.CENTER_LEFT);
+
         vBox.getChildren().add(hBox);
 
         return vBox;
@@ -353,6 +253,7 @@ public class Aur {
             hBox.getChildren().remove(1);
             hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
         });
+
         listView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 contextMenu.setOnAction(event -> {
@@ -370,6 +271,45 @@ public class Aur {
         vBox.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {});
     }
 
+    private void listViewSearch(AuraValues auraIndex) {
+        int counter = 0;
+        int value = 0;
+        int listIndex = listView.getSelectionModel().getSelectedIndex();
+        int textFieldIndex = auraIndex.index;
+        boolean found = false;
+
+        do {
+
+            switch (auraIndex) {
+                case AuraValues.I04 -> value = auraEntries.get(listIndex).i04;
+                case AuraValues.BoostStart -> value = auraEntries.get(listIndex).boostStart;
+                case AuraValues.BoostLoop -> value = auraEntries.get(listIndex).boostLoop;
+                case AuraValues.BoostEnd -> value = auraEntries.get(listIndex).boostEnd;
+                case AuraValues.KiaiCharge -> value = auraEntries.get(listIndex).kiaiCharge;
+                case AuraValues.KiryokuMax -> value = auraEntries.get(listIndex).kiryokuMax;
+                case AuraValues.HenshinStart -> value = auraEntries.get(listIndex).henshinStart;
+                case AuraValues.HenshinEnd -> value = auraEntries.get(listIndex).henshinEnd;
+            }
+
+            if (indexList[1] != null && value == Integer.parseInt((String) indexList[1]) && listView.getSelectionModel().getSelectedIndex() != listIndex) {
+                listView.getSelectionModel().select(listIndex);
+                ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(textFieldIndex)).getChildren().get(1)).requestFocus();
+                ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(textFieldIndex)).getChildren().get(1)).selectAll();
+                found = true;
+                break;
+            }
+
+            listIndex++;
+            counter++;
+
+            if (listIndex == listView.getItems().size()) listIndex = 0;
+        } while (counter != listView.getItems().size());
+
+        if (!found) {
+            Popups.ItemNotFound();
+        }
+    }
+
     private void entriesKeysListener() {
         listView.setOnKeyPressed(e -> {
             if (e.isControlDown() && e.getCode() == KeyCode.C) Copy();
@@ -385,179 +325,29 @@ public class Aur {
                 dialog.setTitle("Find");
                 dialog.getDialogPane().getButtonTypes().addAll(findNextButtonType, cancelButtonType);
                 dialog.getDialogPane().setContent(Popups.createFindDialog("Aura Entry: ", indexList, 
-                FXCollections.observableArrayList("I_04", 
-                "BoostStart", 
-                "BoostLoop", 
-                "BoostEnd", 
-                "KiaiCharge", 
-                "KiryokuMax", 
-                "HenshinStart", 
-                "HenshinEnd")));
+                    FXCollections.observableArrayList(
+                        "I_04", 
+                        "BoostStart", 
+                        "BoostLoop", 
+                        "BoostEnd", 
+                        "KiaiCharge", 
+                        "KiryokuMax", 
+                        "HenshinStart", 
+                        "HenshinEnd"
+                    )));
 
                 final Button findbt = (Button) dialog.getDialogPane().lookupButton(findNextButtonType);
                 findbt.addEventFilter(ActionEvent.ACTION, event -> {
                     if (!findbt.isPressed()) {
-                        switch ((int) indexList.get(0)) {
-                            case 0 -> {
-                                int counter = 0;
-                                int index = listView.getSelectionModel().getSelectedIndex();
-                                boolean found = false;
-                                do {    
-                                    if (indexList.get(1) != null && auraEntries.get(index).i04 == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
-                                        listView.getSelectionModel().select(index);
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(0)).getChildren().get(1)).requestFocus();
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(0)).getChildren().get(1)).selectAll();
-                                        found = true;
-                                        break;
-                                    }
-                                    index ++;
-                                    counter++;
-                                    if (index == listView.getItems().size()) index = 0;
-                                } while (counter != listView.getItems().size());
-                                if (!found) {
-                                    Popups.ItemNotFound();
-                                }
-                            }
-                            case 1 -> {
-                                int counter = 0;
-                                int index = listView.getSelectionModel().getSelectedIndex();
-                                boolean found = false;
-                                do { 
-                                    if (auraEntries.get(index).boostStart == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
-                                        listView.getSelectionModel().select(index);
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(1)).getChildren().get(1)).requestFocus();
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(1)).getChildren().get(1)).selectAll();
-                                        found = true;
-                                        break;
-                                    }
-                                    index ++;
-                                    counter++;
-                                    if (index == listView.getItems().size()) index = 0;
-                                } while (counter != listView.getItems().size());
-                                if (!found) {
-                                    Popups.ItemNotFound();
-                                }
-                            }
-                            case 2 -> {
-                                int counter = 0;
-                                int index = listView.getSelectionModel().getSelectedIndex();
-                                boolean found = false;
-                                do {    
-                                    if (auraEntries.get(index).boostLoop == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
-                                        listView.getSelectionModel().select(index);
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(2)).getChildren().get(1)).requestFocus();
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(2)).getChildren().get(1)).selectAll();
-                                        found = true;
-                                        break;
-                                    }
-                                    index ++;
-                                    counter++;
-                                    if (index == listView.getItems().size()) index = 0;
-                                } while (counter != listView.getItems().size());
-                                if (!found) {
-                                    Popups.ItemNotFound();
-                                }
-                            }
-                            case 3 -> {
-                                int counter = 0;
-                                int index = listView.getSelectionModel().getSelectedIndex();
-                                boolean found = false;
-                                do {    
-                                    if (auraEntries.get(index).boostEnd == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
-                                        listView.getSelectionModel().select(index);
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(3)).getChildren().get(1)).requestFocus();
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(3)).getChildren().get(1)).selectAll();
-                                        found = true;
-                                        break;
-                                    }
-                                    index ++;
-                                    counter++;
-                                    if (index == listView.getItems().size()) index = 0;
-                                } while (counter != listView.getItems().size());
-                                if (!found) {
-                                    Popups.ItemNotFound();
-                                }
-                            }
-                            case 4 -> {
-                                int counter = 0;
-                                int index = listView.getSelectionModel().getSelectedIndex();
-                                boolean found = false;
-                                do {    
-                                    if (auraEntries.get(index).kiaiCharge == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
-                                        listView.getSelectionModel().select(index);
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(4)).getChildren().get(1)).requestFocus();
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(4)).getChildren().get(1)).selectAll();
-                                        found = true;
-                                        break;
-                                    }
-                                    index ++;
-                                    counter++;
-                                    if (index == listView.getItems().size()) index = 0;
-                                } while (counter != listView.getItems().size());
-                                if (!found) {
-                                    Popups.ItemNotFound();
-                                }
-                            }
-                            case 5 -> {
-                                int counter = 0;
-                                int index = listView.getSelectionModel().getSelectedIndex();
-                                boolean found = false;
-                                do {    
-                                    if (auraEntries.get(index).kiryokuMax == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
-                                        listView.getSelectionModel().select(index);
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(5)).getChildren().get(1)).requestFocus();
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(5)).getChildren().get(1)).selectAll();
-                                        found = true;
-                                        break;
-                                    }
-                                    index ++;
-                                    counter++;
-                                    if (index == listView.getItems().size()) index = 0;
-                                } while (counter != listView.getItems().size());
-                                if (!found) {
-                                    Popups.ItemNotFound();
-                                }
-                            }
-                            case 6 -> {
-                                int counter = 0;
-                                int index = listView.getSelectionModel().getSelectedIndex();
-                                boolean found = false;
-                                do {    
-                                    if (auraEntries.get(index).henshinStart == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
-                                        listView.getSelectionModel().select(index);
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(6)).getChildren().get(1)).requestFocus();
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(6)).getChildren().get(1)).selectAll();
-                                        found = true;
-                                        break;
-                                    }
-                                    index ++;
-                                    counter++;
-                                    if (index == listView.getItems().size()) index = 0;
-                                } while (counter != listView.getItems().size());
-                                if (!found) {
-                                    Popups.ItemNotFound();
-                                }
-                            }
-                            case 7 -> {
-                                int counter = 0;
-                                int index = listView.getSelectionModel().getSelectedIndex();
-                                boolean found = false;
-                                do {    
-                                    if (auraEntries.get(index).henshinEnd == Integer.parseInt((String) indexList.get(1)) && listView.getSelectionModel().getSelectedIndex() != index) {
-                                        listView.getSelectionModel().select(index);
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(7)).getChildren().get(1)).requestFocus();
-                                        ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(7)).getChildren().get(1)).selectAll();
-                                        found = true;
-                                        break;
-                                    }
-                                    index ++;
-                                    counter++;
-                                    if (index == listView.getItems().size()) index = 0;
-                                } while (counter != listView.getItems().size());
-                                if (!found) {
-                                    Popups.ItemNotFound();
-                                }
-                            }
+                        switch ((int) indexList[0]) {
+                            case 0 -> listViewSearch(AuraValues.I04);
+                            case 1 -> listViewSearch(AuraValues.BoostStart);
+                            case 2 -> listViewSearch(AuraValues.BoostLoop);
+                            case 3 -> listViewSearch(AuraValues.BoostEnd);
+                            case 4 -> listViewSearch(AuraValues.KiaiCharge);
+                            case 5 -> listViewSearch(AuraValues.KiryokuMax);
+                            case 6 -> listViewSearch(AuraValues.HenshinStart);
+                            case 7 -> listViewSearch(AuraValues.HenshinEnd);
                         }
                         
                         event.consume();
@@ -570,13 +360,13 @@ public class Aur {
 
     private void Copy() {
         paste.setDisable(false);
-        copyContainer = new AurAuraEntry(auraEntries.get(listView.getSelectionModel().getSelectedIndex()));
+        copyContainer = new AuraEntry(auraEntries.get(listView.getSelectionModel().getSelectedIndex()));
     }
 
     private void Paste() {
         if (copyContainer == null) return;
 
-        auraEntries.set(listView.getSelectionModel().getSelectedIndex(), new AurAuraEntry(copyContainer));
+        auraEntries.set(listView.getSelectionModel().getSelectedIndex(), new AuraEntry(copyContainer));
         hBox.getChildren().remove(1);
         hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
     }
@@ -593,19 +383,19 @@ public class Aur {
     }
 
     private void Append() {
-        auraEntries.add(listView.getSelectionModel().getSelectedIndex() + 1, new AurAuraEntry());
+        auraEntries.add(listView.getSelectionModel().getSelectedIndex() + 1, new AuraEntry());
 
         listView.getItems().add("Aura ID " + listView.getItems().size());
     }
 
     private void Insert() {
         if (listView.getSelectionModel().getSelectedIndex() > 0) {
-            auraEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new AurAuraEntry());
+            auraEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new AuraEntry());
 
             listView.getItems().add("Aura ID " + listView.getItems().size());
         }
         else if (listView.getSelectionModel().getSelectedIndex() == 0) {
-            auraEntries.add(listView.getSelectionModel().getSelectedIndex(), new AurAuraEntry());
+            auraEntries.add(listView.getSelectionModel().getSelectedIndex(), new AuraEntry());
 
             listView.getItems().add("Aura ID " + listView.getItems().size());
         }
@@ -626,7 +416,6 @@ public class Aur {
             intBuffer.flip();
             auraEntriesCount = intBuffer.getInt();
 
-
             for (int i = 0; i < auraEntriesCount; i++) {
                 listView.getItems().add("Aura ID " + i);
             }
@@ -635,7 +424,7 @@ public class Aur {
             intBuffer.clear();
             channel.read(intBuffer);
             intBuffer.flip();
-            characterEntries = intBuffer.getInt();
+            int characterEntries = intBuffer.getInt();
 
             channel.position(28);
             intBuffer.clear();
@@ -644,7 +433,7 @@ public class Aur {
             charaOffset = intBuffer.getInt();
 
             for (int i = 0; i < auraEntriesCount; i++) {
-                AurAuraEntry auraEntry = new AurAuraEntry();
+                AuraEntry auraEntry = new AuraEntry();
                 auraEntries.add(auraEntry);
 
                 channel.position(auraoffset + i * 16 + 4);
@@ -703,7 +492,7 @@ public class Aur {
             }
 
             for (int i = 0; i < characterEntries; i++) {
-                AurCharaEntry charaEntry = new AurCharaEntry();
+                CharaEntry charaEntry = new CharaEntry();
                 charaEntries.add(charaEntry);
 
                 channel.position(charaOffset + i * 16);
@@ -788,7 +577,7 @@ public class Aur {
 
             channel.position(24);
             intBuffer.clear();
-            intBuffer.putInt(characterEntries);
+            intBuffer.putInt(charaEntries.size());
             intBuffer.flip();
             channel.write(intBuffer);
 
@@ -844,7 +633,7 @@ public class Aur {
             channel.write(ByteBuffer.wrap(auraTypes.getBytes(StandardCharsets.ISO_8859_1)));
 
             for (int i = 0; i < listView.getItems().size(); i++) {
-                AurAuraEntry auraEntry = auraEntries.get(i);
+                AuraEntry auraEntry = auraEntries.get(i);
    
                 channel.position(auraOffset + i * 16);
                 intBuffer.clear();
@@ -931,8 +720,8 @@ public class Aur {
                 channel.write(intBuffer);
             }
 
-            for (int i = 0; i < characterEntries; i++) {
-                AurCharaEntry charaEntry = charaEntries.get(i);
+            for (int i = 0; i < charaEntries.size(); i++) {
+                CharaEntry charaEntry = charaEntries.get(i);
             
                 channel.position(charaOffset + i * 16);
                 intBuffer.clear();
@@ -962,8 +751,32 @@ public class Aur {
             e.printStackTrace();
         }
     }
+
+    public static enum AuraValues {
+        I04(0),
+        BoostStart(1),
+        BoostLoop(2),
+        BoostEnd(3),
+        KiaiCharge(4),
+        KiryokuMax(5),
+        HenshinStart(6),
+        HenshinEnd(7);
+
+        final int index;
+
+        AuraValues(int index) {
+            this.index = index;
+        }
+    }
+
+    public static enum CharaValues {
+        CharaID,
+        Costume,
+        AuraID,
+        Glare;
+    }
 }
-class AurAuraEntry {
+class AuraEntry {
     public int i04 = 0;
     public int boostStart = 0;
     public int boostLoop = 0;
@@ -973,9 +786,9 @@ class AurAuraEntry {
     public int henshinStart = 0;
     public int henshinEnd = 0;
 
-    public AurAuraEntry() {}
+    public AuraEntry() {}
 
-    public AurAuraEntry(AurAuraEntry other) {
+    public AuraEntry(AuraEntry other) {
         this.i04 = other.i04;
         this.boostStart = other.boostStart;
         this.boostLoop = other.boostLoop;
@@ -987,7 +800,7 @@ class AurAuraEntry {
     }
 }
 
-class AurCharaEntry {
+class CharaEntry {
     public int charaId = 0;
     public int costume = 0;
     public int auraId = 0;
