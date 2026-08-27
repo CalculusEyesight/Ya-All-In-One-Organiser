@@ -216,16 +216,10 @@ class Agd {
     }
 
     public static enum AgdValues {
-        Level(0),
-        XpToNextLevel(1),
-        XpToThisLevel(2),
-        AttributePointsGained(3);
-
-        final int value;
-
-        AgdValues (int value) {
-            this.value = value;
-        }
+        Level,
+        XpToNextLevel,
+        XpToThisLevel,
+        AttributePointsGained;
     }
 }
 
