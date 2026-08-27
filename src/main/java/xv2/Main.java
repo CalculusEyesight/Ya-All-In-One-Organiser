@@ -26,7 +26,6 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
-
 public class Main extends Application {
     public static void main(String[] args) throws Exception {
         launch(args);
@@ -75,29 +74,22 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //bpane
         borderPane.setTop(menuBar);
         borderPane.setCenter(tabPane);
 
-        //radio menu
         efficiencyMode.setToggleGroup(performanceGroup);
         defaultMode.setToggleGroup(performanceGroup);
         performanceMode.setToggleGroup(performanceGroup);
         defaultMode.setSelected(true);
 
-        //file
         File.getItems().addAll(loadFolder, saveFolder);
 
-        //option
         Options.getItems().addAll(Performance, autoGroup);
 
-        //performance
         Performance.getItems().addAll(efficiencyMode, defaultMode, performanceMode);
 
-        //help
         Help.getItems().addAll(idList, commonBdmIdList, skillMovesetManual);
        
-        //menubar
         menuBar.getMenus().addAll(File, Options, Help);
 
         autoGroup.setDisable(true);
@@ -322,12 +314,10 @@ public class Main extends Application {
             }
         });
 
-        //loadfolder
         loadFolder.setOnAction(e -> {
             LoadFolder(primaryStage, false, null);
         });
         
-        //savefolder
         saveFolder.setOnAction(e -> {
             SaveFolder(primaryStage);
         });
@@ -722,6 +712,5 @@ public class Main extends Application {
         autoGroup.setSelected(false);
         tabPane.getTabs().clear();   
         FileTypeRecall.clear();
-        
     }
 }
