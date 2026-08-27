@@ -19,7 +19,6 @@ import javafx.scene.layout.VBox;
 class Agd {
     VBox vBox = new VBox(10);
     ArrayList<AgdEntry> agdEntries = new ArrayList<>();
-    int entries = 0;
 
     public Agd() {
         this.vBox.setPadding(new Insets(20, 0, 20, 60));
@@ -38,10 +37,8 @@ class Agd {
         Button insertEntry = new Button("Insert Entry");
 
         insertEntry.setOnAction(event -> {
-            AgdEntry newEntry = new AgdEntry();
-            agdEntries.add(newEntry);
-            createAgdVBox(newEntry);
-            entries += 1;
+            agdEntries.add(new AgdEntry());
+            createAgdVBox(agdEntries.getLast());
         });
 
         return insertEntry;
@@ -52,11 +49,9 @@ class Agd {
 
         removeEntry.setOnAction(event -> {
             try {
-                agdEntries.remove(entries - 1);
-                this.vBox.getChildren().remove(entries - 1);
-                entries -= 1;
+                this.vBox.getChildren().remove(agdEntries.size() - 1);
+                agdEntries.remove(agdEntries.size() - 1);
             } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
                 Popups.ErrorOutOfBounds();
             }
         });
@@ -69,7 +64,6 @@ class Agd {
     }
 
     private void createAgdVBox(AgdEntry entry) {
-        System.out.println(agdEntries.indexOf(entry));
         HBox agdHBox = new HBox(30, 
             createLabel("Level"), createTextField(agdEntries.indexOf(entry), AgdValues.level), 
             createLabel("Xp To Next Level"), createTextField(agdEntries.indexOf(entry), AgdValues.xpToNextLevel), 
@@ -128,7 +122,7 @@ class Agd {
             intBuffer.clear();
             channel.read(intBuffer);
             intBuffer.flip();
-            entries = intBuffer.getInt();
+            int entries = intBuffer.getInt();
             
             for (int i = 0; i < entries; i++) {
                 AgdEntry agdEntry = new AgdEntry();
@@ -182,14 +176,14 @@ class Agd {
 
             channel.position(8);
             intBuffer.clear();
-            intBuffer.putInt(entries);
+            intBuffer.putInt(agdEntries.size());
             intBuffer.flip();
             channel.write(intBuffer);
 
             channel.position(12);
             channel.write(ByteBuffer.wrap(new byte[]{0x10, 0x00, 0x00, 0x00}));
 
-            for (int i = 0; i < entries; i++) {
+            for (int i = 0; i < agdEntries.size(); i++) {
                 AgdEntry agdEntry = agdEntries.get(i);
 
                 channel.position(offset * (i + 1));
