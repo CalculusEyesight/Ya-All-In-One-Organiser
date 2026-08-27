@@ -65,10 +65,10 @@ class Agd {
 
     private void createAgdVBox(AgdEntry entry) {
         HBox agdHBox = new HBox(30, 
-            createLabel("Level"), createTextField(agdEntries.indexOf(entry), AgdValues.level), 
-            createLabel("Xp To Next Level"), createTextField(agdEntries.indexOf(entry), AgdValues.xpToNextLevel), 
-            createLabel("Xp To This Level"), createTextField(agdEntries.indexOf(entry), AgdValues.xpToThisLevel), 
-            createLabel("Attribute Points Gained"),createTextField(agdEntries.indexOf(entry), AgdValues.attributePointsGained)
+            createLabel("Level"), createTextField(agdEntries.indexOf(entry), AgdValues.Level), 
+            createLabel("Xp To Next Level"), createTextField(agdEntries.indexOf(entry), AgdValues.XpToNextLevel), 
+            createLabel("Xp To This Level"), createTextField(agdEntries.indexOf(entry), AgdValues.XpToThisLevel), 
+            createLabel("Attribute Points Gained"),createTextField(agdEntries.indexOf(entry), AgdValues.AttributePointsGained)
         );
         agdHBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -82,10 +82,10 @@ class Agd {
     private TextField createTextField(int i, AgdValues index) {
         int value = 0;
         switch (index) {
-            case AgdValues.level -> value = agdEntries.get(i).level;
-            case AgdValues.xpToNextLevel -> value = agdEntries.get(i).xpToNextLevel;
-            case AgdValues.xpToThisLevel -> value = agdEntries.get(i).xpToThisLevel;
-            case AgdValues.attributePointsGained -> value = agdEntries.get(i).attributePointsGained;
+            case AgdValues.Level -> value = agdEntries.get(i).level;
+            case AgdValues.XpToNextLevel -> value = agdEntries.get(i).xpToNextLevel;
+            case AgdValues.XpToThisLevel -> value = agdEntries.get(i).xpToThisLevel;
+            case AgdValues.AttributePointsGained -> value = agdEntries.get(i).attributePointsGained;
         }
 
         TextField textField = new TextField(String.valueOf(value));
@@ -95,10 +95,10 @@ class Agd {
             }
             try {
                 switch (index) {
-                    case AgdValues.level -> agdEntries.get(i).level = Integer.parseInt(newText);
-                    case AgdValues.xpToNextLevel -> agdEntries.get(i).xpToNextLevel = Integer.parseInt(newText);
-                    case AgdValues.xpToThisLevel -> agdEntries.get(i).xpToThisLevel = Integer.parseInt(newText);
-                    case AgdValues.attributePointsGained -> agdEntries.get(i).attributePointsGained = Integer.parseInt(newText);
+                    case AgdValues.Level -> agdEntries.get(i).level = Integer.parseInt(newText);
+                    case AgdValues.XpToNextLevel -> agdEntries.get(i).xpToNextLevel = Integer.parseInt(newText);
+                    case AgdValues.XpToThisLevel -> agdEntries.get(i).xpToThisLevel = Integer.parseInt(newText);
+                    case AgdValues.AttributePointsGained -> agdEntries.get(i).attributePointsGained = Integer.parseInt(newText);
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
@@ -216,10 +216,10 @@ class Agd {
     }
 
     public static enum AgdValues {
-        level(0),
-        xpToNextLevel(1),
-        xpToThisLevel(2),
-        attributePointsGained(3);
+        Level(0),
+        XpToNextLevel(1),
+        XpToThisLevel(2),
+        AttributePointsGained(3);
 
         final int value;
 
