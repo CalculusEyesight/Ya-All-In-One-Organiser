@@ -96,8 +96,8 @@ public class Aur {
         return new VBox(createToolBarRight(), createScrollPane());
     }
 
-    private Label createLabel(String value, int width) {
-        Label label = new Label(value);
+    private Label createLabel(String text, int width) {
+        Label label = new Label(text);
         if (width != 0) label.setPrefWidth(width);
 
         return label;

@@ -75,8 +75,8 @@ class Agd {
         this.vBox.getChildren().add(agdHBox);
     }
 
-    private Label createLabel(String value) {
-        return new Label(value);
+    private Label createLabel(String text) {
+        return new Label(text);
     }
 
     private TextField createTextField(int i, AgdValues index) {
