@@ -9,9 +9,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -20,11 +26,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
 public class Cat {
     ArrayList <CatEntry> catEntries = new ArrayList<>();
 
     ListView <String> listView = new ListView<>();
-    HBox outerHBox = new HBox(2);
+    HBox hBox = new HBox(10);
 
     CatEntry copyContainer = null;
 
@@ -35,225 +42,92 @@ public class Cat {
     MenuItem append = new MenuItem("Append Ctrl+A");
     MenuItem insert = new MenuItem("Insert Ctrl+I");
 
+    int findIndex = 0;
+    String findText = null;
+    Object [] indexList = new Object[] {findIndex, findText};
+
     public Cat() {
         entriesActionListener();
         entriesKeysListener();
     }
 
     public HBox createHBoxOuter() {
-        outerHBox.getChildren().addAll(listView, new VBox());
-        return this.outerHBox;
+        hBox.getChildren().addAll(listView, new VBox());
+        return this.hBox;
     }
 
     private VBox createCatVBox(CatEntry entry) {
-        //charaId
-        Label charaIdLabel = new Label("Chara ID");
-        charaIdLabel.setPrefWidth(170);
-
-        TextField charaIdTextField = new TextField(String.valueOf(entry.charaId));
-        charaIdTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (charaIdTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.charaId = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox charaIdHBox = new HBox(charaIdLabel, charaIdTextField);
-        charaIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //charaId
-
-        //costume
-        Label costumeLabel = new Label("Costume");
-        costumeLabel.setPrefWidth(170);
-
-        TextField costumeTextField=new TextField(String.valueOf(entry.costume));
-        costumeTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (costumeTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.costume = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox costumeHBox = new HBox(costumeLabel, costumeTextField);
-        costumeHBox.setAlignment(Pos.CENTER_LEFT);
-
-        //i04
-        Label i04Label = new Label("I_04");
-        i04Label.setPrefWidth(170);
-
-        TextField i04TextField = new TextField(String.valueOf(entry.i04));
-        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i04 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i04HBox = new HBox(i04Label, i04TextField);
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        //i04
-
-        //skillId2
-        Label skillId2Label = new Label("Skill Id 2");
-        skillId2Label.setPrefWidth(170);
-
-        TextField skillId2TextField = new TextField(String.valueOf(entry.skillId2));
-        skillId2TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (skillId2TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.skillId2 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox skillId2HBox = new HBox(skillId2Label, skillId2TextField);
-        skillId2HBox.setAlignment(Pos.CENTER_LEFT);
-        //skillId2
-
-        //charaCode
-        Label charaCodeLabel = new Label("Chara Code");
-        charaCodeLabel.setPrefWidth(170);
-
-        TextField charaCodeTextField = new TextField(entry.charaCode);
-        charaCodeTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (charaCodeTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.charaCode = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox charaCodeHBox = new HBox(charaCodeLabel, charaCodeTextField);
-        charaCodeHBox.setAlignment(Pos.CENTER_LEFT);
-        //charaCode
-
-        //i12
-        Label i12Label = new Label("I_12");
-        i12Label.setPrefWidth(170);
-
-        TextField i12TextField = new TextField(String.valueOf(entry.i12));
-        i12TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i12TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i12 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i12HBox=new HBox(i12Label, i12TextField);
-        i12HBox.setAlignment(Pos.CENTER_LEFT);
-        //i12
-
-        //i16
-        Label i16Label = new Label("Loading Screen Value?");
-        i16Label.setPrefWidth(170);
-
-        TextField i16TextField = new TextField(String.valueOf(entry.i16));
-        i16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i16TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i16 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i16HBox = new HBox(i16Label, i16TextField);
-        i16HBox.setAlignment(Pos.CENTER_LEFT);
-        //i16
-
-        //i20
-        Label i20Label = new Label("I_20");
-        i20Label.setPrefWidth(170);
-
-        TextField i20TextField = new TextField(String.valueOf(entry.i20));
-        i20TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i20TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i20 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i20HBox = new HBox(i20Label, i20TextField);
-        i20HBox.setAlignment(Pos.CENTER_LEFT);
-        //i20
-
-        //transformationEntry
-        Label transformationEntryLabel = new Label("Trasnformation Entry");
-        transformationEntryLabel.setPrefWidth(170);
-
-        TextField transformationEntryTextField = new TextField(String.valueOf(entry.transformationEntry));
-        transformationEntryTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (transformationEntryTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.transformationEntry = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox transformationEntryHBox = new HBox(transformationEntryLabel, transformationEntryTextField);
-        transformationEntryHBox.setAlignment(Pos.CENTER_LEFT);
-        //transformationEntry
-
-        //i22
-        Label i22Label = new Label("I_22");
-        i22Label.setPrefWidth(170);
-
-        TextField i22TextField = new TextField(String.valueOf(entry.i22));
-        i22TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i22TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i22 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i22HBox = new HBox(i22Label, i22TextField);
-        i22HBox.setAlignment(Pos.CENTER_LEFT);
-        //i22
-
         VBox catVBox = new VBox(30,
-            charaIdHBox, costumeHBox,
-            i04HBox, skillId2HBox,
-            charaCodeHBox, i12HBox,
-            i16HBox, i20HBox,
-            transformationEntryHBox, i22HBox
+            createHBox(createLabel("Chara ID", 170), createTextField(catEntries.indexOf(entry), CatValues.CharaID)),
+            createHBox(createLabel("Costume", 170), createTextField(catEntries.indexOf(entry), CatValues.Costume)),
+            createHBox(createLabel("I_04", 170), createTextField(catEntries.indexOf(entry), CatValues.I04)), 
+            createHBox(createLabel("Skill ID 2", 170), createTextField(catEntries.indexOf(entry), CatValues.SkillID2)),
+            createHBox(createLabel("Chara Code", 170), createTextField(catEntries.indexOf(entry), CatValues.CharaCode)), 
+            createHBox(createLabel("I_12", 170), createTextField(catEntries.indexOf(entry), CatValues.I12)),
+            createHBox(createLabel("I_16", 170), createTextField(catEntries.indexOf(entry), CatValues.I16)), 
+            createHBox(createLabel("I_20", 170), createTextField(catEntries.indexOf(entry), CatValues.I20)),
+            createHBox(createLabel("Transformation Entry", 170), createTextField(catEntries.indexOf(entry), CatValues.TransformationEntry)), 
+            createHBox(createLabel("I_22", 170), createTextField(catEntries.indexOf(entry), CatValues.I22))
         );
-        catVBox.setPadding(new Insets(20, 0, 0, 5));
+        catVBox.setPadding(new Insets(20, 0, 0, 0));
+        
         return catVBox;
+    }
+
+    private Label createLabel(String value, int width) {
+        Label label = new Label(value);
+        if (width != 0) label.setPrefWidth(width);
+
+        return label;
+    }
+
+    private TextField createTextField(int i, CatValues auraIndex) {
+        String value = null;
+
+        switch (auraIndex) {
+            case CatValues.CharaID -> value = String.valueOf(catEntries.get(i).charaId);
+            case CatValues.Costume -> value = String.valueOf(catEntries.get(i).costume);
+            case CatValues.I04 -> value = String.valueOf(catEntries.get(i).i04);
+            case CatValues.SkillID2 -> value = String.valueOf(catEntries.get(i).skillId2);
+            case CatValues.CharaCode -> value = catEntries.get(i).charaCode;
+            case CatValues.I12 -> value = String.valueOf(catEntries.get(i).i12);
+            case CatValues.I16 -> value = String.valueOf(catEntries.get(i).i16);
+            case CatValues.I20 -> value = String.valueOf(catEntries.get(i).i20);
+            case CatValues.TransformationEntry -> value = String.valueOf(catEntries.get(i).transformationEntry);
+            case CatValues.I22 -> value = String.valueOf(catEntries.get(i).i22);
+        }
+
+        TextField textField = new TextField(value);
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (auraIndex) {
+                    case CatValues.CharaID -> catEntries.get(i).charaId = Integer.parseInt(newText);
+                    case CatValues.Costume -> catEntries.get(i).costume = Integer.parseInt(newText);
+                    case CatValues.I04 -> catEntries.get(i).i04 = Integer.parseInt(newText);
+                    case CatValues.SkillID2 -> catEntries.get(i).skillId2 = Integer.parseInt(newText);
+                    case CatValues.CharaCode -> catEntries.get(i).charaCode = newText;
+                    case CatValues.I12 -> catEntries.get(i).i12 = Integer.parseInt(newText);
+                    case CatValues.I16 -> catEntries.get(i).i16 = Integer.parseInt(newText);
+                    case CatValues.I20 -> catEntries.get(i).i20 = Integer.parseInt(newText);
+                    case CatValues.TransformationEntry -> catEntries.get(i).transformationEntry = Integer.parseInt(newText);
+                    case CatValues.I22 -> catEntries.get(i).i22 = Integer.parseInt(newText);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private HBox createHBox(Label label, TextField textField) {
+        HBox hBox = new HBox(label, textField);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        return hBox;
     }
 
     private void entriesActionListener() {
@@ -262,12 +136,14 @@ public class Cat {
         contextMenu.getItems().addAll(copy,paste,delete,append,insert);
 
         listView.setContextMenu(contextMenu);
+
         listView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue == null) return;
 
-            outerHBox.getChildren().remove(1);
-            outerHBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
+            hBox.getChildren().remove(1);
+            hBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
         });
+
         listView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 contextMenu.setOnAction(event -> {
@@ -275,18 +151,10 @@ public class Cat {
                         Copy();
                         paste.setDisable(false);
                     }
-                    if (event.getTarget() == paste) {
-                        Paste();
-                    }
-                    if (event.getTarget() == delete) {
-                       Delete();
-                    }
-                    if (event.getTarget() == append) {
-                        Append();
-                    }
-                    if (event.getTarget() == insert) {
-                        Insert();
-                    }
+                    else if (event.getTarget() == paste) Paste();
+                    else if (event.getTarget() == delete) Delete();
+                    else if (event.getTarget() == append) Append();
+                    else if (event.getTarget() == insert) Insert();
                 });
             }
         });
@@ -294,22 +162,95 @@ public class Cat {
 
     private void entriesKeysListener() {
         listView.setOnKeyPressed(e -> {
-            if (e.isControlDown() && e.getCode() == KeyCode.C) {
-                Copy();
-            }
-            if (e.isControlDown() && e.getCode()==KeyCode.V) {
-                Paste();
-            }
-            if (e.getCode() == KeyCode.DELETE) {
-                Delete();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.A) {
-                Append();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.I) {
-                Insert();
+            if (e.isControlDown() && e.getCode() == KeyCode.C) Copy();
+            else if (e.isControlDown() && e.getCode()==KeyCode.V) Paste();
+            else if (e.getCode() == KeyCode.DELETE) Delete();
+            else if (e.isControlDown() && e.getCode() == KeyCode.A) Append();
+            else if (e.isControlDown() && e.getCode() == KeyCode.I) Insert();
+            else if (e.isControlDown() && e.getCode() == KeyCode.F) {
+                ButtonType findNextButtonType = new ButtonType("Find Next", ButtonData.NEXT_FORWARD);
+                ButtonType cancelButtonType = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+                Dialog<String> dialog = new Dialog<>();
+                dialog.setTitle("Find");
+                dialog.getDialogPane().getButtonTypes().addAll(findNextButtonType, cancelButtonType);
+                dialog.getDialogPane().setContent(Popups.createFindDialog("Cat Entry: ", indexList, 
+                    FXCollections.observableArrayList(
+                        "Chara ID", 
+                        "Costume", 
+                        "I_04", 
+                        "Skill ID 2", 
+                        "Chara Code", 
+                        "I_12", 
+                        "I_16", 
+                        "I_20",
+                        "Transformation Entry",
+                        "I22"
+                    )));
+
+                final Button findbt = (Button) dialog.getDialogPane().lookupButton(findNextButtonType);
+                findbt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!findbt.isPressed()) {
+                        switch ((int) indexList[0]) {
+                            case 0 -> listViewSearch(CatValues.CharaID);
+                            case 1 -> listViewSearch(CatValues.Costume);
+                            case 2 -> listViewSearch(CatValues.I04);
+                            case 3 -> listViewSearch(CatValues.SkillID2);
+                            case 4 -> listViewSearch(CatValues.CharaCode);
+                            case 5 -> listViewSearch(CatValues.I12);
+                            case 6 -> listViewSearch(CatValues.I16);
+                            case 7 -> listViewSearch(CatValues.I20);
+                            case 8 -> listViewSearch(CatValues.TransformationEntry);
+                            case 9 -> listViewSearch(CatValues.I22);
+                        }
+                        
+                        event.consume();
+                    }
+                });
+                dialog.showAndWait();
             }
         });
+    }
+
+    private void listViewSearch(CatValues catIndex) {
+        int counter = 0;
+        String value = null;
+        int listIndex = listView.getSelectionModel().getSelectedIndex();
+        int textFieldIndex = catIndex.index;
+        boolean found = false;
+
+        do {
+
+            switch (catIndex) {
+                case CatValues.CharaID -> value = String.valueOf(catEntries.get(listIndex).charaId);
+                case CatValues.Costume -> value = String.valueOf(catEntries.get(listIndex).costume);
+                case CatValues.I04 -> value = String.valueOf(catEntries.get(listIndex).i04);
+                case CatValues.SkillID2 -> value = String.valueOf(catEntries.get(listIndex).skillId2);
+                case CatValues.CharaCode -> value = catEntries.get(listIndex).charaCode;
+                case CatValues.I12 -> value = String.valueOf(catEntries.get(listIndex).i12);
+                case CatValues.I16 -> value = String.valueOf(catEntries.get(listIndex).i16);
+                case CatValues.I20 -> value = String.valueOf(catEntries.get(listIndex).i20);
+                case CatValues.TransformationEntry -> value = String.valueOf(catEntries.get(listIndex).transformationEntry);
+                case CatValues.I22 -> value = String.valueOf(catEntries.get(listIndex).i22);
+            }
+
+            if (indexList[1] != null && value.equals(indexList[1]) && listView.getSelectionModel().getSelectedIndex() != listIndex) {
+                listView.getSelectionModel().select(listIndex);
+                ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(textFieldIndex)).getChildren().get(1)).requestFocus();
+                ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(textFieldIndex)).getChildren().get(1)).selectAll();
+                found = true;
+                break;
+            }
+
+            listIndex++;
+            counter++;
+
+            if (listIndex == listView.getItems().size()) listIndex = 0;
+        } while (counter != listView.getItems().size());
+
+        if (!found) {
+            Popups.ItemNotFound();
+        }
     }
 
     private void Copy() {
@@ -321,8 +262,8 @@ public class Cat {
         
         catEntries.set(listView.getSelectionModel().getSelectedIndex(), new CatEntry(copyContainer));
 
-        outerHBox.getChildren().remove(1);
-        outerHBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
+        hBox.getChildren().remove(1);
+        hBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
     }
 
     private void Delete() {
@@ -528,9 +469,28 @@ public class Cat {
                 shortBuffer.flip();
                 channel.write(shortBuffer);
             }
-        }catch(IOException e) {
+        } catch(IOException e) {
             e.printStackTrace();
         } 
+    }
+
+    public static enum CatValues {
+        CharaID(0),
+        Costume(1),
+        I04(2),
+        SkillID2(3),
+        CharaCode(4),
+        I12(5),
+        I16(6),
+        I20(7),
+        TransformationEntry(8),
+        I22(9);
+
+        final int index;
+
+        CatValues(int index) {
+            this.index = index;
+        }
     }
 }
 class CatEntry{
