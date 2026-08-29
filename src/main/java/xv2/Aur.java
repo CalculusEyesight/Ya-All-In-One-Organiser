@@ -74,14 +74,14 @@ public class Aur {
 
     private VBox createAuraIdVBox(AuraEntry entry) {
         VBox auraIdVBox = new VBox(70, 
-            createHBox(createLabel("I_04", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.I04)), 
-            createHBox(createLabel("BoostStart", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.BoostStart)),
-            createHBox(createLabel("BoostLoop", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.BoostLoop)), 
-            createHBox(createLabel("BoostEnd", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.BoostEnd)),
-            createHBox(createLabel("KiaiCharge", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.KiaiCharge)), 
-            createHBox(createLabel("KiryokuMax", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.KiryokuMax)),
-            createHBox(createLabel("HenshinStart", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.HenshinStart)), 
-            createHBox(createLabel("HenshinEnd", 120), createAuraTextField(auraEntries.indexOf(entry), AuraValues.HenshinEnd))
+            createHBox(createLabel("I_04", 120), createAuraTextField(AuraValues.I04)), 
+            createHBox(createLabel("BoostStart", 120), createAuraTextField(AuraValues.BoostStart)),
+            createHBox(createLabel("BoostLoop", 120), createAuraTextField(AuraValues.BoostLoop)), 
+            createHBox(createLabel("BoostEnd", 120), createAuraTextField(AuraValues.BoostEnd)),
+            createHBox(createLabel("KiaiCharge", 120), createAuraTextField(AuraValues.KiaiCharge)), 
+            createHBox(createLabel("KiryokuMax", 120), createAuraTextField(AuraValues.KiryokuMax)),
+            createHBox(createLabel("HenshinStart", 120), createAuraTextField(AuraValues.HenshinStart)), 
+            createHBox(createLabel("HenshinEnd", 120), createAuraTextField(AuraValues.HenshinEnd))
         );
         auraIdVBox.setPadding(new Insets(20, 0, 0, 0));
 
@@ -103,17 +103,17 @@ public class Aur {
         return label;
     }
 
-    private TextField createAuraTextField(int i, AuraValues auraIndex) {
+    private TextField createAuraTextField(AuraValues auraIndex) {
         int value = 0;
         switch (auraIndex) {
-            case AuraValues.I04 -> value = auraEntries.get(i).i04;
-            case AuraValues.BoostStart -> value = auraEntries.get(i).boostStart;
-            case AuraValues.BoostLoop -> value = auraEntries.get(i).boostLoop;
-            case AuraValues.BoostEnd -> value = auraEntries.get(i).boostEnd;
-            case AuraValues.KiaiCharge -> value = auraEntries.get(i).kiaiCharge;
-            case AuraValues.KiryokuMax -> value = auraEntries.get(i).kiryokuMax;
-            case AuraValues.HenshinStart -> value = auraEntries.get(i).henshinStart;
-            case AuraValues.HenshinEnd -> value = auraEntries.get(i).henshinEnd;
+            case AuraValues.I04 -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).i04;
+            case AuraValues.BoostStart -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostStart;
+            case AuraValues.BoostLoop -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostLoop;
+            case AuraValues.BoostEnd -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostEnd;
+            case AuraValues.KiaiCharge -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiaiCharge;
+            case AuraValues.KiryokuMax -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiryokuMax;
+            case AuraValues.HenshinStart -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinStart;
+            case AuraValues.HenshinEnd -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinEnd;
         }
 
         TextField textField = new TextField(String.valueOf(value));
@@ -123,14 +123,14 @@ public class Aur {
             }
             try {
                 switch (auraIndex) {
-                    case AuraValues.I04 -> auraEntries.get(i).i04 = Integer.parseInt(newText);
-                    case AuraValues.BoostStart -> auraEntries.get(i).boostStart = Integer.parseInt(newText);
-                    case AuraValues.BoostLoop -> auraEntries.get(i).boostLoop = Integer.parseInt(newText);
-                    case AuraValues.BoostEnd -> auraEntries.get(i).boostEnd = Integer.parseInt(newText);
-                    case AuraValues.KiaiCharge -> auraEntries.get(i).kiaiCharge = Integer.parseInt(newText);
-                    case AuraValues.KiryokuMax -> auraEntries.get(i).kiryokuMax = Integer.parseInt(newText);
-                    case AuraValues.HenshinStart -> auraEntries.get(i).henshinStart = Integer.parseInt(newText);
-                    case AuraValues.HenshinEnd -> auraEntries.get(i).henshinEnd = Integer.parseInt(newText);
+                    case AuraValues.I04 -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).i04 = Integer.parseInt(newText);
+                    case AuraValues.BoostStart -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostStart = Integer.parseInt(newText);
+                    case AuraValues.BoostLoop -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostLoop = Integer.parseInt(newText);
+                    case AuraValues.BoostEnd -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostEnd = Integer.parseInt(newText);
+                    case AuraValues.KiaiCharge -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiaiCharge = Integer.parseInt(newText);
+                    case AuraValues.KiryokuMax -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiryokuMax = Integer.parseInt(newText);
+                    case AuraValues.HenshinStart -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinStart = Integer.parseInt(newText);
+                    case AuraValues.HenshinEnd -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinEnd = Integer.parseInt(newText);
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
