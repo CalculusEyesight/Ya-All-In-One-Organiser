@@ -117,32 +117,31 @@ class Agd {
             int entries = intBuffer.getInt();
             
             for (int i = 0; i < entries; i++) {
-                AgdEntry agdEntry = new AgdEntry();
-                agdEntries.add(agdEntry);
+                agdEntries.add(new AgdEntry());
 
                 channel.position(offset * (i + 1));
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                agdEntry.level = intBuffer.getInt();
+                agdEntries.get(i).level = intBuffer.getInt();
                 
                 channel.position(offset * (i + 1) + 4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                agdEntry.xpToNextLevel = intBuffer.getInt();
+                agdEntries.get(i).xpToNextLevel = intBuffer.getInt();
                 
                 channel.position(offset * (i + 1) + 8);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                agdEntry.xpToThisLevel = intBuffer.getInt();
+                agdEntries.get(i).xpToThisLevel = intBuffer.getInt();
 
                 channel.position(offset * (i + 1) + 12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                agdEntry.attributePointsGained = intBuffer.getInt();
+                agdEntries.get(i).attributePointsGained = intBuffer.getInt();
 
                 createAgdVBox(agdEntries.get(i));
             }

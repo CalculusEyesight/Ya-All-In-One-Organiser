@@ -297,68 +297,67 @@ public class Cat {
             }
 
             for (int i = 0; i < catEntriesCount; i++) {
-                CatEntry catEntry = new CatEntry();
-                catEntries.add(catEntry);
+                catEntries.add(new CatEntry());
 
                 channel.position(entryOffset + i * 24);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                catEntry.charaId = toUShort(shortBuffer.getShort());
+                catEntries.get(i).charaId = toUShort(shortBuffer.getShort());
                 
                 channel.position(entryOffset +  i * 24 + 2);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                catEntry.costume = toUShort(shortBuffer.getShort());
+                catEntries.get(i).costume = toUShort(shortBuffer.getShort());
 
                 channel.position(entryOffset + i * 24 + 4);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                catEntry.i04 = toUShort(shortBuffer.getShort());
+                catEntries.get(i).i04 = toUShort(shortBuffer.getShort());
 
                 channel.position(entryOffset + i * 24 + 6);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                catEntry.skillId2 = toUShort(shortBuffer.getShort());
+                catEntries.get(i).skillId2 = toUShort(shortBuffer.getShort());
 
                 channel.position(entryOffset + i * 24 + 8);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                catEntry.charaCode = StandardCharsets.ISO_8859_1.decode(intBuffer).toString().trim();
+                catEntries.get(i).charaCode = StandardCharsets.ISO_8859_1.decode(intBuffer).toString().trim();
 
                 channel.position(entryOffset + i * 24 + 12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                catEntry.i12 = intBuffer.getInt();
+                catEntries.get(i).i12 = intBuffer.getInt();
                 
                 channel.position(entryOffset + i * 24 + 16);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                catEntry.i16 = intBuffer.getInt();
+                catEntries.get(i).i16 = intBuffer.getInt();
 
                 channel.position(entryOffset + i * 24 + 20);
                 byteBuffer.clear();
                 channel.read(byteBuffer);
                 byteBuffer.flip();
-                catEntry.i20 = toUByte(byteBuffer.get());
+                catEntries.get(i).i20 = toUByte(byteBuffer.get());
                 
                 channel.position(entryOffset + i * 24 + 21);
                 byteBuffer.clear();
                 channel.read(byteBuffer);
                 byteBuffer.flip();
-                catEntry.transformationEntry = toUByte(byteBuffer.get());
+                catEntries.get(i).transformationEntry = toUByte(byteBuffer.get());
 
                 channel.position(entryOffset + i * 24 + 22);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                catEntry.i22 = toUShort(shortBuffer.getShort());
+                catEntries.get(i).i22 = toUShort(shortBuffer.getShort());
             }    
         } catch (IOException e) {
             e.printStackTrace();

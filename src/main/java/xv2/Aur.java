@@ -407,14 +407,13 @@ public class Aur {
             charaOffset = intBuffer.getInt();
 
             for (int i = 0; i < auraEntriesCount; i++) {
-                AuraEntry auraEntry = new AuraEntry();
-                auraEntries.add(auraEntry);
+                auraEntries.add(new AuraEntry());
 
                 channel.position(auraoffset + i * 16 + 4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                auraEntry.i04 = intBuffer.getInt();
+                auraEntries.get(i).i04 = intBuffer.getInt();
 
                 channel.position(auraoffset + i * 16 + 12);
                 intBuffer.clear();
@@ -426,72 +425,71 @@ public class Aur {
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                auraEntry.boostStart = intBuffer.getInt();
+                auraEntries.get(i).boostStart = intBuffer.getInt();
 
                 channel.position(effectsOffset + 12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                auraEntry.boostLoop = intBuffer.getInt();
+                auraEntries.get(i).boostLoop = intBuffer.getInt();
 
                 channel.position(effectsOffset + 20);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                auraEntry.boostEnd = intBuffer.getInt();
+                auraEntries.get(i).boostEnd = intBuffer.getInt();
 
                 channel.position(effectsOffset + 28);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                auraEntry.kiaiCharge = intBuffer.getInt();
+                auraEntries.get(i).kiaiCharge = intBuffer.getInt();
 
                 channel.position(effectsOffset + 36);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                auraEntry.kiryokuMax = intBuffer.getInt();
+                auraEntries.get(i).kiryokuMax = intBuffer.getInt();
 
                 channel.position(effectsOffset + 44);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                auraEntry.henshinStart = intBuffer.getInt();
+                auraEntries.get(i).henshinStart = intBuffer.getInt();
 
                 channel.position(effectsOffset + 52);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                auraEntry.henshinEnd = intBuffer.getInt();
+                auraEntries.get(i).henshinEnd = intBuffer.getInt();
             }
 
             for (int i = 0; i < characterEntries; i++) {
-                CharaEntry charaEntry = new CharaEntry();
-                charaEntries.add(charaEntry);
+                charaEntries.add(new CharaEntry());
 
                 channel.position(charaOffset + i * 16);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                charaEntry.charaId = intBuffer.getInt();
+                charaEntries.get(i).charaId = intBuffer.getInt();
     
                 channel.position(charaOffset + i * 16 + 4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                charaEntry.costume = intBuffer.getInt();
+                charaEntries.get(i).costume = intBuffer.getInt();
 
                 channel.position(charaOffset + i * 16 + 8);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                charaEntry.auraId = intBuffer.getInt();
+                charaEntries.get(i).auraId = intBuffer.getInt();
                 
                 channel.position(charaOffset + i * 16 + 12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                charaEntry.glare = (intBuffer.getInt() ==  1);
+                charaEntries.get(i).glare = (intBuffer.getInt() ==  1);
 
                 createCharaIdVBox(charaEntries.get(i));
             }
