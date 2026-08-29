@@ -74,14 +74,14 @@ public class Aur {
 
     private VBox createAuraIdVBox(AuraEntry entry) {
         VBox auraIdVBox = new VBox(70, 
-            createHBox(createLabel("I_04", 120), createAuraTextField(AuraValues.I04)), 
-            createHBox(createLabel("BoostStart", 120), createAuraTextField(AuraValues.BoostStart)),
-            createHBox(createLabel("BoostLoop", 120), createAuraTextField(AuraValues.BoostLoop)), 
-            createHBox(createLabel("BoostEnd", 120), createAuraTextField(AuraValues.BoostEnd)),
-            createHBox(createLabel("KiaiCharge", 120), createAuraTextField(AuraValues.KiaiCharge)), 
-            createHBox(createLabel("KiryokuMax", 120), createAuraTextField(AuraValues.KiryokuMax)),
-            createHBox(createLabel("HenshinStart", 120), createAuraTextField(AuraValues.HenshinStart)), 
-            createHBox(createLabel("HenshinEnd", 120), createAuraTextField(AuraValues.HenshinEnd))
+            createHBox(createLabel("I_04", 120), createAuraTextField(entry.i04 ,AuraValues.I04)), 
+            createHBox(createLabel("BoostStart", 120), createAuraTextField(entry.boostStart, AuraValues.BoostStart)),
+            createHBox(createLabel("BoostLoop", 120), createAuraTextField(entry.boostLoop ,AuraValues.BoostLoop)), 
+            createHBox(createLabel("BoostEnd", 120), createAuraTextField(entry.boostEnd ,AuraValues.BoostEnd)),
+            createHBox(createLabel("KiaiCharge", 120), createAuraTextField(entry.kiaiCharge, AuraValues.KiaiCharge)), 
+            createHBox(createLabel("KiryokuMax", 120), createAuraTextField(entry.kiryokuMax, AuraValues.KiryokuMax)),
+            createHBox(createLabel("HenshinStart", 120), createAuraTextField(entry.henshinStart, AuraValues.HenshinStart)), 
+            createHBox(createLabel("HenshinEnd", 120), createAuraTextField(entry.henshinEnd, AuraValues.HenshinEnd))
         );
         auraIdVBox.setPadding(new Insets(20, 0, 0, 0));
 
@@ -103,19 +103,7 @@ public class Aur {
         return label;
     }
 
-    private TextField createAuraTextField(AuraValues auraValue) {
-        int value = 0;
-        switch (auraValue) {
-            case AuraValues.I04 -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).i04;
-            case AuraValues.BoostStart -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostStart;
-            case AuraValues.BoostLoop -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostLoop;
-            case AuraValues.BoostEnd -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostEnd;
-            case AuraValues.KiaiCharge -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiaiCharge;
-            case AuraValues.KiryokuMax -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiryokuMax;
-            case AuraValues.HenshinStart -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinStart;
-            case AuraValues.HenshinEnd -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinEnd;
-        }
-
+    private TextField createAuraTextField(int value, AuraValues auraValue) {
         TextField textField = new TextField(String.valueOf(value));
         textField.textProperty().addListener((obs, oldText, newText) -> {
             if (textField.getText().contains("-")) {
@@ -140,15 +128,7 @@ public class Aur {
         return textField;
     }
 
-    private TextField createCharaTextField(int i, CharaValues charaValue) {
-        int value = 0;
-        switch (charaValue) {
-            case CharaValues.CharaID -> value = charaEntries.get(i).charaId;
-            case CharaValues.Costume -> value = charaEntries.get(i).costume;
-            case CharaValues.AuraID -> value = charaEntries.get(i).auraId;
-            default -> throw new IllegalArgumentException("Unexpected value: " + charaValue);
-        }
-
+    private TextField createCharaTextField(int i, int value, CharaValues charaValue) {
         TextField textField = new TextField(String.valueOf(value));
         textField.textProperty().addListener((obs, oldText, newText) -> {
             if (textField.getText().contains("-")) {
@@ -169,13 +149,7 @@ public class Aur {
         return textField;
     }
 
-    private CheckBox createCharaChekcBox(int i, CharaValues charaValue) {
-        boolean value = false;
-        switch (charaValue) {
-            case CharaValues.Glare -> value = charaEntries.get(i).glare;
-            default -> throw new IllegalArgumentException("Unexpected value: " + charaValue);
-        }
-
+    private CheckBox createCharaChekcBox(int i, boolean value, CharaValues charaValue) {
         CheckBox checkBox = new CheckBox("Glare");
         checkBox.setSelected(value);
         checkBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
@@ -228,10 +202,10 @@ public class Aur {
     
     private VBox createCharaIdVBox(CharaEntry entry) {
         HBox hBox = new HBox(10,
-            createLabel("Chara ID", 0), createCharaTextField(charaEntries.indexOf(entry), CharaValues.CharaID),
-            createLabel("Costume", 0), createCharaTextField(charaEntries.indexOf(entry), CharaValues.Costume),
-            createLabel("Aura ID", 0), createCharaTextField(charaEntries.indexOf(entry), CharaValues.AuraID) ,
-                                                    createCharaChekcBox(charaEntries.indexOf(entry), CharaValues.Glare)
+            createLabel("Chara ID", 0), createCharaTextField(charaEntries.indexOf(entry), entry.charaId, CharaValues.CharaID),
+            createLabel("Costume", 0), createCharaTextField(charaEntries.indexOf(entry), entry.costume, CharaValues.Costume),
+            createLabel("Aura ID", 0), createCharaTextField(charaEntries.indexOf(entry), entry.auraId, CharaValues.AuraID) ,
+                                                    createCharaChekcBox(charaEntries.indexOf(entry), entry.glare, CharaValues.Glare)
         );
         hBox.setAlignment(Pos.CENTER_LEFT);
 

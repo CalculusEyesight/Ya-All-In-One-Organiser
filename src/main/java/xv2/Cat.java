@@ -58,16 +58,16 @@ public class Cat {
 
     private VBox createCatVBox(CatEntry entry) {
         VBox catVBox = new VBox(30,
-            createHBox(createLabel("Chara ID", 170), createTextField(catEntries.indexOf(entry), CatValues.CharaID)),
-            createHBox(createLabel("Costume", 170), createTextField(catEntries.indexOf(entry), CatValues.Costume)),
-            createHBox(createLabel("I_04", 170), createTextField(catEntries.indexOf(entry), CatValues.I04)), 
-            createHBox(createLabel("Skill ID 2", 170), createTextField(catEntries.indexOf(entry), CatValues.SkillID2)),
-            createHBox(createLabel("Chara Code", 170), createTextField(catEntries.indexOf(entry), CatValues.CharaCode)), 
-            createHBox(createLabel("I_12", 170), createTextField(catEntries.indexOf(entry), CatValues.I12)),
-            createHBox(createLabel("I_16", 170), createTextField(catEntries.indexOf(entry), CatValues.I16)), 
-            createHBox(createLabel("I_20", 170), createTextField(catEntries.indexOf(entry), CatValues.I20)),
-            createHBox(createLabel("Transformation Entry", 170), createTextField(catEntries.indexOf(entry), CatValues.TransformationEntry)), 
-            createHBox(createLabel("I_22", 170), createTextField(catEntries.indexOf(entry), CatValues.I22))
+            createHBox(createLabel("Chara ID", 170), createTextField(catEntries.indexOf(entry), entry.charaId, CatValues.CharaID)),
+            createHBox(createLabel("Costume", 170), createTextField(catEntries.indexOf(entry), entry.costume, CatValues.Costume)),
+            createHBox(createLabel("I_04", 170), createTextField(catEntries.indexOf(entry), entry.i04, CatValues.I04)), 
+            createHBox(createLabel("Skill ID 2", 170), createTextField(catEntries.indexOf(entry), entry.skillId2, CatValues.SkillID2)),
+            createHBox(createLabel("Chara Code", 170), createTextField(catEntries.indexOf(entry), entry.charaCode, CatValues.CharaCode)), 
+            createHBox(createLabel("I_12", 170), createTextField(catEntries.indexOf(entry), entry.i12, CatValues.I12)),
+            createHBox(createLabel("I_16", 170), createTextField(catEntries.indexOf(entry), entry.i16, CatValues.I16)), 
+            createHBox(createLabel("I_20", 170), createTextField(catEntries.indexOf(entry), entry.i20, CatValues.I20)),
+            createHBox(createLabel("Transformation Entry", 170), createTextField(catEntries.indexOf(entry), entry.transformationEntry, CatValues.TransformationEntry)), 
+            createHBox(createLabel("I_22", 170), createTextField(catEntries.indexOf(entry), entry.i22, CatValues.I22))
         );
         catVBox.setPadding(new Insets(20, 0, 0, 0));
         
@@ -81,23 +81,8 @@ public class Cat {
         return label;
     }
 
-    private TextField createTextField(int i, CatValues catValue) {
-        String value = null;
-
-        switch (catValue) {
-            case CatValues.CharaID -> value = String.valueOf(catEntries.get(i).charaId);
-            case CatValues.Costume -> value = String.valueOf(catEntries.get(i).costume);
-            case CatValues.I04 -> value = String.valueOf(catEntries.get(i).i04);
-            case CatValues.SkillID2 -> value = String.valueOf(catEntries.get(i).skillId2);
-            case CatValues.CharaCode -> value = catEntries.get(i).charaCode;
-            case CatValues.I12 -> value = String.valueOf(catEntries.get(i).i12);
-            case CatValues.I16 -> value = String.valueOf(catEntries.get(i).i16);
-            case CatValues.I20 -> value = String.valueOf(catEntries.get(i).i20);
-            case CatValues.TransformationEntry -> value = String.valueOf(catEntries.get(i).transformationEntry);
-            case CatValues.I22 -> value = String.valueOf(catEntries.get(i).i22);
-        }
-
-        TextField textField = new TextField(value);
+    private TextField createTextField(int i, Object value, CatValues catValue) {
+        TextField textField = new TextField(String.valueOf(value));
         textField.textProperty().addListener((obs, oldText, newText) -> {
             if (textField.getText().contains("-")) {
                 return;

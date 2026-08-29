@@ -65,10 +65,10 @@ class Agd {
 
     private void createAgdVBox(AgdEntry entry) {
         HBox agdHBox = new HBox(30, 
-            createLabel("Level"), createTextField(agdEntries.indexOf(entry), AgdValues.Level), 
-            createLabel("Xp To Next Level"), createTextField(agdEntries.indexOf(entry), AgdValues.XpToNextLevel), 
-            createLabel("Xp To This Level"), createTextField(agdEntries.indexOf(entry), AgdValues.XpToThisLevel), 
-            createLabel("Attribute Points Gained"),createTextField(agdEntries.indexOf(entry), AgdValues.AttributePointsGained)
+            createLabel("Level"), createTextField(agdEntries.indexOf(entry), entry.level, AgdValues.Level), 
+            createLabel("Xp To Next Level"), createTextField(agdEntries.indexOf(entry), entry.xpToNextLevel, AgdValues.XpToNextLevel), 
+            createLabel("Xp To This Level"), createTextField(agdEntries.indexOf(entry), entry.xpToThisLevel ,AgdValues.XpToThisLevel), 
+            createLabel("Attribute Points Gained"),createTextField(agdEntries.indexOf(entry), entry.attributePointsGained, AgdValues.AttributePointsGained)
         );
         agdHBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -79,15 +79,7 @@ class Agd {
         return new Label(text);
     }
 
-    private TextField createTextField(int i, AgdValues adgValue) {
-        int value = 0;
-        switch (adgValue) {
-            case AgdValues.Level -> value = agdEntries.get(i).level;
-            case AgdValues.XpToNextLevel -> value = agdEntries.get(i).xpToNextLevel;
-            case AgdValues.XpToThisLevel -> value = agdEntries.get(i).xpToThisLevel;
-            case AgdValues.AttributePointsGained -> value = agdEntries.get(i).attributePointsGained;
-        }
-
+    private TextField createTextField(int i, int value, AgdValues adgValue) {
         TextField textField = new TextField(String.valueOf(value));
         textField.textProperty().addListener((obs, oldText, newText) -> {
             if (textField.getText().contains("-")) {
