@@ -81,10 +81,10 @@ public class Cat {
         return label;
     }
 
-    private TextField createTextField(int i, CatValues auraIndex) {
+    private TextField createTextField(int i, CatValues catValue) {
         String value = null;
 
-        switch (auraIndex) {
+        switch (catValue) {
             case CatValues.CharaID -> value = String.valueOf(catEntries.get(i).charaId);
             case CatValues.Costume -> value = String.valueOf(catEntries.get(i).costume);
             case CatValues.I04 -> value = String.valueOf(catEntries.get(i).i04);
@@ -103,7 +103,7 @@ public class Cat {
                 return;
             }
             try {
-                switch (auraIndex) {
+                switch (catValue) {
                     case CatValues.CharaID -> catEntries.get(i).charaId = Integer.parseInt(newText);
                     case CatValues.Costume -> catEntries.get(i).costume = Integer.parseInt(newText);
                     case CatValues.I04 -> catEntries.get(i).i04 = Integer.parseInt(newText);
@@ -212,16 +212,16 @@ public class Cat {
         });
     }
 
-    private void listViewSearch(CatValues catIndex) {
+    private void listViewSearch(CatValues catValue) {
         int counter = 0;
         String value = null;
         int listIndex = listView.getSelectionModel().getSelectedIndex();
-        int textFieldIndex = catIndex.index;
+        int textFieldIndex = catValue.index;
         boolean found = false;
 
         do {
 
-            switch (catIndex) {
+            switch (catValue) {
                 case CatValues.CharaID -> value = String.valueOf(catEntries.get(listIndex).charaId);
                 case CatValues.Costume -> value = String.valueOf(catEntries.get(listIndex).costume);
                 case CatValues.I04 -> value = String.valueOf(catEntries.get(listIndex).i04);

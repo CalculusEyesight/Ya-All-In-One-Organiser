@@ -79,9 +79,9 @@ class Agd {
         return new Label(text);
     }
 
-    private TextField createTextField(int i, AgdValues index) {
+    private TextField createTextField(int i, AgdValues adgValue) {
         int value = 0;
-        switch (index) {
+        switch (adgValue) {
             case AgdValues.Level -> value = agdEntries.get(i).level;
             case AgdValues.XpToNextLevel -> value = agdEntries.get(i).xpToNextLevel;
             case AgdValues.XpToThisLevel -> value = agdEntries.get(i).xpToThisLevel;
@@ -94,7 +94,7 @@ class Agd {
                 return;
             }
             try {
-                switch (index) {
+                switch (adgValue) {
                     case AgdValues.Level -> agdEntries.get(i).level = Integer.parseInt(newText);
                     case AgdValues.XpToNextLevel -> agdEntries.get(i).xpToNextLevel = Integer.parseInt(newText);
                     case AgdValues.XpToThisLevel -> agdEntries.get(i).xpToThisLevel = Integer.parseInt(newText);

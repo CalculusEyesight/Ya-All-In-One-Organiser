@@ -103,9 +103,9 @@ public class Aur {
         return label;
     }
 
-    private TextField createAuraTextField(AuraValues auraIndex) {
+    private TextField createAuraTextField(AuraValues auraValue) {
         int value = 0;
-        switch (auraIndex) {
+        switch (auraValue) {
             case AuraValues.I04 -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).i04;
             case AuraValues.BoostStart -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostStart;
             case AuraValues.BoostLoop -> value = auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostLoop;
@@ -122,7 +122,7 @@ public class Aur {
                 return;
             }
             try {
-                switch (auraIndex) {
+                switch (auraValue) {
                     case AuraValues.I04 -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).i04 = Integer.parseInt(newText);
                     case AuraValues.BoostStart -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostStart = Integer.parseInt(newText);
                     case AuraValues.BoostLoop -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostLoop = Integer.parseInt(newText);
@@ -140,13 +140,13 @@ public class Aur {
         return textField;
     }
 
-    private TextField createCharaTextField(int i, CharaValues charaIndex) {
+    private TextField createCharaTextField(int i, CharaValues charaValue) {
         int value = 0;
-        switch (charaIndex) {
+        switch (charaValue) {
             case CharaValues.CharaID -> value = charaEntries.get(i).charaId;
             case CharaValues.Costume -> value = charaEntries.get(i).costume;
             case CharaValues.AuraID -> value = charaEntries.get(i).auraId;
-            default -> throw new IllegalArgumentException("Unexpected value: " + charaIndex);
+            default -> throw new IllegalArgumentException("Unexpected value: " + charaValue);
         }
 
         TextField textField = new TextField(String.valueOf(value));
@@ -155,11 +155,11 @@ public class Aur {
                 return;
             }
             try {
-                switch (charaIndex) {
+                switch (charaValue) {
                     case CharaValues.CharaID -> charaEntries.get(i).charaId = Integer.parseInt(newText);
                     case CharaValues.Costume -> charaEntries.get(i).costume = Integer.parseInt(newText);
                     case CharaValues.AuraID -> charaEntries.get(i).auraId = Integer.parseInt(newText);
-                    default -> throw new IllegalArgumentException("Unexpected value: " + charaIndex);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + charaValue);
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
@@ -169,19 +169,19 @@ public class Aur {
         return textField;
     }
 
-    private CheckBox createCharaChekcBox(int i, CharaValues index) {
+    private CheckBox createCharaChekcBox(int i, CharaValues charaValue) {
         boolean value = false;
-        switch (index) {
+        switch (charaValue) {
             case CharaValues.Glare -> value = charaEntries.get(i).glare;
-            default -> throw new IllegalArgumentException("Unexpected value: " + index);
+            default -> throw new IllegalArgumentException("Unexpected value: " + charaValue);
         }
 
         CheckBox checkBox = new CheckBox("Glare");
         checkBox.setSelected(value);
         checkBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            switch (index) {
+            switch (charaValue) {
                 case CharaValues.Glare -> charaEntries.get(i).glare = newValue;
-                default -> throw new IllegalArgumentException("Unexpected value: " + index);
+                default -> throw new IllegalArgumentException("Unexpected value: " + charaValue);
             } 
         });
 
@@ -271,16 +271,16 @@ public class Aur {
         vBox.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {});
     }
 
-    private void listViewSearch(AuraValues auraIndex) {
+    private void listViewSearch(AuraValues auraValue) {
         int counter = 0;
         int value = 0;
         int listIndex = listView.getSelectionModel().getSelectedIndex();
-        int textFieldIndex = auraIndex.index;
+        int textFieldIndex = auraValue.index;
         boolean found = false;
 
         do {
 
-            switch (auraIndex) {
+            switch (auraValue) {
                 case AuraValues.I04 -> value = auraEntries.get(listIndex).i04;
                 case AuraValues.BoostStart -> value = auraEntries.get(listIndex).boostStart;
                 case AuraValues.BoostLoop -> value = auraEntries.get(listIndex).boostLoop;
