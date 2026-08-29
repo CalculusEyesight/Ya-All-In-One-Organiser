@@ -31,7 +31,7 @@ public class Main extends Application {
         launch(args);
     }
 
-    HashMap<String,Object> FileTypeRecall = new HashMap<>();
+    HashMap<String, Object> fileTypesContainer = new HashMap<>();
 
     ArrayList<ArrayList<Tab>> groupedEmbTabs = new ArrayList<>();
     ArrayList<ArrayList<Tab>> groupedEmbDytTabs = new ArrayList<>();
@@ -424,7 +424,7 @@ public class Main extends Application {
                             tabPane.getTabs().add(tabAgd);
 
                             Agd agd = new Agd();
-                            FileTypeRecall.put(xv2File.getAbsolutePath(),agd);
+                            fileTypesContainer.put(xv2File.getAbsolutePath(),agd);
                             
                             executorService.submit(() -> {
                                 try {
@@ -444,7 +444,7 @@ public class Main extends Application {
                             tabPane.getTabs().add(tabAur);
 
                             Aur aur = new Aur();
-                            FileTypeRecall.put(xv2File.getAbsolutePath(),aur);
+                            fileTypesContainer.put(xv2File.getAbsolutePath(),aur);
 
                             executorService.submit(() -> {
                                 try {
@@ -465,7 +465,7 @@ public class Main extends Application {
                             tabPane.getTabs().add(tabBcm); 
 
                             Bcm bcm = new Bcm();
-                            FileTypeRecall.put(xv2File.getAbsolutePath(), bcm);
+                            fileTypesContainer.put(xv2File.getAbsolutePath(), bcm);
 
                             executorService.submit(() -> {
                                 try {
@@ -487,7 +487,7 @@ public class Main extends Application {
                             tabPane.getTabs().add(tabBcs); 
 
                             Bcs bcs = new Bcs();
-                            FileTypeRecall.put(xv2File.getAbsolutePath(), bcs);
+                            fileTypesContainer.put(xv2File.getAbsolutePath(), bcs);
 
                             executorService.submit(() -> {
                                 try {
@@ -510,14 +510,14 @@ public class Main extends Application {
                             tabPane.getTabs().add(tabBdm); 
 
                             Bdm bdm = new Bdm();
-                            FileTypeRecall.put(xv2File.getAbsolutePath(), bdm);
+                            fileTypesContainer.put(xv2File.getAbsolutePath(), bdm);
 
                             executorService.submit(() -> {
                                 try {
                                     bdm.bdmReader(xv2File.toPath()); 
                                     
                                     Platform.runLater(() -> {
-                                        tabBdm.setContent(bdm.createHBox());
+                                        tabBdm.setContent(bdm.createMainHBox());
                                     });
 
                                 } catch (Exception er) {
@@ -532,7 +532,7 @@ public class Main extends Application {
                             tabPane.getTabs().add(tabBsa); 
 
                             Bsa bsa = new Bsa();
-                            FileTypeRecall.put(xv2File.getAbsolutePath(), bsa);
+                            fileTypesContainer.put(xv2File.getAbsolutePath(), bsa);
 
                             executorService.submit(() -> {
                                 try {
@@ -554,7 +554,7 @@ public class Main extends Application {
                             tabPane.getTabs().add(tabCat); 
 
                             Cat cat = new Cat();
-                            FileTypeRecall.put(xv2File.getAbsolutePath(), cat);
+                            fileTypesContainer.put(xv2File.getAbsolutePath(), cat);
 
                             executorService.submit(() -> {
                                 try {
@@ -579,7 +579,7 @@ public class Main extends Application {
                             tabPane.getTabs().add(tabEmb);
 
                             Emb emb = new Emb();
-                            FileTypeRecall.put(xv2File.getAbsolutePath(),emb);
+                            fileTypesContainer.put(xv2File.getAbsolutePath(),emb);
                             
                             executorService.submit(() -> {
                                 try {
@@ -605,11 +605,11 @@ public class Main extends Application {
 
         boolean hasSaved = false;
         
-        for (String originalPath : FileTypeRecall.keySet()) {
+        for (String originalPath : fileTypesContainer.keySet()) {
         File originalFile = new File(originalPath);
             switch (getFileExtension(originalFile.getName())) {
                 case "agd" -> {
-                    Agd agd = (Agd) FileTypeRecall.get(originalPath);
+                    Agd agd = (Agd) fileTypesContainer.get(originalPath);
 
                     executorService.submit(() -> {
                         agd.agdWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
@@ -618,7 +618,7 @@ public class Main extends Application {
                     hasSaved = true;
                 }
                 case "aur" -> {
-                    Aur aur = (Aur) FileTypeRecall.get(originalPath);
+                    Aur aur = (Aur) fileTypesContainer.get(originalPath);
 
                     executorService.submit(() -> {
                         aur.aurWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
@@ -627,7 +627,7 @@ public class Main extends Application {
                     hasSaved = true;
                 }
                 case "bcm" -> {
-                    Bcm bcm = (Bcm) FileTypeRecall.get(originalPath);
+                    Bcm bcm = (Bcm) fileTypesContainer.get(originalPath);
 
                     executorService.submit(() -> {
                         bcm.bcmWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
@@ -636,7 +636,7 @@ public class Main extends Application {
                     hasSaved = true;
                 }
                 case "bcs" -> {
-                    Bcs bcs = (Bcs) FileTypeRecall.get(originalPath);
+                    Bcs bcs = (Bcs) fileTypesContainer.get(originalPath);
 
                     executorService.submit(() -> {
                         bcs.bcsWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
@@ -645,7 +645,7 @@ public class Main extends Application {
                     hasSaved = true;
                 }
                 case "bdm" -> {
-                    Bdm bdm = (Bdm) FileTypeRecall.get(originalPath);
+                    Bdm bdm = (Bdm) fileTypesContainer.get(originalPath);
 
                     executorService.submit(() -> {
                         bdm.bdmWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
@@ -654,7 +654,7 @@ public class Main extends Application {
                     hasSaved = true;
                 }
                 case "bsa" -> {
-                    Bsa bsa = (Bsa) FileTypeRecall.get(originalPath);
+                    Bsa bsa = (Bsa) fileTypesContainer.get(originalPath);
 
                     executorService.submit(() -> {
                         bsa.bsaWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
@@ -663,7 +663,7 @@ public class Main extends Application {
                     hasSaved = true;
                 }
                 case "cat" -> {
-                    Cat cat = (Cat) FileTypeRecall.get(originalPath);
+                    Cat cat = (Cat) fileTypesContainer.get(originalPath);
 
                     executorService.submit(() -> {
                         cat.catWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
@@ -672,7 +672,7 @@ public class Main extends Application {
                     hasSaved = true;
                 }
                 case "emb","EMB" -> {
-                    Emb emb = (Emb) FileTypeRecall.get(originalPath);
+                    Emb emb = (Emb) fileTypesContainer.get(originalPath);
 
                     executorService.submit(() -> {
                         emb.embWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
@@ -711,6 +711,6 @@ public class Main extends Application {
     public void resetRoutine() {
         autoGroup.setSelected(false);
         tabPane.getTabs().clear();   
-        FileTypeRecall.clear();
+        fileTypesContainer.clear();
     }
 }
