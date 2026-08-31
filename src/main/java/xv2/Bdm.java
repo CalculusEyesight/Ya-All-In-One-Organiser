@@ -1,4 +1,5 @@
 package xv2;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -53,7 +54,7 @@ public class Bdm {
         tabActionListener();
     }
 
-    public HBox createHBox() {
+    public HBox createMainHBox() {
         createMainTabPane();
         createSubTabPane();
 
@@ -140,546 +141,85 @@ public class Bdm {
     }
 
     private VBox createMainVBox(BdmSubEntry subEntry) {
-        //damage type
-        Label damageTypeLabel = new Label("Damage Type");
-        damageTypeLabel.setPrefWidth(160);
+        CheckBox[] healthPropertiesList = new CheckBox[] {
+            new CheckBox("Restore Health"),
+            new CheckBox("Unknown 2"),
+            new CheckBox("Unknown 3"),
+            new CheckBox("Unknown 4"),
+        };
+
+        CheckBox[] unknownList = new CheckBox[] {
+            new CheckBox("Unknown 5"),
+            new CheckBox("Unknown 6"),
+            new CheckBox("Unknown 7"),
+            new CheckBox("Unknown 8")
+        };
+
+        CheckBox[] damageProperties = new CheckBox[] {
+            new CheckBox("Disable Evasive Usage"),
+            new CheckBox("Unknown 10"),
+            new CheckBox("Bypass Time Stop Damage"),
+            new CheckBox("Bypass Super Armor")
+        };
+
+        CheckBox[] damageOrientation = new CheckBox[] {
+            new CheckBox("Face Opponent Always"),
+            new CheckBox("Unknown 14"),
+            new CheckBox("Unknown 15"),
+            new CheckBox("Unknown 16")
+        };
+
+        Node[] secondaryType = new Node[] {
+            createCheckBoxGroup("Health Properties", healthPropertiesList, 1, BdmGroups.SecondaryType),
+            createCheckBoxGroup("Unknown", unknownList, 16, BdmGroups.SecondaryType), 
+            createCheckBoxGroup("Damage Priorities", damageProperties, 256, BdmGroups.SecondaryType),
+            createCheckBoxGroup("Damage Orientation", damageOrientation, 4096, BdmGroups.SecondaryType)
+        };
 
         ToggleGroup damageTypeToggleGroup = new ToggleGroup();
 
-        RadioButton noEffect = new RadioButton("No Effect");
-        noEffect.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton block = new RadioButton("Block");
-        block.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton guardBreak = new RadioButton("Guard Break");
-        guardBreak.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton standard = new RadioButton("Standard");
-        standard.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton heavy = new RadioButton("Heavy");
-        heavy.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton knockback = new RadioButton("Knockback");
-        knockback.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton knockback1 = new RadioButton("Knockback 1");
-        knockback1.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton knockback2 = new RadioButton("Knockback 2");
-        knockback2.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton knockback3 = new RadioButton("Knockback 3");
-        knockback3.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton knockback4 = new RadioButton("Knockback 4");
-        knockback4.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton grab = new RadioButton("Grab");
-        grab.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton holdStomach = new RadioButton("Hold Stomach");
-        holdStomach.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton holdEyes = new RadioButton("Hold Eyes");
-        holdEyes.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton knockback5 = new RadioButton("Knockback 5");
-        knockback5.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton electric = new RadioButton("Electric");
-        electric.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton dazed = new RadioButton("Dazed");
-        dazed.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton paralysis = new RadioButton("Paralysis");
-        paralysis.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton freeze = new RadioButton("Freeze");
-        freeze.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton wildCard = new RadioButton("Wild-Card");
-        wildCard.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton unused = new RadioButton("Unused");
-        unused.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton heavyStaminaBreak = new RadioButton("Heavy Stamina Break");
-        heavyStaminaBreak.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton lightStaminaBreak = new RadioButton("Light Stamina Break");
-        lightStaminaBreak.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton giganticKiBlastPush = new RadioButton("Gigantic Ki Blast Push");
-        giganticKiBlastPush.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton brainWash = new RadioButton("Brain Wash");
-        brainWash.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton giganticKiBlastReturn = new RadioButton("Gigantic Ki Blast Return");
-        giganticKiBlastReturn.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton knockback6 = new RadioButton("Knockback 6");
-        knockback6.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton knockback7 = new RadioButton("Knockback 7");
-        knockback7.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton knockback8 = new RadioButton("Knockback 8");
-        knockback8.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton knockback9 = new RadioButton("Knockback 9");
-        knockback9.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton slowOpponent = new RadioButton("Slow Opponent");
-        slowOpponent.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton brainWash2 = new RadioButton("Brain Wash 2");
-        brainWash2.setToggleGroup(damageTypeToggleGroup);
-
-        RadioButton timeStop = new RadioButton("Time Stop");
-        timeStop.setToggleGroup(damageTypeToggleGroup);
-        
-       switch (subEntry.damageType) {
-            case 1  -> block.setSelected(true);
-            case 2  -> guardBreak.setSelected(true);
-            case 3  -> standard.setSelected(true);
-            case 4  -> heavy.setSelected(true);
-            case 5  -> knockback.setSelected(true);
-            case 6  -> knockback1.setSelected(true);
-            case 7  -> knockback2.setSelected(true);
-            case 8  -> knockback3.setSelected(true);
-            case 9  -> knockback4.setSelected(true);
-            case 10 -> grab.setSelected(true);
-            case 11 -> holdStomach.setSelected(true);
-            case 12 -> holdEyes.setSelected(true);
-            case 13 -> knockback5.setSelected(true);
-            case 14 -> electric.setSelected(true);
-            case 15 -> dazed.setSelected(true);
-            case 16 -> paralysis.setSelected(true);
-            case 17 -> freeze.setSelected(true);
-            case 18 -> wildCard.setSelected(true);
-            case 19 -> unused.setSelected(true);
-            case 20 -> heavyStaminaBreak.setSelected(true);
-            case 21 -> lightStaminaBreak.setSelected(true);
-            case 22 -> giganticKiBlastPush.setSelected(true);
-            case 23 -> brainWash.setSelected(true);
-            case 24 -> giganticKiBlastReturn.setSelected(true);
-            case 25 -> knockback6.setSelected(true);
-            case 26 -> knockback7.setSelected(true);
-            case 27 -> knockback8.setSelected(true);
-            case 28 -> knockback9.setSelected(true);
-            case 29 -> slowOpponent.setSelected(true);
-            case 30 -> brainWash2.setSelected(true);
-            case 31 -> timeStop.setSelected(true);
-            default -> noEffect.setSelected(true);
-        }
-
-        damageTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-           if (newValue != null && newValue.isSelected()) {
-                if ((RadioButton) newValue == noEffect)                  { subEntry.damageType = 0; }
-                else if ((RadioButton) newValue == block)                { subEntry.damageType = 1; }
-                else if ((RadioButton) newValue == guardBreak)           { subEntry.damageType = 2; }
-                else if ((RadioButton) newValue == standard)             { subEntry.damageType = 3; }
-                else if ((RadioButton) newValue == heavy)                { subEntry.damageType = 4; }
-                else if ((RadioButton) newValue == knockback)            { subEntry.damageType = 5; }
-                else if ((RadioButton) newValue == knockback1)           { subEntry.damageType = 6; }
-                else if ((RadioButton) newValue == knockback2)           { subEntry.damageType = 7; }
-                else if ((RadioButton) newValue == knockback3)           { subEntry.damageType = 8; }
-                else if ((RadioButton) newValue == knockback4)           { subEntry.damageType = 9; }
-                else if ((RadioButton) newValue == grab)                 { subEntry.damageType = 10; }
-                else if ((RadioButton) newValue == holdStomach)          { subEntry.damageType = 11; }
-                else if ((RadioButton) newValue == holdEyes)             { subEntry.damageType = 12; }
-                else if ((RadioButton) newValue == knockback5)           { subEntry.damageType = 13; }
-                else if ((RadioButton) newValue == electric)             { subEntry.damageType = 14; }
-                else if ((RadioButton) newValue == dazed)                { subEntry.damageType = 15; }
-                else if ((RadioButton) newValue == paralysis)            { subEntry.damageType = 16; }
-                else if ((RadioButton) newValue == freeze)               { subEntry.damageType = 17; }
-                else if ((RadioButton) newValue == wildCard)             { subEntry.damageType = 18; }
-                else if ((RadioButton) newValue == unused)               { subEntry.damageType = 19; }
-                else if ((RadioButton) newValue == heavyStaminaBreak)    { subEntry.damageType = 20; }
-                else if ((RadioButton) newValue == lightStaminaBreak)    { subEntry.damageType = 21; }
-                else if ((RadioButton) newValue == giganticKiBlastPush)  { subEntry.damageType = 22; }
-                else if ((RadioButton) newValue == brainWash)            { subEntry.damageType = 23; }
-                else if ((RadioButton) newValue == giganticKiBlastReturn){ subEntry.damageType = 24; }
-                else if ((RadioButton) newValue == knockback6)           { subEntry.damageType = 25; }
-                else if ((RadioButton) newValue == knockback7)           { subEntry.damageType = 26; }
-                else if ((RadioButton) newValue == knockback8)           { subEntry.damageType = 27; }
-                else if ((RadioButton) newValue == knockback9)           { subEntry.damageType = 28; }
-                else if ((RadioButton) newValue == slowOpponent)         { subEntry.damageType = 29; }
-                else if ((RadioButton) newValue == brainWash2)           { subEntry.damageType = 30; }
-                else if ((RadioButton) newValue == timeStop)             { subEntry.damageType = 31; }
-            }
-        });
-
-        GridPane damageTypeGridPane = new GridPane(10, 10);
-        damageTypeGridPane.getStyleClass().add("titled-address-box");
-
-        damageTypeGridPane.add(noEffect, 0, 0);   
-        damageTypeGridPane.add(block, 1, 0);          
-        damageTypeGridPane.add(guardBreak, 2, 0);          
-        damageTypeGridPane.add(standard, 3, 0);          
-
-        damageTypeGridPane.add(heavy, 0, 1);          
-        damageTypeGridPane.add(knockback, 1, 1);          
-        damageTypeGridPane.add(knockback1, 2, 1);          
-        damageTypeGridPane.add(knockback2, 3, 1);          
-
-        damageTypeGridPane.add(knockback3, 0, 2);          
-        damageTypeGridPane.add(knockback4, 1, 2);   
-        damageTypeGridPane.add(grab, 2, 2);
-        damageTypeGridPane.add(holdStomach, 3, 2);
-
-        damageTypeGridPane.add(holdEyes, 0, 3);
-        damageTypeGridPane.add(knockback5, 1, 3);
-        damageTypeGridPane.add(electric, 2, 3);
-        damageTypeGridPane.add(dazed, 3, 3);
-
-        damageTypeGridPane.add(paralysis, 0, 4);
-        damageTypeGridPane.add(freeze, 1, 4);
-        damageTypeGridPane.add(wildCard, 2, 4);
-        damageTypeGridPane.add(unused, 3, 4);
-
-        damageTypeGridPane.add(heavyStaminaBreak, 0, 5);
-        damageTypeGridPane.add(lightStaminaBreak, 1, 5);
-        damageTypeGridPane.add(giganticKiBlastPush, 2, 5);
-        damageTypeGridPane.add(brainWash, 3, 5);
-
-        damageTypeGridPane.add(giganticKiBlastReturn, 0, 6);
-        damageTypeGridPane.add(knockback6, 1, 6);
-        damageTypeGridPane.add(knockback7, 2, 6);
-        damageTypeGridPane.add(knockback8, 3, 6);
-
-        damageTypeGridPane.add(knockback9, 0, 7);
-        damageTypeGridPane.add(slowOpponent, 1, 7);
-        damageTypeGridPane.add(brainWash2, 2, 7);
-        damageTypeGridPane.add(timeStop, 3, 7);
-        
-        HBox damageTypeHBox = new HBox(5, damageTypeLabel, damageTypeGridPane);
-        damageTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //damage type
-
-        //secondary type
-        Label secondaryTypeLabel = new Label("Secondary Type");
-        secondaryTypeLabel.setPrefWidth(160);
-
-        //health properties
-        Label healthPropertiesLabel = new Label("Health Properties");
-        healthPropertiesLabel.getStyleClass().add("titled-address-label");
-        healthPropertiesLabel.setTranslateY(-8); 
-        healthPropertiesLabel.setTranslateX(10);
-
-        CheckBox restoreHealth = new CheckBox("Restore Health");
-        CheckBox unknown2 = new CheckBox("Unknown2");
-        CheckBox unknown3 = new CheckBox("Unknown3");
-        CheckBox unknown4 = new CheckBox("Unknown4");
-
-        restoreHealth.setSelected((subEntry.secondaryType & 1) != 0);
-        unknown2.setSelected((subEntry.secondaryType & 2) != 0);
-        unknown3.setSelected((subEntry.secondaryType & 4) != 0);
-        unknown4.setSelected((subEntry.secondaryType & 8) != 0);
-
-        restoreHealth.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType|= 1;
-            }
-            else {
-                subEntry.secondaryType &= ~1;
-            }
-        });
-        unknown2.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 2;
-            }
-            else {
-                subEntry.secondaryType &= ~2;
-            }
-        });
-        unknown3.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 4;
-            }
-            else {
-                subEntry.secondaryType &= ~4;
-            }
-        });
-        unknown4.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 8;
-            }
-            else {
-                subEntry.secondaryType &= ~8;
-            }
-        });
-
-        VBox healthPropertiesBox = new VBox(2, restoreHealth, unknown2, unknown3, unknown4);
-
-        VBox borderContainerHealthProperties = new VBox(healthPropertiesBox);
-        borderContainerHealthProperties.getStyleClass().add("titled-address-box");
-        borderContainerHealthProperties.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane healthPropertiesBoxStackPane = new StackPane(borderContainerHealthProperties, healthPropertiesLabel);
-        StackPane.setAlignment(healthPropertiesLabel, Pos.TOP_LEFT);
-        //health properties
-
-        //unknown
-        Label unknownLabel = new Label("Unknown");
-        unknownLabel.getStyleClass().add("titled-address-label");
-        unknownLabel.setTranslateY(-8); 
-        unknownLabel.setTranslateX(10);
-
-        CheckBox unknown5 = new CheckBox("Unknown 5");
-        CheckBox unknown6 = new CheckBox("Unknown 6");
-        CheckBox unknown7 = new CheckBox("Unknown 7");
-        CheckBox unknown8 = new CheckBox("Unknown 8");
-
-        unknown5.setSelected((subEntry.secondaryType & 16L) != 0);
-        unknown6.setSelected((subEntry.secondaryType & 32L) != 0);
-        unknown7.setSelected((subEntry.secondaryType & 64L) != 0);
-        unknown8.setSelected((subEntry.secondaryType & 128L) != 0);
-
-        unknown5.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 16;
-            }
-            else {
-                subEntry.secondaryType &= ~16;
-            }
-        });
-        unknown6.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 32;
-            }
-            else {
-                subEntry.secondaryType &= ~32;
-            }
-        });
-        unknown7.selectedProperty().addListener((obs,oldValue,newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 64;
-            }
-            else {
-                subEntry.secondaryType &= ~64;
-            }
-        });
-        unknown8.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 128;
-            }
-            else {
-                subEntry.secondaryType &= ~128;
-            }
-        });
-
-        VBox unknownVBox = new VBox(2, unknown5, unknown6, unknown7, unknown8);
-
-        VBox borderContainerunknown = new VBox(unknownVBox);
-        borderContainerunknown.getStyleClass().add("titled-address-box");
-        borderContainerunknown.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane unknownStackPane = new StackPane(borderContainerunknown, unknownLabel);
-        StackPane.setAlignment(unknownLabel, Pos.TOP_LEFT);
-        //unknown
-
-        //damage properties
-        Label damagePropertiesLabel = new Label("Damage Priorities");
-        damagePropertiesLabel.getStyleClass().add("titled-address-label");
-        damagePropertiesLabel.setTranslateY(-8); 
-        damagePropertiesLabel.setTranslateX(10);
-
-        CheckBox disableEvasiveUsage = new CheckBox("Disable Evasive Usage");
-        CheckBox unknown10 = new CheckBox("Unknown 10");
-        CheckBox bypassTimeStopDamage = new CheckBox("Bypass Time Stop Damage");
-        CheckBox bypassSuperArmor = new CheckBox("Bypass Super Armor");
-
-        disableEvasiveUsage.setSelected((subEntry.secondaryType & 256) != 0);
-        unknown10.setSelected((subEntry.secondaryType & 512) != 0);
-        bypassTimeStopDamage.setSelected((subEntry.secondaryType & 1024) != 0);
-        bypassSuperArmor.setSelected((subEntry.secondaryType & 2048) != 0);
-
-        disableEvasiveUsage.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 256;
-            }
-            else {
-                subEntry.secondaryType &= ~256;
-            }
-        });
-        unknown10.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 512;
-            }
-            else {
-                subEntry.secondaryType &= ~512;
-            }
-        });
-        bypassTimeStopDamage.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 1024;
-            }
-            else {
-                subEntry.secondaryType &= ~1024;
-            }
-        });
-        bypassSuperArmor.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 2048;
-            }
-            else {
-                subEntry.secondaryType &= ~2048;
-            }
-        });
-
-        VBox damagePropertiesBox = new VBox(2, disableEvasiveUsage, unknown10, bypassTimeStopDamage, bypassSuperArmor);
-
-        VBox borderContainerDamageProperties = new VBox(damagePropertiesBox);
-        borderContainerDamageProperties.getStyleClass().add("titled-address-box");
-        borderContainerDamageProperties.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane damagePropertiesStackPane = new StackPane(borderContainerDamageProperties, damagePropertiesLabel);
-        StackPane.setAlignment(damagePropertiesLabel, Pos.TOP_LEFT);
-        //damage properties
-
-        //damage orientation
-        Label damageOrientationLabel = new Label("Damage Orientation");
-        damageOrientationLabel.getStyleClass().add("titled-address-label");
-        damageOrientationLabel.setTranslateY(-8); 
-        damageOrientationLabel.setTranslateX(10);
-
-        CheckBox faceOpponentAlways = new CheckBox("Face Opponent Always");
-        CheckBox unknown14 = new CheckBox("Unknown 14");
-        CheckBox unknown15 = new CheckBox("Unknown 15");
-        CheckBox unknown16 = new CheckBox("Unknown 16");
-
-        faceOpponentAlways.setSelected((subEntry.secondaryType & 4096) != 0);
-        unknown14.setSelected((subEntry.secondaryType & 8192) != 0);
-        unknown15.setSelected((subEntry.secondaryType & 16384) != 0);
-        unknown16.setSelected((subEntry.secondaryType & 32768) != 0);
-
-        faceOpponentAlways.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 4096;
-            }
-            else {
-                subEntry.secondaryType &= ~4096;
-            }
-        });
-        unknown14.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 8192;
-            }
-            else {
-                subEntry.secondaryType &= ~8192;
-            }
-        });
-        unknown15.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 16384;
-            }
-            else {
-                subEntry.secondaryType &= ~16384;
-            }
-        });
-        unknown16.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.secondaryType |= 32768;
-            }
-            else {
-                subEntry.secondaryType &= ~32768;
-            }
-        });
-
-        VBox damageOrientationBox = new VBox(2, faceOpponentAlways, unknown14, unknown15, unknown16);
-
-        VBox borderContainerDamageOrientation = new VBox(damageOrientationBox);
-        borderContainerDamageOrientation.getStyleClass().add("titled-address-box");
-        borderContainerDamageOrientation.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane damageOrientationStackPane = new StackPane(borderContainerDamageOrientation, damageOrientationLabel);
-        StackPane.setAlignment(damageOrientationLabel, Pos.TOP_LEFT);
-        //damage properties
-
-        HBox secondaryTypeHBox = new HBox(5,
-            secondaryTypeLabel, healthPropertiesBoxStackPane,
-            unknownStackPane, damagePropertiesStackPane,
-            damageOrientationStackPane
-        );
-        secondaryTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //secondary type
-
-        //damage amount
-        Label damageAmountLabel = new Label("Damage Amount");
-        damageAmountLabel.setPrefWidth(160);
-
-        Spinner<Integer> damageAmountSpinner = new Spinner<>(0, 65535, subEntry.damageAmount);
-        damageAmountSpinner.setEditable(true);
-        damageAmountSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.damageAmount = newValue;
-            }
-        });
-
-        HBox damageAmountHBox = new HBox(5, damageAmountLabel, damageAmountSpinner);
-        damageAmountHBox.setAlignment(Pos.CENTER_LEFT);
-        //damage amount
-
-        //damage special
-        Label damageSpecialLabel = new Label("Damage Special");
-        damageSpecialLabel.setPrefWidth(160);
-
-        Spinner<Integer> damageSpecialSpinner = new Spinner<>(0, 65535, subEntry.damageSpecial);
-        damageSpecialSpinner.setEditable(true);
-        damageSpecialSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.damageSpecial = newValue;
-            }
-
-        });
-
-        HBox damageSpecialHBox = new HBox(5, damageSpecialLabel, damageSpecialSpinner);
-        damageSpecialHBox.setAlignment(Pos.CENTER_LEFT);
-        //damage special
-
-        //damage special 2
-        Label damageSpecial2Label = new Label("Damage Special 2");
-        damageSpecial2Label.setPrefWidth(160);
-
-        Spinner<Integer> damageSpecial2Spinner = new Spinner<>(0, 65535, subEntry.damageSpecial2);
-        damageSpecial2Spinner.setEditable(true);
-        damageSpecial2Spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.damageSpecial2 = newValue;
-            }
-
-        });
-
-        HBox damageSpecial2HBox = new HBox(5, damageSpecial2Label, damageSpecial2Spinner);
-        damageSpecial2HBox.setAlignment(Pos.CENTER_LEFT);
-        //damage special 2
-
-        //damage special 3
-        Label damageSpecial3Label = new Label("Damage Special 3");
-        damageSpecial3Label.setPrefWidth(160);
-
-        Spinner<Integer> damageSpecial3Spinner = new Spinner<>(0, 65535, subEntry.damageSpecial3);
-        damageSpecial3Spinner.setEditable(true);
-        damageSpecial3Spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.damageSpecial3 = newValue;
-            }
-
-        });
-
-        HBox damageSpecial3HBox = new HBox(5, damageSpecial3Label, damageSpecial3Spinner);
-        damageSpecial3HBox.setAlignment(Pos.CENTER_LEFT);
-        //damage special 3
+        RadioButton[] damageTypeRadioButtonsList = new RadioButton[] {
+            createRadioButton("No Effect", damageTypeToggleGroup, subEntry.damageType, DamageTypes.NoEffect),
+            createRadioButton("Block", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Block),
+            createRadioButton("Guard Break", damageTypeToggleGroup, subEntry.damageType, DamageTypes.GuardBreak),
+            createRadioButton("Standard", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Standard),
+            createRadioButton("Heavy", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Heavy),
+            createRadioButton("Knockback", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback),
+            createRadioButton("Knockback 1", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback1),
+            createRadioButton("Knockback 2", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback2),
+            createRadioButton("Knockback 3", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback3),
+            createRadioButton("Knockback 4", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback4),
+            createRadioButton("Grab", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Grab),
+            createRadioButton("Hold Stomach", damageTypeToggleGroup, subEntry.damageType, DamageTypes.HoldStomach),
+            createRadioButton("Hold Eyes", damageTypeToggleGroup, subEntry.damageType, DamageTypes.HoldEyes),
+            createRadioButton("Knockback 5", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback5),
+            createRadioButton("Electric", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Electric),
+            createRadioButton("Dazed", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Dazed),
+            createRadioButton("Paralysis", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Paralysis),
+            createRadioButton("Freeze", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Freeze),
+            createRadioButton("Wild-Card", damageTypeToggleGroup, subEntry.damageType, DamageTypes.WildCard),
+            createRadioButton("Unused", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Unused),
+            createRadioButton("Heavy Stamina Break", damageTypeToggleGroup, subEntry.damageType, DamageTypes.HeavyStaminaBreak),
+            createRadioButton("Light Stamina Break", damageTypeToggleGroup, subEntry.damageType, DamageTypes.LightStaminaBreak),
+            createRadioButton("Gigantic Ki Blast Push", damageTypeToggleGroup, subEntry.damageType, DamageTypes.GiganticKiBlastPush),
+            createRadioButton("Brain Wash", damageTypeToggleGroup, subEntry.damageType, DamageTypes.BrainWash),
+            createRadioButton("Gigantic Ki Blast Return", damageTypeToggleGroup, subEntry.damageType, DamageTypes.GiganticKiBlastReturn),
+            createRadioButton("Knockback 6", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback6),
+            createRadioButton("Knockback 7", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback7),
+            createRadioButton("Knockback 8", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback8),
+            createRadioButton("Knockback 9", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback9),
+            createRadioButton("Slow Opponent", damageTypeToggleGroup, subEntry.damageType, DamageTypes.SlowOpponent),
+            createRadioButton("Brain Wash 2", damageTypeToggleGroup, subEntry.damageType, DamageTypes.BrainWash2),
+            createRadioButton("Time Stop", damageTypeToggleGroup, subEntry.damageType, DamageTypes.TimeStop),
+        };
 
         VBox mainVBox = new VBox(45,
-            damageTypeHBox, secondaryTypeHBox,
-            damageAmountHBox, damageSpecialHBox,
-            damageSpecial2HBox, damageSpecial3HBox
+            createHBox(0, createLabel("Damage Type", 160), createGridPane(4, 8, damageTypeRadioButtonsList)), 
+            createHBox(0, createLabel("Secondary Type", 160), createHBox(5, secondaryType, false)),
+            createHBox(0, createLabel("Damage Amount", 160), createSpinner(0, 65535, subEntry.damageAmount, BdmValues.DamageAmount)), 
+            createHBox(0, createLabel("Damage Special", 160), createSpinner(0, 65535, subEntry.damageSpecial, BdmValues.DamageSpecial)),
+            createHBox(0, createLabel("Damage Special 2", 160), createSpinner(0, 65535, subEntry.damageSpecial2, BdmValues.DamageSpecial2)), 
+            createHBox(0, createLabel("Damage Special 3", 160), createSpinner(0, 65535, subEntry.damageSpecial3, BdmValues.DamageSpecial3))
         );
         mainVBox.setPadding(new Insets(20, 0, 0, 8));
 
@@ -687,612 +227,90 @@ public class Bdm {
     }
 
     private VBox createAnimationVBox(BdmSubEntry subEntry) {
-        //user animation time
-        Label userAnimationTimeLabel = new Label("User Animation Time");
-        userAnimationTimeLabel.setPrefWidth(160);
-
-        Spinner<Integer> userAnimationTimeSpinner = new Spinner<>(0, 65535, subEntry.userAnimationTime);
-        userAnimationTimeSpinner.setEditable(true);
-        userAnimationTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.userAnimationTime = newValue;
-            }
-        });
-
-        HBox userAnimationTimeHBox = new HBox(userAnimationTimeLabel, userAnimationTimeSpinner);
-        userAnimationTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //user animation time
-
-        //user animation speed
-        Label userAnimationSpeed = new Label("User Animation Speed");
-        userAnimationSpeed.setPrefWidth(160);
-
-        Spinner<Double> userAnimationSpeedSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.userAnimationSpeed);
-        userAnimationSpeedSpinner.setEditable(true);
-        userAnimationSpeedSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.userAnimationSpeed = newValue.floatValue();
-            }
-        });
-
-        HBox userAnimationSpeedHBox = new HBox(userAnimationSpeed, userAnimationSpeedSpinner);
-        userAnimationSpeedHBox.setAlignment(Pos.CENTER_LEFT);
-        //user animation speed
-
-        //victim animation time
-        Label victimAnimationTimeLabel = new Label("Victim Animation Time");
-        victimAnimationTimeLabel.setPrefWidth(160);
-
-        Spinner<Integer> victimAnimationTimeSpinner=new Spinner<>(0, 65535, subEntry.victimAnimationTime);
-        victimAnimationTimeSpinner.setEditable(true);
-        victimAnimationTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.victimAnimationTime = newValue;
-            }
-
-        });
-
-        HBox victimAnimationTimeHBox = new HBox(victimAnimationTimeLabel, victimAnimationTimeSpinner);
-        victimAnimationTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //vcitim animation time
-
-        //victim animation speed
-        Label victimAnimationSpeed = new Label("Victim Animation Speed");
-        victimAnimationSpeed.setPrefWidth(160);
-
-        Spinner<Double> victimAnimationSpeedSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.victimAnimationSpeed);
-        victimAnimationSpeedSpinner.setEditable(true);
-        victimAnimationSpeedSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.victimAnimationSpeed = newValue.floatValue();
-            }
-        });
-
-        HBox victimAnimationSpeedHBox = new HBox(victimAnimationSpeed, victimAnimationSpeedSpinner);
-        victimAnimationSpeedHBox.setAlignment(Pos.CENTER_LEFT);
-        //victim animation speed
-
-        VBox animationVBox = new VBox(30, userAnimationTimeHBox, userAnimationSpeedHBox, victimAnimationTimeHBox, victimAnimationSpeedHBox);
+        VBox animationVBox = new VBox(30, 
+            createHBox(0, createLabel("User Animation Time", 160), createSpinner(0, 65535, subEntry.userAnimationTime, BdmValues.UserAnimationTime)), 
+            createHBox(0, createLabel("User Animation Speed", 160), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.userAnimationSpeed, BdmValues.UserAnimationSpeed)),
+            createHBox(0, createLabel("Victim Animation Time", 160), createSpinner(0, 65535, subEntry.victimAnimationTime, BdmValues.VictimAnimationTime)), 
+            createHBox(0, createLabel("Victim Animation Speed", 160), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.victimAnimationSpeed, BdmValues.VictimAnimationSpeed))
+        );
         animationVBox.setPadding(new Insets(20, 0, 0, 8));
 
         return animationVBox;
     }
 
     private VBox createSoundVBox(BdmSubEntry subEntry) {
-        //sound type
-        Label acbTypeLabel=new Label("ACB Type");
-        acbTypeLabel.setPrefWidth(100);
-
-        HBox acbTypeRadioButtonsHBox=new HBox(15);
-        acbTypeRadioButtonsHBox.getStyleClass().add("titled-address-box");
-        
         ToggleGroup acbTypeToggleGroup = new ToggleGroup();
 
-        RadioButton common = new RadioButton("Common");
-        common.setToggleGroup(acbTypeToggleGroup);
+        RadioButton[] radioButtonsList = new RadioButton[] {
+            createRadioButton("Common", acbTypeToggleGroup, subEntry.acbType, ACBTypes.Common), 
+            createRadioButton("Character SE", acbTypeToggleGroup, subEntry.acbType, ACBTypes.CharacterSE),
+            createRadioButton("Character VOX", acbTypeToggleGroup, subEntry.acbType, ACBTypes.CharacterVOX),
+            createRadioButton("Skill SE", acbTypeToggleGroup, subEntry.acbType, ACBTypes.SkillSE),
+            createRadioButton("Skill VOX", acbTypeToggleGroup, subEntry.acbType, ACBTypes.SkillVOX)
+        };
 
-        RadioButton characterSE = new RadioButton("Character SE");
-        characterSE.setToggleGroup(acbTypeToggleGroup);
-
-        RadioButton characterVOX = new RadioButton("Character VOX");
-        characterVOX.setToggleGroup(acbTypeToggleGroup);
-
-        RadioButton skillSE = new RadioButton("Skill SE");
-        skillSE.setToggleGroup(acbTypeToggleGroup);
-
-        RadioButton skillVOX = new RadioButton("Skill VOX");
-        skillVOX.setToggleGroup(acbTypeToggleGroup);
-
-
-        switch (subEntry.acbType) {
-            case 2  -> characterSE.setSelected(true);
-            case 3  -> characterVOX.setSelected(true);
-            case 10 -> skillSE.setSelected(true);
-            case 11 -> skillVOX.setSelected(true);
-            default -> common.setSelected(true);
-        }
-
-        acbTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null && newValue.isSelected()) {
-                if ((RadioButton) newValue == common)          { subEntry.acbType = 0;  }
-                else if ((RadioButton) newValue == characterSE)  { subEntry.acbType = 2;  }
-                else if ((RadioButton) newValue == characterVOX) { subEntry.acbType = 3;  }
-                else if ((RadioButton) newValue == skillSE)      { subEntry.acbType = 10; }
-                else if ((RadioButton) newValue == skillVOX)     { subEntry.acbType = 11; }
-            }
-        });
-
-        acbTypeRadioButtonsHBox.getChildren().addAll(common,characterSE,characterVOX,skillSE,skillVOX);
-
-        HBox acbTypeHBox = new HBox(acbTypeLabel, acbTypeRadioButtonsHBox);
-        acbTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //sound type
-
-        //victim animation speed
-        Label cueIdSpeed = new Label("Cue ID");
-        cueIdSpeed.setPrefWidth(100);
-
-        Spinner<Integer> cueIdSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.cueId);
-        cueIdSpinner.setEditable(true);
-        cueIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.cueId = newValue.shortValue();
-            }
-        });
-
-        HBox cueIdHBox = new HBox(cueIdSpeed, cueIdSpinner);
-        cueIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //victim animation speed
-
-        VBox soundVBox = new VBox(30, acbTypeHBox, cueIdHBox);
+        VBox soundVBox = new VBox(30, 
+            createHBox(0, createLabel("ACB Type", 100), createHBox(15, radioButtonsList, true)), 
+            createHBox(0, createLabel("Cue ID", 100), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.cueId, BdmValues.Cue_ID))
+        );
         soundVBox.setPadding(new Insets(20, 0, 0, 8));
 
         return soundVBox;
     }
 
     private ScrollPane createEffectsScrollPane(BdmSubEntry subEntry) {
-        //effect 1 id
-        Label effect1IdLabel = new Label("Effect 1 ID");
-        effect1IdLabel.setPrefWidth(160);
-
-        Spinner<Integer> effect1IdSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.effect1Id);
-        effect1IdSpinner.setEditable(true);
-        effect1IdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.effect1Id = newValue.shortValue();
-            }
-        });
-
-        HBox effect1IdHBox = new HBox(effect1IdLabel, effect1IdSpinner);
-        effect1IdHBox.setAlignment(Pos.CENTER_LEFT);
-        //effect 1 id
-
-        //effect 1 skill id
-        Label effect1SkillIdLabel = new Label("Effect 1 Skill ID");
-        effect1SkillIdLabel.setPrefWidth(160);
-
-        Spinner<Integer> effect1SkillIdSpinner = new Spinner<>(0, 65535, subEntry.effect1SkillId);
-        effect1SkillIdSpinner.setEditable(true);
-        effect1SkillIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.effect1SkillId = newValue;
-            }
-        });
-
-        HBox effect1SkillIdHBox = new HBox(effect1SkillIdLabel, effect1SkillIdSpinner);
-        effect1SkillIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //effect 1 skill id
-
-        //effect 1 eepk type
-        Label effect1EepkTypeLabel = new Label("Effect 1 EEPK Type");
-        effect1EepkTypeLabel.setPrefWidth(160);
-
         ToggleGroup effect1EepkTypeToggleGroup = new ToggleGroup();
 
-        RadioButton commonEffect1 = new RadioButton("Common");
-        commonEffect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton stageBGEffect1 = new RadioButton("StageBG");
-        stageBGEffect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton characterEffect1 = new RadioButton("Character");
-        characterEffect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton awokenSkillEffect1 = new RadioButton("Awoken Skill");
-        awokenSkillEffect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton unknown4Effect1 = new RadioButton("Unknown 4");
-        unknown4Effect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton superSkillEffect1 = new RadioButton("Super Skill");
-        superSkillEffect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton ultimateSkillEffect1 = new RadioButton("Ultimate Skill");
-        ultimateSkillEffect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton evasiveSkillEffect1 = new RadioButton("Evasive Skill");
-        evasiveSkillEffect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton unknown8Effect1 = new RadioButton("Unknown 8");
-        unknown8Effect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton kiBlastSkillEffect1 = new RadioButton("Ki Blast Skill");
-        kiBlastSkillEffect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton unknown10Effect1 = new RadioButton("Unknown 10");
-        unknown10Effect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton stageEffect1 = new RadioButton("Stage");
-        stageEffect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton unknown12Effect1 = new RadioButton("Unknown 12");
-        unknown12Effect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton unknown13Effect1 = new RadioButton("Unknown 13");
-        unknown13Effect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton unknown14Effect1 = new RadioButton("Unknown 14");
-        unknown14Effect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        RadioButton unknown15Effect1 = new RadioButton("Unknown 15");
-        unknown15Effect1.setToggleGroup(effect1EepkTypeToggleGroup);
-
-        switch (subEntry.effect1EepkType) {
-            case 1  -> stageBGEffect1.setSelected(true);
-            case 2  -> characterEffect1.setSelected(true);
-            case 3  -> awokenSkillEffect1.setSelected(true);
-            case 4  -> unknown4Effect1.setSelected(true);
-            case 5  -> superSkillEffect1.setSelected(true);
-            case 6  -> ultimateSkillEffect1.setSelected(true);
-            case 7  -> evasiveSkillEffect1.setSelected(true);
-            case 8  -> unknown8Effect1.setSelected(true);
-            case 9  -> kiBlastSkillEffect1.setSelected(true);
-            case 10 -> unknown10Effect1.setSelected(true);
-            case 11 -> stageEffect1.setSelected(true);
-            case 12 -> unknown12Effect1.setSelected(true);
-            case 13 -> unknown13Effect1.setSelected(true);
-            case 14 -> unknown14Effect1.setSelected(true);
-            case 15 -> unknown15Effect1.setSelected(true);
-            default -> commonEffect1.setSelected(true);
-        }
-
-        effect1EepkTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null && newValue.isSelected()) {
-                if      ((RadioButton) newValue == commonEffect1)           { subEntry.effect1EepkType = 0;  }
-                else if ((RadioButton) newValue == stageBGEffect1)          { subEntry.effect1EepkType = 1;  }
-                else if ((RadioButton) newValue == characterEffect1)        { subEntry.effect1EepkType = 2;  }
-                else if ((RadioButton) newValue == awokenSkillEffect1)      { subEntry.effect1EepkType = 3;  }
-                else if ((RadioButton) newValue == unknown4Effect1)         { subEntry.effect1EepkType = 4;  }
-                else if ((RadioButton) newValue == superSkillEffect1)       { subEntry.effect1EepkType = 5;  }
-                else if ((RadioButton) newValue == ultimateSkillEffect1)    { subEntry.effect1EepkType = 6;  }
-                else if ((RadioButton) newValue == evasiveSkillEffect1)     { subEntry.effect1EepkType = 7;  }
-                else if ((RadioButton) newValue == unknown8Effect1)         { subEntry.effect1EepkType = 8;  }
-                else if ((RadioButton) newValue == kiBlastSkillEffect1)     { subEntry.effect1EepkType = 9;  }
-                else if ((RadioButton) newValue == unknown10Effect1)        { subEntry.effect1EepkType = 10; }
-                else if ((RadioButton) newValue == stageEffect1)            { subEntry.effect1EepkType = 11; }
-                else if ((RadioButton) newValue == unknown12Effect1)        { subEntry.effect1EepkType = 12; }
-                else if ((RadioButton) newValue == unknown13Effect1)        { subEntry.effect1EepkType = 13; }
-                else if ((RadioButton) newValue == unknown14Effect1)        { subEntry.effect1EepkType = 14; }
-                else if ((RadioButton) newValue == unknown15Effect1)        { subEntry.effect1EepkType = 15; }
-            }
-        });
-
-        GridPane effect1EepkTypeGridPane = new GridPane(10, 10);
-        effect1EepkTypeGridPane.getStyleClass().add("titled-address-box");
-        effect1EepkTypeGridPane.add(commonEffect1, 0, 0);   
-        effect1EepkTypeGridPane.add(stageBGEffect1, 1, 0);          
-        effect1EepkTypeGridPane.add(characterEffect1, 2, 0);          
-        effect1EepkTypeGridPane.add(awokenSkillEffect1, 3, 0);          
-
-        effect1EepkTypeGridPane.add(unknown4Effect1, 0, 1);          
-        effect1EepkTypeGridPane.add(superSkillEffect1, 1, 1);           
-        effect1EepkTypeGridPane.add(ultimateSkillEffect1, 2, 1);
-        effect1EepkTypeGridPane.add(evasiveSkillEffect1, 3, 1);
-
-        effect1EepkTypeGridPane.add(unknown8Effect1, 0, 2);
-        effect1EepkTypeGridPane.add(kiBlastSkillEffect1, 1, 2);
-        effect1EepkTypeGridPane.add(unknown10Effect1, 2, 2);
-        effect1EepkTypeGridPane.add(stageEffect1, 3, 2);
-
-        effect1EepkTypeGridPane.add(unknown12Effect1, 0, 3);
-        effect1EepkTypeGridPane.add(unknown13Effect1, 1, 3);
-        effect1EepkTypeGridPane.add(unknown14Effect1, 2, 3);
-        effect1EepkTypeGridPane.add(unknown15Effect1, 3, 3);
-
-        HBox effect1EepkTypeHBox = new HBox(effect1EepkTypeLabel, effect1EepkTypeGridPane);
-        effect1EepkTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //effect 1 eepk type
-
-        //effect 2 id
-        Label effect2IdLabel = new Label("Effect 2 ID");
-        effect2IdLabel.setPrefWidth(160);
-
-        Spinner<Integer> effect2IdSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.effect2Id);
-        effect2IdSpinner.setEditable(true);
-        effect2IdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.effect2Id = newValue.shortValue();
-            }
-        });
-
-        HBox effect2IdHBox = new HBox(effect2IdLabel, effect2IdSpinner);
-        effect2IdHBox.setAlignment(Pos.CENTER_LEFT);
-        //effect 2 id
-
-        //effect 2 skill id
-        Label effect2SkillIdLabel=new Label("Effect 2 Skill ID");
-        effect2SkillIdLabel.setPrefWidth(160);
-
-        Spinner<Integer> effect2SkillIdSpinner=new Spinner<>(0, 65535, subEntry.effect2SkillId);
-        effect2SkillIdSpinner.setEditable(true);
-        effect2SkillIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.effect2SkillId = newValue;
-            }
-        });
-
-        HBox effect2SkillIdHBox = new HBox(effect2SkillIdLabel, effect2SkillIdSpinner);
-        effect2SkillIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //effect 2 skill id
-
-        //effect 2 eepk type
-        Label effect2EepkTypeLabel = new Label("Effect 2 EEPK Type");
-        effect2EepkTypeLabel.setPrefWidth(160);
+        RadioButton[] effect1List = new RadioButton[] {
+            createRadioButton("Common", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.Common, 1),
+            createRadioButton("StageBG", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.StageBG, 1),
+            createRadioButton("Character", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.CharacterEffect, 1),
+            createRadioButton("Awoken Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.AwokenSkill, 1),
+            createRadioButton("Super Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.SuperSkill, 1),
+            createRadioButton("Ultimate Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.UltimateSkill, 1),
+            createRadioButton("Evasive Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.EvasiveSkill, 1),
+            createRadioButton("Ki Blast Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.KiBlastSkill, 1),
+            createRadioButton("Stage", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.StageEffect, 1),
+        };
 
         ToggleGroup effect2EepkTypeToggleGroup = new ToggleGroup();
 
-        RadioButton commonEffect2 = new RadioButton("Common");
-        commonEffect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton stageBGEffect2 = new RadioButton("StageBG");
-        stageBGEffect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton characterEffect2 = new RadioButton("Character");
-        characterEffect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton awokenSkillEffect2 = new RadioButton("Awoken Skill");
-        awokenSkillEffect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton unknown4Effect2 = new RadioButton("Unknown 4");
-        unknown4Effect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton superSkillEffect2 = new RadioButton("Super Skill");
-        superSkillEffect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton ultimateSkillEffect2 = new RadioButton("Ultimate Skill");
-        ultimateSkillEffect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton evasiveSkillEffect2 = new RadioButton("Evasive Skill");
-        evasiveSkillEffect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton unknown8Effect2 = new RadioButton("Unknown 8");
-        unknown8Effect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton kiBlastSkillEffect2 = new RadioButton("Ki Blast Skill");
-        kiBlastSkillEffect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton unknown10Effect2 = new RadioButton("Unknown 10");
-        unknown10Effect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton stageEffect2 = new RadioButton("Stage");
-        stageEffect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton unknown12Effect2 = new RadioButton("Unknown 12");
-        unknown12Effect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton unknown13Effect2 = new RadioButton("Unknown 13");
-        unknown13Effect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton unknown14Effect2 = new RadioButton("Unknown 14");
-        unknown14Effect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        RadioButton unknown15Effect2 = new RadioButton("Unknown 15");
-        unknown15Effect2.setToggleGroup(effect2EepkTypeToggleGroup);
-
-        switch (subEntry.effect2EepkType) {
-            case 1  -> stageBGEffect2.setSelected(true);
-            case 2  -> characterEffect2.setSelected(true);
-            case 3  -> awokenSkillEffect2.setSelected(true);
-            case 4  -> unknown4Effect2.setSelected(true);
-            case 5  -> superSkillEffect2.setSelected(true);
-            case 6  -> ultimateSkillEffect2.setSelected(true);
-            case 7  -> evasiveSkillEffect2.setSelected(true);
-            case 8  -> unknown8Effect2.setSelected(true);
-            case 9  -> kiBlastSkillEffect2.setSelected(true);
-            case 10 -> unknown10Effect2.setSelected(true);
-            case 11 -> stageEffect2.setSelected(true);
-            case 12 -> unknown12Effect2.setSelected(true);
-            case 13 -> unknown13Effect2.setSelected(true);
-            case 14 -> unknown14Effect2.setSelected(true);
-            case 15 -> unknown15Effect2.setSelected(true);
-            default -> commonEffect2.setSelected(true);
-        }
-
-        effect2EepkTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null && newValue.isSelected()) {
-                if      ((RadioButton) newValue == commonEffect2)           { subEntry.effect2EepkType = 0;  }
-                else if ((RadioButton) newValue == stageBGEffect2)          { subEntry.effect2EepkType = 1;  }
-                else if ((RadioButton) newValue == characterEffect2)        { subEntry.effect2EepkType = 2;  }
-                else if ((RadioButton) newValue == awokenSkillEffect2)      { subEntry.effect2EepkType = 3;  }
-                else if ((RadioButton) newValue == unknown4Effect2)         { subEntry.effect2EepkType = 4;  }
-                else if ((RadioButton) newValue == superSkillEffect2)       { subEntry.effect2EepkType = 5;  }
-                else if ((RadioButton) newValue == ultimateSkillEffect2)    { subEntry.effect2EepkType = 6;  }
-                else if ((RadioButton) newValue == evasiveSkillEffect2)     { subEntry.effect2EepkType = 7;  }
-                else if ((RadioButton) newValue == unknown8Effect2)         { subEntry.effect2EepkType = 8;  }
-                else if ((RadioButton) newValue == kiBlastSkillEffect2)     { subEntry.effect2EepkType = 9;  }
-                else if ((RadioButton) newValue == unknown10Effect2)        { subEntry.effect2EepkType = 10; }
-                else if ((RadioButton) newValue == stageEffect2)            { subEntry.effect2EepkType = 11; }
-                else if ((RadioButton) newValue == unknown12Effect2)        { subEntry.effect2EepkType = 12; }
-                else if ((RadioButton) newValue == unknown13Effect2)        { subEntry.effect2EepkType = 13; }
-                else if ((RadioButton) newValue == unknown14Effect2)        { subEntry.effect2EepkType = 14; }
-                else if ((RadioButton) newValue == unknown15Effect2)        { subEntry.effect2EepkType = 15; }
-            }
-        });
-
-        GridPane effect2EepkTypeGridPane = new GridPane(10, 10);
-        effect2EepkTypeGridPane.getStyleClass().add("titled-address-box");
-        effect2EepkTypeGridPane.add(commonEffect2, 0, 0);   
-        effect2EepkTypeGridPane.add(stageBGEffect2, 1, 0);          
-        effect2EepkTypeGridPane.add(characterEffect2, 2, 0);          
-        effect2EepkTypeGridPane.add(awokenSkillEffect2, 3, 0);          
-
-        effect2EepkTypeGridPane.add(unknown4Effect2, 0, 1);          
-        effect2EepkTypeGridPane.add(superSkillEffect2, 1, 1);           
-        effect2EepkTypeGridPane.add(ultimateSkillEffect2, 2, 1);
-        effect2EepkTypeGridPane.add(evasiveSkillEffect2, 3, 1);
-
-        effect2EepkTypeGridPane.add(unknown8Effect2, 0, 2);
-        effect2EepkTypeGridPane.add(kiBlastSkillEffect2, 1, 2);
-        effect2EepkTypeGridPane.add(unknown10Effect2, 2, 2);
-        effect2EepkTypeGridPane.add(stageEffect2, 3, 2);
-
-        effect2EepkTypeGridPane.add(unknown12Effect2, 0, 3);
-        effect2EepkTypeGridPane.add(unknown13Effect2, 1, 3);
-        effect2EepkTypeGridPane.add(unknown14Effect2, 2, 3);
-        effect2EepkTypeGridPane.add(unknown15Effect2, 3, 3);
-
-        HBox effect2EepkTypeHBox = new HBox(effect2EepkTypeLabel, effect2EepkTypeGridPane);
-        effect2EepkTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //effect 2 eepk type
-
-        //effect 3 id
-        Label effect3IdLabel = new Label("Effect 3 ID");
-        effect3IdLabel.setPrefWidth(160);
-
-        Spinner<Integer> effect3IdSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.effect3Id);
-        effect3IdSpinner.setEditable(true);
-        effect3IdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.effect3Id = newValue.shortValue();
-            }
-        });
-
-        HBox effect3IdHBox = new HBox(effect3IdLabel, effect3IdSpinner);
-        effect3IdHBox.setAlignment(Pos.CENTER_LEFT);
-        //effect 3 id
-
-        //effect 3 skill id
-        Label effect3SkillIdLabel = new Label("Effect 3 Skill ID");
-        effect3SkillIdLabel.setPrefWidth(160);
-
-        Spinner<Integer> effect3SkillIdSpinner = new Spinner<>(0, 65535, subEntry.effect3SkillId);
-        effect3SkillIdSpinner.setEditable(true);
-        effect3SkillIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.effect3SkillId = newValue;
-            }
-        });
-
-        HBox effect3SkillIdHBox = new HBox(effect3SkillIdLabel, effect3SkillIdSpinner);
-        effect3SkillIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //effect 3 skill id
-
-        //effect 3 eepk type
-        Label effect3EepkTypeLabel = new Label("Effect 3 EEPK Type");
-        effect3EepkTypeLabel.setPrefWidth(160);
+        RadioButton[] effect2List = new RadioButton[] {
+            createRadioButton("Common", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.Common, 2),
+            createRadioButton("StageBG", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.StageBG, 2),
+            createRadioButton("Character", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.CharacterEffect, 2),
+            createRadioButton("Awoken Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.AwokenSkill, 2),
+            createRadioButton("Super Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.SuperSkill, 2),
+            createRadioButton("Ultimate Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.UltimateSkill, 2),
+            createRadioButton("Evasive Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.EvasiveSkill, 2),
+            createRadioButton("Ki Blast Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.KiBlastSkill, 2),
+            createRadioButton("Stage", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.StageEffect, 2),
+        };
 
         ToggleGroup effect3EepkTypeToggleGroup = new ToggleGroup();
 
-        RadioButton commonEffect3 = new RadioButton("Common");
-        commonEffect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton stageBGEffect3 = new RadioButton("StageBG");
-        stageBGEffect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton characterEffect3 = new RadioButton("Character");
-        characterEffect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton awokenSkillEffect3 = new RadioButton("Awoken Skill");
-        awokenSkillEffect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton unknown4Effect3 = new RadioButton("Unknown 4");
-        unknown4Effect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton superSkillEffect3 = new RadioButton("Super Skill");
-        superSkillEffect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton ultimateSkillEffect3 = new RadioButton("Ultimate Skill");
-        ultimateSkillEffect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton evasiveSkillEffect3 = new RadioButton("Evasive Skill");
-        evasiveSkillEffect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton unknown8Effect3 = new RadioButton("Unknown 8");
-        unknown8Effect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton kiBlastSkillEffect3 = new RadioButton("Ki Blast Skill");
-        kiBlastSkillEffect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton unknown10Effect3 = new RadioButton("Unknown 10");
-        unknown10Effect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton stageEffect3 = new RadioButton("Stage");
-        stageEffect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton unknown12Effect3 = new RadioButton("Unknown 12");
-        unknown12Effect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton unknown13Effect3 = new RadioButton("Unknown 13");
-        unknown13Effect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton unknown14Effect3 = new RadioButton("Unknown 14");
-        unknown14Effect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        RadioButton unknown15Effect3 = new RadioButton("Unknown 15");
-        unknown15Effect3.setToggleGroup(effect3EepkTypeToggleGroup);
-
-        switch (subEntry.effect3EepkType) {
-            case 1  -> stageBGEffect3.setSelected(true);
-            case 2  -> characterEffect3.setSelected(true);
-            case 3  -> awokenSkillEffect3.setSelected(true);
-            case 4  -> unknown4Effect3.setSelected(true);
-            case 5  -> superSkillEffect3.setSelected(true);
-            case 6  -> ultimateSkillEffect3.setSelected(true);
-            case 7  -> evasiveSkillEffect3.setSelected(true);
-            case 8  -> unknown8Effect3.setSelected(true);
-            case 9  -> kiBlastSkillEffect3.setSelected(true);
-            case 10 -> unknown10Effect3.setSelected(true);
-            case 11 -> stageEffect3.setSelected(true);
-            case 12 -> unknown12Effect3.setSelected(true);
-            case 13 -> unknown13Effect3.setSelected(true);
-            case 14 -> unknown14Effect3.setSelected(true);
-            case 15 -> unknown15Effect3.setSelected(true);
-            default -> commonEffect3.setSelected(true);
-        }
-
-        effect3EepkTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null && newValue.isSelected()) {
-                if      ((RadioButton) newValue == commonEffect3)           { subEntry.effect3EepkType = 0;  }
-                else if ((RadioButton) newValue == stageBGEffect3)          { subEntry.effect3EepkType = 1;  }
-                else if ((RadioButton) newValue == characterEffect3)        { subEntry.effect3EepkType = 2;  }
-                else if ((RadioButton) newValue == awokenSkillEffect3)      { subEntry.effect3EepkType = 3;  }
-                else if ((RadioButton) newValue == unknown4Effect3)         { subEntry.effect3EepkType = 4;  }
-                else if ((RadioButton) newValue == superSkillEffect3)       { subEntry.effect3EepkType = 5;  }
-                else if ((RadioButton) newValue == ultimateSkillEffect3)    { subEntry.effect3EepkType = 6;  }
-                else if ((RadioButton) newValue == evasiveSkillEffect3)     { subEntry.effect3EepkType = 7;  }
-                else if ((RadioButton) newValue == unknown8Effect3)         { subEntry.effect3EepkType = 8;  }
-                else if ((RadioButton) newValue == kiBlastSkillEffect3)     { subEntry.effect3EepkType = 9;  }
-                else if ((RadioButton) newValue == unknown10Effect3)        { subEntry.effect3EepkType = 10; }
-                else if ((RadioButton) newValue == stageEffect3)            { subEntry.effect3EepkType = 11; }
-                else if ((RadioButton) newValue == unknown12Effect3)        { subEntry.effect3EepkType = 12; }
-                else if ((RadioButton) newValue == unknown13Effect3)        { subEntry.effect3EepkType = 13; }
-                else if ((RadioButton) newValue == unknown14Effect3)        { subEntry.effect3EepkType = 14; }
-                else if ((RadioButton) newValue == unknown15Effect3)        { subEntry.effect3EepkType = 15; }
-            }
-        });
-
-        GridPane effect3EepkTypeGridPane = new GridPane(10, 10);
-        effect3EepkTypeGridPane.getStyleClass().add("titled-address-box");
-        effect3EepkTypeGridPane.add(commonEffect3, 0, 0);   
-        effect3EepkTypeGridPane.add(stageBGEffect3, 1, 0);          
-        effect3EepkTypeGridPane.add(characterEffect3, 2, 0);          
-        effect3EepkTypeGridPane.add(awokenSkillEffect3, 3, 0);          
-
-        effect3EepkTypeGridPane.add(unknown4Effect3, 0, 1);          
-        effect3EepkTypeGridPane.add(superSkillEffect3, 1, 1);           
-        effect3EepkTypeGridPane.add(ultimateSkillEffect3, 2, 1);
-        effect3EepkTypeGridPane.add(evasiveSkillEffect3, 3, 1);
-
-        effect3EepkTypeGridPane.add(unknown8Effect3, 0, 2);
-        effect3EepkTypeGridPane.add(kiBlastSkillEffect3, 1, 2);
-        effect3EepkTypeGridPane.add(unknown10Effect3, 2, 2);
-        effect3EepkTypeGridPane.add(stageEffect3, 3, 2);
-
-        effect3EepkTypeGridPane.add(unknown12Effect3, 0, 3);
-        effect3EepkTypeGridPane.add(unknown13Effect3, 1, 3);
-        effect3EepkTypeGridPane.add(unknown14Effect3, 2, 3);
-        effect3EepkTypeGridPane.add(unknown15Effect3, 3, 3);
-
-        HBox effect3EepkTypeHBox = new HBox(effect3EepkTypeLabel, effect3EepkTypeGridPane);
-        effect3EepkTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //effect 2 eepk type
+        RadioButton[] effect3List = new RadioButton[] {
+            createRadioButton("Common", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.Common, 3),
+            createRadioButton("StageBG", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.StageBG, 3),
+            createRadioButton("Character", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.CharacterEffect, 3),
+            createRadioButton("Awoken Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.AwokenSkill, 3),
+            createRadioButton("Super Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.SuperSkill, 3),
+            createRadioButton("Ultimate Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.UltimateSkill, 3),
+            createRadioButton("Evasive Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.EvasiveSkill, 3),
+            createRadioButton("Ki Blast Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.KiBlastSkill, 3),
+            createRadioButton("Stage", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.StageEffect, 3),
+        };
 
         VBox effectsVBox = new VBox(35, 
-            effect1IdHBox, effect1SkillIdHBox,
-            effect1EepkTypeHBox, effect2IdHBox,
-            effect2SkillIdHBox, effect2EepkTypeHBox,
-            effect3IdHBox, effect3SkillIdHBox,
-            effect3EepkTypeHBox
+            createHBox(0, createLabel("Effect 1 ID", 160), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.effect1Id, BdmValues.Effect1_ID)), 
+            createHBox(0, createLabel("Effect 1 Skill ID", 160), createSpinner(0, 65535, subEntry.effect1SkillId, BdmValues.Effect1_Skill_ID)),
+            createHBox(0, createLabel("Effect 1 EEPK Type", 160), createGridPane(3, 3, effect1List)),
+            createHBox(0, createLabel("Effect 2 ID", 160), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.effect2Id, BdmValues.Effect2_ID)),
+            createHBox(0, createLabel("Effect 2 Skill ID", 160), createSpinner(0, 65535, subEntry.effect2SkillId, BdmValues.Effect2_Skill_ID)), 
+            createHBox(0, createLabel("Effect 2 EEPK Type", 160), createGridPane(3, 3, effect2List)),
+            createHBox(0, createLabel("Effect 3 ID", 160), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.effect3Id, BdmValues.Effect3_ID)),
+            createHBox(0, createLabel("Effect 3 Skill ID", 160), createSpinner(0, 65535, subEntry.effect3SkillId, BdmValues.Effect3_Skill_ID)), 
+            createHBox(0, createLabel("Effect 3 EEPK Type", 160), createGridPane(3, 3, effect3List))
         );
         effectsVBox.setPadding(new Insets(20, 0, 20, 8));
 
@@ -1300,222 +318,20 @@ public class Bdm {
     }
 
     private VBox createPushbackVBox(BdmSubEntry subEntry) {
-        //pushback strength
-        Label pushbackStrengthLabel = new Label("Pushback Strength");
-        pushbackStrengthLabel.setPrefWidth(200);
-
-        Spinner<Double> pushbackStrengthSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.pushbackStrength);
-        pushbackStrengthSpinner.setEditable(true);
-        pushbackStrengthSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.pushbackStrength = newValue.floatValue();
-            }
-        });
-
-        HBox pushbackStrengthHBox = new HBox(pushbackStrengthLabel, pushbackStrengthSpinner);
-        pushbackStrengthHBox.setAlignment(Pos.CENTER_LEFT);
-        //pushback strength
-
-        //pushback acceleration
-        Label pushbackAccelerationLabel = new Label("Pushback Acceleration");
-        pushbackAccelerationLabel.setPrefWidth(200);
-
-        Spinner<Double> pushbackAccelerationSpinner=new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.pushbackAcceleration);
-        pushbackAccelerationSpinner.setEditable(true);
-        pushbackAccelerationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.pushbackAcceleration = newValue.floatValue();
-            }
-        });
-
-        HBox pushbackAccelerationHBox = new HBox(pushbackAccelerationLabel, pushbackAccelerationSpinner);
-        pushbackAccelerationHBox.setAlignment(Pos.CENTER_LEFT);
-        //pushback acceleration
-
-        //user stunt
-        Label userStuntLabel = new Label("User Stunt");
-        userStuntLabel.setPrefWidth(200);
-
-        Spinner<Integer> userStuntSpinner = new Spinner<>(0, 65535, subEntry.userStunt);
-        userStuntSpinner.setEditable(true);
-        userStuntSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.userStunt = newValue;
-            }
-        });
-
-        HBox userStuntHBox = new HBox(userStuntLabel, userStuntSpinner);
-        userStuntHBox.setAlignment(Pos.CENTER_LEFT);
-        //user stunt
-
-        //victim stunt
-        Label victimStuntLabel = new Label("Victim Stunt");
-        victimStuntLabel.setPrefWidth(200);
-
-        Spinner<Integer> victimStuntSpinner = new Spinner<>(0, 65535, subEntry.victimStunt);
-        victimStuntSpinner.setEditable(true);
-        victimStuntSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.victimStunt = newValue;
-            }
-        });
-
-        HBox victimStuntHBox = new HBox(victimStuntLabel, victimStuntSpinner);
-        victimStuntHBox.setAlignment(Pos.CENTER_LEFT);
-        //victim stunt
-
-       
-        //knockback duration
-        Label knockbackDurationLabel = new Label("Knockback Duration");
-        knockbackDurationLabel.setPrefWidth(200);
-
-        Spinner<Integer> knockbackDurationSpinner=new Spinner<>(0, 65535, subEntry.knockbackDuration);
-        knockbackDurationSpinner.setEditable(true);
-        knockbackDurationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.knockbackDuration = newValue;
-            }
-        });
-
-        HBox knockbackDurationHBox = new HBox(knockbackDurationLabel, knockbackDurationSpinner);
-        knockbackDurationHBox.setAlignment(Pos.CENTER_LEFT);
-        //knockback duration
-
-        //knockback ground impact time
-        Label knockbackGroundImpactTimeLabel = new Label("Knockback Ground Impact Time");
-        knockbackGroundImpactTimeLabel.setPrefWidth(200);
-
-        Spinner<Integer> knockbackGroundImpactSpinner = new Spinner<>(0, 65535, subEntry.knockbackGroundImpactTime);
-        knockbackGroundImpactSpinner.setEditable(true);
-        knockbackGroundImpactSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-               subEntry.knockbackGroundImpactTime = newValue;
-            }
-        });
-
-        HBox knockbackGroundImpactTimeHBox = new HBox(knockbackGroundImpactTimeLabel, knockbackGroundImpactSpinner);
-        knockbackGroundImpactTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //knockback ground impact time
-
-        //knockback ground impact time
-        Label knockbackRecoveryAfterImpactTimeLabel = new Label("Knockback Recovery After Impact");
-        knockbackRecoveryAfterImpactTimeLabel.setPrefWidth(200);
-
-        Spinner<Integer> knockbackRecoveryAfterImpactSpinner = new Spinner<>(0, 65535, subEntry.knockbackRecoveryAfterImpactTime);
-        knockbackRecoveryAfterImpactSpinner.setEditable(true);
-        knockbackRecoveryAfterImpactSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.knockbackRecoveryAfterImpactTime = newValue;
-            }
-        });
-
-        HBox knockbackRecoveryAfterImpactTimeHBox = new HBox(knockbackRecoveryAfterImpactTimeLabel, knockbackRecoveryAfterImpactSpinner);
-        knockbackRecoveryAfterImpactTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //knockback recovery after impact
-
-        //knockback strength x
-        Label knockbackStrengthXLabel = new Label("Knockback Strength X");
-        knockbackStrengthXLabel.setPrefWidth(200);
-
-        Spinner<Double> knockbackStrengthXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackStrengthX);
-        knockbackStrengthXSpinner.setEditable(true);
-        knockbackStrengthXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.knockbackStrengthX = newValue.floatValue();
-            }
-        });
-
-        HBox knockbackStrengthXHBox = new HBox(knockbackStrengthXLabel, knockbackStrengthXSpinner);
-        knockbackStrengthXHBox.setAlignment(Pos.CENTER_LEFT);
-        //knockback strength x
-
-        //knockback strength y
-        Label knockbackStrengthYLabel = new Label("Knockback Strength Y");
-        knockbackStrengthYLabel.setPrefWidth(200);
-
-        Spinner<Double> knockbackStrengthYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackStrengthY);
-        knockbackStrengthYSpinner.setEditable(true);
-        knockbackStrengthYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.knockbackStrengthY = newValue.floatValue();
-            }
-        });
-
-        HBox knockbackStrengthYHBox = new HBox(knockbackStrengthYLabel, knockbackStrengthYSpinner);
-        knockbackStrengthYHBox.setAlignment(Pos.CENTER_LEFT);
-        //knockback strength y
-
-        //knockback strength z
-        Label knockbackStrengthZLabel = new Label("Knockback Strength Z");
-        knockbackStrengthZLabel.setPrefWidth(200);
-
-        Spinner<Double> knockbackStrengthZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackStrengthZ);
-        knockbackStrengthZSpinner.setEditable(true);
-        knockbackStrengthZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.knockbackStrengthZ = newValue.floatValue();
-            }
-        });
-
-        HBox knockbackStrengthZHBox = new HBox(knockbackStrengthZLabel, knockbackStrengthZSpinner);
-        knockbackStrengthZHBox.setAlignment(Pos.CENTER_LEFT);
-        //knockback strength z
-
-        //knockback drag y
-        Label knockbackSDragYLabel = new Label("Knockback Strength Y");
-        knockbackSDragYLabel.setPrefWidth(200);
-
-        Spinner<Double> knockbackSDragYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackDragY);
-        knockbackSDragYSpinner.setEditable(true);
-        knockbackSDragYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.knockbackDragY = newValue.floatValue();
-            }
-        });
-
-        HBox knockbackDragYHBox = new HBox(knockbackSDragYLabel,knockbackSDragYSpinner);
-        knockbackDragYHBox.setAlignment(Pos.CENTER_LEFT);
-        //knockback drag y
-
-        //knockback gravity time
-        Label knockbackGravityTimeLabel = new Label("Knockback Gravity Time");
-        knockbackGravityTimeLabel.setPrefWidth(200);
-
-        Spinner<Integer> knockbackGravityTimeSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.knockbackGravityTime);
-        knockbackGravityTimeSpinner.setEditable(true);
-        knockbackGravityTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.knockbackGravityTime = newValue;
-            }
-        });
-
-        HBox knockbackGravityTimeHBox = new HBox(knockbackGravityTimeLabel, knockbackGravityTimeSpinner);
-        knockbackGravityTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //knockback gravity time
-
-        //knockback gravity time
-        Label victimInvincibilityTimeLabel = new Label("Victim Invincibility Time");
-        victimInvincibilityTimeLabel.setPrefWidth(200);
-
-        Spinner<Integer> victimInvincibilityTimeSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.victimInvincibilityTime);
-        victimInvincibilityTimeSpinner.setEditable(true);
-        victimInvincibilityTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.victimInvincibilityTime = newValue.shortValue();
-            }
-        });
-
-        HBox victimInvincibilityTimeHBox = new HBox(victimInvincibilityTimeLabel, victimInvincibilityTimeSpinner);
-        victimInvincibilityTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //knockback gravity time
-
         VBox pushBackVBox = new VBox(27, 
-            pushbackStrengthHBox, pushbackAccelerationHBox,
-            userStuntHBox, victimStuntHBox,knockbackDurationHBox,
-            knockbackGroundImpactTimeHBox, knockbackRecoveryAfterImpactTimeHBox,
-            knockbackStrengthXHBox, knockbackStrengthYHBox,
-            knockbackStrengthZHBox, knockbackDragYHBox,
-            knockbackGravityTimeHBox, victimInvincibilityTimeHBox
+            createHBox(0, createLabel("Pushback Strength", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.pushbackStrength, BdmValues.PushbackStrength)), 
+            createHBox(0, createLabel("Pushback Acceleration", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.pushbackAcceleration, BdmValues.PushbackAcceleration)),
+            createHBox(0, createLabel("User Stunt", 230), createSpinner(0, 65535, subEntry.userStunt, BdmValues.UserStunt)), 
+            createHBox(0, createLabel("Victim Stunt", 230), createSpinner(0, 65535, subEntry.victimStunt, BdmValues.VictimStunt)),
+            createHBox(0, createLabel("Knockback Duration", 230), createSpinner(0, 65535, subEntry.knockbackDuration, BdmValues.KnockbackDuration)),  
+            createHBox(0, createLabel("Knockback Ground Impact Time", 230), createSpinner(0, 65535, subEntry.knockbackGroundImpactTime, BdmValues.KnockbackGroundImpactTime)),  
+            createHBox(0, createLabel("Knockback Recovery After Impact Time", 230), createSpinner(0, 65535, subEntry.knockbackRecoveryAfterImpactTime, BdmValues.KnockbackRecoveryAfterImpactTime)),
+            createHBox(0, createLabel("Knockback Strength X", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackStrengthX, BdmValues.KnockbackStrengthX)), 
+            createHBox(0, createLabel("Knockback Strength Y", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackStrengthY, BdmValues.KnockbackStrengthY)),
+            createHBox(0, createLabel("Knockback Strength Z", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackStrengthZ, BdmValues.KnockbackStrengthZ)), 
+            createHBox(0, createLabel("Knockback Drag Y", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackDragY, BdmValues.KnockbackDragY)),
+            createHBox(0, createLabel("Knockback Gravity Time", 230), createSpinner(0, 65535, subEntry.knockbackGravityTime, BdmValues.KnockbackGravityTime)), 
+            createHBox(0, createLabel("Victim Invincibility Time", 230), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.victimInvincibilityTime, BdmValues.VictimInvincibilityTime))
         );
         pushBackVBox.setPadding(new Insets(20, 0, 0, 8));
 
@@ -1523,23 +339,13 @@ public class Bdm {
     }
 
     private VBox createCameraVBox(BdmSubEntry subEntry) {
-        //camera shake type
-        Label cameraShakeTypeLabel = new Label("Camera Shake Type");
-        cameraShakeTypeLabel.setPrefWidth(130);
+        Spinner<Number> spinner = createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.cameraShakeType, BdmValues.CameraShakeType);
 
-        Spinner<Integer> cameraShakeTypeSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.cameraShakeType);
-        cameraShakeTypeSpinner.setEditable(true);
-        cameraShakeTypeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.cameraShakeType = newValue.shortValue();
-            }
-        });
-
-        Label cameraShakeTypeIndicatorLabel = new Label();
-        cameraShakeTypeIndicatorLabel.setTextFill(Color.CRIMSON);
-        cameraShakeTypeIndicatorLabel.textProperty().bind(
+        Label label = new Label();
+        label.setTextFill(Color.CRIMSON);
+        label.textProperty().bind(
             Bindings.createStringBinding(() -> {
-                return switch (cameraShakeTypeSpinner.getValue()) {
+                return switch (spinner.getValue().intValue()) {
                     case -1, 3, 4, 5, 9 -> "None";
                     case 0 -> "Rumble";
                     case 1 -> "Heavy Rumble";
@@ -1549,759 +355,442 @@ public class Bdm {
                     case 8 -> "Camera Focus";
                     default -> "Unknown";
                 };
-            }, cameraShakeTypeSpinner.valueProperty())
+            }, spinner.valueProperty())
         );
 
-        HBox cameraShakeTypeHBox = new HBox(15, cameraShakeTypeLabel, cameraShakeTypeSpinner, cameraShakeTypeIndicatorLabel);
-        cameraShakeTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //camera shake type
-        
-
-        //camera shake time
-        Label cameraShakeTimeLabel = new Label("Camera Shake Time");
-        cameraShakeTimeLabel.setPrefWidth(130);
-
-        Spinner<Integer> cameraShakeTimeSpinner = new Spinner<>(0, 65535, subEntry.cameraShakeTime);
-        cameraShakeTimeSpinner.setEditable(true);
-        cameraShakeTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.cameraShakeTime = newValue.shortValue();
-            }
-        });
-        
-        HBox cameraShakeTimeHBox = new HBox(15, cameraShakeTimeLabel, cameraShakeTimeSpinner);
-        cameraShakeTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //camera shake time
-
-        //user bpe id
-        Label userBpeIdLabel = new Label("User BPE ID");
-        userBpeIdLabel.setPrefWidth(130);
-
-        Spinner<Integer> userBpeIdSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.userBpeID);
-        userBpeIdSpinner.setEditable(true);
-        userBpeIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.userBpeID = newValue.shortValue();
-            }
-        });
-        
-        HBox userBpeIdHBox = new HBox(15 ,userBpeIdLabel, userBpeIdSpinner);
-        userBpeIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //user bpe id
-
-        //opponent bpe id
-        Label victimBpeIdLabel = new Label("Victim BPE ID");
-        victimBpeIdLabel.setPrefWidth(130);
-
-        Spinner<Integer> victimBpeIdSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.victimBpeID);
-        victimBpeIdSpinner.setEditable(true);
-        victimBpeIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.victimBpeID = newValue.shortValue();
-            }
-        });
-        
-        HBox victimBpeIdHBox = new HBox(15, victimBpeIdLabel, victimBpeIdSpinner);
-        victimBpeIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //opponent bpe id
-
-        VBox cameraVBox = new VBox(25, cameraShakeTypeHBox, cameraShakeTimeHBox, userBpeIdHBox, victimBpeIdHBox);
+        VBox cameraVBox = new VBox(25, 
+            createHBox(0, createLabel("Camera Shake Type", 130), createHBox(15, new Node[] {spinner, label}, false)), 
+            createHBox(0, createLabel("Camera Shake Time", 130), createSpinner(0, 65535, subEntry.cameraShakeTime, BdmValues.CameraShakeTime)), 
+            createHBox(0, createLabel("User BPE ID", 130), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.userBpeID, BdmValues.User_BPE_ID)), 
+            createHBox(0, createLabel("Victim BPE ID", 130), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.victimBpeID, BdmValues.Victim_BPE_ID))
+        );
         cameraVBox.setPadding(new Insets(20, 0, 0, 8));
 
         return cameraVBox;
     }
 
     private VBox createMiscVBox(BdmSubEntry subEntry) {
-        //transformation type
-        Label transformationTypeLabel = new Label("Transformation Type");
-        transformationTypeLabel.setPrefWidth(180);
-        
-        Spinner<Integer> trasnsformationTypeSpinner = new Spinner<>(0, 65535, subEntry.transformationType);
-        trasnsformationTypeSpinner.setEditable(true);
-        trasnsformationTypeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.transformationType = newValue.shortValue();
-            }
-        });
+        Spinner<Number> spinner = createSpinner(0, 65535, subEntry.transformationType, BdmValues.TransformationType);
 
-        Label trasnformationTypeIndicatorLabel = new Label();
-        trasnformationTypeIndicatorLabel.setTextFill(Color.CRIMSON);
-        trasnformationTypeIndicatorLabel.textProperty().bind(
+        Label label = new Label();
+        label.setTextFill(Color.CRIMSON);
+        label.textProperty().bind(
             Bindings.createStringBinding(() -> {
-                return switch (trasnsformationTypeSpinner.getValue()) {
+                return switch (spinner.getValue().intValue()) {
                     case 0 -> "None";
                     case 1 -> "Candy";
                     default -> "Unknown";
                 };
-            }, trasnsformationTypeSpinner.valueProperty())
+            }, spinner.valueProperty())
         );
 
-        HBox transformationTypeHBox = new HBox(15, transformationTypeLabel, trasnsformationTypeSpinner, trasnformationTypeIndicatorLabel);
-        transformationTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //transformation type
+        CheckBox[] alimentGroup1 = new CheckBox[] {
+            new CheckBox("Unknown1"),
+            new CheckBox("HP/DEF"),
+            new CheckBox("SPD"),
+            new CheckBox("Target")
+        };
+ 
+        CheckBox[] alimentGroup2 = new CheckBox[] {
+            new CheckBox("Seal Awoken Skill"),
+            new CheckBox("Unknown 6"),
+            new CheckBox("Unknown 7"),
+            new CheckBox("Unknown 8")
+        };
 
-        //aliment Type
-        Label alimentTypeLabel = new Label("Aliment Type");
-        alimentTypeLabel.setPrefWidth(190);
+        CheckBox[] stumbleGroup1 = new CheckBox[] {
+            new CheckBox("Stumble Set 1"),
+            new CheckBox("Stumble Set 2"),
+            new CheckBox("Stumble Set 3"),
+            new CheckBox("Stumble Set 4")
+        };
 
-        //properties 1
-        Label properties1Label = new Label("Properties #1");
-        properties1Label.getStyleClass().add("titled-address-label");
-        properties1Label.setTranslateY(-8); 
-        properties1Label.setTranslateX(10);
+        CheckBox[] stumbleGroup2 = new CheckBox[] {
+            new CheckBox("Stumble Set 5"),
+            new CheckBox("Stumble Set 6"),
+            new CheckBox("All Stumble Sets"),
+            new CheckBox("Unknown 8")
+        };
 
-        CheckBox unknown1 = new CheckBox("Unknown1");
-        CheckBox HP_DEF = new CheckBox("HP/DEF");
-        CheckBox SPD = new CheckBox("SPD");
-        CheckBox target = new CheckBox("Target");
+        CheckBox[] stumbleGroup3 = new CheckBox[] {
+            new CheckBox("Unknown 9"),
+            new CheckBox("Unknown 10"),
+            new CheckBox("Unknown 11"),
+            new CheckBox("Unknown 12"),
+        };
 
-        unknown1.setSelected((subEntry.alimentType & 1) != 0);
-        HP_DEF.setSelected((subEntry.alimentType & 2) != 0);
-        SPD.setSelected((subEntry.alimentType & 4) != 0);
-        target.setSelected((subEntry.alimentType & 8) != 0);
+        CheckBox[] stumbleGroup4 = new CheckBox[] {
+            new CheckBox("Unknown 13"),
+            new CheckBox("Unknown 14"),
+            new CheckBox("Unknown 15"),
+            new CheckBox("Unknown 16"),
+        };
 
-        unknown1.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.alimentType |= 1;
-            }
-            else {
-                subEntry.alimentType &= ~1;
-            }
-        });
-        HP_DEF.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.alimentType |= 2;
-            }
-            else {
-                subEntry.alimentType &= ~2;
-            }
-        });
-        SPD.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.alimentType |= 4;
-            }
-            else {
-                subEntry.alimentType &= ~4;
-            }
-        });
-        target.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.alimentType |= 8;
-            }
-            else {
-                subEntry.alimentType &= ~8;
-            }
-        });
+        Node[] alimentTypes = new Node[] {
+            createCheckBoxGroup("Stumble Group 1", alimentGroup1, 1, BdmGroups.AlimentType),
+            createCheckBoxGroup("Properties #2", alimentGroup2, 16, BdmGroups.AlimentType),
+        };
 
-        VBox properties1Box = new VBox(2, unknown1, HP_DEF, SPD, target);
-
-        VBox borderContainerProperties1 = new VBox(properties1Box);
-        borderContainerProperties1.getStyleClass().add("titled-address-box");
-        borderContainerProperties1.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane properties1BoxStackPane = new StackPane(borderContainerProperties1, properties1Label);
-        StackPane.setAlignment(properties1Label, Pos.TOP_LEFT);
-        //properties 1
-
-        //properties 2
-        Label properties2Label = new Label("Properties #2");
-        properties2Label.getStyleClass().add("titled-address-label");
-        properties2Label.setTranslateY(-8); 
-        properties2Label.setTranslateX(10);
-
-        CheckBox sealAwokenSkill = new CheckBox("Seal Awoken Skill");
-        CheckBox unknown6 = new CheckBox("Unknown 6");
-        CheckBox unknown7 = new CheckBox("Unknown 7");
-        CheckBox unknown8 = new CheckBox("Unknown 8");
-
-        sealAwokenSkill.setSelected((subEntry.alimentType & 16) != 0);
-        unknown6.setSelected((subEntry.alimentType & 32) != 0);
-        unknown7.setSelected((subEntry.alimentType & 64) != 0);
-        unknown8.setSelected((subEntry.alimentType & 128) != 0);
-
-        sealAwokenSkill.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.alimentType |= 16;
-            }
-            else {
-                subEntry.alimentType &= ~16;
-            }
-        });
-        unknown6.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.alimentType |= 32;
-            }
-            else {
-                subEntry.alimentType &= ~32;
-            }
-        });
-        unknown7.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.alimentType |= 64;
-            }
-            else {
-                subEntry.alimentType &= ~64;
-            }
-        });
-        unknown8.selectedProperty().addListener((obs, oldValue, newValue) -> { 
-            if (newValue) {
-                subEntry.alimentType |= 128;
-            }
-            else {
-                subEntry.alimentType &= ~128;
-            }
-        });
-
-        VBox properties2Box = new VBox(2, sealAwokenSkill, unknown6, unknown7, unknown8);
-
-        VBox borderContainerProperties2 = new VBox(properties2Box);
-        borderContainerProperties2.getStyleClass().add("titled-address-box");
-        borderContainerProperties2.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane properties2BoxStackPane = new StackPane(borderContainerProperties2,properties2Label);
-        StackPane.setAlignment(properties2Label, Pos.TOP_LEFT);
-        //properties 2
+        Node[] stumbleTypes = new Node[] {
+            createCheckBoxGroup("Stumble Group 1", stumbleGroup1, 1, BdmGroups.StumbleType),
+            createCheckBoxGroup("Stumble Group 2", stumbleGroup2, 16, BdmGroups.StumbleType), 
+            createCheckBoxGroup("Stumble Group 3", stumbleGroup3, 256, BdmGroups.StumbleType),
+            createCheckBoxGroup("Stumble Group 4", stumbleGroup4, 4096, BdmGroups.StumbleType)
+        };
         
-        HBox alimentTypeHBox = new HBox(5, alimentTypeLabel, properties1BoxStackPane, properties2BoxStackPane);
-        alimentTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //aliment type
-
-        //stumble type
-        Label stumbleTypeLabel = new Label("Stumble Type");
-        stumbleTypeLabel.setPrefWidth(190);
-
-        //stumble group 1
-        Label stumbleGroup1Label = new Label("Stumble Group 1");
-        stumbleGroup1Label.getStyleClass().add("titled-address-label");
-        stumbleGroup1Label.setTranslateY(-8); 
-        stumbleGroup1Label.setTranslateX(10);
-
-        CheckBox stumbleSet1 = new CheckBox("Stumble Set 1");
-        CheckBox stumbleSet2 = new CheckBox("Stumble Set 2");
-        CheckBox stumbleSet3 = new CheckBox("Stumble Set 3");
-        CheckBox stumbleSet4 = new CheckBox("Stumble Set 4");
-
-        stumbleSet1.setSelected((subEntry.stumbleType & 1) != 0);
-        stumbleSet2.setSelected((subEntry.stumbleType & 2) != 0);
-        stumbleSet3.setSelected((subEntry.stumbleType & 4) != 0);
-        stumbleSet4.setSelected((subEntry.stumbleType & 8) != 0);
-
-        stumbleSet1.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 1;
-            }
-            else {
-                subEntry.stumbleType &= ~1;
-            }
-        });
-        stumbleSet2.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 2;
-            }
-            else {
-                subEntry.stumbleType &= ~2;
-            }
-        });
-        stumbleSet3.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 4;
-            }
-            else {
-                subEntry.stumbleType &= ~4;
-            }
-        });
-        stumbleSet4.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 8;
-            }
-            else {
-                subEntry.stumbleType &= ~8;
-            }
-        });
-
-        VBox stumbleGroup1Box = new VBox(2, stumbleSet1, stumbleSet2, stumbleSet3, stumbleSet4);
-
-        VBox borderContainerStumbleGroup1=new VBox(stumbleGroup1Box);
-        borderContainerStumbleGroup1.getStyleClass().add("titled-address-box");
-        borderContainerStumbleGroup1.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane stumbleGroup1BoxStackPane = new StackPane(borderContainerStumbleGroup1, stumbleGroup1Label);
-        StackPane.setAlignment(stumbleGroup1Label, Pos.TOP_LEFT);
-        //stumble group 1
-
-        //stumble group 2
-        Label stumbleGroup2Label = new Label("Stumble Group 2");
-        stumbleGroup2Label.getStyleClass().add("titled-address-label");
-        stumbleGroup2Label.setTranslateY(-8); 
-        stumbleGroup2Label.setTranslateX(10);
-
-        CheckBox stumbleSet5 = new CheckBox("Stumble Set 5");
-        CheckBox stumbleSet6 = new CheckBox("Stumble Set 6");
-        CheckBox allStumbleSets = new CheckBox("All Stumble Sets");
-        CheckBox unknown8StumbleSet = new CheckBox("Unknown 8");
-
-        stumbleSet5.setSelected((subEntry.stumbleType & 16) != 0);
-        stumbleSet6.setSelected((subEntry.stumbleType & 32) != 0);
-        allStumbleSets.setSelected((subEntry.stumbleType & 64) != 0);
-        unknown8StumbleSet.setSelected((subEntry.stumbleType & 128) != 0);
-
-        stumbleSet5.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 1;
-            }
-            else {
-                subEntry.stumbleType &= ~1;
-            }
-        });
-        stumbleSet6.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 2;
-            }
-            else {
-                subEntry.stumbleType &= ~2;
-            }
-        });
-        allStumbleSets.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 4;
-            }
-            else {
-                subEntry.stumbleType &= ~4;
-            }
-        });
-        unknown8StumbleSet.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 8;
-            }
-            else {
-                subEntry.stumbleType &= ~8;
-            }
-        });
-
-        VBox stumbleGroup2Box = new VBox(2, stumbleSet5, stumbleSet6, allStumbleSets, unknown8StumbleSet);
-
-        VBox borderContainerStumbleGroup2 = new VBox(stumbleGroup2Box);
-        borderContainerStumbleGroup2.getStyleClass().add("titled-address-box");
-        borderContainerStumbleGroup2.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane stumbleGroup2BoxStackPane = new StackPane(borderContainerStumbleGroup2, stumbleGroup2Label);
-        StackPane.setAlignment(stumbleGroup2Label, Pos.TOP_LEFT);
-        //stumble group 2
-
-        //stumble group 3
-        Label stumbleGroup3Label = new Label("Stumble Group 3");
-        stumbleGroup3Label.getStyleClass().add("titled-address-label");
-        stumbleGroup3Label.setTranslateY(-8); 
-        stumbleGroup3Label.setTranslateX(10);
-
-        CheckBox unknown9StumbleSet = new CheckBox("Unknown 9");
-        CheckBox unknown10StumbleSet = new CheckBox("Unknown 10");
-        CheckBox unknown11StumbleSet = new CheckBox("Unknown 11");
-        CheckBox unknown12StumbleSet = new CheckBox("Unknown 12");
-
-        unknown9StumbleSet.setSelected((subEntry.stumbleType & 16) != 0);
-        unknown10StumbleSet.setSelected((subEntry.stumbleType & 32) != 0);
-        unknown11StumbleSet.setSelected((subEntry.stumbleType & 64) != 0);
-        unknown12StumbleSet.setSelected((subEntry.stumbleType & 128) != 0);
-
-        unknown9StumbleSet.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 16;
-            }
-            else {
-                subEntry.stumbleType &= ~16;
-            }
-        });
-        unknown10StumbleSet.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 32;
-            }
-            else {
-                subEntry.stumbleType &= ~32;
-            }
-        });
-        unknown11StumbleSet.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 64;
-            }
-            else {
-                subEntry.stumbleType &= ~64;
-            }
-        });
-        unknown12StumbleSet.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 128;
-            }
-            else {
-                subEntry.stumbleType &= ~128;
-            }
-        });
-        VBox stumbleGroup3Box = new VBox(2, unknown9StumbleSet, unknown10StumbleSet, unknown11StumbleSet, unknown12StumbleSet);
-
-        VBox borderContainerStumbleGroup3 = new VBox(stumbleGroup3Box);
-        borderContainerStumbleGroup3.getStyleClass().add("titled-address-box");
-        borderContainerStumbleGroup3.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane stumbleGroup3BoxStackPane = new StackPane(borderContainerStumbleGroup3, stumbleGroup3Label);
-        StackPane.setAlignment(stumbleGroup3Label, Pos.TOP_LEFT);
-        //stumble group 3
-
-       //stumble group 4
-        Label stumbleGroup4Label = new Label("Stumble Group 4");
-        stumbleGroup4Label.getStyleClass().add("titled-address-label");
-        stumbleGroup4Label.setTranslateY(-8); 
-        stumbleGroup4Label.setTranslateX(10);
-
-        CheckBox unknown13StumbleSet = new CheckBox("Unknown 13");
-        CheckBox unknown14StumbleSet = new CheckBox("Unknown 14");
-        CheckBox unknown15StumbleSet = new CheckBox("Unknown 15");
-        CheckBox unknown16StumbleSet =  new CheckBox("Unknown 16");
-
-        unknown13StumbleSet.setSelected((subEntry.stumbleType & 256) != 0);
-        unknown14StumbleSet.setSelected((subEntry.stumbleType & 512) != 0);
-        unknown15StumbleSet.setSelected((subEntry.stumbleType & 1024) != 0);
-        unknown16StumbleSet.setSelected((subEntry.stumbleType & 2048) != 0);
-
-        unknown13StumbleSet.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 256;
-            }
-            else {
-                subEntry.stumbleType &= ~256;
-            }
-        });
-        unknown14StumbleSet.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 512;
-            }
-            else {
-                subEntry.stumbleType &= ~512;
-            }
-        });
-        unknown15StumbleSet.selectedProperty().addListener((obs, oldValue ,newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 1024;
-            }
-            else {
-                subEntry.stumbleType &= ~1024;
-            }
-        });
-        unknown16StumbleSet.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                subEntry.stumbleType |= 2048;
-            }
-            else {
-                subEntry.stumbleType &= ~2048;
-            }
-        });
-
-        VBox stumbleGroup4Box = new VBox(2, unknown13StumbleSet, unknown14StumbleSet, unknown15StumbleSet, unknown16StumbleSet);
-
-        VBox borderContainerStumbleGroup4 = new VBox(stumbleGroup4Box);
-        borderContainerStumbleGroup4.getStyleClass().add("titled-address-box");
-        borderContainerStumbleGroup4.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane stumbleGroup4BoxStackPane = new StackPane(borderContainerStumbleGroup4, stumbleGroup4Label);
-        StackPane.setAlignment(stumbleGroup4Label, Pos.TOP_LEFT);
-        //stumble group 4
-
-        HBox stumbleTypeHBox = new HBox(5, 
-            stumbleTypeLabel, stumbleGroup1BoxStackPane,
-            stumbleGroup2BoxStackPane, stumbleGroup3BoxStackPane,
-            stumbleGroup4BoxStackPane
+        VBox miscVBox = new VBox(35, 
+            createHBox(0, createLabel("Transformation Type", 200), createHBox(15, new Node[] {spinner, label}, false)), 
+            createHBox(0, createLabel("Aliment Type", 200), createHBox(5, alimentTypes, false)), 
+            createHBox(0, createLabel("Stumble Type", 200), createHBox(5, stumbleTypes, false)), 
+            createHBox(0, createLabel("Stamina Broken Override BDM ID", 200), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.staminaBrokenOverrideBdmId, BdmValues.StaminaBrokenOverride_BDM_ID)), 
+            createHBox(0, createLabel("Z Vanish Enable Time", 200), createSpinner(0, 65535, subEntry.zVanishEnableTime, BdmValues.ZVanishEnableTime))
         );
-        stumbleTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //stumble type
-        
-        //stamina broken override bdm id
-        Label staminaBrokenOverrideBdmIdLabel = new Label("Stamina Broken Override BDM ID");
-        staminaBrokenOverrideBdmIdLabel.setPrefWidth(180);
-
-        Spinner<Integer> staminaBrokenOverrideBdmIdSpinner = new Spinner<>(0, 65535, subEntry.staminaBrokenOverrideBdmId);
-        staminaBrokenOverrideBdmIdSpinner.setEditable(true);
-        staminaBrokenOverrideBdmIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.staminaBrokenOverrideBdmId = newValue.shortValue();
-            }
-        });
-
-        HBox staminaBrokenOverrideBdmIdHBox = new HBox(15, staminaBrokenOverrideBdmIdLabel, staminaBrokenOverrideBdmIdSpinner);
-        staminaBrokenOverrideBdmIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //stamina broken override bdm id
-
-        //z vanish enable time
-        Label zVanishEnableTimeLabel = new Label("Z Vanish Enable Time");
-        zVanishEnableTimeLabel.setPrefWidth(180);
-
-        Spinner<Integer> zVanishEnableTimeSpinner = new Spinner<>(0, 65535, subEntry.zVanishEnableTime);
-        zVanishEnableTimeSpinner.setEditable(true);
-        zVanishEnableTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                subEntry.zVanishEnableTime = newValue.shortValue();
-            }
-        });
-
-        HBox zVanishEnableTimeHBox = new HBox(15, zVanishEnableTimeLabel,zVanishEnableTimeSpinner);
-        zVanishEnableTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //z vanish enable time
-
-        VBox miscVBox = new VBox(35, transformationTypeHBox, alimentTypeHBox, stumbleTypeHBox, staminaBrokenOverrideBdmIdHBox, zVanishEnableTimeHBox);
         miscVBox.setPadding(new Insets(20, 0, 0, 8));
 
         return miscVBox;
     }
 
     private VBox createUnknownVBox (BdmSubEntry subEntry) {
-        //i02
-        Label i02Label = new Label("I_02");
-        i02Label.setPrefWidth(60);
-
-        TextField i02TextField = new TextField(String.valueOf(subEntry.i02));
-        i02TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i02TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.i02 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i02HBox = new HBox(i02Label, i02TextField);
-        i02HBox.setAlignment(Pos.CENTER_LEFT);
-        //i02
-
-        //i06
-        Label i06Label = new Label("I_06");
-        i06Label.setPrefWidth(60);
-
-        TextField i06TextField = new TextField(String.valueOf(subEntry.i06));
-        i06TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i06TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.i06 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i06HBox = new HBox(i06Label, i06TextField);
-        i06HBox.setAlignment(Pos.CENTER_LEFT);
-        //i06
-
-        //f08
-        Label f08Label = new Label("F_08");
-        f08Label.setPrefWidth(60);
-
-        TextField f08TextField = new TextField(String.valueOf(subEntry.f08));
-        f08TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f08TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.f08 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i08HBox = new HBox(f08Label, f08TextField);
-        i08HBox.setAlignment(Pos.CENTER_LEFT);
-        //f08
-
-        //i22
-        Label i22Label = new Label("I_22");
-        i22Label.setPrefWidth(60);
-
-        TextField i22TextField = new TextField(String.valueOf(subEntry.i22));
-        i22TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i22TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.i22 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i22HBox = new HBox(i22Label, i22TextField);
-        i22HBox.setAlignment(Pos.CENTER_LEFT);
-        //i22
-
-        //i30
-        Label i30Label = new Label("I_30");
-        i30Label.setPrefWidth(60);
-
-        TextField i30TextField = new TextField(String.valueOf(subEntry.i30));
-        i30TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i30TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.i30 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i30HBox = new HBox(i30Label, i30TextField);
-        i30HBox.setAlignment(Pos.CENTER_LEFT);
-        //i30
-
-        //i38
-        Label i38Label = new Label("I_38");
-        i38Label.setPrefWidth(60);
-
-        TextField i38TextField = new TextField(String.valueOf(subEntry.i38));
-        i38TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i38TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.i38 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i38HBox = new HBox(i38Label, i38TextField);
-        i38HBox.setAlignment(Pos.CENTER_LEFT);
-        //i38
-
-        //i58
-        Label i58Label = new Label("I_58");
-        i58Label.setPrefWidth(60);
-
-        TextField i58TextField = new TextField(String.valueOf(subEntry.i58));
-        i58TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i58TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.i58 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i58HBox = new HBox(i58Label, i58TextField);
-        i58HBox.setAlignment(Pos.CENTER_LEFT);
-        //i58
-
-        //i76
-        Label i76Label = new Label("I_76");
-        i76Label.setPrefWidth(60);
-
-        TextField i76TextField = new TextField(String.valueOf(subEntry.i76));
-        i76TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i76TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.i76 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i76HBox = new HBox(i76Label, i76TextField);
-        i76HBox.setAlignment(Pos.CENTER_LEFT);
-        //i76
-
-        //i82
-        Label i82Label = new Label("I_82");
-        i82Label.setPrefWidth(60);
-
-        TextField i82TextField = new TextField(String.valueOf(subEntry.i82));
-        i82TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i82TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.i82 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i82HBox = new HBox(i82Label, i82TextField);
-        i82HBox.setAlignment(Pos.CENTER_LEFT);
-        //i82
-
-        //i88
-        Label i88Label = new Label("I_88");
-        i88Label.setPrefWidth(60);
-
-        TextField txtI88 = new TextField(String.valueOf(subEntry.i88));
-        txtI88.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtI88.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.i88 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        HBox i88HBox = new HBox(i88Label, txtI88);
-        i88HBox.setAlignment(Pos.CENTER_LEFT);
-        //i88
-
-        //i90
-        Label i90Label = new Label("I_90");
-        i90Label.setPrefWidth(60);
-
-        TextField i90TextField = new TextField(String.valueOf(subEntry.i90));
-        i90TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i90TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.i90 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i90HBox = new HBox(i90Label, i90TextField);
-        i90HBox.setAlignment(Pos.CENTER_LEFT);
-        //i90
-
-        //i92
-        Label i92Label = new Label("I_92");
-        i92Label.setPrefWidth(60);
-
-        TextField i92TextField = new TextField(String.valueOf(subEntry.i92));
-        i92TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i92TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                subEntry.i92 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i92HBox = new HBox(i92Label, i92TextField);
-        i92HBox.setAlignment(Pos.CENTER_LEFT);
-        //i92
-
         VBox unknownVBox = new VBox(32, 
-            i02HBox, i06HBox,
-            i08HBox, i22HBox,
-            i30HBox, i38HBox,
-            i58HBox, i76HBox,
-            i82HBox, i88HBox,
-            i90HBox, i92HBox 
+            createHBox(0, createLabel("I_02", 60), createTextField(subEntry.i02 ,BdmValues.I02)), 
+            createHBox(0, createLabel("I_06", 60), createTextField(subEntry.i06 ,BdmValues.I06)),
+            createHBox(0, createLabel("F_08", 60), createTextField(subEntry.f08 ,BdmValues.F08)), 
+            createHBox(0, createLabel("I_22", 60), createTextField(subEntry.i22 ,BdmValues.I22)),
+            createHBox(0, createLabel("I_30", 60), createTextField(subEntry.i30 ,BdmValues.I30)), 
+            createHBox(0, createLabel("I_38", 60), createTextField(subEntry.i38 ,BdmValues.I38)),
+            createHBox(0, createLabel("I_58", 60), createTextField(subEntry.i58 ,BdmValues.I58)), 
+            createHBox(0, createLabel("I_76", 60), createTextField(subEntry.i76 ,BdmValues.I76)),
+            createHBox(0, createLabel("I_82", 60), createTextField(subEntry.i82 ,BdmValues.I82)), 
+            createHBox(0, createLabel("I_88", 60), createTextField(subEntry.i88 ,BdmValues.I88)),
+            createHBox(0, createLabel("I_90", 60), createTextField(subEntry.i90 ,BdmValues.I90)), 
+            createHBox(0, createLabel("I_92", 60), createTextField(subEntry.i92, BdmValues.I92)) 
         );
         unknownVBox.setPadding(new Insets(20,0,0,8));
 
         return unknownVBox;
+    }
+
+    private Label createLabel(String text, int width) {
+        Label label = new Label(text);
+        if (width != 0) label.setPrefWidth(width);
+
+        return label;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, int value, DamageTypes damageType) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (value == damageType.index) radioButton.setSelected(true);
+
+        BdmSubEntry bdmSubEntry = bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()];
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                switch (damageType) {
+                    case NoEffect -> bdmSubEntry.damageType = 0;
+                    case Block -> bdmSubEntry.damageType = 1;
+                    case GuardBreak -> bdmSubEntry.damageType = 2;
+                    case Standard -> bdmSubEntry.damageType = 3;
+                    case Heavy -> bdmSubEntry.damageType = 4;
+                    case Knockback -> bdmSubEntry.damageType = 5;
+                    case Knockback1 -> bdmSubEntry.damageType = 6;
+                    case Knockback2 -> bdmSubEntry.damageType = 7;
+                    case Knockback3 -> bdmSubEntry.damageType = 8;
+                    case Knockback4 -> bdmSubEntry.damageType = 9;
+                    case Grab -> bdmSubEntry.damageType = 10;
+                    case HoldStomach -> bdmSubEntry.damageType = 11;
+                    case HoldEyes -> bdmSubEntry.damageType = 12;
+                    case Knockback5 -> bdmSubEntry.damageType = 13;
+                    case Electric -> bdmSubEntry.damageType = 14;
+                    case Dazed -> bdmSubEntry.damageType = 15;
+                    case Paralysis -> bdmSubEntry.damageType = 16;
+                    case Freeze -> bdmSubEntry.damageType = 17;
+                    case WildCard -> bdmSubEntry.damageType = 18;
+                    case Unused -> bdmSubEntry.damageType = 19;
+                    case HeavyStaminaBreak -> bdmSubEntry.damageType = 20;
+                    case LightStaminaBreak -> bdmSubEntry.damageType = 21;
+                    case GiganticKiBlastPush -> bdmSubEntry.damageType = 22;
+                    case BrainWash -> bdmSubEntry.damageType = 23;
+                    case GiganticKiBlastReturn -> bdmSubEntry.damageType = 24;
+                    case Knockback6 -> bdmSubEntry.damageType = 25;
+                    case Knockback7 -> bdmSubEntry.damageType = 26;
+                    case Knockback8 -> bdmSubEntry.damageType = 27;
+                    case Knockback9 -> bdmSubEntry.damageType = 28;
+                    case SlowOpponent -> bdmSubEntry.damageType = 29;
+                    case BrainWash2 -> bdmSubEntry.damageType = 30;
+                    case TimeStop -> bdmSubEntry.damageType = 31;
+                }
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, int value, ACBTypes ACBType) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (value == ACBType.index) radioButton.setSelected(true);
+
+        BdmSubEntry bdmSubEntry = bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()];
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                switch (ACBType) {
+                    case Common -> bdmSubEntry.acbType = 0;
+                    case CharacterSE -> bdmSubEntry.acbType = 2;
+                    case CharacterVOX -> bdmSubEntry.acbType = 3;
+                    case SkillSE -> bdmSubEntry.acbType = 10;
+                    case SkillVOX -> bdmSubEntry.acbType = 11;
+                }
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, int value, Effect_EEPK_Types effect_EEPK_Type, int type) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (value == effect_EEPK_Type.index) radioButton.setSelected(true);
+
+        BdmSubEntry bdmSubEntry = bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()];
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            switch (type) {
+                case 1 -> {
+                    if (newValue) {
+                        switch (effect_EEPK_Type) {
+                            case Common -> bdmSubEntry.effect1EepkType = 0;
+                            case StageBG -> bdmSubEntry.effect1EepkType = 1;
+                            case CharacterEffect -> bdmSubEntry.effect1EepkType = 2;
+                            case AwokenSkill -> bdmSubEntry.effect1EepkType = 3;
+                            case SuperSkill -> bdmSubEntry.effect1EepkType = 5;
+                            case UltimateSkill -> bdmSubEntry.effect1EepkType = 6;
+                            case EvasiveSkill -> bdmSubEntry.effect1EepkType = 7;
+                            case KiBlastSkill -> bdmSubEntry.effect1EepkType = 9;
+                            case StageEffect -> bdmSubEntry.effect1EepkType = 11;
+                        }
+                    }
+                }
+                case 2 -> {
+                    if (newValue) {
+                        switch (effect_EEPK_Type) {
+                            case Common -> bdmSubEntry.effect2EepkType = 0;
+                            case StageBG -> bdmSubEntry.effect2EepkType = 1;
+                            case CharacterEffect -> bdmSubEntry.effect2EepkType = 2;
+                            case AwokenSkill -> bdmSubEntry.effect2EepkType = 3;
+                            case SuperSkill -> bdmSubEntry.effect2EepkType = 5;
+                            case UltimateSkill -> bdmSubEntry.effect2EepkType = 6;
+                            case EvasiveSkill -> bdmSubEntry.effect2EepkType = 7;
+                            case KiBlastSkill -> bdmSubEntry.effect2EepkType = 9;
+                            case StageEffect -> bdmSubEntry.effect2EepkType = 11;
+                        }
+                    }
+                }
+                case 3 -> {
+                    if (newValue) {
+                        switch (effect_EEPK_Type) {
+                            case Common -> bdmSubEntry.effect3EepkType = 0;
+                            case StageBG -> bdmSubEntry.effect3EepkType = 1;
+                            case CharacterEffect -> bdmSubEntry.effect3EepkType = 2;
+                            case AwokenSkill -> bdmSubEntry.effect3EepkType = 3;
+                            case SuperSkill -> bdmSubEntry.effect3EepkType = 5;
+                            case UltimateSkill -> bdmSubEntry.effect3EepkType = 6;
+                            case EvasiveSkill -> bdmSubEntry.effect3EepkType = 7;
+                            case KiBlastSkill -> bdmSubEntry.effect3EepkType = 9;
+                            case StageEffect -> bdmSubEntry.effect3EepkType = 11;
+                        }
+                    }
+                }
+            }
+        });
+
+        return radioButton;
+    }
+
+    private TextField createTextField(Number value, BdmValues bdmValue) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bdmValue) {
+                    case BdmValues.I02 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i02 = Integer.parseInt(newText);
+                    case BdmValues.I06 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i06 = Integer.parseInt(newText);
+                    case BdmValues.F08 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].f08 = Float.parseFloat(newText);
+                    case BdmValues.I22 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i22 = Integer.parseInt(newText);
+                    case BdmValues.I30 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i30 = Integer.parseInt(newText);
+                    case BdmValues.I38 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i38 = Integer.parseInt(newText);
+                    case BdmValues.I58 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i58 = Integer.parseInt(newText);
+                    case BdmValues.I76 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i76 = Integer.parseInt(newText);
+                    case BdmValues.I82 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i82 = Integer.parseInt(newText);
+                    case BdmValues.I88 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i88 = Integer.parseInt(newText);
+                    case BdmValues.I90 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i90 = Integer.parseInt(newText);
+                    case BdmValues.I92 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i92 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bdmValue);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BdmValues bdmValue) {
+        Spinner<Number> spinner;
+
+        if (value instanceof Double) {
+            spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
+        }
+        else {
+            spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+        }
+        
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bdmValue) {
+                    case DamageAmount -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].damageAmount = newValue.intValue();
+                    case DamageSpecial -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].damageSpecial = newValue.intValue();
+                    case DamageSpecial2 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].damageSpecial2 = newValue.intValue();
+                    case DamageSpecial3 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].damageSpecial3 = newValue.intValue();
+                    case Cue_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].cueId = newValue.shortValue();
+                    case Effect1_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].effect1Id = newValue.shortValue();
+                    case Effect1_Skill_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].effect1SkillId = newValue.intValue();
+                    case Effect2_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].effect2Id = newValue.shortValue();
+                    case Effect2_Skill_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].effect2SkillId = newValue.intValue();
+                    case Effect3_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].effect3Id = newValue.shortValue();
+                    case Effect3_Skill_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].effect3SkillId = newValue.intValue();
+                    case PushbackStrength -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].pushbackStrength = newValue.floatValue();
+                    case PushbackAcceleration -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].pushbackAcceleration = newValue.floatValue();
+                    case UserStunt -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].userStunt = newValue.intValue();
+                    case VictimStunt -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].victimStunt = newValue.intValue();
+                    case KnockbackDuration -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].knockbackDuration = newValue.intValue();
+                    case KnockbackGroundImpactTime -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].knockbackGroundImpactTime = newValue.intValue();
+                    case KnockbackRecoveryAfterImpactTime -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].knockbackRecoveryAfterImpactTime = newValue.intValue();
+                    case KnockbackStrengthX -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].knockbackStrengthX = newValue.floatValue();
+                    case KnockbackStrengthY -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].knockbackStrengthY = newValue.floatValue();
+                    case KnockbackStrengthZ -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].knockbackStrengthZ = newValue.floatValue();
+                    case KnockbackDragY -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].knockbackDragY = newValue.floatValue();
+                    case KnockbackGravityTime -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].knockbackGravityTime = newValue.intValue();
+                    case VictimInvincibilityTime -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].victimInvincibilityTime = newValue.shortValue();
+                    case CameraShakeType -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].cameraShakeType = newValue.shortValue();
+                    case CameraShakeTime -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].cameraShakeTime = newValue.intValue();
+                    case User_BPE_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].userBpeID = newValue.shortValue();
+                    case Victim_BPE_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].victimBpeID = newValue.shortValue();
+                    case TransformationType -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].transformationType = newValue.intValue();
+                    case StaminaBrokenOverride_BDM_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].staminaBrokenOverrideBdmId = newValue.shortValue();
+                    case ZVanishEnableTime -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].zVanishEnableTime = newValue.intValue();
+                    case UserAnimationTime -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].userAnimationTime = newValue.intValue();
+                    case UserAnimationSpeed -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].userAnimationSpeed = newValue.floatValue();
+                    case VictimAnimationTime -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].victimAnimationTime = newValue.intValue();
+                    case VictimAnimationSpeed -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].victimAnimationSpeed = newValue.floatValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bdmValue);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private HBox createHBox(int width, Label label, Node node) {
+        HBox hBox = new HBox(width, label, node);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        return hBox;
+    }
+
+    private HBox createHBox(int width, Node[] nodeList, boolean enableStyle) {
+        HBox hBox = new HBox(width);
+
+        if (enableStyle) hBox.getStyleClass().add("titled-address-box");
+
+        for (int i = 0; i < nodeList.length; i++) {
+            hBox.getChildren().add(nodeList[i]);
+        }
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        return hBox;
+    }
+
+    private GridPane createGridPane(int columns ,int rows, Node[] nodeList) {
+        GridPane gridPane = new GridPane(10, 10);
+        gridPane.getStyleClass().add("titled-address-box");
+
+        int index = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                gridPane.add(nodeList[index], j, i);
+                index++;
+            }
+        }
+
+        return gridPane;
+    }
+
+    private StackPane createCheckBoxGroup(String text, CheckBox[] checkBoxsList, int increment, BdmGroups bdmGroup) {
+        Label label = new Label(text);
+        label.getStyleClass().add("titled-address-label");
+        label.setTranslateY(-8); 
+        label.setTranslateX(10);
+
+        VBox vBox = new VBox(2);
+        vBox.getStyleClass().add("titled-address-box");
+        vBox.setPadding(new Insets(12, 0, 0, 0));
+        
+        for (int i = 0; i < checkBoxsList.length; i++) {
+            final int incrementLamda = increment;
+
+            switch(bdmGroup) {
+                case SecondaryType -> {
+                    checkBoxsList[i].setSelected((bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].secondaryType & increment) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].secondaryType |= incrementLamda;
+                        }
+                        else {
+                            bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].secondaryType &= ~incrementLamda;
+                        }
+                    });
+                }
+                case AlimentType -> {
+                    checkBoxsList[i].setSelected((bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].alimentType & increment) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].alimentType |= incrementLamda;
+                        }
+                        else {
+                            bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].alimentType &= ~incrementLamda;
+                        }
+                    });
+                }
+                case StumbleType -> {
+                    checkBoxsList[i].setSelected((bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].stumbleType & increment) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].stumbleType |= incrementLamda;
+                        }
+                        else {
+                            bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].stumbleType &= ~incrementLamda;
+                        }
+                    });
+                }
+            }
+
+            vBox.getChildren().add(checkBoxsList[i]);
+
+            increment <<= 1;
+        }
+
+        StackPane stackPane = new StackPane(vBox, label);
+        StackPane.setAlignment(label, Pos.TOP_LEFT);
+
+        return stackPane;
     }
 
     public void entriesActionListener() {
@@ -2331,18 +820,10 @@ public class Bdm {
                         Copy();
                         paste.setDisable(false);
                     }
-                    if (event.getTarget() == paste) {
-                        Paste();
-                    }
-                    if (event.getTarget() == delete) {
-                       Delete();
-                    }
-                    if (event.getTarget() == append) {
-                        Append();
-                    }
-                    if (event.getTarget() == insert) {
-                        Insert();
-                    }
+                    else if (event.getTarget() == paste) Paste();
+                    else if (event.getTarget() == delete) Delete();
+                    else if (event.getTarget() == append) Append();
+                    else if (event.getTarget() == insert) Insert();
                 });
             }
         });
@@ -2372,18 +853,10 @@ public class Bdm {
                 Copy();
                 paste.setDisable(false);
             }
-            if (e.isControlDown() && e.getCode() == KeyCode.V) {
-                Paste();
-            }
-            if (e.getCode() == KeyCode.DELETE) {
-                Delete();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.A) {
-                Append();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.I) {
-                Insert();
-            }
+            else if (e.isControlDown() && e.getCode() == KeyCode.V) Paste();
+            else if (e.getCode() == KeyCode.DELETE) Delete();
+            else if (e.isControlDown() && e.getCode() == KeyCode.A) Append();
+            else if (e.isControlDown() && e.getCode() == KeyCode.I) Insert();
         });
     }
 
@@ -2410,7 +883,7 @@ public class Bdm {
     }
 
     private void Delete() {
-        if (listView.getSelectionModel().getSelectedIndex() < 0) return;
+        if (listView.getSelectionModel().getSelectedIndex() == 0) return;
 
         bdmEntries.remove(listView.getSelectionModel().getSelectedIndex());
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
@@ -2455,342 +928,340 @@ public class Bdm {
             switch ((int)((path.toFile().length() - 16) / bdmEntriesCount)) {
                 case 1284 -> {
                     for (int i = 0; i < bdmEntriesCount; i++) {
-                        BdmEntry bdmEntry = new BdmEntry();
-                        bdmEntries.add(bdmEntry);
+                        bdmEntries.add(new BdmEntry());
 
                         listView.getItems().add("Entry " + i);
 
                         for (int j = 0; j < 10; j++) {
-                            BdmSubEntry subEntry = bdmEntry.subEntries[j];
                             channel.position(entryOffset + 4 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.damageType = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].damageType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 6 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.i02 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].i02 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 8 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.damageAmount = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].damageAmount = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 10 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.i06 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].i06 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 12 + j * 128 + i * 1284);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            subEntry.f08 = intBuffer.getFloat();
+                            bdmEntries.get(i).subEntries[j].f08 = intBuffer.getFloat();
 
                             channel.position(entryOffset + 16 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.acbType = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].acbType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 18 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.cueId = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].cueId = shortBuffer.getShort();
 
                             channel.position(entryOffset + 20 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.effect1Id = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].effect1Id = shortBuffer.getShort();
 
                             channel.position(entryOffset + 22 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.effect1SkillId = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].effect1SkillId = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 24 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.effect1EepkType = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].effect1EepkType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 26 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.i22 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].i22 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 28 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.effect2Id = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].effect2Id = shortBuffer.getShort();
 
                             channel.position(entryOffset + 30 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.effect2SkillId = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].effect2SkillId = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 32 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.effect2EepkType = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].effect2EepkType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 34 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.i30 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].i30 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 36 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.effect3Id = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].effect3Id = shortBuffer.getShort();
 
                             channel.position(entryOffset + 38 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.effect3SkillId = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].effect3SkillId = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 40 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.effect3EepkType = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].effect3EepkType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 42 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.i38 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].i38 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 44 + j * 128 + i * 1284);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            subEntry.pushbackStrength = intBuffer.getFloat();
+                            bdmEntries.get(i).subEntries[j].pushbackStrength = intBuffer.getFloat();
 
                             channel.position(entryOffset + 48 + j * 128 + i * 1284);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            subEntry.pushbackAcceleration = intBuffer.getFloat();
+                            bdmEntries.get(i).subEntries[j].pushbackAcceleration = intBuffer.getFloat();
 
                             channel.position(entryOffset + 52 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.userStunt = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].userStunt = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 54 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.victimStunt = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].victimStunt = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 56 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.knockbackDuration = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].knockbackDuration = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 58 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.knockbackRecoveryAfterImpactTime = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].knockbackRecoveryAfterImpactTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 60 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.knockbackGroundImpactTime = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].knockbackGroundImpactTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 62 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.i58 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].i58 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 64 + j * 128 + i * 1284);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            subEntry.knockbackStrengthX = intBuffer.getFloat();
+                            bdmEntries.get(i).subEntries[j].knockbackStrengthX = intBuffer.getFloat();
 
                             channel.position(entryOffset + 68 + j * 128 + i * 1284);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            subEntry.knockbackStrengthY = intBuffer.getFloat();
+                            bdmEntries.get(i).subEntries[j].knockbackStrengthY = intBuffer.getFloat();
 
                             channel.position(entryOffset + 72 + j * 128 + i * 1284);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            subEntry.knockbackStrengthZ = intBuffer.getFloat();
+                            bdmEntries.get(i).subEntries[j].knockbackStrengthZ = intBuffer.getFloat();
 
                             channel.position(entryOffset + 76 + j * 128 + i * 1284);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            subEntry.knockbackDragY = intBuffer.getFloat();
+                            bdmEntries.get(i).subEntries[j].knockbackDragY = intBuffer.getFloat();
 
                             channel.position(entryOffset + 80 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.i76 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].i76 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 82 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.knockbackGravityTime = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].knockbackGravityTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 84 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.victimInvincibilityTime = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].victimInvincibilityTime = shortBuffer.getShort();
 
                             channel.position(entryOffset + 86 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.i82 = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].i82 = shortBuffer.getShort();
 
                             channel.position(entryOffset + 88 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.transformationType = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].transformationType = shortBuffer.getShort();
 
                             channel.position(entryOffset + 90 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.alimentType = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].alimentType = shortBuffer.getShort();
 
                             channel.position(entryOffset + 92 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.i88 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].i88 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 94 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.i90 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].i90 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 96 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.i92 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].i92 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 98 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.damageSpecial = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].damageSpecial = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 100 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.damageSpecial2 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].damageSpecial2 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 102 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.damageSpecial3 = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].damageSpecial3 = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 104 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.stumbleType = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].stumbleType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 106 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.secondaryType = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].secondaryType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 108 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.cameraShakeType = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].cameraShakeType = shortBuffer.getShort();
 
                             channel.position(entryOffset + 110 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.cameraShakeTime = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].cameraShakeTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 112 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.userBpeID = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].userBpeID = shortBuffer.getShort();
 
                             channel.position(entryOffset + 114 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.victimBpeID = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].victimBpeID = shortBuffer.getShort();
 
                             channel.position(entryOffset + 116 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.staminaBrokenOverrideBdmId = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].staminaBrokenOverrideBdmId = shortBuffer.getShort();
 
                             channel.position(entryOffset + 118 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.zVanishEnableTime = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].zVanishEnableTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 120 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.userAnimationTime = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].userAnimationTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 122 + j * 128 + i * 1284);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            subEntry.victimAnimationTime = toUShort(shortBuffer.getShort());
+                            bdmEntries.get(i).subEntries[j].victimAnimationTime = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 124 + j * 128 + i * 1284);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            subEntry.userAnimationSpeed = intBuffer.getFloat();
+                            bdmEntries.get(i).subEntries[j].userAnimationSpeed = intBuffer.getFloat();
 
                             channel.position(entryOffset + 128 + j * 128 + i * 1284);
                             intBuffer.clear();
                             channel.read(intBuffer);
                             intBuffer.flip();
-                            subEntry.victimAnimationSpeed = intBuffer.getFloat();
+                            bdmEntries.get(i).subEntries[j].victimAnimationSpeed = intBuffer.getFloat();
                         }
                     }
                 }
@@ -3175,6 +1646,149 @@ public class Bdm {
         }
         catch(IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static enum DamageTypes {
+        NoEffect(0),
+        Block(1),
+        GuardBreak(2),
+        Standard(3),
+        Heavy(4),
+        Knockback(5),
+        Knockback1(6),
+        Knockback2(7),
+        Knockback3(8),
+        Knockback4(9),
+        Grab(10),
+        HoldStomach(11),
+        HoldEyes(12),
+        Knockback5(13),
+        Electric(14),
+        Dazed(15),
+        Paralysis(16),
+        Freeze(17),
+        WildCard(18),
+        Unused(19),
+        HeavyStaminaBreak(20),
+        LightStaminaBreak(21),
+        GiganticKiBlastPush(22),
+        BrainWash(23),
+        GiganticKiBlastReturn(24),
+        Knockback6(25),
+        Knockback7(26),
+        Knockback8(27),
+        Knockback9(28),
+        SlowOpponent(29),
+        BrainWash2(30),
+        TimeStop(31);
+
+        final int index;
+
+        DamageTypes(int index) {
+            this.index = index;
+        }
+    }
+
+    public static enum BdmGroups {
+        SecondaryType,
+        AlimentType,
+        StumbleType
+    }
+
+    public static enum ACBTypes {
+        Common(0),
+        CharacterSE(2),
+        CharacterVOX(3),
+        SkillSE(10),
+        SkillVOX(11);
+
+        final int index;
+
+        ACBTypes(int index) {
+            this.index = index;
+        }
+    }
+
+    public static enum Effect_EEPK_Types {
+        Common(0),
+        StageBG(1),
+        CharacterEffect(2),
+        AwokenSkill(3),
+        SuperSkill(5),
+        UltimateSkill(6),
+        EvasiveSkill(7),
+        KiBlastSkill(9),
+        StageEffect(11);
+
+        final int index;
+
+        Effect_EEPK_Types(int index) {
+            this.index = index;
+        }
+    }
+
+    public static enum BdmValues {
+        DamageType(0),
+        I02(1),
+        DamageAmount(2),
+        I06(3),
+        F08(4),
+        ACB_Type(5),
+        Cue_ID(6),
+        Effect1_ID(7),
+        Effect1_Skill_ID(8),
+        Effect1_EEPK_Type(9),
+        I22(10),
+        Effect2_ID(11),
+        Effect2_Skill_ID(12),
+        Effect2_EEPK_Type(13),
+        I30(14),
+        Effect3_ID(15),
+        Effect3_Skill_ID(16),
+        Effect3_EEPK_Type(17),
+        I38(18),
+        PushbackStrength(19),
+        PushbackAcceleration(20),
+        UserStunt(21),
+        KnockbackDuration(22),
+        KnockbackRecoveryAfterImpactTime(23),
+        KnockbackGroundImpactTime(24),
+        I58(25),
+        VictimStunt(26),
+        KnockbackStrengthX(27),
+        KnockbackStrengthY(28),
+        KnockbackStrengthZ(29),
+        KnockbackDragY(30),
+        I76(31),
+        KnockbackGravityTime(32),
+        VictimInvincibilityTime(33),
+        I82(34),
+        TransformationType(35),
+        AlimentType(36),
+        I88(37),
+        I90(38),
+        I92(39),
+        DamageSpecial(40),
+        DamageSpecial2(41),
+        DamageSpecial3(42),
+        StumbleType(43),
+        SecondaryType(44),
+        CameraShakeType(45),
+        CameraShakeTime(46),
+        User_BPE_ID(47),
+        Victim_BPE_ID(48),
+        StaminaBrokenOverride_BDM_ID(49),
+        ZVanishEnableTime(50), 
+        UserAnimationTime(51),     
+        VictimAnimationTime(52),    
+        UserAnimationSpeed(53),         
+        VictimAnimationSpeed(54);
+
+        final int index;
+
+        BdmValues(int index) {
+            this.index = index;
         }
     }
 }
