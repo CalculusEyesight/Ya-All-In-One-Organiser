@@ -171,7 +171,8 @@ public class Cat {
                         "I_20",
                         "Transformation Entry",
                         "I22"
-                    )));
+                    ))
+                );
 
                 final Button findbt = (Button) dialog.getDialogPane().lookupButton(findNextButtonType);
                 findbt.addEventFilter(ActionEvent.ACTION, event -> {

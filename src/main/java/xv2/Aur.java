@@ -308,7 +308,8 @@ public class Aur {
                         "KiryokuMax", 
                         "HenshinStart", 
                         "HenshinEnd"
-                    )));
+                    ))
+                );
 
                 final Button findbt = (Button) dialog.getDialogPane().lookupButton(findNextButtonType);
                 findbt.addEventFilter(ActionEvent.ACTION, event -> {
