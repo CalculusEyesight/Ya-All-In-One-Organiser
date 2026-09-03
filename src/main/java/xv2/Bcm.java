@@ -380,12 +380,12 @@ public class Bcm {
         ToggleGroup randomFlagToggleGroup = new ToggleGroup();
 
         RadioButton[] randomFlagsList = new RadioButton[] {
-            createRadioButton("None/Default", randomFlagToggleGroup, entry.characterCondition, RandomFlags.None),
-            createRadioButton("Random BAC Entry", randomFlagToggleGroup, entry.characterCondition, RandomFlags.Random_BAC_Entry),
-            createRadioButton("No Target Correction", randomFlagToggleGroup, entry.characterCondition, RandomFlags.NoTargetCorrection),
-            createRadioButton("3 Instance Setup", randomFlagToggleGroup, entry.characterCondition, RandomFlags.ThreeInstanceSetup),
-            createRadioButton("Unknown 4", randomFlagToggleGroup, entry.characterCondition, RandomFlags.Unknown4),
-            createRadioButton("Unknown 6", randomFlagToggleGroup, entry.characterCondition, RandomFlags.Unknown6),
+            createRadioButton("None/Default", randomFlagToggleGroup, entry.characterCondition, BcmValues.RandomFlags.None),
+            createRadioButton("Random BAC Entry", randomFlagToggleGroup, entry.characterCondition, BcmValues.RandomFlags.Random_BAC_Entry),
+            createRadioButton("No Target Correction", randomFlagToggleGroup, entry.characterCondition, BcmValues.RandomFlags.NoTargetCorrection),
+            createRadioButton("3 Instance Setup", randomFlagToggleGroup, entry.characterCondition, BcmValues.RandomFlags.ThreeInstanceSetup),
+            createRadioButton("Unknown 4", randomFlagToggleGroup, entry.characterCondition, BcmValues.RandomFlags.Unknown4),
+            createRadioButton("Unknown 6", randomFlagToggleGroup, entry.characterCondition, BcmValues.RandomFlags.Unknown6),
         };
 
         VBox BACVBox = new VBox(30, 
@@ -418,16 +418,16 @@ public class Bcm {
         );
 
         RadioButton[] characterConditonsList = new RadioButton[] {
-            createRadioButton("None/Default", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.None),
-            createRadioButton("Custom Character (CAC)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.CustomCharacter),
-            createRadioButton("Human Male (HUM)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.HumanMale),
-            createRadioButton("Human Female (HUF)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.HumanFemale),
-            createRadioButton("Saiyan Male (SYM)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.SaiyanMale),
-            createRadioButton("Saiyan Female (SYF)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.SaiyanFemale),
-            createRadioButton("Namekian (NMC)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.Namekian),
-            createRadioButton("Frieza Race (FRI)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.FriezaRace),
-            createRadioButton("Majin Male (MAM)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.MajinMale),
-            createRadioButton("Majin Female (MAF)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.MajinFemale),
+            createRadioButton("None/Default", characterConditonToggleGroup, entry.characterCondition, BcmValues.CharacterConditions.None),
+            createRadioButton("Custom Character (CAC)", characterConditonToggleGroup, entry.characterCondition, BcmValues.CharacterConditions.CustomCharacter),
+            createRadioButton("Human Male (HUM)", characterConditonToggleGroup, entry.characterCondition, BcmValues.CharacterConditions.HumanMale),
+            createRadioButton("Human Female (HUF)", characterConditonToggleGroup, entry.characterCondition, BcmValues.CharacterConditions.HumanFemale),
+            createRadioButton("Saiyan Male (SYM)", characterConditonToggleGroup, entry.characterCondition, BcmValues.CharacterConditions.SaiyanMale),
+            createRadioButton("Saiyan Female (SYF)", characterConditonToggleGroup, entry.characterCondition, BcmValues.CharacterConditions.SaiyanFemale),
+            createRadioButton("Namekian (NMC)", characterConditonToggleGroup, entry.characterCondition, BcmValues.CharacterConditions.Namekian),
+            createRadioButton("Frieza Race (FRI)", characterConditonToggleGroup, entry.characterCondition, BcmValues.CharacterConditions.FriezaRace),
+            createRadioButton("Majin Male (MAM)", characterConditonToggleGroup, entry.characterCondition, BcmValues.CharacterConditions.MajinMale),
+            createRadioButton("Majin Female (MAF)", characterConditonToggleGroup, entry.characterCondition, BcmValues.CharacterConditions.MajinFemale),
         };
         
         VBox miscVBox = new VBox(30, 
@@ -591,7 +591,7 @@ public class Bcm {
         return radioButton;
     }
 
-    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, long value, RandomFlags randomFlag) {
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, long value, BcmValues.RandomFlags randomFlag) {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setToggleGroup(toggleGroup);
 
@@ -613,7 +613,7 @@ public class Bcm {
         return radioButton;
     }
 
-    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, long value, CharacterConditions characterCondition) {
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, long value, BcmValues.CharacterConditions characterCondition) {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setToggleGroup(toggleGroup);
 
@@ -1523,40 +1523,6 @@ public class Bcm {
         }
     }
 
-    public static enum RandomFlags {
-        None(0),
-        Random_BAC_Entry(1),
-        NoTargetCorrection(2),
-        ThreeInstanceSetup(3),
-        Unknown4(4),
-        Unknown6(6);
-
-        final int index;
-
-        RandomFlags(int index) {
-            this.index = index;
-        }
-    }
-
-    public static enum CharacterConditions {
-        None(0),
-        CustomCharacter(1),
-        HumanMale(2),
-        HumanFemale(3),
-        SaiyanMale(4),
-        SaiyanFemale(5),
-        Namekian(6),
-        FriezaRace(7),
-        MajinMale(8),
-        MajinFemale(9);
-
-        final int index;
-
-        CharacterConditions(int index) {
-            this.index = index;
-        }
-    }
-
     public static enum BcmValues {
         Mode,
         DirectionalInput,
@@ -1588,6 +1554,40 @@ public class Bcm {
         CUS_Aura,
         I104,
         CharacterCondition;
+
+        public static enum RandomFlags {
+            None(0),
+            Random_BAC_Entry(1),
+            NoTargetCorrection(2),
+            ThreeInstanceSetup(3),
+            Unknown4(4),
+            Unknown6(6);
+
+            final int index;
+
+            RandomFlags(int index) {
+                this.index = index;
+            }
+        }
+
+        public static enum CharacterConditions {
+            None(0),
+            CustomCharacter(1),
+            HumanMale(2),
+            HumanFemale(3),
+            SaiyanMale(4),
+            SaiyanFemale(5),
+            Namekian(6),
+            FriezaRace(7),
+            MajinMale(8),
+            MajinFemale(9);
+
+            final int index;
+
+            CharacterConditions(int index) {
+                this.index = index;
+            }
+        }
     }
 }
 
