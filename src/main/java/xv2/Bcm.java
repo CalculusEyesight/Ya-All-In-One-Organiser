@@ -7,11 +7,20 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
@@ -20,7 +29,6 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -34,7 +42,7 @@ import javafx.scene.control.Tab;
 
 public class Bcm {
     ArrayList<TreeItem<String>> allEntries;
-    ArrayList <BcmEntry> bcmEntries = new ArrayList<>();
+    HashMap<TreeItem<String> ,BcmEntry> bcmHashMap = new HashMap<>();
 
     TreeView<String> treeView = new TreeView<>();
     TreeItem<String> currentEntry = new TreeItem<>();
@@ -50,6 +58,10 @@ public class Bcm {
     MenuItem insert = new MenuItem("Insert Ctrl+I");
     MenuItem addNewChild = new MenuItem("Add New Child Ctrl+N");
     MenuItem addComment = new MenuItem("Add Comment Ctrl+Q");
+
+    int findIndex = 0;
+    String findText = null;
+    Object[] indexList = new Object[] {findIndex, findText};
   
     public Bcm() {
         entriesActionListener();
@@ -84,1418 +96,147 @@ public class Bcm {
     }
     
     public VBox createInputsVBox(BcmEntry entry) {
-        //directional input
-        Label directionalInputLabel = new Label("Directional input");
-        directionalInputLabel.setPrefWidth(100);
+        ToggleGroup behaviorToggleGroup = new ToggleGroup();
+        ToggleGroup option2ToggleGroup = new ToggleGroup();
+        ToggleGroup option3ToggleGroup = new ToggleGroup();
+        ToggleGroup option4ToggleGroup = new ToggleGroup();
+        ToggleGroup chargeTypeToggleGroup = new ToggleGroup();
 
-        //relative direction
-        Label relativeDirectionLabel = new Label("Relative Direction");
-        relativeDirectionLabel.getStyleClass().add("titled-address-label");
-        relativeDirectionLabel.setTranslateY(-8); 
-        relativeDirectionLabel.setTranslateX(10);
+        CheckBox[] relativeDirection = new CheckBox[] {
+            new CheckBox("Forwards"),
+            new CheckBox("Backwards"),
+            new CheckBox("Left"),
+            new CheckBox("Right")
+        };
 
-        CheckBox forwardsRD = new CheckBox("Forwards");
-        CheckBox backwardsRD = new CheckBox("Backwards");
-        CheckBox leftRD = new CheckBox("Left");
-        CheckBox rightRD = new CheckBox("Right");
+        CheckBox[] userDirection = new CheckBox[] {
+            new CheckBox("Input Activated Once"),
+            new CheckBox("Up"),
+            new CheckBox("Down"),
+            new CheckBox("Right"),
+            new CheckBox("Left")
+        };
 
-        forwardsRD.setSelected((entry.directionalInputs & 1L) != 0);
-        backwardsRD.setSelected((entry.directionalInputs & 2L) != 0);
-        leftRD.setSelected((entry.directionalInputs & 4L) != 0);
-        rightRD.setSelected((entry.directionalInputs & 8L) != 0);
+        CheckBox[] buttonInputGroup1 = new CheckBox[] {
+            new CheckBox("Light"),
+            new CheckBox("Heavy"),
+            new CheckBox("Blast"),
+            new CheckBox("Jump")
+        };
 
-        forwardsRD.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 1L;
-            }
-            else {
-                entry.directionalInputs &= ~1L;
-            }
-        });
-        backwardsRD.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 2L;
-            }
-            else {
-                entry.directionalInputs &= ~2L;
-            }
-        });
-        leftRD.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 4L;
-            }
-            else {
-                entry.directionalInputs &= ~4L;
-            }
-        });
-        rightRD.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 8L;
-            }
-            else {
-                entry.directionalInputs &= ~8L;
-            }
-        });
+        CheckBox[] buttonInputGroup2 = new CheckBox[] {
+            new CheckBox("Skill Menu"),
+            new CheckBox("Boost"),
+            new CheckBox("Guard"),
+            new CheckBox("Unknown 8")
+        };
 
-        VBox relativeDirectionBox = new VBox(2, forwardsRD, backwardsRD, leftRD, rightRD);
+        CheckBox[] buttonInputGroup3 = new CheckBox[] {
+            new CheckBox("Super Skill 1"),
+            new CheckBox("Super Skill 2"),
+            new CheckBox("Super Skill 3"),
+            new CheckBox("Super Skill 4")
+        };
 
-        VBox borderContainerRD = new VBox(relativeDirectionBox);
-        borderContainerRD.getStyleClass().add("titled-address-box");
-        borderContainerRD.setPadding(new Insets(12, 0, 0, 0));
+        CheckBox[] buttonInputGroup4 = new CheckBox[] {
+            new CheckBox("Ultimate Skill 1"),
+            new CheckBox("Ultimate Skill 2"),
+            new CheckBox("Awoken Skill"),
+            new CheckBox("Evasive Sklill")
+        };
 
-        StackPane relativeDirectionBoxStackPane = new StackPane(borderContainerRD, relativeDirectionLabel);
-        StackPane.setAlignment(relativeDirectionLabel, Pos.TOP_LEFT);
-        //relative direction
-        
-        //user direction
-        Label userDirectionLabel = new Label("User Direction");
-        userDirectionLabel.getStyleClass().add("titled-address-label");
-        userDirectionLabel.setTranslateY(-8); 
-        userDirectionLabel.setTranslateX(10);
+        CheckBox[] buttonInputGroup5 = new CheckBox[] {
+            new CheckBox("Skill Input"),
+            new CheckBox("Super Menu + Skill Input"),
+            new CheckBox("Ultimate Menu + Skill Input"),
+            new CheckBox("Unknown 20")
+        };
 
-        CheckBox inputActivatedOnceDI = new CheckBox("Input Activated Once");
-        CheckBox upDI = new CheckBox("Up");
-        CheckBox downDI = new CheckBox("Down");
-        CheckBox rightDI = new CheckBox("Right");
-        CheckBox leftDI = new CheckBox("Left");
+        CheckBox[] buttonInputGroup6 = new CheckBox[] {
+            new CheckBox("Locked On"),
+            new CheckBox("Descend"),
+            new CheckBox("Dragon Radar"),
+            new CheckBox("Jump 2")
+        };
 
-        inputActivatedOnceDI.setSelected((entry.directionalInputs & 16L) != 0);
-        upDI.setSelected((entry.directionalInputs & 32L) != 0);
-        downDI.setSelected((entry.directionalInputs & 64L) != 0);
-        rightDI.setSelected((entry.directionalInputs & 128L) != 0);
-        leftDI.setSelected((entry.directionalInputs & 256L) != 0);
+        CheckBox[] buttonInputGroup7 = new CheckBox[] {
+            new CheckBox("Ultimate Menu"),
+            new CheckBox("Unknown 26"),
+            new CheckBox("Unknown 27"),
+            new CheckBox("Unknown 28")
+        };
 
-        inputActivatedOnceDI.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 16L;
-            }
-            else {
-                entry.directionalInputs &= ~16L;
-            }
-        });
-        upDI.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 32L;
-            }
-            else {
-                entry.directionalInputs &= ~32L;
-            }
-        });
-        downDI.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 64L;
-            }
-            else {
-                entry.directionalInputs &= ~64L;
-            }
-        });
-        rightDI.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 128L;
-            }
-            else {
-                entry.directionalInputs &= ~128L;
-            }
-        });
-        leftDI.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 256L;
-            }
-            else {
-                entry.directionalInputs &= ~256L;
-            }
-        });
+        CheckBox[] buttonInputGroup8 = new CheckBox[] {
+            new CheckBox("Ultimate Menu 2"),
+            new CheckBox("Unknown 30"),
+            new CheckBox("Unknown 31"),
+            new CheckBox("Unknown 32")
+        };
 
-        VBox userDirectionVBox = new VBox(2, inputActivatedOnceDI, upDI, downDI, rightDI, leftDI);
+        RadioButton[] holdDownConditonsGroup1 = new RadioButton[] {
+            new RadioButton("Continue Until Released"),
+            new RadioButton("Delay Until Released"),
+            new RadioButton("Unknown 2"),
+            new RadioButton("Stop Skill From Activating")
+        };
 
-        VBox borderContainerUD = new VBox(userDirectionVBox);
-        borderContainerUD.getStyleClass().add("titled-address-box");
-        borderContainerUD.setPadding(new Insets(12, 0, 0, 0));
+        RadioButton[] holdDownConditonsGroup2 = new RadioButton[] {
+            new RadioButton("Unknown 5"),
+            new RadioButton("Unknown 6"),
+            new RadioButton("Unknown 7"),
+            new RadioButton("Unknown 8")
+        };
 
-        StackPane userDirectionBoxStackPane = new StackPane(borderContainerUD, userDirectionLabel);
-        StackPane.setAlignment(userDirectionLabel, Pos.TOP_LEFT);
-        //user direction
+        RadioButton[] holdDownConditonsGroup3 = new RadioButton[] {
+            new RadioButton("Unknown 9"),
+            new RadioButton("Unknown 10"),
+            new RadioButton("Unknown 11"),
+            new RadioButton("Unknown 12")
+        };
 
-        //unknown1
-        Label unknownDir1Label = new Label("Unknown 1");
-        unknownDir1Label.getStyleClass().add("titled-address-label");
-        unknownDir1Label.setTranslateY(-8); 
-        unknownDir1Label.setTranslateX(10);
+        RadioButton[] holdDownConditonsGroup4 = new RadioButton[] {
+            new RadioButton("Unknown 13"),
+            new RadioButton("Unknown 14"),
+            new RadioButton("Unknown 15"),
+            new RadioButton("Unknown 16")
+        };
 
-        CheckBox unknown10 = new CheckBox("Unknown 10");
-        CheckBox unknown11 = new CheckBox("Unknown 11");
-        CheckBox unknown12 = new CheckBox("Unknown 12");
-        CheckBox unknown13 = new CheckBox("Unknown 13");
-        CheckBox unknown14 = new CheckBox("Unknown 14");
+        RadioButton[] holdDownConditonsGroup5 = new RadioButton[] {
+            new RadioButton("Automatic"),
+            new RadioButton("Manual"),
+            new RadioButton("Hold Down To Loop"),
+            new RadioButton("Unknown 20")
+        };
 
-        unknown10.setSelected((entry.directionalInputs & 512L) != 0);
-        unknown11.setSelected((entry.directionalInputs & 1024L) != 0);
-        unknown12.setSelected((entry.directionalInputs & 2048L) != 0);
-        unknown13.setSelected((entry.directionalInputs & 4096L) != 0);
-        unknown14.setSelected((entry.directionalInputs & 8192L) != 0);
+        Node[] directionalInput = new Node[] {
+            createCheckBoxGroup("Relative Direction", relativeDirection, 1L, BcmValues.DirectionalInput),
+            createCheckBoxGroup("User Direction", userDirection, 16L, BcmValues.DirectionalInput),
+        };
 
-        unknown10.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 512L;
-            }
-            else {
-                entry.directionalInputs &= ~512L;
-            }
-        });
-        unknown11.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 1024L;
-            }
-            else {
-                entry.directionalInputs &= ~1024L;
-            }
-        });
-        unknown12.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 2048L;
-            }
-            else {
-                entry.directionalInputs &= ~2048L;
-            }
-        });
-        unknown13.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 4096L;
-            }
-            else {
-                entry.directionalInputs &= ~4096L;
-            }
-        });
-        unknown14.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 8192L;
-            }
-            else {
-                entry.directionalInputs &= ~8192L;
-            }
-        });
+        Node[] buttonInput = new Node[] {
+            createCheckBoxGroup("0x1", buttonInputGroup1, 1L, BcmValues.ButtonInput),
+            createCheckBoxGroup("0x10", buttonInputGroup2, 16L, BcmValues.ButtonInput),
+            createCheckBoxGroup("0x100", buttonInputGroup3, 256L, BcmValues.ButtonInput),
+            createCheckBoxGroup("0x1000", buttonInputGroup4, 4096L, BcmValues.ButtonInput),
+            createCheckBoxGroup("0x10000", buttonInputGroup5, 65536L, BcmValues.ButtonInput),
+            createCheckBoxGroup("0x100000", buttonInputGroup6, 1048576L, BcmValues.ButtonInput),
+            createCheckBoxGroup("0x1000000", buttonInputGroup7, 16777216L, BcmValues.ButtonInput),
+            createCheckBoxGroup("0x10000000", buttonInputGroup8, 268435456L, BcmValues.ButtonInput)
+        };
 
-        VBox unknownGroup1Box = new VBox(2, unknown10, unknown11, unknown12, unknown13, unknown14);
+        Node[] holdDownConditions = new Node[] {
+            createRadioButtonGroup("Behaviour", behaviorToggleGroup, holdDownConditonsGroup1, 1L, new float[] {2, 2}, BcmValues.HoldDownConditions),
+            createRadioButtonGroup("Option 2", option2ToggleGroup, holdDownConditonsGroup2, 16L, new float[] {2, 1.5f}, BcmValues.HoldDownConditions),
+            createRadioButtonGroup("Option 3", option3ToggleGroup, holdDownConditonsGroup3, 256L, new float[] {2, 1.5f}, BcmValues.HoldDownConditions),
+            createRadioButtonGroup("Option 4", option4ToggleGroup, holdDownConditonsGroup4, 4096L, new float[] {2, 1.5f}, BcmValues.HoldDownConditions),
+            createRadioButtonGroup("Charge Type", chargeTypeToggleGroup, holdDownConditonsGroup5, 65536L, new float[] {2, 1.5f}, BcmValues.HoldDownConditions)
+        };
 
-        VBox borderContainerUG1 = new VBox(unknownGroup1Box);
-        borderContainerUG1.getStyleClass().add("titled-address-box");
-        borderContainerUG1.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane unknownGroup1BoxStackPane = new StackPane(borderContainerUG1, unknownDir1Label);
-        StackPane.setAlignment(unknownDir1Label, Pos.TOP_LEFT);
-        //unknown1
-
-        //unknown2
-        Label unknownDir2Label = new Label("Unknown 2");
-        unknownDir2Label.getStyleClass().add("titled-address-label");
-        unknownDir2Label.setTranslateY(-8); 
-        unknownDir2Label.setTranslateX(10);
-
-        CheckBox unknown15 = new CheckBox("Unknown 15");
-        CheckBox unknown16 = new CheckBox("Unknown 16");
-        CheckBox unknown17 = new CheckBox("Unknown 17");
-        CheckBox unknown18 = new CheckBox("Unknown 18");
-        CheckBox unknown19 = new CheckBox("Unknown 19");
-
-        unknown15.setSelected((entry.directionalInputs & 16384L) != 0);
-        unknown16.setSelected((entry.directionalInputs & 32768L) != 0);
-        unknown17.setSelected((entry.directionalInputs & 65536L) != 0);
-        unknown18.setSelected((entry.directionalInputs & 131072L) != 0);
-        unknown19.setSelected((entry.directionalInputs & 262144L) != 0);
-
-        unknown15.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 16384L;
-            }
-            else {
-                entry.directionalInputs &= ~16384L;
-            }
-        });
-        unknown16.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 32768L;
-            }
-            else {
-                entry.directionalInputs &= ~32768L;
-            }
-        });
-        unknown17.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 65536L;
-            }
-            else {
-                entry.directionalInputs &= ~65536L;
-            }
-        });
-        unknown18.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 131072L;
-            }
-            else {
-                entry.directionalInputs &= ~131072L;
-            }
-        });
-        unknown19.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 262144L;
-            }
-            else {
-                entry.directionalInputs &= ~262144L;
-            }
-        });
-
-        VBox unknownGroup2Box = new VBox(2, unknown15, unknown16, unknown17, unknown18, unknown19);
-
-        VBox borderContainerUG2 = new VBox(unknownGroup2Box);
-        borderContainerUG2.getStyleClass().add("titled-address-box");
-        borderContainerUG2.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane unknownGroup2BoxStackPane = new StackPane(borderContainerUG2,unknownDir2Label);
-        StackPane.setAlignment(unknownDir2Label, Pos.TOP_LEFT);
-        //unknown2
-
-        //unknown3
-        Label unknownDir3Label = new Label("Unknown 3");
-        unknownDir3Label.getStyleClass().add("titled-address-label");
-        unknownDir3Label.setTranslateY(-8); 
-        unknownDir3Label.setTranslateX(10);
-
-        CheckBox unknown20 = new CheckBox("Unknown 20");
-        CheckBox unknown21 = new CheckBox("Unknown 21");
-        CheckBox unknown22 = new CheckBox("Unknown 22");
-        CheckBox unknown23 = new CheckBox("Unknown 23");
-        CheckBox unknown24 = new CheckBox("Unknown 24");
-
-        unknown20.setSelected((entry.directionalInputs & 524288L) != 0);
-        unknown21.setSelected((entry.directionalInputs & 1048576L) != 0);
-        unknown22.setSelected((entry.directionalInputs & 2097152L) != 0);
-        unknown23.setSelected((entry.directionalInputs & 4194304L) != 0);
-        unknown24.setSelected((entry.directionalInputs & 8388608L) != 0);
-
-        unknown20.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 524288L;
-            }
-            else {
-                entry.directionalInputs &= ~524288L;
-            }
-        });
-        unknown21.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 1048576L;
-            }
-            else {
-                entry.directionalInputs &= ~1048576L;
-            }
-        });
-        unknown22.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 2097152L;
-            }
-            else {
-                entry.directionalInputs &= ~2097152L;
-            }
-        });
-        unknown23.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) { 
-                entry.directionalInputs |= 4194304L;
-            }
-            else {
-                entry.directionalInputs &= ~4194304L;
-            }
-        });
-        unknown24.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 8388608L;
-            }
-            else {
-                entry.directionalInputs &= ~8388608L;
-            }
-        });
-        
-        VBox unknownGroup3Box = new VBox(2, unknown20, unknown21, unknown22, unknown23, unknown24);
-
-        VBox borderContainerUG3 = new VBox(unknownGroup3Box);
-        borderContainerUG3.getStyleClass().add("titled-address-box");
-        borderContainerUG3.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane unknownGroup3BoxStackPane = new StackPane(borderContainerUG3, unknownDir3Label);
-        StackPane.setAlignment(unknownDir3Label, Pos.TOP_LEFT);
-        //unknown3
-
-        //unknown4
-        Label unknownDir4Label = new Label("Unknown 4");
-        unknownDir4Label.getStyleClass().add("titled-address-label");
-        unknownDir4Label.setTranslateY(-8); 
-        unknownDir4Label.setTranslateX(10);
-
-        CheckBox unknown25 = new CheckBox("Unknown 25");
-        CheckBox unknown26 = new CheckBox("Unknown 26");
-        CheckBox unknown27 = new CheckBox("Unknown 27");
-        CheckBox unknown28 = new CheckBox("Unknown 28");
-        CheckBox unknown29 = new CheckBox("Unknown 29");
-
-        unknown25.setSelected((entry.directionalInputs & 16777216L) != 0);
-        unknown26.setSelected((entry.directionalInputs & 33554432L) != 0);
-        unknown27.setSelected((entry.directionalInputs & 67108864L) != 0);
-        unknown28.setSelected((entry.directionalInputs & 134217728L) != 0);
-        unknown29.setSelected((entry.directionalInputs & 268435456L) != 0);
-
-        unknown25.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 16777216L;
-            }
-            else {
-                entry.directionalInputs &= ~16777216L;
-            }
-        });
-        unknown26.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 33554432L;
-            }
-            else {
-                entry.directionalInputs &= ~33554432L;
-            }
-        });
-        unknown27.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 67108864L;
-            }
-            else {
-                entry.directionalInputs &= ~67108864L;
-            }
-        });
-        unknown28.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 134217728L;
-            }
-            else {
-                entry.directionalInputs &= ~134217728L;
-            }
-        });
-        unknown29.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 268435456L;
-            }
-            else {
-                entry.directionalInputs &= ~268435456L;
-            }
-        });
-        VBox unknownGroup4Box = new VBox(2, unknown25, unknown26, unknown27, unknown28, unknown29);
-
-        VBox borderContainerUG4=new VBox(unknownGroup4Box);
-        borderContainerUG4.getStyleClass().add("titled-address-box");
-        borderContainerUG4.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane unknownGroup4BoxStackPane = new StackPane(borderContainerUG4,unknownDir4Label);
-        StackPane.setAlignment(unknownDir4Label, Pos.TOP_LEFT);
-        //unknown4
-
-        //unknown5
-        Label unknownDir5Label = new Label("Unknown 5");
-        unknownDir5Label.getStyleClass().add("titled-address-label");
-        unknownDir5Label.setTranslateY(-8); 
-        unknownDir5Label.setTranslateX(10);
-
-        CheckBox unknown30 = new CheckBox("Unknown 30");
-        CheckBox unknown31 = new CheckBox("Unknown 31");
-        CheckBox unknown32 = new CheckBox("Unknown 32");
-
-        unknown30.setSelected((entry.directionalInputs & 536870912L) != 0);
-        unknown31.setSelected((entry.directionalInputs & 1073741824L) != 0);
-        unknown32.setSelected((entry.directionalInputs & 2147483648L) != 0);
-
-        unknown30.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 536870912L;
-            }
-            else {
-                entry.directionalInputs &= ~536870912L;
-            }
-        });
-        unknown31.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 1073741824L;
-            }
-            else {
-                entry.directionalInputs &= ~1073741824L;
-            }
-        });
-        unknown32.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.directionalInputs |= 2147483648L;
-            }
-            else {
-                entry.directionalInputs &= ~2147483648L;
-            }
-        });
-        VBox unknownGroup5Box = new VBox(2, unknown30, unknown31, unknown32);
-
-        VBox borderContainerUG5 = new VBox(unknownGroup5Box);
-        borderContainerUG5.getStyleClass().add("titled-address-box");
-        borderContainerUG5.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane unknownGroup5BoxStackPane = new StackPane(borderContainerUG5, unknownDir5Label);
-        StackPane.setAlignment(unknownDir5Label, Pos.TOP_LEFT);
-        //unknown5
-
-        HBox directionalInputHBox = new HBox(5,
-            directionalInputLabel, relativeDirectionBoxStackPane,
-            userDirectionBoxStackPane, unknownGroup1BoxStackPane,
-            unknownGroup2BoxStackPane, unknownGroup3BoxStackPane,
-            unknownGroup4BoxStackPane,unknownGroup5BoxStackPane
+        VBox inputsVBox = new VBox(100, 
+            createHBox(0, createLabel("Directional Input", 100), createHBox(5, directionalInput, false)), 
+            createHBox(0, createLabel("Button Input", 100), createGridPane(4, 2, buttonInput, false)), 
+            createHBox(0, createLabel("Hold Down\nConditions", 100), createHBox(5, holdDownConditions, false))
         );
-        directionalInputHBox.setAlignment(Pos.CENTER_LEFT);
-        //directional input 
-        
-        //button input
-        Label buttonInputLabel = new Label("Button Input");
-        buttonInputLabel.setPrefWidth(100);
-
-        //0x1
-        Label hexDigit0Label = new Label("0x1");
-        hexDigit0Label.getStyleClass().add("titled-address-label");
-        hexDigit0Label.setTranslateY(-8); 
-        hexDigit0Label.setTranslateX(10);
-
-        CheckBox light = new CheckBox("Light");
-        CheckBox heavy = new CheckBox("Heavy");
-        CheckBox blast = new CheckBox("Blast"); 
-        CheckBox jump = new CheckBox("Jump");
-
-        light.setSelected((entry.buttonInputs & 1L) != 0);
-        heavy.setSelected((entry.buttonInputs & 2L) != 0);
-        blast.setSelected((entry.buttonInputs & 4L) != 0);
-        jump.setSelected((entry.buttonInputs & 8L) != 0);
-
-        //0x1
-        light.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) { 
-                entry.buttonInputs |= 1L; 
-            }
-            else { 
-                entry.buttonInputs &= ~1L; 
-            }
-        });
-        heavy.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) { 
-                entry.buttonInputs |= 2L; 
-            }
-            else { 
-                entry.buttonInputs &= ~2L; 
-            }
-        });
-        blast.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) { 
-                entry.buttonInputs |= 4L; 
-            }
-            else { 
-                entry.buttonInputs &= ~4L; 
-            }
-        });
-        jump.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) { 
-                entry.buttonInputs |= 8L; 
-            }
-            else { 
-                entry.buttonInputs &= ~8L; 
-            }
-        });
-        VBox hexDigit0Box = new VBox(2, light, heavy, blast, jump);
-
-        VBox borderContainerHexDigit0 = new VBox(hexDigit0Box);
-        borderContainerHexDigit0.getStyleClass().add("titled-address-box");
-        borderContainerHexDigit0.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane hexDigit0StackPane = new StackPane(borderContainerHexDigit0, hexDigit0Label);
-        StackPane.setAlignment(hexDigit0Label, Pos.TOP_LEFT);
-        //0x1
-
-        //0x10
-        Label hexDigit1Label = new Label("0x10");
-        hexDigit1Label.getStyleClass().add("titled-address-label");
-        hexDigit1Label.setTranslateY(-8); 
-        hexDigit1Label.setTranslateX(10);
-
-        CheckBox skillMenu = new CheckBox("Skill Menu");
-        CheckBox boost = new CheckBox("Boost");
-        CheckBox guard = new CheckBox("Guard");
-        CheckBox unknown8 = new CheckBox("Unknown 8");
-
-        skillMenu.setSelected((entry.buttonInputs & 16L) != 0);
-        boost.setSelected((entry.buttonInputs & 32L) != 0);
-        guard.setSelected((entry.buttonInputs & 64L) != 0);
-        unknown8.setSelected((entry.buttonInputs & 128L) != 0);
-
-        skillMenu.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 16L;
-            } else {
-                entry.buttonInputs &= ~16L;
-            }
-        });
-        boost.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 32L;
-            } else {
-                entry.buttonInputs &= ~32L;
-            }
-        });
-        guard.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 64L;
-            } else {
-                entry.buttonInputs &= ~64L;
-            }
-        });
-        unknown8.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 128L;
-            } else {
-                entry.buttonInputs &= ~128L;
-            }
-        });
-        VBox hexDigit1Box = new VBox(2, skillMenu, boost, guard, unknown8);
-
-        VBox borderContainerHexDigit1 = new VBox(hexDigit1Box);
-        borderContainerHexDigit1.getStyleClass().add("titled-address-box");
-        borderContainerHexDigit1.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane hexDigit1StackPane = new StackPane(borderContainerHexDigit1, hexDigit1Label);
-        StackPane.setAlignment(hexDigit1Label, Pos.TOP_LEFT);
-        //0x10
-
-        //0x100
-        Label hexDigit2Label = new Label("0x100");
-        hexDigit2Label.getStyleClass().add("titled-address-label");
-        hexDigit2Label.setTranslateY(-8); 
-        hexDigit2Label.setTranslateX(10);
-
-        CheckBox superSkill1 = new CheckBox("Super Skill 1");
-        CheckBox superSkill2 = new CheckBox("Super Skill 2");
-        CheckBox superSkill3 = new CheckBox("Super Skill 3");
-        CheckBox superSkill4 = new CheckBox("Super Skill 4");
-
-        superSkill1.setSelected((entry.buttonInputs & 256L) != 0);
-        superSkill2.setSelected((entry.buttonInputs & 512L) != 0);
-        superSkill3.setSelected((entry.buttonInputs & 1024L) != 0);
-        superSkill4.setSelected((entry.buttonInputs & 2048L) != 0);
-
-        superSkill1.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 256L;
-            } else {
-                entry.buttonInputs &= ~256L;
-            }
-        });
-        superSkill2.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 512L;
-            } else {
-                entry.buttonInputs &= ~512L;
-            }
-        });
-        superSkill3.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 1024L;
-            } else {
-                entry.buttonInputs &= ~1024L;
-            }
-        });
-        superSkill4.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 2048L;
-            } else {
-                entry.buttonInputs &= ~2048L;
-            }
-        });
-        VBox hexDigit2Box = new VBox(2, superSkill1, superSkill2, superSkill3, superSkill4);
-
-        VBox borderContainerHexDigit2 = new VBox(hexDigit2Box);
-        borderContainerHexDigit2.getStyleClass().add("titled-address-box");
-        borderContainerHexDigit2.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane hexDigit2StackPane = new StackPane(borderContainerHexDigit2, hexDigit2Label);
-        StackPane.setAlignment(hexDigit2Label, Pos.TOP_LEFT); 
-        //0x100
-
-        //0x1000
-        Label hexDigit3Label = new Label("0x1000");
-        hexDigit3Label.getStyleClass().add("titled-address-label");
-        hexDigit3Label.setTranslateY(-8); 
-        hexDigit3Label.setTranslateX(10);
-
-        CheckBox ultimateSkill1 = new CheckBox("Ultimate Skill 1");
-        CheckBox ultimateSkill2 = new CheckBox("Ultimate Skill 2");
-        CheckBox awokenSkill = new CheckBox("Awoken Skill");
-        CheckBox evasiveSkill = new CheckBox("Evasive Skill");
-
-        ultimateSkill1.setSelected((entry.buttonInputs & 4096L) != 0);
-        ultimateSkill2.setSelected((entry.buttonInputs & 8192L) != 0);
-        awokenSkill.setSelected((entry.buttonInputs & 16384L) != 0);
-        evasiveSkill.setSelected((entry.buttonInputs & 32768L) != 0);
-
-        ultimateSkill1.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 4096L;
-            } else {
-                entry.buttonInputs &= ~4096L;
-            }
-        });
-        ultimateSkill2.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 8192L;
-            } else {
-                entry.buttonInputs &= ~8192L;
-            }
-        });
-        awokenSkill.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 16384L;
-            } else {
-                entry.buttonInputs &= ~16384L;
-            }
-        });
-        evasiveSkill.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 32768L;
-            } else {
-                entry.buttonInputs &= ~32768L;
-            }
-        });
-        VBox hexDigit3Box = new VBox(2, ultimateSkill1, ultimateSkill2, awokenSkill, evasiveSkill);
-
-        VBox borderContainerHexDigit3 = new VBox(hexDigit3Box);
-        borderContainerHexDigit3.getStyleClass().add("titled-address-box");
-        borderContainerHexDigit3.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane hexDigit3StackPane = new StackPane(borderContainerHexDigit3, hexDigit3Label);
-        StackPane.setAlignment(hexDigit3Label, Pos.TOP_LEFT);
-        //0x1000
-
-        //0x10000
-        Label hexDigit4Label = new Label("0x10000");
-        hexDigit4Label.getStyleClass().add("titled-address-label");
-        hexDigit4Label.setTranslateY(-8); 
-        hexDigit4Label.setTranslateX(10);
-
-        CheckBox skillInput = new CheckBox("Skill Input");
-        CheckBox superMenuPlusSkillInput = new CheckBox("Super Menu + Skill Input");
-        CheckBox ultimateMenuPlusSkillInput = new CheckBox("Ultimate Menu+Skill Input");
-        CheckBox unknown20Button = new CheckBox("Unknown 20");
-
-        skillInput.setSelected((entry.buttonInputs & 65536L) != 0);
-        superMenuPlusSkillInput.setSelected((entry.buttonInputs & 131072L) != 0);
-        ultimateMenuPlusSkillInput.setSelected((entry.buttonInputs & 262144L) != 0);
-        unknown20Button.setSelected((entry.buttonInputs & 524288L) != 0);
-
-        skillInput.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 65536L;
-            } else {
-                entry.buttonInputs &= ~65536L;
-            }
-        });
-        superMenuPlusSkillInput.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 131072L;
-            } else {
-                entry.buttonInputs &= ~131072L;
-            }
-        });
-        ultimateMenuPlusSkillInput.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 262144L;
-            } else {
-                entry.buttonInputs &= ~262144L;
-            }
-        });
-        unknown20Button.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 524288L;
-            } else {
-                entry.buttonInputs &= ~524288L;
-            }
-        });
-        VBox hexDigit4Box = new VBox(2, skillInput, superMenuPlusSkillInput, ultimateMenuPlusSkillInput, unknown20Button);
-
-        VBox borderContainerHexDigit4 = new VBox(hexDigit4Box);
-        borderContainerHexDigit4.getStyleClass().add("titled-address-box");
-        borderContainerHexDigit4.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane hexDigit4StackPane = new StackPane(borderContainerHexDigit4, hexDigit4Label);
-        StackPane.setAlignment(hexDigit4Label, Pos.TOP_LEFT);
-        //0x10000
-
-        //0x100000
-        Label hexDigit5Label = new Label("0x100000");
-        hexDigit5Label.getStyleClass().add("titled-address-label");
-        hexDigit5Label.setTranslateY(-8); 
-        hexDigit5Label.setTranslateX(10);
-
-        CheckBox lockedON = new CheckBox("Locked On");
-        CheckBox descend = new CheckBox("Descend");
-        CheckBox dragonRadar = new CheckBox("Dragon Radar");
-        CheckBox jump2 = new CheckBox("Jump 2");
-
-        lockedON.setSelected((entry.buttonInputs & 1048576L) != 0);
-        descend.setSelected((entry.buttonInputs & 2097152L) != 0);
-        dragonRadar.setSelected((entry.buttonInputs & 4194304L) != 0);
-        jump2.setSelected((entry.buttonInputs & 8388608L) != 0);
-
-        lockedON.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 1048576L;
-            } else {
-                entry.buttonInputs &= ~1048576L;
-            }
-        });
-        descend.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 2097152L;
-            } else {
-                entry.buttonInputs &= ~2097152L;
-            }
-        });
-        dragonRadar.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 4194304L;
-            } else {
-                entry.buttonInputs &= ~4194304L;
-            }
-        });
-        jump2.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 8388608L;
-            } else {
-                entry.buttonInputs &= ~8388608L;
-            }
-        });
-        VBox hexDigit5Box = new VBox(2, lockedON, descend, dragonRadar, jump2);
-
-        VBox borderContainerHexDigit5 = new VBox(hexDigit5Box);
-        borderContainerHexDigit5.getStyleClass().add("titled-address-box");
-        borderContainerHexDigit5.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane hexDigit5StackPane = new StackPane(borderContainerHexDigit5, hexDigit5Label);
-        StackPane.setAlignment(hexDigit5Label, Pos.TOP_LEFT);
-        //0x100000
-
-        //0x1000000
-        Label hexDigit6Label = new Label("0x1000000");
-        hexDigit6Label.getStyleClass().add("titled-address-label");
-        hexDigit6Label.setTranslateY(-8); 
-        hexDigit6Label.setTranslateX(10);
-
-        CheckBox ultimateMenu = new CheckBox("Ultimate Menu");
-        CheckBox unknown26ButtonInput = new CheckBox("Unknown 26");
-        CheckBox unknown27ButtonInput = new CheckBox("Unknown 27");
-        CheckBox unknown28ButtonInput = new CheckBox("Unknown 28");
-
-        ultimateMenu.setSelected((entry.buttonInputs & 16777216L) != 0);
-        unknown26ButtonInput.setSelected((entry.buttonInputs & 33554432L) != 0);
-        unknown27ButtonInput.setSelected((entry.buttonInputs & 67108864L) != 0);
-        unknown28ButtonInput.setSelected((entry.buttonInputs & 134217728L) != 0);
-
-        ultimateMenu.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 16777216L;
-            } else {
-                entry.buttonInputs &= ~16777216L;
-            }
-        });
-        unknown26ButtonInput.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 33554432L;
-            } else {
-                entry.buttonInputs &= ~33554432L;
-            }
-        });
-        unknown27ButtonInput.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 67108864L;
-            } else {
-                entry.buttonInputs &= ~67108864L;
-            }
-        });
-        unknown28ButtonInput.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 134217728L;
-            } else {
-                entry.buttonInputs &= ~134217728L;
-            }
-        });
-
-        VBox hexDigit6Box = new VBox(2, ultimateMenu, unknown26ButtonInput, unknown27ButtonInput, unknown28ButtonInput);
-
-        VBox borderContainerHexDigit6 = new VBox(hexDigit6Box);
-        borderContainerHexDigit6.getStyleClass().add("titled-address-box");
-        borderContainerHexDigit6.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane hexDigit6StackPane = new StackPane(borderContainerHexDigit6, hexDigit6Label);
-        StackPane.setAlignment(hexDigit6Label, Pos.TOP_LEFT);
-        //0x1000000
-
-        //0x10000000
-        Label hexDigit7Label = new Label("0x10000000");
-        hexDigit7Label.getStyleClass().add("titled-address-label");
-        hexDigit7Label.setTranslateY(-8); 
-        hexDigit7Label.setTranslateX(10);
-
-        CheckBox ultimateMenu2 = new CheckBox("Ultimate Menu 2");
-        CheckBox unknown30ButtonInput = new CheckBox("Unknown 30");
-        CheckBox unknown31ButtonInput = new CheckBox("Unknown 31");
-        CheckBox unknown32ButtonInput = new CheckBox("Unknown 32");
-
-        ultimateMenu2.setSelected((entry.buttonInputs & 268435456L) != 0);
-        unknown30ButtonInput.setSelected((entry.buttonInputs & 536870912L) != 0);
-        unknown31ButtonInput.setSelected((entry.buttonInputs & 1073741824L) != 0);
-        unknown32ButtonInput.setSelected((entry.buttonInputs & 2147483648L) != 0);
-
-        ultimateMenu2.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 268435456L;
-            } else {
-                entry.buttonInputs &= ~268435456L;
-            }
-        });
-        unknown30ButtonInput.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 536870912L;
-            } else {
-                entry.buttonInputs &= ~536870912L;
-            }
-        });
-        unknown31ButtonInput.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 1073741824L;
-            } else {
-                entry.buttonInputs &= ~1073741824L;
-            }
-        });
-        unknown32ButtonInput.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.buttonInputs |= 2147483648L;
-            } else {
-                entry.buttonInputs &= ~2147483648L;
-            }
-        });
-
-        VBox hexDigit7Box = new VBox(2, ultimateMenu2, unknown30ButtonInput, unknown31ButtonInput, unknown32ButtonInput);
-
-        VBox borderContainerhexDigit7 = new VBox(hexDigit7Box);
-        borderContainerhexDigit7.getStyleClass().add("titled-address-box");
-        borderContainerhexDigit7.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane hexDigit7StackPane = new StackPane(borderContainerhexDigit7, hexDigit7Label);
-        StackPane.setAlignment(hexDigit7Label, Pos.TOP_LEFT);
-        //0x10000000
-
-        GridPane buttonInputGridPane = new GridPane(10, 10);
-        buttonInputGridPane.add(hexDigit0StackPane, 0, 0);
-        buttonInputGridPane.add(hexDigit1StackPane, 1, 0);
-        buttonInputGridPane.add(hexDigit2StackPane, 2, 0);
-        buttonInputGridPane.add(hexDigit3StackPane, 3, 0);
-        buttonInputGridPane.add(hexDigit4StackPane, 0, 1);
-        buttonInputGridPane.add(hexDigit5StackPane, 1, 1); 
-        buttonInputGridPane.add(hexDigit6StackPane, 2, 1);
-        buttonInputGridPane.add(hexDigit7StackPane, 3, 1);
-
-        HBox buttonInputHBox = new HBox(5, buttonInputLabel, buttonInputGridPane);
-        buttonInputHBox.setAlignment(Pos.CENTER_LEFT);
-        //button input
-
-        //hold down conditions
-        Label holdDownConditionslabel = new Label("Hold Down \nConditions");
-        holdDownConditionslabel.setPrefWidth(100);
-        
-        //Action
-        Label actionLabel = new Label("Action");
-        actionLabel.getStyleClass().add("titled-address-label");
-        actionLabel.setTranslateY(-8); 
-        actionLabel.setTranslateX(10);
-
-        CheckBox continueUntilReleased = new CheckBox("Continue Until Released");
-        CheckBox delayUntilReleased = new CheckBox("Delay Until Released");
-        CheckBox unknown2HDC = new CheckBox("Unknown 2");
-        CheckBox stopSkillFromActivating = new CheckBox("Stop Skill From Activating");
-        CheckBox unknown4HDC = new CheckBox("Unknown 4");
- 
-        delayUntilReleased.setSelected((entry.holdDownConditions & 1L) != 0);       
-        unknown2HDC.setSelected((entry.holdDownConditions & 2L) != 0);              
-        stopSkillFromActivating.setSelected((entry.holdDownConditions& 4L) != 0);  
-        unknown4HDC.setSelected((entry.holdDownConditions & 8L) != 0);
-
-        if (delayUntilReleased.isSelected() || unknown2HDC.isSelected() || stopSkillFromActivating.isSelected() || unknown4HDC.isSelected()) {
-            continueUntilReleased.setSelected(false);
-        }
-        else {
-            continueUntilReleased.setSelected(true);
-        }
-
-        delayUntilReleased.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 1L;
-            } else {
-                entry.holdDownConditions &= ~1L;
-            }
-        });
-        unknown2HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 2L;
-            } else {
-                entry.holdDownConditions &= ~2L;
-            }
-        });
-        stopSkillFromActivating.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 4L;
-            } else {
-                entry.holdDownConditions &= ~4L;
-            }
-        });
-        unknown4HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 8L;
-            } else {
-                entry.holdDownConditions &= ~8L;
-            }
-        });
-
-        VBox actionBox = new VBox(2, continueUntilReleased, delayUntilReleased, unknown2HDC, stopSkillFromActivating,unknown4HDC);
-        actionBox.addEventHandler(ActionEvent.ACTION, event -> {
-            if (delayUntilReleased.isSelected() || unknown2HDC.isSelected()|| stopSkillFromActivating.isSelected()|| unknown4HDC.isSelected()) {
-                continueUntilReleased.setSelected(false);
-            }
-            else {
-                continueUntilReleased.setSelected(true);
-            }
-        });
-
-        VBox borderContainerAction = new VBox(actionBox);
-        borderContainerAction.getStyleClass().add("titled-address-box");
-        borderContainerAction.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane actionBoxStackPane = new StackPane(borderContainerAction, actionLabel);
-        StackPane.setAlignment(actionLabel, Pos.TOP_LEFT);
-        //Action
-
-        //Option 2
-        Label option2Label = new Label("Option 2");
-        option2Label.getStyleClass().add("titled-address-label");
-        option2Label.setTranslateY(-8); 
-        option2Label.setTranslateX(10);
-
-        CheckBox unknown5HDC = new CheckBox("Unknown 5");
-        CheckBox unknown6HDC = new CheckBox("Unknown 6");
-        CheckBox unknown7HDC = new CheckBox("Unknown 7");
-        CheckBox unknown8HDC = new CheckBox("Unknown 8");
-
-        unknown5HDC.setSelected((entry.holdDownConditions & 16L) != 0);   
-        unknown6HDC.setSelected((entry.holdDownConditions & 32L) != 0);      
-        unknown7HDC.setSelected((entry.holdDownConditions & 64L) != 0);       
-        unknown8HDC.setSelected((entry.holdDownConditions & 128L) != 0);     
-
-        unknown5HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 16L;
-            } else {
-                entry.holdDownConditions &= ~16L;
-            }
-        });
-        unknown6HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 32L;
-            } else {
-                entry.holdDownConditions &= ~32L;
-            }
-        });
-        unknown7HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 64L;
-            } else {
-                entry.holdDownConditions &= ~64L;
-            }
-        });
-        unknown8HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 128L;
-            } else {
-                entry.holdDownConditions &= ~128L;
-            }
-        });
-
-        VBox option2Box = new VBox(2, unknown5HDC, unknown6HDC, unknown7HDC, unknown8HDC);
-
-        VBox borderContainerOption2 = new VBox(option2Box);
-        borderContainerOption2.getStyleClass().add("titled-address-box");
-        borderContainerOption2.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option2BoxStackPane = new StackPane(borderContainerOption2, option2Label);
-        StackPane.setAlignment(option2Label, Pos.TOP_LEFT);
-        //Options 2
-
-        //Options 3
-        Label option3Label = new Label("Option 3");
-        option3Label.getStyleClass().add("titled-address-label");
-        option3Label.setTranslateY(-8); 
-        option3Label.setTranslateX(10);
-
-        CheckBox unknown9HDC = new CheckBox("Unknown 9");
-        CheckBox unknown10HDC = new CheckBox("Unknown 10");
-        CheckBox unknown11HDC = new CheckBox("Unknown 11");
-        CheckBox unknown12HDC = new CheckBox("Unknown 12");
-
-        unknown9HDC.setSelected((entry.holdDownConditions & 256L) != 0);   
-        unknown10HDC.setSelected((entry.holdDownConditions & 512L) != 0);     
-        unknown11HDC.setSelected((entry.holdDownConditions & 1024L) != 0);    
-        unknown12HDC.setSelected((entry.holdDownConditions & 2048L) != 0);    
-   
-
-        unknown9HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 256L;
-            } else {
-                entry.holdDownConditions &= ~256L;
-            }
-        });
-        unknown10HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 512L;
-            } else {
-                entry.holdDownConditions &= ~512L;
-            }
-        });
-        unknown11HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 1024L;
-            } else {
-                entry.holdDownConditions &= ~1024L;
-            }
-        });
-        unknown12HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 2048L;
-            } else {
-                entry.holdDownConditions &= ~2048L;
-            }
-        });
-
-        VBox option3Box = new VBox(2,unknown9HDC, unknown10HDC, unknown11HDC, unknown12HDC);
-
-        VBox borderContainerOption3 = new VBox(option3Box);
-        borderContainerOption3.getStyleClass().add("titled-address-box");
-        borderContainerOption3.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option3BoxStackPane = new StackPane(borderContainerOption3, option3Label);
-        StackPane.setAlignment(option3Label, Pos.TOP_LEFT);
-        //Options 3
-
-        //Options 4
-        Label option4Label = new Label("Option 4");
-        option4Label.getStyleClass().add("titled-address-label");
-        option4Label.setTranslateY(-8); 
-        option4Label.setTranslateX(10);
-
-        CheckBox unknown13HDC = new CheckBox("Unknown 13");
-        CheckBox unknown14HDC = new CheckBox("Unknown 14");
-        CheckBox unknown15HDC = new CheckBox("Unknown 15");
-        CheckBox unknown16HDC = new CheckBox("Unknown 16");
-
-        unknown13HDC.setSelected((entry.holdDownConditions & 4096L) != 0);    
-        unknown14HDC.setSelected((entry.holdDownConditions & 8192L) != 0);   
-        unknown15HDC.setSelected((entry.holdDownConditions & 16384L) != 0);   
-        unknown16HDC.setSelected((entry.holdDownConditions & 32768L) != 0);   
-
-        unknown13HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 4096L;
-            } else {
-                entry.holdDownConditions &= ~4096L;
-            }
-        });
-        unknown14HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 8192L;
-            } else {
-                entry.holdDownConditions &= ~8192L;
-            }
-        });
-        unknown15HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 16384L;
-            } else {
-                entry.holdDownConditions &= ~16384L;
-            }
-        });
-        unknown16HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 32768L;
-            } else {
-                entry.holdDownConditions &= ~32768L;
-            }
-        });
-        VBox option4Box = new VBox(2, unknown13HDC, unknown14HDC, unknown15HDC, unknown16HDC);
-
-        VBox borderContainerOption4 = new VBox(option4Box);
-        borderContainerOption4.getStyleClass().add("titled-address-box");
-        borderContainerOption4.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option4BoxStackPane = new StackPane(borderContainerOption4, option4Label);
-        StackPane.setAlignment(option4Label, Pos.TOP_LEFT);
-        //Options 4
-
-        //ChargeType
-        Label chargeTypeLabel = new Label("Charge Type");
-        chargeTypeLabel.getStyleClass().add("titled-address-label");
-        chargeTypeLabel.setTranslateY(-8); 
-        chargeTypeLabel.setTranslateX(10);
-
-        CheckBox automatic = new CheckBox("Automatic");
-        CheckBox manual = new CheckBox("Manual");
-        CheckBox unknown18HDC = new CheckBox("Unknown 18");
-        CheckBox unknown19HDC = new CheckBox("Unknown 19");
-        CheckBox unknown20HDC = new CheckBox("Unknown 20");
-
-        manual.setSelected((entry.holdDownConditions & 65536L) != 0);   
-        unknown18HDC.setSelected((entry.holdDownConditions & 131072L) != 0);  
-        unknown19HDC.setSelected((entry.holdDownConditions & 262144L) != 0);  
-        unknown20HDC.setSelected((entry.holdDownConditions & 524288L) != 0);  
-
-        if (manual.isSelected() || unknown18HDC.isSelected() || unknown19HDC.isSelected() || unknown20HDC.isSelected()) {
-            automatic.setSelected(false);
-        }
-        else {
-            automatic.setSelected(true);
-        }
-
-        manual.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 65536L;
-            } else {
-                entry.holdDownConditions &= ~65536L;
-            }
-        });
-        unknown18HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 131072L;
-            } else {
-                entry.holdDownConditions &= ~131072L;
-            }
-        });
-        unknown19HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 262144L;
-            } else {
-                entry.holdDownConditions &= ~262144L;
-            }
-        });
-        unknown20HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 524288L;
-            } else {
-                entry.holdDownConditions &= ~524288L;
-            }
-        });
-
-        VBox chargeTypeBox = new VBox(2, automatic, manual, unknown18HDC, unknown19HDC, unknown20HDC);
-        chargeTypeBox.addEventHandler(ActionEvent.ACTION, event -> {
-            if (manual.isSelected() || unknown18HDC.isSelected() || unknown19HDC.isSelected() || unknown20HDC.isSelected()) {
-                automatic.setSelected(false);
-            }
-            else {
-                automatic.setSelected(true);
-            }
-        });
-
-        VBox borderContainerChargeType = new VBox(chargeTypeBox);
-        borderContainerChargeType.getStyleClass().add("titled-address-box");
-        borderContainerChargeType.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane chargeTypeBoxStackPane = new StackPane(borderContainerChargeType, chargeTypeLabel);
-        StackPane.setAlignment(chargeTypeLabel, Pos.TOP_LEFT);
-        //ChargeType
-
-        //Options 6
-        Label option6Label = new Label("Option 6");
-        option6Label.getStyleClass().add("titled-address-label");
-        option6Label.setTranslateY(-8); 
-        option6Label.setTranslateX(10);
-
-        CheckBox unknown21HDC = new CheckBox("Unknown 21");
-        CheckBox unknown22HDC = new CheckBox("Unknown 22");
-        CheckBox unknown23HDC = new CheckBox("Unknown 23");
-        CheckBox unknown24HDC = new CheckBox("Unknown 24");
-
-        unknown21HDC.setSelected((entry.holdDownConditions & 1048576L) != 0); 
-        unknown22HDC.setSelected((entry.holdDownConditions & 2097152L) != 0); 
-        unknown23HDC.setSelected((entry.holdDownConditions & 4194304L) != 0); 
-        unknown24HDC.setSelected((entry.holdDownConditions & 8388608L) != 0); 
-
-        unknown21HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 1048576L;
-            } else {
-                entry.holdDownConditions &= ~1048576L;
-            }
-        });
-        unknown22HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 2097152L;
-            } else {
-                entry.holdDownConditions &= ~2097152L;
-            }
-        });
-        unknown23HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 4194304L;
-            } else {
-                entry.holdDownConditions &= ~4194304L;
-            }
-        });
-        unknown24HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 8388608L;
-            } else {
-                entry.holdDownConditions &= ~8388608L;
-            }
-        });
-
-        VBox option6Box = new VBox(2, unknown21HDC, unknown22HDC, unknown23HDC, unknown24HDC);
-
-        VBox borderContainerOption6 = new VBox(option6Box);
-        borderContainerOption6.getStyleClass().add("titled-address-box");
-        borderContainerOption6.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option6BoxStackPane = new StackPane(borderContainerOption6, option6Label);
-        StackPane.setAlignment(option6Label, Pos.TOP_LEFT);
-        //Options 6
-
-        //Options 7
-        Label option7Label = new Label("Option 7");
-        option7Label.getStyleClass().add("titled-address-label");
-        option7Label.setTranslateY(-8); 
-        option7Label.setTranslateX(10);
-
-        CheckBox unknown25HDC = new CheckBox("Unknown 25");
-        CheckBox unknown26HDC = new CheckBox("Unknown 26");
-        CheckBox unknown27HDC = new CheckBox("Unknown 27");
-        CheckBox unknown28HDC = new CheckBox("Unknown 28");
-
-        unknown25HDC.setSelected((entry.holdDownConditions & 16777216L) != 0);
-        unknown26HDC.setSelected((entry.holdDownConditions & 33554432L) != 0);
-        unknown27HDC.setSelected((entry.holdDownConditions & 67108864L) != 0);
-        unknown28HDC.setSelected((entry.holdDownConditions & 134217728L) != 0);
-
-        unknown25HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 16777216L;
-            } else {
-                entry.holdDownConditions &= ~16777216L;
-            }
-        });
-        unknown26HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 33554432L;
-            } else {
-                entry.holdDownConditions &= ~33554432L;
-            }
-        });
-        unknown27HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 67108864L;
-            } else {
-                entry.holdDownConditions &= ~67108864L;
-            }
-        });
-        unknown28HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 134217728L;
-            } else {
-                entry.holdDownConditions &= ~134217728L;
-            }
-        });
-
-        VBox option7Box = new VBox(2, unknown25HDC, unknown26HDC, unknown27HDC, unknown28HDC);
-
-        VBox borderContainerOption7 = new VBox(option7Box);
-        borderContainerOption7.getStyleClass().add("titled-address-box");
-        borderContainerOption7.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option7BoxStackPane = new StackPane(borderContainerOption7, option7Label);
-        StackPane.setAlignment(option7Label, Pos.TOP_LEFT);
-        //Options 7
-
-        //Options 8
-        Label option8Label = new Label("Option 8");
-        option8Label.getStyleClass().add("titled-address-label");
-        option8Label.setTranslateY(-8); 
-        option8Label.setTranslateX(10);
-
-        CheckBox unknown29HDC = new CheckBox("Unknown 29");
-        CheckBox unknown30HDC = new CheckBox("Unknown 30");
-        CheckBox unknown31HDC = new CheckBox("Unknown 31");
-        CheckBox unknown32HDC = new CheckBox("Unknown 32");
-
-        unknown29HDC.setSelected((entry.holdDownConditions & 268435456L) != 0);
-        unknown30HDC.setSelected((entry.holdDownConditions & 536870912L) != 0);
-        unknown31HDC.setSelected((entry.holdDownConditions & 1073741824L) != 0);
-        unknown32HDC.setSelected((entry.holdDownConditions & 2147483648L) != 0);
-
-        unknown29HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 268435456L;
-            } else {
-                entry.holdDownConditions &= ~268435456L;
-            }
-        });
-        unknown30HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 536870912L;
-            } else {
-                entry.holdDownConditions &= ~536870912L;
-            }
-        });
-        unknown31HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 1073741824L;
-            } else {
-                entry.holdDownConditions &= ~1073741824L;
-            }
-        });
-        unknown32HDC.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.holdDownConditions |= 2147483648L;
-            } else {
-                entry.holdDownConditions &= ~2147483648L;
-            }
-        });
-
-        VBox option8Box = new VBox(2, unknown29HDC, unknown30HDC, unknown31HDC, unknown32HDC);
-
-        VBox borderContainerOption8 = new VBox(option8Box);
-        borderContainerOption8.getStyleClass().add("titled-address-box");
-        borderContainerOption8.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option8BoxStackPane = new StackPane(borderContainerOption8, option8Label);
-        StackPane.setAlignment(option8Label, Pos.TOP_LEFT);
-        //Options 8
-
-        GridPane holdDownConditionsGridPane = new GridPane(10, 10);
-        holdDownConditionsGridPane.add(actionBoxStackPane ,0 ,0);
-        holdDownConditionsGridPane.add(option2BoxStackPane, 1, 0);
-        holdDownConditionsGridPane.add(option3BoxStackPane, 2, 0);
-        holdDownConditionsGridPane.add(option4BoxStackPane, 3, 0);
-        holdDownConditionsGridPane.add(chargeTypeBoxStackPane, 0, 1);
-        holdDownConditionsGridPane.add(option6BoxStackPane, 1, 1);
-        holdDownConditionsGridPane.add(option7BoxStackPane, 2, 1);
-        holdDownConditionsGridPane.add(option8BoxStackPane, 3, 1);
-
-        HBox holdDownConditionsHBox = new HBox(5, holdDownConditionslabel, holdDownConditionsGridPane);
-        holdDownConditionsHBox.setAlignment(Pos.CENTER_LEFT);
-        //hold down conditions
-
-        VBox inputsVBox = new VBox(55, directionalInputHBox, buttonInputHBox, holdDownConditionsHBox);
         inputsVBox.setPadding(new Insets(20, 0, 0, 8));
         inputsVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
@@ -1503,1420 +244,128 @@ public class Bcm {
     }
 
     private ScrollPane createActivatorScrollPane(BcmEntry entry) {
-        //Opponent Size Conditions
-        Label opponentSizeConditionsLabel = new Label("Opponent Size\nConditions");
-        opponentSizeConditionsLabel.setPrefWidth(120);
-
-        //Unk Size 1
-        Label unknownSize1Label = new Label("Unk Size 1");
-        unknownSize1Label.getStyleClass().add("titled-address-label");
-        unknownSize1Label.setTranslateY(-8); 
-        unknownSize1Label.setTranslateX(10);
-
-        CheckBox unknown1OpponentSizeConditions = new CheckBox("Unknown 1");
-        CheckBox unknown2OpponentSizeConditions = new CheckBox("Unknown 2");
-        CheckBox unknown3OpponentSizeConditions = new CheckBox("Unknown 3"); 
-        CheckBox unknown4OpponentSizeConditions = new CheckBox("Unknown 4");
-
-        unknown1OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 1L) != 0);          
-        unknown2OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 2L) != 0);          
-        unknown3OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 4L) != 0);         
-        unknown4OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 8L) != 0);     
-        
-        unknown1OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 1L;
-            } else {
-                entry.opponentSizeConditions &= ~1L;
-            }
-        });
-        unknown2OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 2L;
-            } else {
-                entry.opponentSizeConditions &= ~2L;
-            }
-        });
-        unknown3OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 4L;
-            } else {
-                entry.opponentSizeConditions &= ~4L;
-            }
-        });
-        unknown4OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 8L;
-            } else {
-                entry.opponentSizeConditions &= ~8L;
-            }
-        });
-
-        VBox unknownSize1Box = new VBox(2, unknown1OpponentSizeConditions, unknown2OpponentSizeConditions, unknown3OpponentSizeConditions, unknown4OpponentSizeConditions);
-
-        VBox borderContainerUnknownSize1Conditions = new VBox(unknownSize1Box);
-        borderContainerUnknownSize1Conditions.getStyleClass().add("titled-address-box");
-        borderContainerUnknownSize1Conditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane unknownSize1StackPane = new StackPane(borderContainerUnknownSize1Conditions, unknownSize1Label);
-        StackPane.setAlignment(unknownSize1Label, Pos.TOP_LEFT);
-        //Unk Size 1
-
-        //Unk Size 2
-        Label unknownSize2Label = new Label("Unk Size 2");
-        unknownSize2Label.getStyleClass().add("titled-address-label");
-        unknownSize2Label.setTranslateY(-8); 
-        unknownSize2Label.setTranslateX(10);
-
-        CheckBox unknown5OpponentSizeConditions = new CheckBox("Unknown 5");
-        CheckBox unknown6OpponentSizeConditions = new CheckBox("Unknown 6");
-        CheckBox unknown7OpponentSizeConditions = new CheckBox("Unknown 7"); 
-        CheckBox unknown8OpponentSizeConditions = new CheckBox("Unknown 8");
-
-        unknown5OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 16L) != 0);       
-        unknown6OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 32L) != 0);         
-        unknown7OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 64L) != 0);         
-        unknown8OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 128L) != 0);        
-
-        unknown5OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 16L;
-            } else {
-                entry.opponentSizeConditions &= ~16L;
-            }
-        });
-        unknown6OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 32L;
-            } else {
-                entry.opponentSizeConditions &= ~32L;
-            }
-        });
-        unknown7OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 64L;
-            } else {
-                entry.opponentSizeConditions &= ~64L;
-            }
-        });
-        unknown8OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions|= 128L;
-            } else {
-                entry.opponentSizeConditions &= ~128L;
-            }
-        });
-
-        VBox unknownSize2Box = new VBox(2, unknown5OpponentSizeConditions, unknown6OpponentSizeConditions, unknown7OpponentSizeConditions, unknown8OpponentSizeConditions);
-
-        VBox borderContainerUnknownSize2Conditions = new VBox(unknownSize2Box);
-        borderContainerUnknownSize2Conditions.getStyleClass().add("titled-address-box");
-        borderContainerUnknownSize2Conditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane unknownSize2StackPane = new StackPane(borderContainerUnknownSize2Conditions, unknownSize2Label);
-        StackPane.setAlignment(unknownSize2Label, Pos.TOP_LEFT);
-        //Unk Size 2
-
-        //Unk Size 3
-        Label unknownSize3Label = new Label("Unk Size 3");
-        unknownSize3Label.getStyleClass().add("titled-address-label");
-        unknownSize3Label.setTranslateY(-8); 
-        unknownSize3Label.setTranslateX(10);
-
-        CheckBox unknown9OpponentSizeConditions = new CheckBox("Unknown 9");
-        CheckBox unknown10OpponentSizeConditions = new CheckBox("Unknown 10");
-        CheckBox unknown11OpponentSizeConditions = new CheckBox("Unknown 11"); 
-        CheckBox unknown12OpponentSizeConditions = new CheckBox("Unknown 12");
-
-        unknown9OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 256L) != 0);        
-        unknown10OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 512L) != 0);       
-        unknown11OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 1024L) != 0);     
-        unknown12OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 2048L) != 0);    
-        
-        unknown9OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 256L;
-            } else {
-                entry.opponentSizeConditions &= ~256L;
-            }
-        });
-        unknown10OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 512L;
-            } else {
-                entry.opponentSizeConditions &= ~512L;
-            }
-        });
-        unknown11OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 1024L;
-            } else {
-                entry.opponentSizeConditions &= ~1024L;
-            }
-        });
-        unknown12OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 2048L;
-            } else {
-                entry.opponentSizeConditions &= ~2048L;
-            }
-        });
-
-        VBox unknownSize3Box = new VBox(2, unknown9OpponentSizeConditions, unknown10OpponentSizeConditions, unknown11OpponentSizeConditions, unknown12OpponentSizeConditions);
-
-        VBox borderContainerUnknownSize3Conditions = new VBox(unknownSize3Box);
-        borderContainerUnknownSize3Conditions.getStyleClass().add("titled-address-box");
-        borderContainerUnknownSize3Conditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane unknownSize3StackPane = new StackPane(borderContainerUnknownSize3Conditions, unknownSize3Label);
-        StackPane.setAlignment(unknownSize3Label, Pos.TOP_LEFT);
-        //Unk Size 3
-
-        //Unk Size 4
-        Label unknownSize4Label = new Label("Unk Size 4");
-        unknownSize4Label.getStyleClass().add("titled-address-label");
-        unknownSize4Label.setTranslateY(-8); 
-        unknownSize4Label.setTranslateX(10);
-
-        CheckBox unknown13OpponentSizeConditions = new CheckBox("Unknown 13");
-        CheckBox unknown14OpponentSizeConditions = new CheckBox("Unknown 14");
-        CheckBox unknown15OpponentSizeConditions = new CheckBox("Unknown 15"); 
-        CheckBox unknown16OpponentSizeConditions = new CheckBox("Unknown 16");
-
-        unknown13OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 4096L) != 0);      
-        unknown14OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 8192L) != 0);      
-        unknown15OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 16384L) != 0);     
-        unknown16OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 32768L) != 0);         
-
-        unknown13OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 4096L;
-            } else {
-                entry.opponentSizeConditions &= ~4096L;
-            }
-        });
-        unknown14OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 8192L;
-            } else {
-                entry.opponentSizeConditions &= ~8192L;
-            }
-        });
-        unknown15OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 16384L;
-            } else {
-                entry.opponentSizeConditions &= ~16384L;
-            }
-        });
-        unknown16OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 32768L;
-            } else {
-                entry.opponentSizeConditions &= ~32768L;
-            }
-        });
-
-        VBox unknownSize4Box = new VBox(2, unknown13OpponentSizeConditions, unknown14OpponentSizeConditions, unknown15OpponentSizeConditions, unknown16OpponentSizeConditions);
-
-        VBox borderContainerUnknownSize4Conditions = new VBox(unknownSize4Box);
-        borderContainerUnknownSize4Conditions.getStyleClass().add("titled-address-box");
-        borderContainerUnknownSize4Conditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane unknownSize4StackPane = new StackPane(borderContainerUnknownSize4Conditions, unknownSize4Label);
-        StackPane.setAlignment(unknownSize4Label, Pos.TOP_LEFT);
-        //Unk Size 4
-
-        //Opponent Size 1
-        Label opponentSize1Label = new Label("Opponent Size 1");
-        opponentSize1Label.getStyleClass().add("titled-address-label");
-        opponentSize1Label.setTranslateY(-8); 
-        opponentSize1Label.setTranslateX(10);
-
-        CheckBox unknown17OpponentSizeConditions = new CheckBox("Unknown 17");
-        CheckBox unknown18OpponentSizeConditions = new CheckBox("Unknown 18");
-        CheckBox unknown19OpponentSizeConditions = new CheckBox("Unknown 19"); 
-        CheckBox unknown20OpponentSizeConditions = new CheckBox("Unknown 20");
-
-        unknown17OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 65536L) != 0);   
-        unknown18OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 131072L) != 0);    
-        unknown19OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 262144L) != 0);   
-        unknown20OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 524288L) != 0); 
-
-        unknown17OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 65536L;
-            } else {
-                entry.opponentSizeConditions &= ~65536L;
-            }
-        });
-        unknown18OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 131072L;
-            } else {
-                entry.opponentSizeConditions &= ~131072L;
-            }
-        });
-        unknown19OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 262144L;
-            } else {
-               entry.opponentSizeConditions &= ~262144L;
-            }
-        });
-        unknown20OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 524288L;
-            } else {
-                entry.opponentSizeConditions &= ~524288L;
-            }
-        });
-
-        VBox opponentSize1Box = new VBox(2, unknown17OpponentSizeConditions, unknown18OpponentSizeConditions, unknown19OpponentSizeConditions, unknown20OpponentSizeConditions);
-
-        VBox borderContainerOpponentSize1Conditions = new VBox(opponentSize1Box);
-        borderContainerOpponentSize1Conditions.getStyleClass().add("titled-address-box");
-        borderContainerOpponentSize1Conditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane opponentSize1StackPane = new StackPane(borderContainerOpponentSize1Conditions, opponentSize1Label);
-        StackPane.setAlignment(opponentSize1Label, Pos.TOP_LEFT);
-        //Opponent Size 1
-
-        //Opponent Size 2
-        Label opponentSize2Label = new Label("Opponent Size 2");
-        opponentSize2Label.getStyleClass().add("titled-address-label");
-        opponentSize2Label.setTranslateY(-8); 
-        opponentSize2Label.setTranslateX(10);
-
-        CheckBox unknown21OpponentSizeConditions = new CheckBox("Unknown 21");
-        CheckBox unknown22OpponentSizeConditions = new CheckBox("Unknown 22");
-        CheckBox unknown23OpponentSizeConditions = new CheckBox("Unknown 23"); 
-        CheckBox unknown24OpponentSizeConditions = new CheckBox("Unknown 24");
-
-        unknown21OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 1048576L) != 0);
-        unknown22OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 2097152L) != 0);  
-        unknown23OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 4194304L) != 0);   
-        unknown24OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 8388608L) != 0);   
-
-        unknown21OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 1048576L;
-            } else {
-                entry.opponentSizeConditions &= ~1048576L;
-            }
-        });
-        unknown22OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 2097152L;
-            } else {
-                entry.opponentSizeConditions &= ~2097152L;
-            }
-        });
-        unknown23OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 4194304L;
-            } else {
-                entry.opponentSizeConditions &= ~4194304L;
-            }
-        });
-        unknown24OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 8388608L;
-            } else {
-                entry.opponentSizeConditions &= ~8388608L;
-            }
-        });
-
-        VBox opponentSize2Box = new VBox(2, unknown21OpponentSizeConditions, unknown22OpponentSizeConditions, unknown23OpponentSizeConditions, unknown24OpponentSizeConditions);
-
-        VBox borderContainerOpponentSize2Conditions = new VBox(opponentSize2Box);
-        borderContainerOpponentSize2Conditions.getStyleClass().add("titled-address-box");
-        borderContainerOpponentSize2Conditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane opponentSize2StackPane = new StackPane(borderContainerOpponentSize2Conditions, opponentSize2Label);
-        StackPane.setAlignment(opponentSize2Label, Pos.TOP_LEFT);
-        //Opponent Size 2
-
-        //Skill Upgrade 1
-        Label skillUpgrade1Label = new Label("Skill Upgrade 1");
-        skillUpgrade1Label.getStyleClass().add("titled-address-label");
-        skillUpgrade1Label.setTranslateY(-8); 
-        skillUpgrade1Label.setTranslateX(10);
-
-        CheckBox unknown25OpponentSizeConditions = new CheckBox("Unknown 25");
-        CheckBox unknown26OpponentSizeConditions = new CheckBox("Unknown 26");
-        CheckBox unknown27OpponentSizeConditions = new CheckBox("Unknown 27"); 
-        CheckBox unknown28OpponentSizeConditions = new CheckBox("Unknown 28");
-
-        unknown25OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 16777216L) != 0); 
-        unknown26OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 33554432L) != 0);  
-        unknown27OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 67108864L) != 0);  
-        unknown28OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 134217728L) != 0); 
-
-        unknown25OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 16777216L;
-            } else {
-                entry.opponentSizeConditions &= ~16777216L;
-            }
-        });
-        unknown26OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 33554432L;
-            } else {
-                entry.opponentSizeConditions &= ~33554432L;
-            }
-        });
-        unknown27OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 67108864L;
-            } else {
-                entry.opponentSizeConditions &= ~67108864L;
-            }
-        });
-        unknown28OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 134217728L;
-            } else {
-                entry.opponentSizeConditions &= ~134217728L;
-            }
-        });
-
-        VBox skillUpgrade1Box = new VBox(2, unknown25OpponentSizeConditions, unknown26OpponentSizeConditions, unknown27OpponentSizeConditions, unknown28OpponentSizeConditions);
-
-        VBox borderContainerSkillUpgrade1Conditions = new VBox(skillUpgrade1Box);
-        borderContainerSkillUpgrade1Conditions.getStyleClass().add("titled-address-box");
-        borderContainerSkillUpgrade1Conditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane skillUpgrade1StackPane = new StackPane(borderContainerSkillUpgrade1Conditions, skillUpgrade1Label);
-        StackPane.setAlignment(skillUpgrade1Label, Pos.TOP_LEFT);
-        //Skill Upgrade 1
-
-        //Skill Upgrade 2
-        Label skillUpgrade2Label = new Label("Skill Upgrade 2");
-        skillUpgrade2Label.getStyleClass().add("titled-address-label");
-        skillUpgrade2Label.setTranslateY(-8); 
-        skillUpgrade2Label.setTranslateX(10);
-
-        CheckBox unknown29OpponentSizeConditions = new CheckBox("Unknown 29");
-        CheckBox unknown30OpponentSizeConditions = new CheckBox("Unknown 30");
-        CheckBox unknown31OpponentSizeConditions = new CheckBox("Unknown 31"); 
-        CheckBox unknown32OpponentSizeConditions = new CheckBox("Unknown 32");
-
-        unknown29OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 268435456L) != 0); 
-        unknown30OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 536870912L) != 0);
-        unknown31OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 1073741824L) != 0);
-        unknown32OpponentSizeConditions.setSelected((entry.opponentSizeConditions & 2147483648L) != 0);
-
-        unknown29OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 268435456L;
-            } else {
-                entry.opponentSizeConditions &= ~268435456L;
-            }
-        });
-        unknown30OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 536870912L;
-            } else {
-                entry.opponentSizeConditions &= ~536870912L;
-            }
-        });
-        unknown31OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 1073741824L;
-            } else {
-                entry.opponentSizeConditions &= ~1073741824L;
-            }
-        });
-        unknown32OpponentSizeConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.opponentSizeConditions |= 2147483648L;
-            } else {
-                entry.opponentSizeConditions &= ~2147483648L;
-            }
-        });
-
-        VBox skillUpgrade2Box = new VBox(2, unknown29OpponentSizeConditions, unknown30OpponentSizeConditions, unknown31OpponentSizeConditions, unknown32OpponentSizeConditions);
-
-        VBox borderContainerSkillUpgrade2Conditions = new VBox(skillUpgrade2Box);
-        borderContainerSkillUpgrade2Conditions.getStyleClass().add("titled-address-box");
-        borderContainerSkillUpgrade2Conditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane skillUpgrade2StackPane = new StackPane(borderContainerSkillUpgrade2Conditions, skillUpgrade2Label);
-        StackPane.setAlignment(skillUpgrade2Label, Pos.TOP_LEFT);
-        //Skill Upgrade 2
-
-        GridPane opponentSizeConditionsGridPane = new GridPane(10, 10);
-        opponentSizeConditionsGridPane.add(unknownSize1StackPane, 0, 0); 
-        opponentSizeConditionsGridPane.add(unknownSize2StackPane, 1, 0);
-        opponentSizeConditionsGridPane.add(unknownSize3StackPane, 2, 0); 
-        opponentSizeConditionsGridPane.add(unknownSize4StackPane, 3, 0); 
-        opponentSizeConditionsGridPane.add(opponentSize1StackPane, 0, 1); 
-        opponentSizeConditionsGridPane.add(opponentSize2StackPane, 1, 1); 
-        opponentSizeConditionsGridPane.add(skillUpgrade1StackPane, 2, 1);
-        opponentSizeConditionsGridPane.add(skillUpgrade2StackPane, 3, 1); 
-
-        HBox opponentsSizeConditionsHBox = new HBox(5, opponentSizeConditionsLabel, opponentSizeConditionsGridPane);
-        opponentsSizeConditionsHBox.setAlignment(Pos.CENTER_LEFT);
-        //Opponents Size Conditons
-
-        //Minimum Loop Conditions
-        Label minimumLoopDurationLabel = new Label("Minimum Loop\nConditions");
-        minimumLoopDurationLabel.setPrefWidth(120);
-
-        Spinner<Integer> minimumLoopDurationSpinner = new Spinner<>(0, 65535, entry.minimumLoopDuration);
-        minimumLoopDurationSpinner.setEditable(true);
-        minimumLoopDurationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.minimumLoopDuration = newValue;
-            }
-        });
-
-        HBox minimumLoopDurationHBox = new HBox(5, minimumLoopDurationLabel, minimumLoopDurationSpinner);
-        minimumLoopDurationHBox.setAlignment(Pos.CENTER_LEFT);
-        //Minimum Loop Conditions
-
-        //Maximum Loop Conditions
-        Label maximumLoopDurationLabel = new Label("Maximum Loop\nConditions");
-        maximumLoopDurationLabel.setPrefWidth(120);
-        
-        Spinner<Integer> maximumLoopDurationSpinner = new Spinner<>(0, 65535, entry.maximumLoopDuration);
-        maximumLoopDurationSpinner.setEditable(true);
-        maximumLoopDurationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.maximumLoopDuration = newValue;
-            }
-        });
-
-        HBox maximumLoopDurationHBox = new HBox(5, maximumLoopDurationLabel, maximumLoopDurationSpinner);
-        maximumLoopDurationHBox.setAlignment(Pos.CENTER_LEFT);
-        //Maximum Loop Conditions
-
-        //Primary Activator Conditions
-        Label primaryActivatorConditionsLabel = new Label("Primary Activator\nConditions");
-        primaryActivatorConditionsLabel.setPrefWidth(120);
-        
-        //Position
-        Label positionLabel = new Label("Position");
-        positionLabel.getStyleClass().add("titled-address-label");
-        positionLabel.setTranslateY(-8); 
-        positionLabel.setTranslateX(10);
-
-        CheckBox standing = new CheckBox("Standing");
-        CheckBox floating = new CheckBox("Floating");
-        CheckBox touchingGround = new CheckBox("Touching Ground"); 
-        CheckBox onAttackHit = new CheckBox("On Attack Hit");
-
-        standing.setSelected((entry.primaryActivatorConditions & 1L) != 0);
-        floating.setSelected((entry.primaryActivatorConditions & 2L) != 0);
-        touchingGround.setSelected((entry.primaryActivatorConditions & 4L) != 0);
-        onAttackHit.setSelected((entry.primaryActivatorConditions & 8L) != 0);
-
-        standing.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 1L;
-            } else {
-                entry.primaryActivatorConditions &= ~1L;
-            }
-        });
-        floating.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 2L;
-            } else {
-                entry.primaryActivatorConditions &= ~2L;
-            }
-        });
-        touchingGround.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 4L;
-            } else {
-                entry.primaryActivatorConditions &= ~4L;
-            }
-        });
-        onAttackHit.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 8L;
-            } else {
-                entry.primaryActivatorConditions &= ~8L;
-            }
-        });
-
-        VBox positionBox = new VBox(2, standing, floating, touchingGround, onAttackHit);
-
-        VBox borderContainerPositionConditions = new VBox(positionBox);
-        borderContainerPositionConditions.getStyleClass().add("titled-address-box");
-        borderContainerPositionConditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane positionStackPane = new StackPane(borderContainerPositionConditions, positionLabel);
-        StackPane.setAlignment(positionLabel, Pos.TOP_LEFT);
-        //Position
-
-        //Distance and Transformation
-        Label distanceTransformationLabel = new Label("Distance And Transformation");
-        distanceTransformationLabel.getStyleClass().add("titled-address-label");
-        distanceTransformationLabel.setTranslateY(-8); 
-        distanceTransformationLabel.setTranslateX(10);
-
-        CheckBox attackBlocked = new CheckBox("Attack Blocked");
-        CheckBox closeToTarget = new CheckBox("Close To Target");
-        CheckBox farFromTarget = new CheckBox("Far From Target"); 
-        CheckBox inBaseForm = new CheckBox("In Base Form");
-
-        attackBlocked.setSelected((entry.primaryActivatorConditions & 16L) != 0);
-        closeToTarget.setSelected((entry.primaryActivatorConditions & 32L) != 0);
-        farFromTarget.setSelected((entry.primaryActivatorConditions & 64L) != 0);
-        inBaseForm.setSelected((entry.primaryActivatorConditions & 128L) != 0);
-
-        attackBlocked.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 16L;
-            } else {
-                entry.primaryActivatorConditions &= ~16L;
-            }
-        });
-        closeToTarget.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 32L;
-            } else {
-                entry.primaryActivatorConditions &= ~32L;
-            }
-        });
-        farFromTarget.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 64L;
-            } else {
-                entry.primaryActivatorConditions &= ~64L;
-            }
-        });
-        inBaseForm.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 128L;
-            } else {
-                entry.primaryActivatorConditions &= ~128;
-            }
-        });
-
-        VBox distanceTransformationBox = new VBox(2, attackBlocked, closeToTarget, farFromTarget, inBaseForm);
-
-        VBox borderContainerdistanceTransformationConditions = new VBox(distanceTransformationBox);
-        borderContainerdistanceTransformationConditions.getStyleClass().add("titled-address-box");
-        borderContainerdistanceTransformationConditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane distanceTransformationStackPane = new StackPane(borderContainerdistanceTransformationConditions, distanceTransformationLabel);
-        StackPane.setAlignment(distanceTransformationLabel, Pos.TOP_LEFT);
-        //Distance and Transformation
-
-        //Primary Activator
-        Label primaryActivatorLabel=new Label("Primary Activator");
-        primaryActivatorLabel.getStyleClass().add("titled-address-label");
-        primaryActivatorLabel.setTranslateY(-8); 
-        primaryActivatorLabel.setTranslateX(10);
-
-        CheckBox inTransformedState = new CheckBox("In Transformed State");
-        CheckBox flashOnOffUnlessTargeting = new CheckBox("Flash On/Off Unless Targeting");
-        CheckBox unknown11PrimaryActivatorConditions = new CheckBox("Unknown 11"); 
-        CheckBox idle = new CheckBox("Idle");
-
-        inTransformedState.setSelected((entry.primaryActivatorConditions & 256L) != 0);
-        flashOnOffUnlessTargeting.setSelected((entry.primaryActivatorConditions & 512L) != 0);
-        unknown11PrimaryActivatorConditions.setSelected((entry.primaryActivatorConditions & 1024L) != 0);
-        idle.setSelected((entry.primaryActivatorConditions & 2048L) != 0);
-
-        inTransformedState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 256L;
-            } else {
-                entry.primaryActivatorConditions &= ~256L;
-            }
-        });
-        flashOnOffUnlessTargeting.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 512L;
-            } else {
-                entry.primaryActivatorConditions &= ~512L;
-            }
-        });
-        unknown11PrimaryActivatorConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 1024L;
-            } else {
-                entry.primaryActivatorConditions &= ~1024L;
-            }
-        });
-        idle.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 2048L;
-            } else {
-                entry.primaryActivatorConditions &= ~2048L;
-            }
-        });
-
-        VBox primaryActivatorBox = new VBox(2, inTransformedState, flashOnOffUnlessTargeting, unknown11PrimaryActivatorConditions, idle);
-
-        VBox borderContainerPrimaryActivator = new VBox(primaryActivatorBox);
-        borderContainerPrimaryActivator.getStyleClass().add("titled-address-box");
-        borderContainerPrimaryActivator.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane primaryActivatorStackPane = new StackPane(borderContainerPrimaryActivator, primaryActivatorLabel);
-        StackPane.setAlignment(primaryActivatorLabel, Pos.TOP_LEFT);
-        //Primary Activator
-
-        //Counter and Ki Amount
-        Label counterKiAmountLabel = new Label("Counter And Ki Amount");
-        counterKiAmountLabel.getStyleClass().add("titled-address-label");
-        counterKiAmountLabel.setTranslateY(-8); 
-        counterKiAmountLabel.setTranslateX(10);
-
-        CheckBox counterMelee = new CheckBox("Counter Melee");
-        CheckBox counterProjectile = new CheckBox("Counter Projectile");
-        CheckBox kiBelow100 = new CheckBox("Ki < 100%"); 
-        CheckBox kiAbove0 = new CheckBox("Ki > 0%");
-
-        counterMelee.setSelected((entry.primaryActivatorConditions & 4096L) != 0);
-        counterProjectile.setSelected((entry.primaryActivatorConditions & 8192L) != 0);
-        kiBelow100.setSelected((entry.primaryActivatorConditions & 16384L) != 0);
-        kiAbove0.setSelected((entry.primaryActivatorConditions & 32768L) != 0);
-
-        counterMelee.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 4096L;
-            } else {
-                entry.primaryActivatorConditions &= ~4096L;
-            }
-        });
-        counterProjectile.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 8192L;
-            } else {
-                entry.primaryActivatorConditions &= ~8192L;
-            }
-        });
-        kiBelow100.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 16384L;
-            } else {
-                entry.primaryActivatorConditions &= ~16384L;
-            }
-        });
-        kiAbove0.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 32768L;
-            } else {
-                entry.primaryActivatorConditions &= ~32768L;
-            }
-        });
-
-        VBox counterKiAmountBox = new VBox(2, counterMelee, counterProjectile, kiBelow100, kiAbove0);
-
-        VBox borderContainercounterKiAmountConditions = new VBox(counterKiAmountBox);
-        borderContainercounterKiAmountConditions.getStyleClass().add("titled-address-box");
-        borderContainercounterKiAmountConditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane counterKiAmountStackPane = new StackPane(borderContainercounterKiAmountConditions, counterKiAmountLabel);
-        StackPane.setAlignment(counterKiAmountLabel, Pos.TOP_LEFT);
-        //Counter and Ki Amount
-
-        //Touching
-        Label touchingLabel = new Label("Touching");
-        touchingLabel.getStyleClass().add("titled-address-label");
-        touchingLabel.setTranslateY(-8); 
-        touchingLabel.setTranslateX(10);
-
-        CheckBox unknown17PrimaryActivatorConditions = new CheckBox("Unknown 17");
-        CheckBox unknown18PrimaryActivatorConditions = new CheckBox("Unknown 18");
-        CheckBox ground = new CheckBox("Ground"); 
-        CheckBox opponent = new CheckBox("Opponent");
-
-        unknown17PrimaryActivatorConditions.setSelected((entry.primaryActivatorConditions & 65536L) != 0);
-        unknown18PrimaryActivatorConditions.setSelected((entry.primaryActivatorConditions & 131072L) != 0);
-        ground.setSelected((entry.primaryActivatorConditions & 262144L) != 0);
-        opponent.setSelected((entry.primaryActivatorConditions & 524288L) != 0);
-
-        unknown17PrimaryActivatorConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 65536L;
-            } else {
-                entry.primaryActivatorConditions &= ~65536L;
-            }
-        });
-        unknown18PrimaryActivatorConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 131072L;
-            } else {
-                entry.primaryActivatorConditions &= ~131072L;
-            }
-        });
-        ground.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 262144L;
-            } else {
-                entry.primaryActivatorConditions &= ~262144L;
-            }
-        });
-        opponent.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 524288L;
-            } else {
-                entry.primaryActivatorConditions &= ~524288L;
-            }
-        });
-
-        VBox touchingBox = new VBox(2, unknown17PrimaryActivatorConditions, unknown18PrimaryActivatorConditions, ground, opponent);
-
-        VBox borderContainertouchingConditions = new VBox(touchingBox);
-        borderContainertouchingConditions.getStyleClass().add("titled-address-box");
-        borderContainertouchingConditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane touchingStackPane = new StackPane(borderContainertouchingConditions, touchingLabel);
-        StackPane.setAlignment(touchingLabel, Pos.TOP_LEFT);
-        //Touching
-
-        //Targeting
-        Label targetingLabel = new Label("Targeting");
-        targetingLabel.getStyleClass().add("titled-address-label");
-        targetingLabel.setTranslateY(-8); 
-        targetingLabel.setTranslateX(10);
-
-        CheckBox opponentKnockback = new CheckBox("Opponent Knockback");
-        CheckBox unknown22PrimaryActivatorConditions = new CheckBox("Unknown 22");
-        CheckBox targetingOpponent = new CheckBox("Targeting Opponent"); 
-        CheckBox unknown24PrimaryActivatorConditions = new CheckBox("Unknown 24");
-
-        opponentKnockback.setSelected((entry.primaryActivatorConditions & 1048576L) != 0);
-        unknown22PrimaryActivatorConditions.setSelected((entry.primaryActivatorConditions & 2097152L) != 0);
-        targetingOpponent.setSelected((entry.primaryActivatorConditions & 4194304L) != 0);
-        unknown24PrimaryActivatorConditions.setSelected((entry.primaryActivatorConditions & 8388608L) != 0);
-
-        opponentKnockback.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 1048576L;
-            } else {
-                entry.primaryActivatorConditions &= ~1048576L;
-            }
-        });
-        unknown22PrimaryActivatorConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 2097152L;
-            } else {
-                entry.primaryActivatorConditions &= ~2097152L;
-            }
-        });
-        targetingOpponent.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 4194304L;
-            } else {
-                entry.primaryActivatorConditions &= ~4194304L;
-            }
-        });
-        unknown24PrimaryActivatorConditions.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 8388608L;
-            } else {
-                entry.primaryActivatorConditions &= ~8388608L;
-            }
-        });
-
-        VBox targetingBox = new VBox(2, opponentKnockback, unknown22PrimaryActivatorConditions, targetingOpponent, unknown24PrimaryActivatorConditions);
-
-        VBox borderContainerTargetingConditions = new VBox(targetingBox);
-        borderContainerTargetingConditions.getStyleClass().add("titled-address-box");
-        borderContainerTargetingConditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane targetingStackPane = new StackPane(borderContainerTargetingConditions, targetingLabel);
-        StackPane.setAlignment(targetingLabel, Pos.TOP_LEFT);
-        //Targeting
-
-        //Collision and Stamina
-        Label collisionStaminaLabel = new Label("Collision/Stamina");
-        collisionStaminaLabel.getStyleClass().add("titled-address-label");
-        collisionStaminaLabel.setTranslateY(-8); 
-        collisionStaminaLabel.setTranslateX(10);
-
-        CheckBox activateProjectile = new CheckBox("Activate Projectile");
-        CheckBox staminaAboveZero = new CheckBox("Stamina > 0%");
-        CheckBox notNearStageCeiling = new CheckBox("Not Near Stage Ceiling"); 
-        CheckBox notNearCertainObjects = new CheckBox("Not Near Certain Objects");
-
-        activateProjectile.setSelected((entry.primaryActivatorConditions & 16777216L) != 0);
-        staminaAboveZero.setSelected((entry.primaryActivatorConditions & 33554432L) != 0);
-        notNearStageCeiling.setSelected((entry.primaryActivatorConditions & 67108864L) != 0);
-        notNearCertainObjects.setSelected((entry.primaryActivatorConditions & 134217728L) != 0);
-
-        activateProjectile.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 16777216L;
-            } else {
-                entry.primaryActivatorConditions &= ~16777216L;
-            }
-        });
-        staminaAboveZero.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 33554432L;
-            } else {
-                entry.primaryActivatorConditions &= ~33554432L;
-            }
-        });
-        notNearStageCeiling.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 67108864L;
-            } else {
-                entry.primaryActivatorConditions &= ~67108864L;
-            }
-        });
-        notNearCertainObjects.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 134217728L;
-            } else {
-                entry.primaryActivatorConditions &= ~134217728L;
-            }
-        });
-
-        VBox collisionStaminaBox = new VBox(2, activateProjectile, staminaAboveZero, notNearStageCeiling, notNearCertainObjects);
-
-        VBox borderContainerCollisionStaminaConditions = new VBox(collisionStaminaBox);
-        borderContainerCollisionStaminaConditions.getStyleClass().add("titled-address-box");
-        borderContainerCollisionStaminaConditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane collisionStaminaStackPane = new StackPane(borderContainerCollisionStaminaConditions, collisionStaminaLabel);
-        StackPane.setAlignment(collisionStaminaLabel, Pos.TOP_LEFT);
-        //Collision and Stamina
-
-        //Health
-        Label healthLabel = new Label("Health");
-        healthLabel.getStyleClass().add("titled-address-label");
-        healthLabel.setTranslateY(-8); 
-        healthLabel.setTranslateX(10);
-
-        CheckBox usersHealth_OneUse = new CheckBox("Users Health (One Use)");
-        CheckBox targetsHealthLessThan25 = new CheckBox("Target's Health < 25%");
-        CheckBox currentBacEntryHits = new CheckBox("Current BAC Entry Hits"); 
-        CheckBox usersHealth = new CheckBox("Users Health");
-
-        usersHealth_OneUse.setSelected((entry.primaryActivatorConditions & 268435456L) != 0);
-        targetsHealthLessThan25.setSelected((entry.primaryActivatorConditions & 536870912L) != 0);
-        currentBacEntryHits.setSelected((entry.primaryActivatorConditions & 1073741824L) != 0);
-        usersHealth.setSelected((entry.primaryActivatorConditions & 2147483648L) != 0);
-
-        usersHealth_OneUse.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 268435456L;
-            } else {
-                entry.primaryActivatorConditions &= ~268435456L;
-            }
-        });
-        targetsHealthLessThan25.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 536870912L;
-            } else {
-                entry.primaryActivatorConditions &= ~536870912L;
-            }
-        });
-        currentBacEntryHits.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 1073741824L;
-            } else {
-                entry.primaryActivatorConditions &= ~1073741824L;
-            }
-        });
-        usersHealth.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.primaryActivatorConditions |= 2147483648L;
-            } else {
-                entry.primaryActivatorConditions &= ~2147483648L;
-            }
-        });
-
-        VBox healthBox = new VBox(2, usersHealth_OneUse, targetsHealthLessThan25, currentBacEntryHits, usersHealth);
-
-        VBox borderContainerhealthConditions = new VBox(healthBox);
-        borderContainerhealthConditions.getStyleClass().add("titled-address-box");
-        borderContainerhealthConditions.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane healthStackPane = new StackPane(borderContainerhealthConditions, healthLabel);
-        StackPane.setAlignment(healthLabel, Pos.TOP_LEFT);
-        //Health
-
-        GridPane primaryActivatorConditionsGridPane=new GridPane(10, 10);
-        primaryActivatorConditionsGridPane.add(positionStackPane, 0, 0); 
-        primaryActivatorConditionsGridPane.add(distanceTransformationStackPane, 1, 0); 
-        primaryActivatorConditionsGridPane.add(primaryActivatorStackPane, 2, 0); 
-        primaryActivatorConditionsGridPane.add(counterKiAmountStackPane, 3, 0); 
-        primaryActivatorConditionsGridPane.add(touchingStackPane, 0, 1);
-        primaryActivatorConditionsGridPane.add(targetingStackPane, 1, 1); 
-        primaryActivatorConditionsGridPane.add(collisionStaminaStackPane, 2, 1);
-        primaryActivatorConditionsGridPane.add(healthStackPane, 3, 1); 
-
-        HBox primaryActivatorConditionsHBox = new HBox(5, primaryActivatorConditionsLabel, primaryActivatorConditionsGridPane);
-        primaryActivatorConditionsHBox.setAlignment(Pos.CENTER_LEFT);
-        //Primary Activator Conditions
-
-        //Activator State
-        Label activatorStateLabel = new Label("Activator State");
-        activatorStateLabel.setPrefWidth(120);
-        
-        //activator state box 1
-        Label activatorState1Label = new Label("Activator State 1");
-        activatorState1Label.getStyleClass().add("titled-address-label");
-        activatorState1Label.setTranslateY(-8); 
-        activatorState1Label.setTranslateX(10);
-
-        CheckBox idleActivatorState = new CheckBox("Idle");
-        CheckBox comboSkill = new CheckBox("Combo/Skill");
-        CheckBox boosting = new CheckBox("Boosting"); 
-        CheckBox guarding = new CheckBox("Guarding");
-
-        idleActivatorState.setSelected((entry.activatorState & 1L) != 0);
-        comboSkill.setSelected((entry.activatorState & 2L) != 0);
-        boosting.setSelected((entry.activatorState & 4L) != 0);
-        guarding.setSelected((entry.activatorState & 8L) != 0);
-
-        idleActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 1L;
-            } else {
-                entry.activatorState &= ~1L;
-            }
-        });
-        comboSkill.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 2L;
-            } else {
-                entry.activatorState &= ~2L;
-            }
-        });
-        boosting.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 4L;
-            } else {
-                entry.activatorState &= ~4L;
-            }
-        });
-        guarding.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 8L;
-            } else {
-                entry.activatorState &= ~8L;
-            }
-        });
-
-        VBox activatorState1Box = new VBox(2, idleActivatorState, comboSkill, boosting, guarding);
-
-        VBox borderContainerActivatorState1 = new VBox(activatorState1Box);
-        borderContainerActivatorState1.getStyleClass().add("titled-address-box");
-        borderContainerActivatorState1.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane activatorState1StackPane = new StackPane(borderContainerActivatorState1, activatorState1Label);
-        StackPane.setAlignment(activatorState1Label, Pos.TOP_LEFT);
-        //activator state box 1
-
-        //activator state box 2
-        Label activatorState2Label = new Label("Activator State 2");
-        activatorState2Label.getStyleClass().add("titled-address-label");
-        activatorState2Label.setTranslateY(-8); 
-        activatorState2Label.setTranslateX(10);
-
-        CheckBox receivingDamage = new CheckBox("Receiving Damage");
-        CheckBox jumping = new CheckBox("Jumping");
-        CheckBox notBeingDamaged = new CheckBox("Not Being Damaged"); 
-        CheckBox targetAttackingPlayer = new CheckBox("Target Attacking Player");
-
-        receivingDamage.setSelected((entry.activatorState & 16L) != 0);
-        jumping.setSelected((entry.activatorState & 32L) != 0);
-        notBeingDamaged.setSelected((entry.activatorState & 64L) != 0);
-        targetAttackingPlayer.setSelected((entry.activatorState & 128L) != 0);
-
-        receivingDamage.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 16L;
-            } else {
-                entry.activatorState &= ~16L;
-            }
-        });
-        jumping.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 32L;
-            } else {
-                entry.activatorState &= ~32L;
-            }
-        });
-        notBeingDamaged.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 64L;
-            } else {
-                entry.activatorState &= ~64L;
-            }
-        });
-        targetAttackingPlayer.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 128L;
-            } else {
-                entry.activatorState &= ~128L;
-            }
-        });
-
-        VBox activatorState2Box = new VBox(2, receivingDamage,jumping,notBeingDamaged,targetAttackingPlayer);
-
-        VBox borderContainerActivatorState2 = new VBox(activatorState2Box);
-        borderContainerActivatorState2.getStyleClass().add("titled-address-box");
-        borderContainerActivatorState2.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane activatorState2StackPane = new StackPane(borderContainerActivatorState2, activatorState2Label);
-        StackPane.setAlignment(activatorState2Label, Pos.TOP_LEFT);
-        //activator state box 2
-
-        //activator state box 3
-        Label activatorState3Label = new Label("Activator State 3");
-        activatorState3Label.getStyleClass().add("titled-address-label");
-        activatorState3Label.setTranslateY(-8); 
-        activatorState3Label.setTranslateX(10);
-
-        CheckBox forwards = new CheckBox("Forwards");
-        CheckBox backwards = new CheckBox("Backwards");
-        CheckBox left = new CheckBox("Left"); 
-        CheckBox right = new CheckBox("Right");
-
-        forwards.setSelected((entry.activatorState & 256L) != 0);
-        backwards.setSelected((entry.activatorState & 512L) != 0);
-        left.setSelected((entry.activatorState & 1024L) != 0);
-        right.setSelected((entry.activatorState & 2048L) != 0);
-
-        forwards.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 256L;
-            } else {
-                entry.activatorState &= ~256L;
-            }
-        });
-        backwards.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 512L;
-            } else {
-                entry.activatorState &= ~512L;
-            }
-        });
-        left.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 1024L;
-            } else {
-                entry.activatorState &= ~1024L;
-            }
-        });
-        right.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 2048L;
-            } else {
-                entry.activatorState &= ~2048L;
-            }
-        });
-
-        VBox activatorState3Box = new VBox(2, forwards,backwards,left,right);
-
-        VBox borderContainerActivatorState3 = new VBox(activatorState3Box);
-        borderContainerActivatorState3.getStyleClass().add("titled-address-box");
-        borderContainerActivatorState3.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane activatorState3StackPane = new StackPane(borderContainerActivatorState3, activatorState3Label);
-        StackPane.setAlignment(activatorState3Label, Pos.TOP_LEFT);
-        //activator state box 3
-
-        //activator state box 4
-        Label unknownState4Label = new Label("Unk State 4");
-        unknownState4Label.getStyleClass().add("titled-address-label");
-        unknownState4Label.setTranslateY(-8); 
-        unknownState4Label.setTranslateX(10);
-
-        CheckBox unknown13ActivatorState = new CheckBox("Unknown 13");
-        CheckBox unknown14ActivatorState = new CheckBox("Unknown 14");
-        CheckBox unknown15ActivatorState = new CheckBox("Unknown 15"); 
-        CheckBox unknown16ActivatorState = new CheckBox("Unknown 16");
-
-        unknown13ActivatorState.setSelected((entry.activatorState & 4096L) != 0);
-        unknown14ActivatorState.setSelected((entry.activatorState & 8192L) != 0);
-        unknown15ActivatorState.setSelected((entry.activatorState & 16384L) != 0);
-        unknown16ActivatorState.setSelected((entry.activatorState & 32768L) != 0);
-
-        unknown13ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 4096L;
-            } else {
-                entry.activatorState &= ~4096L;
-            }
-        });
-        unknown14ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 8192L;
-            } else {
-                entry.activatorState &= ~8192L;
-            }
-        });
-        unknown15ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 16384L;
-            } else {
-                entry.activatorState &= ~16384L;
-            }
-        });
-        unknown16ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 32768L;
-            } else {
-                entry.activatorState &= ~32768L;
-            }
-        });
-
-        VBox activatorState4Box = new VBox(2, unknown13ActivatorState,unknown14ActivatorState,unknown15ActivatorState,unknown16ActivatorState);
-
-        VBox borderContainerActivatorState4 = new VBox(activatorState4Box);
-        borderContainerActivatorState4.getStyleClass().add("titled-address-box");
-        borderContainerActivatorState4.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane activatorState4StackPane = new StackPane(borderContainerActivatorState4, unknownState4Label);
-        StackPane.setAlignment(unknownState4Label, Pos.TOP_LEFT);
-        //activator state box 4
-
-        //activator state box 5
-        Label unknownState5Label = new Label("Unk State 5");
-        unknownState5Label.getStyleClass().add("titled-address-label");
-        unknownState5Label.setTranslateY(-8); 
-        unknownState5Label.setTranslateX(10);
-
-        CheckBox unknown17ActivatorState = new CheckBox("Unknown 17");
-        CheckBox unknown18ActivatorState = new CheckBox("Unknown 18");
-        CheckBox unknown19ActivatorState = new CheckBox("Unknown 19"); 
-        CheckBox unknown20ActivatorState = new CheckBox("Unknown 20");
-
-        unknown17ActivatorState.setSelected((entry.activatorState & 65536L) != 0);
-        unknown18ActivatorState.setSelected((entry.activatorState & 131072L) != 0);
-        unknown19ActivatorState.setSelected((entry.activatorState & 262144L) != 0);
-        unknown20ActivatorState.setSelected((entry.activatorState & 524288L) != 0);
-
-        unknown17ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 65536L;
-            } else {
-                entry.activatorState &= ~65536L;
-            }
-        });
-        unknown18ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 131072L;
-            } else {
-                entry.activatorState &= ~131072L;
-            }
-        });
-        unknown19ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 262144L;
-            } else {
-                entry.activatorState &= ~262144L;
-            }
-        });
-        unknown20ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 524288L;
-            } else {
-                entry.activatorState &= ~524288L;
-            }
-        });
-
-        VBox activatorState5Box = new VBox(2, unknown17ActivatorState, unknown18ActivatorState, unknown19ActivatorState, unknown20ActivatorState);
-
-        VBox borderContainerActivatorState5 = new VBox(activatorState5Box);
-        borderContainerActivatorState5.getStyleClass().add("titled-address-box");
-        borderContainerActivatorState5.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane activatorState5StackPane = new StackPane(borderContainerActivatorState5, unknownState5Label);
-        StackPane.setAlignment(unknownState5Label, Pos.TOP_LEFT);
-        //activator state box 5
-
-        //activator state box 6
-        Label unknownState6Label = new Label("Unk State 6");
-        unknownState6Label.getStyleClass().add("titled-address-label");
-        unknownState6Label.setTranslateY(-8); 
-        unknownState6Label.setTranslateX(10);
-
-        CheckBox unknown21ActivatorState = new CheckBox("Unknown 21");
-        CheckBox unknown22ActivatorState = new CheckBox("Unknown 22");
-        CheckBox unknown23ActivatorState = new CheckBox("Unknown 23"); 
-        CheckBox unknown24ActivatorState = new CheckBox("Unknown 24");
-
-        unknown21ActivatorState.setSelected((entry.activatorState & 1048576L) != 0);
-        unknown22ActivatorState.setSelected((entry.activatorState & 2097152L) != 0);
-        unknown23ActivatorState.setSelected((entry.activatorState & 4194304L) != 0);
-        unknown24ActivatorState.setSelected((entry.activatorState & 8388608L) != 0);
-
-        unknown21ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 1048576L;
-            } else {
-                entry.activatorState &= ~1048576L;
-            }
-        });
-        unknown22ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 2097152L;
-            } else {
-                entry.activatorState &= ~2097152L;
-            }
-        });
-        unknown23ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 4194304L;
-            } else {
-                entry.activatorState &= ~4194304L;
-            }
-        });
-        unknown24ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 8388608L;
-            } else {
-                entry.activatorState &= ~8388608L;
-            }
-        });
-        VBox activatorState6Box = new VBox(2, unknown21ActivatorState, unknown22ActivatorState, unknown23ActivatorState, unknown24ActivatorState);
-
-        VBox borderContainerActivatorState6 = new VBox(activatorState6Box);
-        borderContainerActivatorState6.getStyleClass().add("titled-address-box");
-        borderContainerActivatorState6.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane activatorState6StackPane = new StackPane(borderContainerActivatorState6, unknownState6Label);
-        StackPane.setAlignment(unknownState6Label, Pos.TOP_LEFT);
-        //activator state box 6
-
-        //activator state box 7
-        Label unknownState7Label = new Label("Unk State 7");
-        unknownState7Label.getStyleClass().add("titled-address-label");
-        unknownState7Label.setTranslateY(-8); 
-        unknownState7Label.setTranslateX(10);
-
-        CheckBox unknown25ActivatorState = new CheckBox("Unknown 25");
-        CheckBox unknown26ActivatorState = new CheckBox("Unknown 26");
-        CheckBox unknown27ActivatorState = new CheckBox("Unknown 27"); 
-        CheckBox unknown28ActivatorState = new CheckBox("Unknown 28");
-
-        unknown25ActivatorState.setSelected((entry.activatorState & 16777216L) != 0);
-        unknown26ActivatorState.setSelected((entry.activatorState & 33554432L) != 0);
-        unknown27ActivatorState.setSelected((entry.activatorState & 67108864L) != 0);
-        unknown28ActivatorState.setSelected((entry.activatorState & 134217728L) != 0);
-
-        unknown25ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 16777216L;
-            } else {
-                entry.activatorState &= ~16777216L;
-            }
-        });
-        unknown26ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 33554432L;
-            } else {
-                entry.activatorState &= ~33554432L;
-            }
-        });
-        unknown27ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 67108864L;
-            } else {
-                entry.activatorState &= ~67108864L;
-            }
-        });
-        unknown28ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 134217728L;
-            } else {
-                entry.activatorState &= ~134217728L;
-            }
-        });
-
-        VBox activatorState7Box = new VBox(2, unknown25ActivatorState, unknown26ActivatorState, unknown27ActivatorState, unknown28ActivatorState);
-
-        VBox borderContainerActivatorState7 = new VBox(activatorState7Box);
-        borderContainerActivatorState7.getStyleClass().add("titled-address-box");
-        borderContainerActivatorState7.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane activatorState7StackPane = new StackPane(borderContainerActivatorState7, unknownState7Label);
-        StackPane.setAlignment(unknownState7Label, Pos.TOP_LEFT);
-        //activator state box 7
-
-        //activator state box 8
-        Label unknownState8Label = new Label("Unk State 8");
-        unknownState8Label.getStyleClass().add("titled-address-label");
-        unknownState8Label.setTranslateY(-8); 
-        unknownState8Label.setTranslateX(10);
-
-        CheckBox unknown29ActivatorState = new CheckBox("Unknown 29");
-        CheckBox unknown30ActivatorState = new CheckBox("Unknown 30");
-        CheckBox unknown31ActivatorState = new CheckBox("Unknown 31"); 
-        CheckBox unknown32ActivatorState = new CheckBox("Unknown 32");
-
-        unknown29ActivatorState.setSelected((entry.activatorState & 268435456L) != 0);
-        unknown30ActivatorState.setSelected((entry.activatorState & 536870912L) != 0);
-        unknown31ActivatorState.setSelected((entry.activatorState & 1073741824L) != 0);
-        unknown32ActivatorState.setSelected((entry.activatorState & 2147483648L) != 0);
-
-        unknown28ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 134217728L;
-            } else {
-                entry.activatorState &= ~134217728L;
-            }
-        });
-        unknown29ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 268435456L;
-            } else {
-                entry.activatorState &= ~268435456L;
-            }
-        });
-        unknown30ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 536870912L;
-            } else {
-                entry.activatorState &= ~536870912L;
-            }
-        });
-        unknown31ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 1073741824L;
-            } else {
-                entry.activatorState &= ~1073741824L;
-            }
-        });
-        unknown32ActivatorState.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.activatorState |= 2147483648L;
-            } else {
-                entry.activatorState &= ~2147483648L;
-            }
-        });
-
-        VBox activatorState8Box = new VBox(2, unknown29ActivatorState, unknown30ActivatorState, unknown31ActivatorState, unknown32ActivatorState);
-
-        VBox borderContainerActivatorState8 = new VBox(activatorState8Box);
-        borderContainerActivatorState8.getStyleClass().add("titled-address-box");
-        borderContainerActivatorState8.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane activatorState8StackPane = new StackPane(borderContainerActivatorState8, unknownState8Label);
-        StackPane.setAlignment(unknownState8Label, Pos.TOP_LEFT);
-        //activator state box 8
-
-        GridPane activatorStateGridPane = new GridPane(10, 10);
-        activatorStateGridPane.add(activatorState1StackPane, 0, 0);
-        activatorStateGridPane.add(activatorState2StackPane, 1, 0);
-        activatorStateGridPane.add(activatorState3StackPane, 2, 0);
-        activatorStateGridPane.add(activatorState4StackPane, 3, 0); 
-        activatorStateGridPane.add(activatorState5StackPane, 0, 1); 
-        activatorStateGridPane.add(activatorState6StackPane, 1, 1); 
-        activatorStateGridPane.add(activatorState7StackPane, 2, 1); 
-        activatorStateGridPane.add(activatorState8StackPane, 3, 1);
-
-        HBox activatorStateHBox = new HBox(5, activatorStateLabel,activatorStateGridPane);
-        activatorStateHBox.setAlignment(Pos.CENTER_LEFT);
+        ToggleGroup skillConditionsToggleGroup = new ToggleGroup();
+
+        ObservableList<String> opponentSizes = FXCollections.observableArrayList(
+            "All Sizes",
+            "Unknown 1",
+            "Unknown 2",
+            "Small Characters",
+            "Default Size",
+            "Medium",
+            "Medium Large",
+            "Large",
+            "Great Ape"
+        );
+
+        RadioButton[] skillConditions = new RadioButton[] {
+            createRadioButton("None", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.None),
+            createRadioButton("Use Skill Upgrades", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.UseSkillUpgrades),
+            createRadioButton("Unknown 2", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.Unknown2),
+            createRadioButton("Unknown 3", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.Unknown3),
+            createRadioButton("Unknown 4", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.Unknown4),
+            createRadioButton("Opponent Reached Ground", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.OpponentRachedGround),
+        };
+
+        CheckBox[] primaryConditionsGroup1 = new CheckBox[] {
+            new CheckBox("Standing"),
+            new CheckBox("Floating"),
+            new CheckBox("Touching Ground"), 
+            new CheckBox("When Attack Hits")
+        };
+
+        CheckBox[] primaryConditionsGroup2 = new CheckBox[] {
+            new CheckBox("Pass When Guarding"),
+            new CheckBox("Close To Opponent"),
+            new CheckBox("Far From Opponent"), 
+            new CheckBox("Base Form")
+        };
+
+        CheckBox[] primaryConditionsGroup3 = new CheckBox[] {
+            new CheckBox("Transformed"),
+            new CheckBox("Flash On/Off Unless Targeting"),
+            new CheckBox("Unknown 11"), 
+            new CheckBox("Not Moving")
+        };
+
+        CheckBox[] primaryConditionsGroup4 = new CheckBox[] {
+            new CheckBox("Counter All"),
+            new CheckBox("Pass When Stamina Reaches 0"),
+            new CheckBox("Ki < 100%"), 
+            new CheckBox("Ki > 0%")
+        };
+
+        CheckBox[] primaryConditionsGroup5 = new CheckBox[] {
+            new CheckBox("Counter Melee"),
+            new CheckBox("Counter Projectile"),
+            new CheckBox("Ground"),
+            new CheckBox("Opponent")
+        };
+
+        CheckBox[] primaryConditionsGroup6 = new CheckBox[] {
+            new CheckBox("Opponent In Knockback"),
+            new CheckBox("Unknown 22"),
+            new CheckBox("Opponent Being Targeted"),
+            new CheckBox("Unknown 24")
+        };
+
+        CheckBox[] primaryConditionsGroup7 = new CheckBox[] {
+            new CheckBox("Active Projectile"),
+            new CheckBox("Stamina > 0%"),
+            new CheckBox("Not Near Map Ceiling"),
+            new CheckBox("Not Near Certain Objects")
+        };
+
+        CheckBox[] primaryConditionsGroup8 = new CheckBox[] {
+            new CheckBox("User Health < 25% (One Use)"),
+            new CheckBox("Opponent Health < 25%"),
+            new CheckBox("Running BAC Entry Attact Hits"),
+            new CheckBox("User Health < 25%")
+        };
+
+        CheckBox[] activatorStateGroup1 = new CheckBox[] {
+            new CheckBox("Idle"),
+            new CheckBox("Combo/Skill"),
+            new CheckBox("Boosting"), 
+            new CheckBox("Guarding")
+        };
+
+        CheckBox[] activatorStateGroup2 = new CheckBox[] {
+            new CheckBox("Receiving Damage"),
+            new CheckBox("Jumping"),
+            new CheckBox("Not Being Damaged"), 
+            new CheckBox("Target Attacking Player")
+        };
+
+        Node[] primaryActivatorConditions = new Node[] {
+            createCheckBoxGroup("Group 1", primaryConditionsGroup1, 1L, BcmValues.PrimaryActivatorConditions),
+            createCheckBoxGroup("Group 2", primaryConditionsGroup2, 16L, BcmValues.PrimaryActivatorConditions),
+            createCheckBoxGroup("Group 3", primaryConditionsGroup3, 256L, BcmValues.PrimaryActivatorConditions),
+            createCheckBoxGroup("Group 4", primaryConditionsGroup4, 4096L, BcmValues.PrimaryActivatorConditions),
+            createCheckBoxGroup("Group 5", primaryConditionsGroup5, 65536L, BcmValues.PrimaryActivatorConditions),
+            createCheckBoxGroup("Group 6", primaryConditionsGroup6, 1048576L, BcmValues.PrimaryActivatorConditions),
+            createCheckBoxGroup("Group 7", primaryConditionsGroup7, 16777216L, BcmValues.PrimaryActivatorConditions),
+            createCheckBoxGroup("Group 8", primaryConditionsGroup8, 268435456L, BcmValues.PrimaryActivatorConditions)
+        };
+
+        Node[] activatorState = new Node[] {
+            createCheckBoxGroup("State", activatorStateGroup1, 1L, BcmValues.ActivatorState),
+            createCheckBoxGroup("State", activatorStateGroup2, 16L, BcmValues.ActivatorState)
+        };
+
+        Node[] opponentSizeConditions = new Node[] {
+            createComboBox(opponentSizes, BcmValues.OpponentSizeConditions),
+            createLabel("Upgrade Level", 0),
+            createSpinner(0, 255, entry.opponentSizeConditions / 16777216, BcmValues.OpponentSizeConditions)
+        };
 
         VBox activatorVBox = new VBox(35, 
-            opponentsSizeConditionsHBox, minimumLoopDurationHBox,
-            maximumLoopDurationHBox, primaryActivatorConditionsHBox, activatorStateHBox
+            createHBox(0, createLabel("Opponent Size", 120), createHBox(15, opponentSizeConditions, false)),
+            createHBox(0, createLabel("Skill Conditions", 120), createGridPane(1, 6, skillConditions, true)),
+            createHBox(0, createLabel("Minimum Loop\nDuration", 120), createSpinner(0, 65535, entry.maximumLoopDuration, BcmValues.MaximumLoopDuration)),
+            createHBox(0, createLabel("Maximum Loop\nDuration", 120), createSpinner(0, 65535, entry.minimumLoopDuration, BcmValues.MinimumLoopDuration)), 
+            createHBox(0, createLabel("Primary Activator\nConditions", 120), createGridPane(4, 2, primaryActivatorConditions, false)), 
+            createHBox(0, createLabel("Activator State", 120), createHBox(5, activatorState, false))
         );
         activatorVBox.setPadding(new Insets(20, 0, 20, 8));
         activatorVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
@@ -2928,554 +377,430 @@ public class Bcm {
     }
 
     private VBox createBACVBox(BcmEntry entry) {
-        //BAC entry primary
-        Label BACEntryPrimaryLabel = new Label("BAC Entry Primary");
-        BACEntryPrimaryLabel.setPrefWidth(200);
-        
-        Spinner<Integer> BACEntryPrimarySpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryPrimary);
-        BACEntryPrimarySpinner.setEditable(true);
-        BACEntryPrimarySpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.bacEntryPrimary = newValue.shortValue();
-            }
-        });
-        
-        HBox BACEntryPrimaryHBox = new HBox(BACEntryPrimaryLabel, BACEntryPrimarySpinner);
-        BACEntryPrimaryHBox.setAlignment(Pos.CENTER_LEFT);
-        //BAC entry primary
+        ToggleGroup randomFlagToggleGroup = new ToggleGroup();
 
-        //BAC entry charge
-        
-        Label BACEntryChargeLabel = new Label("BAC Entry Charge");
-        BACEntryChargeLabel.setPrefWidth(200);
-
-        Spinner<Integer> BACEntryChargeSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryCharge);
-        BACEntryChargeSpinner.setEditable(true);
-        BACEntryChargeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.bacEntryCharge = newValue.shortValue();
-            }
-        });
-
-        HBox BACEntryChargeHBox = new HBox(BACEntryChargeLabel, BACEntryChargeSpinner);
-        BACEntryChargeHBox.setAlignment(Pos.CENTER_LEFT);
-        //BAC entry charge
-
-        //BAC entry user connect
-        Label BACEntryUserConnectLabel = new Label("BAC Entry User Connect");
-        BACEntryUserConnectLabel.setPrefWidth(200);
-
-        Spinner<Integer> BACEntryUserConnectSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryUserConnect);
-        BACEntryUserConnectSpinner.setEditable(true);
-        BACEntryUserConnectSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.bacEntryUserConnect = newValue.shortValue();
-            }
-        });
-
-        HBox BACEntryUserConnectHBox = new HBox(BACEntryUserConnectLabel, BACEntryUserConnectSpinner);
-        BACEntryUserConnectHBox.setAlignment(Pos.CENTER_LEFT);
-        //BAC entry user connect
-
-        //BAC entry victim connect
-        Label BACEntryVictimConnectLabel = new Label("BAC Entry Victim Connect");
-        BACEntryVictimConnectLabel.setPrefWidth(200);
-        
-        Spinner<Integer> BACEntryVictimConnectSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryVictimConnect);
-        BACEntryVictimConnectSpinner.setEditable(true);
-        BACEntryVictimConnectSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.bacEntryVictimConnect = newValue.shortValue();
-            }
-        });
-
-        HBox BACEntryVictimConnectHBox = new HBox(BACEntryVictimConnectLabel, BACEntryVictimConnectSpinner);
-        BACEntryVictimConnectHBox.setAlignment(Pos.CENTER_LEFT);
-        //BAC entry victim connect
-
-        //BAC entry airborne
-        Label BACEntryAirborneLabel = new Label("BAC Entry Airborne");
-        BACEntryAirborneLabel.setPrefWidth(200);
-
-        Spinner<Integer> BACEntryAirborneSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryAirborne);
-        BACEntryAirborneSpinner.setEditable(true);
-        BACEntryAirborneSpinner.valueProperty().addListener((obs,oldValue,newValue) -> {
-            if (newValue != null) {
-                entry.bacEntryAirborne = newValue.shortValue();
-            }
-        });
-
-        HBox BACEntryAirborneHBox = new HBox(BACEntryAirborneLabel, BACEntryAirborneSpinner);
-        BACEntryAirborneHBox.setAlignment(Pos.CENTER_LEFT);
-        //BAC entry airborne
-
-        //BAC entry targeting override
-        Label BACEntryTargetingOverrideLabel = new Label("BAC Entry Targeting Override");
-        BACEntryTargetingOverrideLabel.setPrefWidth(200);
-
-        Spinner<Integer> BACEntryTargetingOverrideSpinner = new Spinner<>(0, 65535, entry.bacEntryTargetingOverride);
-        BACEntryTargetingOverrideSpinner.setEditable(true);
-        BACEntryTargetingOverrideSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.bacEntryTargetingOverride = newValue;
-            }
-        });
-        
-        HBox BACEntryTargetingOverrideHBox = new HBox(BACEntryTargetingOverrideLabel, BACEntryTargetingOverrideSpinner);
-        BACEntryTargetingOverrideHBox.setAlignment(Pos.CENTER_LEFT);
-        //BAC entry targeting override
-
-        //random flags
-        Label randomFlagLabel = new Label("Random Flag");
-        randomFlagLabel.setPrefWidth(200);
-
-        ToggleGroup randomFlagToggleGroup=new ToggleGroup();
-
-        RadioButton none=new RadioButton("None");
-        none.setToggleGroup(randomFlagToggleGroup);
-
-        RadioButton randomBACEntry=new RadioButton("Random BAC Entry");
-        randomBACEntry.setToggleGroup(randomFlagToggleGroup);
-
-        RadioButton noTargetCorrection=new RadioButton("No Target Correction");
-        noTargetCorrection.setToggleGroup(randomFlagToggleGroup);
-
-        RadioButton threeInstanceSetup =new RadioButton("3 Instance Setup");
-        threeInstanceSetup.setToggleGroup(randomFlagToggleGroup);
-
-        RadioButton unknown4=new RadioButton("Unknown 4");
-        unknown4.setToggleGroup(randomFlagToggleGroup);
-
-        RadioButton unknown5 = new RadioButton("Unknown 5");
-        unknown5.setToggleGroup(randomFlagToggleGroup);
-
-        RadioButton unknown6 = new RadioButton("Unknown 6");
-        unknown6.setToggleGroup(randomFlagToggleGroup);
-
-        RadioButton unknown7 = new RadioButton("Unknown 7");
-        unknown7.setToggleGroup(randomFlagToggleGroup);
-
-        RadioButton unknown8 = new RadioButton("Unknown 8");
-        unknown8.setToggleGroup(randomFlagToggleGroup);
-
-        RadioButton unknown9 = new RadioButton("Unknown 9");
-        unknown9.setToggleGroup(randomFlagToggleGroup);
-        
-        switch (entry.bacRandomFlags) {
-            case 1 -> randomBACEntry.setSelected(true);
-            case 2 -> noTargetCorrection.setSelected(true);
-            case 3 -> threeInstanceSetup.setSelected(true);
-            case 4 -> unknown4.setSelected(true);
-            case 5 -> unknown5.setSelected(true);
-            case 6 -> unknown6.setSelected(true);
-            case 7 -> unknown7.setSelected(true);
-            case 8 -> unknown8.setSelected(true);
-            case 9 -> unknown9.setSelected(true);
-            default -> none.setSelected(true);
-        }
-
-        randomFlagToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.isSelected()) {
-                if ((RadioButton) newValue == none)                     { entry.bacRandomFlags = 0; }
-                else if ((RadioButton) newValue == randomBACEntry)      { entry.bacRandomFlags = 1; }
-                else if ((RadioButton) newValue == noTargetCorrection)  { entry.bacRandomFlags = 2; }
-                else if ((RadioButton) newValue == threeInstanceSetup)  { entry.bacRandomFlags = 3; }
-                else if ((RadioButton) newValue == unknown4)            { entry.bacRandomFlags = 4; }
-                else if ((RadioButton) newValue == unknown5)            { entry.bacRandomFlags = 5; }
-                else if ((RadioButton) newValue == unknown6)            { entry.bacRandomFlags = 6; }
-                else if ((RadioButton) newValue == unknown7)            { entry.bacRandomFlags = 7; }
-                else if ((RadioButton) newValue == unknown8)            { entry.bacRandomFlags = 8; }
-                else if ((RadioButton) newValue == unknown9)            { entry.bacRandomFlags = 9; }
-            }
-        });
-
-        GridPane randomFlagGridPane=new GridPane(10, 10);
-        randomFlagGridPane.getStyleClass().add("titled-address-box");
-        randomFlagGridPane.add(none, 0, 0);   
-        randomFlagGridPane.add(randomBACEntry, 1, 0);          
-        randomFlagGridPane.add(noTargetCorrection, 0, 1);          
-        randomFlagGridPane.add(threeInstanceSetup, 1, 1);          
-        randomFlagGridPane.add(unknown4, 0, 2);          
-        randomFlagGridPane.add(unknown5, 1, 2);          
-        randomFlagGridPane.add(unknown6, 0, 3);          
-        randomFlagGridPane.add(unknown7, 1, 3);          
-        randomFlagGridPane.add(unknown8, 0, 4);          
-        randomFlagGridPane.add(unknown9, 1, 4);   
-        
-        HBox randomFlagHBox = new HBox(randomFlagLabel, randomFlagGridPane);
-        randomFlagHBox.setAlignment(Pos.CENTER_LEFT);
-        //random flags
+        RadioButton[] randomFlagsList = new RadioButton[] {
+            createRadioButton("None/Default", randomFlagToggleGroup, entry.characterCondition, RandomFlags.None),
+            createRadioButton("Random BAC Entry", randomFlagToggleGroup, entry.characterCondition, RandomFlags.Random_BAC_Entry),
+            createRadioButton("No Target Correction", randomFlagToggleGroup, entry.characterCondition, RandomFlags.NoTargetCorrection),
+            createRadioButton("3 Instance Setup", randomFlagToggleGroup, entry.characterCondition, RandomFlags.ThreeInstanceSetup),
+            createRadioButton("Unknown 4", randomFlagToggleGroup, entry.characterCondition, RandomFlags.Unknown4),
+            createRadioButton("Unknown 6", randomFlagToggleGroup, entry.characterCondition, RandomFlags.Unknown6),
+        };
 
         VBox BACVBox = new VBox(30, 
-            BACEntryPrimaryHBox, BACEntryChargeHBox,
-            BACEntryUserConnectHBox, BACEntryVictimConnectHBox,
-            BACEntryAirborneHBox, BACEntryTargetingOverrideHBox,
-            randomFlagHBox
+            createHBox(0, createLabel("BAC Entry Primary", 200), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryPrimary, BcmValues.BAC_EntryPrimary)), 
+            createHBox(0, createLabel("BAC Entry Charge", 200), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryCharge, BcmValues.BAC_EntryCharge)),
+            createHBox(0, createLabel("BAC Entry User Connect", 200), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryUserConnect, BcmValues.BAC_EntryUserConnect)), 
+            createHBox(0, createLabel("BAC Entry Victim Connect", 200), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryVictimConnect, BcmValues.BAC_EntryVictimConnect)), 
+            createHBox(0, createLabel("BAC Entry Airborne", 200), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.bacEntryAirborne, BcmValues.BAC_EntryAirborne)), 
+            createHBox(0, createLabel("BAC Entry Targeting Override", 200), createSpinner(0, 65535, entry.bacEntryTargetingOverride, BcmValues.BAC_EntryTargetingOverride)),
+            createHBox(0, createLabel("Random Flag", 200), createGridPane(2, 3, randomFlagsList, true))
         );
         BACVBox.setPadding(new Insets(20, 0, 0, 8));
-        BACVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         return BACVBox;
     }
 
     private VBox createMiscVBox(BcmEntry entry) {
-        //ki cost
-        Label kiCostLabel = new Label("Ki Cost");
-        kiCostLabel.setPrefWidth(180);
+        ToggleGroup characterConditonToggleGroup = new ToggleGroup();
 
-        Spinner<Double> kiCostSpinner = new Spinner<>(0, 4294967295.0, (double)entry.kiCost);
-        kiCostSpinner.setEditable(true);
-        kiCostSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.kiCost = newValue.longValue();
-            }
-        });
+        ObservableList<String> receiverLinkIds = FXCollections.observableArrayList(
+            "None",
+            "Combos",
+            "Supers",
+            "Ultimate / Awoken / Evasive",
+            "Z-Vanish",
+            "Ki Blasts",
+            "Jump",
+            "Guard",
+            "Flying / Step Dash"
+        );
 
-        HBox kiCostHBox = new HBox(kiCostLabel, kiCostSpinner);
-        kiCostHBox.setAlignment(Pos.CENTER_LEFT);
-        //ki cost
-
-        //receiver link id
-        Label receiverLinkIdLabel = new Label("Receiver Link ID");
-        receiverLinkIdLabel.setPrefWidth(180);
-
-        Spinner<Double> receiverLinkIdSpinner = new Spinner<>(0, 4294967295.0, (double)entry.receiverLinkId);
-        receiverLinkIdSpinner.setEditable(true);
-        receiverLinkIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.receiverLinkId = newValue.longValue();
-            }
-        });
-
-        HBox receiverIdLinkHBox = new HBox(receiverLinkIdLabel, receiverLinkIdSpinner);
-        receiverIdLinkHBox.setAlignment(Pos.CENTER_LEFT);
-        //receiver link id
-
-        //stamina cost
-        Label staminaCostLabel = new Label("Stamina Cost");
-        staminaCostLabel.setPrefWidth(180);
-
-        Spinner<Double> staminaCostSpinner = new Spinner<>(0, 4294967295.0, (double)entry.staminaCost);
-        staminaCostSpinner.setEditable(true);
-        staminaCostSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.staminaCost = newValue.longValue();
-            }
-        });
-        
-        HBox staminaCostHBox = new HBox(staminaCostLabel, staminaCostSpinner);
-        staminaCostHBox.setAlignment(Pos.CENTER_LEFT);
-        //stamina cost
-
-        //ki required
-        Label kiRequiredLabel = new Label("Ki Required");
-        kiRequiredLabel.setPrefWidth(180);
-
-        Spinner<Double> kiRequiredSpinner = new Spinner<>(0, 4294967295.0, (double)entry.kiRequired);
-        kiRequiredSpinner.setEditable(true);
-        kiRequiredSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.kiRequired = newValue.longValue();
-            }
-        });
-
-        HBox kiRequiredHBox = new HBox(kiRequiredLabel, kiRequiredSpinner);
-        kiRequiredHBox.setAlignment(Pos.CENTER_LEFT);
-        //ki required
-
-        //health required
-        Label healthRequiredLabel = new Label("Health Required");
-        healthRequiredLabel.setPrefWidth(180);
-
-        Spinner<Double> healthRequiredSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, (double)entry.healthRequired);
-        healthRequiredSpinner.setEditable(true);
-        healthRequiredSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.healthRequired = newValue.floatValue();
-            }
-        });
-
-        HBox healthRequiredHBox = new HBox(healthRequiredLabel, healthRequiredSpinner);
-        healthRequiredHBox.setAlignment(Pos.CENTER_LEFT);
-        //health required
-
-        //transformation stage
-        Label transformationStageLabel = new Label("Transformation Stage");
-        transformationStageLabel.setPrefWidth(180);
-
-        Spinner<Integer> transformationStageSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.transformationStage);
-        transformationStageSpinner.setEditable(true);
-        transformationStageSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.transformationStage = newValue.shortValue();
-            }
-        });
-
-        HBox transformationStageHBox = new HBox(transformationStageLabel, transformationStageSpinner);
-        transformationStageHBox.setAlignment(Pos.CENTER_LEFT);
-        //transformation stage
-
-        //cus aura
-        Label cusAuraLabel = new Label("CUS Aura");
-        cusAuraLabel.setPrefWidth(180);
-
-        Spinner<Integer> cusAuraSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.cusAura);
-        cusAuraSpinner.setEditable(true);
-        cusAuraSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.cusAura = newValue.shortValue();
-            }
-        });
-        HBox cusAuraHBox = new HBox(cusAuraLabel,cusAuraSpinner);
-        cusAuraHBox.setAlignment(Pos.CENTER_LEFT);
-        //cus aura
-
-        //race and gender
-        Label raceGenderLabel = new Label("Race/Gender");
-        raceGenderLabel.setPrefWidth(180);
-
-        ToggleGroup raceGenderToggleGroup=new ToggleGroup();
-
-        RadioButton allCharactersDefault=new RadioButton("All Characters/Default");
-        allCharactersDefault.setToggleGroup(raceGenderToggleGroup);
-
-        RadioButton rosterCharactersOnly=new RadioButton("Roster Characters Only");
-        rosterCharactersOnly.setToggleGroup(raceGenderToggleGroup);
-
-        RadioButton maleHumansOnly=new RadioButton("Male Humans Only");
-        maleHumansOnly.setToggleGroup(raceGenderToggleGroup);
-
-        RadioButton femaleHumansOnly =new RadioButton("Female Humans Only");
-        femaleHumansOnly.setToggleGroup(raceGenderToggleGroup);
-
-        RadioButton maleSaiyansOnly=new RadioButton("Male Saiyans Only");
-        maleSaiyansOnly.setToggleGroup(raceGenderToggleGroup);
-
-        RadioButton femaleSaiyansOnly = new RadioButton("Female Saiyans Only");
-        femaleSaiyansOnly.setToggleGroup(raceGenderToggleGroup);
-
-        RadioButton namekiansOnly = new RadioButton("Namekians Only");
-        namekiansOnly.setToggleGroup(raceGenderToggleGroup);
-
-        RadioButton friezaRaceOnly = new RadioButton("Frieza Race Only");
-        friezaRaceOnly.setToggleGroup(raceGenderToggleGroup);
-
-        RadioButton maleMajinsOnly = new RadioButton("Male Majins Only");
-        maleMajinsOnly.setToggleGroup(raceGenderToggleGroup);
-
-        RadioButton femaleMajinsOnly = new RadioButton("Female Majins Only");
-        femaleMajinsOnly.setToggleGroup(raceGenderToggleGroup);
-
-        switch ((int)entry.raceGender) {
-            case 1 -> rosterCharactersOnly.setSelected(true);
-            case 2 -> maleHumansOnly.setSelected(true);
-            case 3 -> femaleHumansOnly.setSelected(true);
-            case 4 -> maleSaiyansOnly.setSelected(true);
-            case 5 -> femaleSaiyansOnly.setSelected(true);
-            case 6 -> namekiansOnly.setSelected(true);
-            case 7 -> friezaRaceOnly.setSelected(true);
-            case 8 -> maleMajinsOnly.setSelected(true);
-            case 9 -> femaleMajinsOnly.setSelected(true);
-            default -> allCharactersDefault.setSelected(true);
-        }
-        
-        raceGenderToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.isSelected()) {
-                if ((RadioButton) newValue == allCharactersDefault)      { entry.raceGender = 0L; }
-                else if ((RadioButton) newValue == rosterCharactersOnly) { entry.raceGender = 1L; }
-                else if ((RadioButton) newValue == maleHumansOnly)       { entry.raceGender = 2L; }
-                else if ((RadioButton) newValue == femaleHumansOnly)     { entry.raceGender = 3L; }
-                else if ((RadioButton) newValue == maleSaiyansOnly)      { entry.raceGender = 4L; }
-                else if ((RadioButton) newValue == femaleSaiyansOnly)    { entry.raceGender = 5L; }
-                else if ((RadioButton) newValue == namekiansOnly)        { entry.raceGender = 6L; }
-                else if ((RadioButton) newValue == friezaRaceOnly)       { entry.raceGender = 7L; }
-                else if ((RadioButton) newValue == maleMajinsOnly)       { entry.raceGender = 8L; }
-                else if ((RadioButton) newValue == femaleMajinsOnly)     { entry.raceGender = 9L; }
-            }
-        });
-
-        GridPane raceGenderGridPane = new GridPane(10, 10);
-        raceGenderGridPane.getStyleClass().add("titled-address-box");
-        raceGenderGridPane.add(allCharactersDefault, 0, 0);   
-        raceGenderGridPane.add(rosterCharactersOnly, 1, 0);          
-        raceGenderGridPane.add(maleHumansOnly, 0, 1);          
-        raceGenderGridPane.add(femaleHumansOnly, 1, 1);          
-        raceGenderGridPane.add(maleSaiyansOnly, 0, 2);          
-        raceGenderGridPane.add(femaleSaiyansOnly, 1, 2);          
-        raceGenderGridPane.add(namekiansOnly, 0, 3);          
-        raceGenderGridPane.add(friezaRaceOnly, 1, 3);          
-        raceGenderGridPane.add(maleMajinsOnly, 0, 4);          
-        raceGenderGridPane.add(femaleMajinsOnly, 1, 4);
-
-        HBox raceGenderHBox = new HBox(raceGenderLabel, raceGenderGridPane);
-        raceGenderHBox.setAlignment(Pos.CENTER_LEFT);
+        RadioButton[] characterConditonsList = new RadioButton[] {
+            createRadioButton("None/Default", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.None),
+            createRadioButton("Custom Character (CAC)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.CustomCharacter),
+            createRadioButton("Human Male (HUM)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.HumanMale),
+            createRadioButton("Human Female (HUF)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.HumanFemale),
+            createRadioButton("Saiyan Male (SYM)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.SaiyanMale),
+            createRadioButton("Saiyan Female (SYF)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.SaiyanFemale),
+            createRadioButton("Namekian (NMC)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.Namekian),
+            createRadioButton("Frieza Race (FRI)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.FriezaRace),
+            createRadioButton("Majin Male (MAM)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.MajinMale),
+            createRadioButton("Majin Female (MAF)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.MajinFemale),
+        };
         
         VBox miscVBox = new VBox(30, 
-            kiCostHBox, receiverIdLinkHBox,
-            staminaCostHBox, kiRequiredHBox,
-            healthRequiredHBox, transformationStageHBox,
-            cusAuraHBox, raceGenderHBox
+            createHBox(0, createLabel("Ki Cost", 180), createSpinner(0, 4294967295.0, (double) entry.kiCost, BcmValues.KiCost)), 
+            createHBox(0, createLabel("Receiver Link ID", 180), createComboBox(receiverLinkIds, BcmValues.ReceiverLinkID)),
+            createHBox(0, createLabel("Stamina Cost", 180), createSpinner(0, 4294967295.0, (double) entry.staminaCost, BcmValues.StaminaCost)), 
+            createHBox(0, createLabel("Ki Required", 180), createSpinner(0, 4294967295.0, (double) entry.kiRequired, BcmValues.KiRequired)),
+            createHBox(0, createLabel("Health Required", 180), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double) entry.healthRequired, BcmValues.HealthRequired)),
+            createHBox(0, createLabel("Transformation Stage", 180), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.transformationStage, BcmValues.TransformationStage)),
+            createHBox(0, createLabel("CUS Aura", 180), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.cusAura, BcmValues.CUS_Aura)), 
+            createHBox(0, createLabel("Character Condition", 180), createGridPane(2, 5, characterConditonsList, true))
         );
-        miscVBox.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         miscVBox.setPadding(new Insets(20, 0, 0, 8));
 
         return miscVBox;
     }
 
     private VBox createUnknownVBox(BcmEntry entry) {
-        //i00
-        Label i00Label=new Label("I_00");
-        i00Label.setPrefWidth(130);
-
-        TextField i00TextField = new TextField(String.valueOf(entry.i00));
-        i00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i00TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i00 = Long.parseLong(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        
-        HBox i00HBox = new HBox(i00Label, i00TextField);
-        i00HBox.setAlignment(Pos.CENTER_LEFT);
-        //i00
-
-        //i36
-        Label i36Label = new Label("I_36");
-        i36Label.setPrefWidth(130);
-
-        TextField i36TextField = new TextField(String.valueOf(entry.i36));
-        i36TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i36TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i36 = Short.parseShort(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        
-        HBox i36HBox = new HBox(i36Label, i36TextField);
-        i36HBox.setAlignment(Pos.CENTER_LEFT);
-        //i36
-
-        //i68
-        Label i68Label = new Label("I_68");
-        i68Label.setPrefWidth(130);
-
-        TextField i68TextField = new TextField(String.valueOf(entry.i68));
-        i68TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i68TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i68 = Long.parseLong(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                
-            }
-        });
-        
-        HBox i68HBox = new HBox(i68Label, i68TextField);
-        i68HBox.setAlignment(Pos.CENTER_LEFT);
-        //i68
-
-        //i72
-        Label i72Label = new Label("I_72");
-        i72Label.setPrefWidth(130);
-
-        TextField i72TextField = new TextField(String.valueOf(entry.i72));
-        i72TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i72TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i72 = Long.parseLong(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                
-            }
-        });
-
-        HBox i72HBox = new HBox(i72Label, i72TextField);
-        i72HBox.setAlignment(Pos.CENTER_LEFT);
-        //i72
-
-        //i80
-        Label i80Label = new Label("I_80");
-        i80Label.setPrefWidth(130);
-
-        TextField i80TextField = new TextField(String.valueOf(entry.i80));
-        i80TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i80TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i80 = Long.parseLong(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                
-            }
-        });
-        
-        HBox i80HBox = new HBox(i80Label, i80TextField);
-        i80HBox.setAlignment(Pos.CENTER_LEFT);
-        //i80
-
-        //i88
-        Label i88Label = new Label("I_88");
-        i88Label.setPrefWidth(130);
-
-        TextField i88TextField = new TextField(String.valueOf(entry.i88));
-        i88TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i88TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i88 = Long.parseLong(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                
-            }
-        });
-
-        HBox i88HBox = new HBox(i88Label, i88TextField);
-        i88HBox.setAlignment(Pos.CENTER_LEFT);
-        //i88
-
-        //i104
-        Label i104Label = new Label("Skill Upgrade Value?");
-        i104Label.setPrefWidth(130);
-
-        TextField i104TextField = new TextField(String.valueOf(entry.i104));
-        i104TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i104TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i104 = Long.parseLong(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        
-        HBox i104HBox = new HBox(i104Label, i104TextField);
-        i104HBox.setAlignment(Pos.CENTER_LEFT);
-        //i104
-
         VBox unknownVBox = new VBox(30,
-            i00HBox, i36HBox,
-            i68HBox, i72HBox,
-            i80HBox, i88HBox,
-            i104HBox
+            createHBox(0, createLabel("I_36", 130), createTextField(entry.i36, BcmValues.I36)),
+            createHBox(0, createLabel("I_68", 130), createTextField(entry.i68, BcmValues.I68)), 
+            createHBox(0, createLabel("I_72", 130), createTextField(entry.i72, BcmValues.I72)),
+            createHBox(0, createLabel("I_80", 130), createTextField(entry.i80, BcmValues.I80)), 
+            createHBox(0, createLabel("I_88", 130), createTextField(entry.i88, BcmValues.I88)),
+            createHBox(0, createLabel("Skill Upgrade Value?", 130), createTextField(entry.i104, BcmValues.I104))
         );
         unknownVBox.setPadding(new Insets(20, 0, 0, 8));
 
         return unknownVBox;
+    }
+
+    private Label createLabel(String text, int width) {
+        Label label = new Label(text);
+        if (width != 0) label.setPrefWidth(width);
+
+        return label;
+    }
+
+    private TextField createTextField(Number value, BcmValues bcmValue) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bcmValue) {
+                    case BcmValues.I36 -> bcmHashMap.get(currentEntry).i36 = Short.parseShort(newText);
+                    case BcmValues.I68 -> bcmHashMap.get(currentEntry).i68 = Long.parseLong(newText);
+                    case BcmValues.I72 -> bcmHashMap.get(currentEntry).i72 = Long.parseLong(newText);
+                    case BcmValues.I80 -> bcmHashMap.get(currentEntry).i80 = Long.parseLong(newText);
+                    case BcmValues.I88 -> bcmHashMap.get(currentEntry).i88 = Long.parseLong(newText);
+                    case BcmValues.I104 -> bcmHashMap.get(currentEntry).i104 = Long.parseLong(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bcmValue);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private ComboBox<String> createComboBox(ObservableList<String> observableList, BcmValues bcmValue) {
+        ComboBox<String> comboBox = new ComboBox<>(observableList);
+
+        switch (bcmValue) {
+            case OpponentSizeConditions -> {
+                outerLoop:
+                for (int i = 1; i < observableList.size(); i++) {
+                    if (bcmHashMap.get(currentEntry).opponentSizeConditions != 0 && (bcmHashMap.get(currentEntry).opponentSizeConditions & OpponentSizeConditions.values()[i].index) == (bcmHashMap.get(currentEntry).opponentSizeConditions % 16777216)) {
+                        comboBox.getSelectionModel().select(i);
+                        break outerLoop;
+                    }
+                    else {
+                        comboBox.getSelectionModel().select(0);
+                    }
+                }
+
+                comboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+                    final long upgradeLevel = bcmHashMap.get(currentEntry).opponentSizeConditions - bcmHashMap.get(currentEntry).opponentSizeConditions % 16777216;
+                    bcmHashMap.get(currentEntry).opponentSizeConditions = upgradeLevel + OpponentSizeConditions.values()[newValue.intValue()].index;
+                });
+            }
+            case ReceiverLinkID -> {
+                if (bcmHashMap.get(currentEntry).receiverLinkId != 0) {
+                    comboBox.getSelectionModel().select((int) (Math.log(bcmHashMap.get(currentEntry).receiverLinkId) / Math.log(2)) + 1);
+                }
+                else {
+                    comboBox.getSelectionModel().select(0);
+                }
+
+                comboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+                    bcmHashMap.get(currentEntry).receiverLinkId = newValue.intValue() != 0 ? 1 << (newValue.intValue() - 1) : 0;
+                });
+            }
+            default -> throw new IllegalArgumentException("Unexpected value: " + bcmValue);
+        }
+        
+        return comboBox;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BcmValues bcmValue) {
+        Spinner<Number> spinner;
+
+        if (value instanceof Double) {
+            spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
+        }
+        else {
+            spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+        }
+        
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bcmValue) {
+                    case OpponentSizeConditions -> {
+                        final long remainingBits = ((bcmHashMap.get(currentEntry).opponentSizeConditions + bcmHashMap.get(currentEntry).opponentSizeConditions * 16777216) % 16777216);
+                        bcmHashMap.get(currentEntry).opponentSizeConditions = remainingBits +  newValue.longValue()  * 16777216;
+                    }
+                    case MinimumLoopDuration -> bcmHashMap.get(currentEntry).minimumLoopDuration = newValue.intValue();
+                    case MaximumLoopDuration -> bcmHashMap.get(currentEntry).maximumLoopDuration = newValue.intValue();
+                    case BAC_EntryPrimary -> bcmHashMap.get(currentEntry).bacEntryPrimary = newValue.shortValue();
+                    case BAC_EntryCharge -> bcmHashMap.get(currentEntry).bacEntryCharge = newValue.shortValue();
+                    case BAC_EntryUserConnect -> bcmHashMap.get(currentEntry).bacEntryUserConnect = newValue.shortValue();
+                    case BAC_EntryVictimConnect -> bcmHashMap.get(currentEntry).bacEntryVictimConnect = newValue.shortValue();
+                    case BAC_EntryAirborne -> bcmHashMap.get(currentEntry).bacEntryAirborne = newValue.shortValue();
+                    case BAC_EntryTargetingOverride -> bcmHashMap.get(currentEntry).bacEntryTargetingOverride = newValue.intValue();
+                    case KiCost -> bcmHashMap.get(currentEntry).kiCost = newValue.longValue();
+                    case StaminaCost -> bcmHashMap.get(currentEntry).staminaCost = newValue.longValue();
+                    case KiRequired -> bcmHashMap.get(currentEntry).kiRequired = newValue.longValue();
+                    case HealthRequired -> bcmHashMap.get(currentEntry).healthRequired = newValue.floatValue();
+                    case TransformationStage -> bcmHashMap.get(currentEntry).transformationStage = newValue.shortValue();
+                    case CUS_Aura -> bcmHashMap.get(currentEntry).cusAura = newValue.shortValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bcmValue);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, long value, SkillConditions skillConditions) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (value == skillConditions.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                switch (skillConditions) {
+                    case None -> bcmHashMap.get(currentEntry).skillConditions = 0;
+                    case UseSkillUpgrades -> bcmHashMap.get(currentEntry).skillConditions = 1;
+                    case Unknown2 -> bcmHashMap.get(currentEntry).skillConditions = 2;
+                    case Unknown3 -> bcmHashMap.get(currentEntry).skillConditions = 4;
+                    case Unknown4 -> bcmHashMap.get(currentEntry).skillConditions = 8;
+                    case OpponentRachedGround -> bcmHashMap.get(currentEntry).skillConditions = 6;
+                }
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, long value, RandomFlags randomFlag) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (value == randomFlag.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                switch (randomFlag) {
+                    case None -> bcmHashMap.get(currentEntry).bacRandomFlags = 0;
+                    case Random_BAC_Entry -> bcmHashMap.get(currentEntry).bacRandomFlags = 1;
+                    case NoTargetCorrection -> bcmHashMap.get(currentEntry).bacRandomFlags = 2;
+                    case ThreeInstanceSetup -> bcmHashMap.get(currentEntry).bacRandomFlags = 3;
+                    case Unknown4 -> bcmHashMap.get(currentEntry).bacRandomFlags = 4;
+                    case Unknown6 -> bcmHashMap.get(currentEntry).bacRandomFlags = 6;
+                }
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, long value, CharacterConditions characterCondition) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (value == characterCondition.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                switch (characterCondition) {
+                    case None -> bcmHashMap.get(currentEntry).characterCondition = 0;
+                    case CustomCharacter -> bcmHashMap.get(currentEntry).characterCondition = 1;
+                    case HumanMale -> bcmHashMap.get(currentEntry).characterCondition = 2;
+                    case HumanFemale -> bcmHashMap.get(currentEntry).characterCondition = 3;
+                    case SaiyanMale -> bcmHashMap.get(currentEntry).characterCondition = 4;
+                    case SaiyanFemale -> bcmHashMap.get(currentEntry).characterCondition = 5;
+                    case Namekian -> bcmHashMap.get(currentEntry).characterCondition = 6;
+                    case FriezaRace -> bcmHashMap.get(currentEntry).characterCondition = 7;
+                    case MajinMale -> bcmHashMap.get(currentEntry).characterCondition = 8;
+                    case MajinFemale -> bcmHashMap.get(currentEntry).characterCondition = 9;
+                }
+            }
+        });
+
+        return radioButton;
+    }
+    
+    private StackPane createCheckBoxGroup(String text, CheckBox[] checkBoxsList, long bitMask, BcmValues bcmValue) {
+        Label label = new Label(text);
+        label.getStyleClass().add("titled-address-label");
+        label.setTranslateY(-8); 
+        label.setTranslateX(10);
+
+        VBox vBox = new VBox(2);
+        vBox.getStyleClass().add("titled-address-box");
+        vBox.setPadding(new Insets(12, 0, 0, 0));
+        
+        for (int i = 0; i < checkBoxsList.length; i++) {
+            final long bitMaskLamda = bitMask;
+
+            switch(bcmValue) {
+                case DirectionalInput -> {
+                    checkBoxsList[i].setSelected((bcmHashMap.get(currentEntry).directionalInputs & bitMask) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bcmHashMap.get(currentEntry).directionalInputs |= bitMaskLamda;
+                        }
+                        else {
+                            bcmHashMap.get(currentEntry).directionalInputs &= ~bitMaskLamda;
+                        }
+                    });
+                }
+                case ButtonInput -> {
+                    checkBoxsList[i].setSelected((bcmHashMap.get(currentEntry).buttonInputs & bitMask) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bcmHashMap.get(currentEntry).buttonInputs |= bitMaskLamda;
+                        }
+                        else {
+                            bcmHashMap.get(currentEntry).buttonInputs &= ~bitMaskLamda;
+                        }
+                    });
+                }
+                case PrimaryActivatorConditions -> {
+                    checkBoxsList[i].setSelected((bcmHashMap.get(currentEntry).primaryActivatorConditions & bitMask) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bcmHashMap.get(currentEntry).primaryActivatorConditions |= bitMaskLamda;
+                        }
+                        else {
+                            bcmHashMap.get(currentEntry).primaryActivatorConditions &= ~bitMaskLamda;
+                        }
+                    });
+                }
+                case ActivatorState -> {
+                    checkBoxsList[i].setSelected((bcmHashMap.get(currentEntry).activatorState & bitMask) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bcmHashMap.get(currentEntry).activatorState |= bitMaskLamda;
+                        }
+                        else {
+                            bcmHashMap.get(currentEntry).activatorState &= ~bitMaskLamda;
+                        }
+                    });
+                }
+                default -> throw new IllegalArgumentException("Unexpected value: " + bcmValue);
+            }
+
+            vBox.getChildren().add(checkBoxsList[i]);
+
+            bitMask <<= 1;
+        }
+
+        StackPane stackPane = new StackPane(vBox, label);
+        StackPane.setAlignment(label, Pos.TOP_LEFT);
+
+        return stackPane;
+    }
+
+    private StackPane createRadioButtonGroup(String text, ToggleGroup toggleGroup, RadioButton[] radioButtonsList, double bitMask, float[] increment, BcmValues bcmValue) {
+        Label label = new Label(text);
+        label.getStyleClass().add("titled-address-label");
+        label.setTranslateY(-8); 
+        label.setTranslateX(10);
+
+        VBox vBox = new VBox(2, radioButtonsList[0]);
+        vBox.getStyleClass().add("titled-address-box");
+        vBox.setPadding(new Insets(12, 0, 0, 0));
+
+        radioButtonsList[0].setSelected(true);
+        radioButtonsList[0].setToggleGroup(toggleGroup);
+
+        double currentBitMask = bitMask;
+
+        for (int i = 1; i < radioButtonsList.length; i++) {
+            switch(bcmValue) {
+                case HoldDownConditions -> {
+                    radioButtonsList[i].setToggleGroup(toggleGroup);
+                    radioButtonsList[i].setSelected((bcmHashMap.get(currentEntry).holdDownConditions & (long) currentBitMask) == (long) currentBitMask); 
+                }
+                default -> throw new IllegalArgumentException("Unexpected value: " + bcmValue);
+            }
+
+            vBox.getChildren().add(radioButtonsList[i]);
+
+            if (i != radioButtonsList.length - 1) currentBitMask *= increment[i - 1];
+        }
+
+        currentBitMask = bitMask;
+
+        for (int i = 1; i < radioButtonsList.length; i++) {
+            final long bitMaskLamda = (long) currentBitMask;
+
+            radioButtonsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                if (newValue) {
+                    bcmHashMap.get(currentEntry).holdDownConditions |= bitMaskLamda;
+                }
+                else {
+                    bcmHashMap.get(currentEntry).holdDownConditions &= ~bitMaskLamda;
+                    
+                }
+            });
+
+            if (i != radioButtonsList.length - 1) currentBitMask *= increment[i - 1];
+        }
+
+        StackPane stackPane = new StackPane(vBox, label);
+        StackPane.setAlignment(label, Pos.TOP_LEFT);
+
+        return stackPane;
+    }
+
+    private HBox createHBox(int width, Label label, Node node) {
+        HBox hBox = new HBox(width, label, node);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        return hBox;
+    }
+
+    private HBox createHBox(int width, Node[] nodeList, boolean enableStyle) {
+        HBox hBox = new HBox(width);
+
+        if (enableStyle) hBox.getStyleClass().add("titled-address-box");
+
+        for (int i = 0; i < nodeList.length; i++) {
+            hBox.getChildren().add(nodeList[i]);
+        }
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        return hBox;
+    }
+
+    private GridPane createGridPane(int columns ,int rows, Node[] nodeList, boolean enableStyle) {
+        GridPane gridPane = new GridPane(10, 10);
+        if (enableStyle) gridPane.getStyleClass().add("titled-address-box");
+
+        int index = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                gridPane.add(nodeList[index], j, i);
+                index++;
+            }
+        }
+
+        return gridPane;
     }
      
     public void entriesActionListener() {
@@ -3486,14 +811,14 @@ public class Bcm {
         treeView.setContextMenu(contextMenu);
         treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue == null)  return;
-            
+
             currentEntry = newValue;
 
-            tabPane.getTabs().get(0).setContent(createInputsVBox(bcmEntries.get(treeView.getRow(newValue))));
-            tabPane.getTabs().get(1).setContent(createActivatorScrollPane(bcmEntries.get(treeView.getRow(newValue))));
-            tabPane.getTabs().get(2).setContent(createBACVBox(bcmEntries.get(treeView.getRow(newValue))));
-            tabPane.getTabs().get(3).setContent(createMiscVBox(bcmEntries.get(treeView.getRow(newValue))));
-            tabPane.getTabs().get(4).setContent(createUnknownVBox(bcmEntries.get(treeView.getRow(newValue))));
+            tabPane.getTabs().get(0).setContent(createInputsVBox(bcmHashMap.get(currentEntry)));
+            tabPane.getTabs().get(1).setContent(createActivatorScrollPane(bcmHashMap.get(currentEntry)));
+            tabPane.getTabs().get(2).setContent(createBACVBox(bcmHashMap.get(currentEntry)));
+            tabPane.getTabs().get(3).setContent(createMiscVBox(bcmHashMap.get(currentEntry)));
+            tabPane.getTabs().get(4).setContent(createUnknownVBox(bcmHashMap.get(currentEntry)));
         });
         treeView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
@@ -3502,24 +827,12 @@ public class Bcm {
                         Copy();
                         paste.setDisable(false);
                     }
-                    if (event.getTarget() == paste) {
-                        Paste();
-                    }
-                    if (event.getTarget() == delete) {
-                       Delete();
-                    }
-                    if (event.getTarget() == append) {
-                        Append();
-                    }
-                    if (event.getTarget() == insert) {
-                        Insert();
-                    }
-                    if (event.getTarget() == addNewChild) {
-                        AddNewChild();
-                    }
-                    if (event.getTarget() == addComment) {
-                        AddComment();
-                    }
+                    else if (event.getTarget() == paste) Paste();
+                    else if (event.getTarget() == delete) Delete();
+                    else if (event.getTarget() == append) Append();
+                    else if (event.getTarget() == insert) Insert();
+                    else if (event.getTarget() == addNewChild) AddNewChild();
+                    else if (event.getTarget() == addComment) Popups.AddComment(currentEntry);
                 });
             }
         });
@@ -3531,23 +844,41 @@ public class Bcm {
                 Copy();
                 paste.setDisable(false);
             }
-            if (e.isControlDown() && e.getCode() == KeyCode.V) {
-                Paste();
-            }
-            if (e.getCode() == KeyCode.DELETE) {
-                Delete();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.A) {
-                Append();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.I) {
-                Insert();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.N) {
-                AddNewChild();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.Q) {
-                AddComment();
+            else if (e.isControlDown() && e.getCode() == KeyCode.V) Paste();
+            else if (e.getCode() == KeyCode.DELETE) Delete();
+            else if (e.isControlDown() && e.getCode() == KeyCode.A) Append();
+            else if (e.isControlDown() && e.getCode() == KeyCode.I) Insert();
+            else if (e.isControlDown() && e.getCode() == KeyCode.N) AddNewChild();
+            else if (e.isControlDown() && e.getCode() == KeyCode.Q) Popups.AddComment(currentEntry);
+            else if (e.isControlDown() && e.getCode() == KeyCode.F) {
+                ButtonType findNextButtonType = new ButtonType("Find Next", ButtonData.NEXT_FORWARD);
+                ButtonType cancelButtonType = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+                
+                Dialog<String> dialog = new Dialog<>();
+
+                dialog.setTitle("Find");
+                dialog.getDialogPane().getButtonTypes().addAll(findNextButtonType, cancelButtonType);
+                dialog.getDialogPane().setContent(Popups.createFindDialog("Entry: ", indexList, 
+                    FXCollections.observableArrayList(
+                        "Directional Input", 
+                        "Button Input", 
+                        "Hold Down Conditions", 
+                        "BoostEnd", 
+                        "KiaiCharge", 
+                        "KiryokuMax", 
+                        "HenshinStart", 
+                        "HenshinEnd"
+                    )));
+
+                final Button findbt = (Button) dialog.getDialogPane().lookupButton(findNextButtonType);
+                findbt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!findbt.isPressed()) {
+
+            
+                        event.consume();
+                    }
+                });
+                dialog.showAndWait();
             }
         });
     }
@@ -3555,30 +886,30 @@ public class Bcm {
     private void Copy() {
         if (currentEntry == null) return;
         
-        copyContainer = new BcmEntry(bcmEntries.get(treeView.getSelectionModel().getSelectedIndex()));
+        copyContainer = new BcmEntry(bcmHashMap.get(currentEntry));
     }
 
     private void Paste() {
         if (currentEntry == null || copyContainer == null) return;
         
-        bcmEntries.set(treeView.getSelectionModel().getSelectedIndex(), new BcmEntry(copyContainer));
+        bcmHashMap.put(currentEntry, new BcmEntry(copyContainer));
 
         if (treeView.getSelectionModel().getSelectedItem() != null) {
-            tabPane.getTabs().get(0).setContent(createInputsVBox(bcmEntries.get(treeView.getSelectionModel().getSelectedIndex())));
-            tabPane.getTabs().get(1).setContent(createActivatorScrollPane(bcmEntries.get(treeView.getSelectionModel().getSelectedIndex())));
-            tabPane.getTabs().get(2).setContent(createBACVBox(bcmEntries.get(treeView.getSelectionModel().getSelectedIndex())));
-            tabPane.getTabs().get(3).setContent(createMiscVBox(bcmEntries.get(treeView.getSelectionModel().getSelectedIndex())));
-            tabPane.getTabs().get(4).setContent(createUnknownVBox(bcmEntries.get(treeView.getSelectionModel().getSelectedIndex())));
+            tabPane.getTabs().get(0).setContent(createInputsVBox(bcmHashMap.get(currentEntry)));
+            tabPane.getTabs().get(1).setContent(createActivatorScrollPane(bcmHashMap.get(currentEntry)));
+            tabPane.getTabs().get(2).setContent(createBACVBox(bcmHashMap.get(currentEntry)));
+            tabPane.getTabs().get(3).setContent(createMiscVBox(bcmHashMap.get(currentEntry)));
+            tabPane.getTabs().get(4).setContent(createUnknownVBox(bcmHashMap.get(currentEntry)));
         }
     }
 
     private void Delete() {
         if (currentEntry == null || currentEntry.getParent() == null) return;
         
-        bcmEntries.remove(treeView.getSelectionModel().getSelectedIndex());
+        bcmHashMap.remove(currentEntry);
+        allEntries.remove(currentEntry);
         currentEntry.getParent().getChildren().remove(currentEntry);
-        allEntries.remove(treeView.getSelectionModel().getSelectedIndex());
-
+    
         int[] index = {0};
         renameTreeItems(treeView.getRoot(), index);
     }
@@ -3592,8 +923,8 @@ public class Bcm {
 
             parent.getChildren().add(currentPos + 1, newEntry);
 
-            bcmEntries.add(treeView.getRow(currentEntry) + 1, new BcmEntry());
             allEntries.add(treeView.getRow(currentEntry) + 1, newEntry);
+            bcmHashMap.put(newEntry, new BcmEntry());
 
             int[] index = {0};
             renameTreeItems(treeView.getRoot(), index);
@@ -3602,6 +933,7 @@ public class Bcm {
 
    private void Insert() {
         TreeItem<String> parent = currentEntry.getParent();
+
         if (parent != null) {
             TreeItem<String> newEntry = new TreeItem<>("New Entry");
 
@@ -3609,8 +941,8 @@ public class Bcm {
 
             parent.getChildren().add(currentPos, newEntry);
 
-            bcmEntries.add(treeView.getRow(currentEntry) - 1, new BcmEntry());
             allEntries.add(treeView.getRow(currentEntry) - 1, newEntry);
+            bcmHashMap.put(newEntry, new BcmEntry());
 
             int[] index = {0};
             renameTreeItems(treeView.getRoot(), index);
@@ -3625,37 +957,23 @@ public class Bcm {
         currentEntry.getChildren().add(newChild);
         currentEntry.setExpanded(true);
 
-        bcmEntries.add(treeView.getRow(currentEntry) + 1, new BcmEntry());
         allEntries.add(treeView.getRow(currentEntry) + 1, newChild);
+        bcmHashMap.put(newChild, new BcmEntry());
 
         int[] index = {0};
         renameTreeItems(treeView.getRoot(), index);
     }
 
-    public void AddComment() {
-        if (currentEntry == null) return;
+    public void renameTreeItems(TreeItem<String> root, int[] index) {
+        if (root == null) return;
 
-        TextInputDialog textInputDialog = new TextInputDialog();
-        textInputDialog.setTitle("Comment");
-        textInputDialog.getDialogPane().setContentText("New Comment: ");
+        root.setValue("Entry " + index[0]);
 
-        System.out.println(textInputDialog.getEditor().getText());
-
-        textInputDialog.showAndWait().ifPresent(updatedText -> {
-            currentEntry.setValue(currentEntry.getValue() + " - " + updatedText);
-        });
-    }
-
-    public void renameTreeItems(TreeItem<String> item, int[] index) {
-        if (item == null) return;
-
-        item.setValue("Entry " + index[0]);
-
-        allEntries.set(index[0], item);
+        allEntries.set(index[0], root);
 
         index[0]++;
         
-        for (TreeItem<String> child : item.getChildren()) {
+        for (TreeItem<String> child : root.getChildren()) {
             renameTreeItems(child, index);
         }
     }
@@ -3684,8 +1002,7 @@ public class Bcm {
             }
 
             for (int i = 0; i < bcmEntryCount; i++) {
-                BcmEntry bcmEntry = new BcmEntry();
-                bcmEntries.add(bcmEntry);
+                bcmHashMap.put(allEntries.get(i), new BcmEntry());
 
                 int entryStartOffset = 16 + (i * 112);
                 int siblingOffset = entryStartOffset + 48;
@@ -3695,103 +1012,103 @@ public class Bcm {
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.i00 = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).skillConditions = toUint32(intBuffer.getInt());
 
                 channel.position(entryStartOffset + 4);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.directionalInputs = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).directionalInputs = toUint32(intBuffer.getInt());
                 
                 channel.position(entryStartOffset + 8);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.buttonInputs = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).buttonInputs = toUint32(intBuffer.getInt());
             
                 channel.position(entryStartOffset + 12);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.holdDownConditions = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).holdDownConditions = toUint32(intBuffer.getInt());
                 
                 channel.position(entryStartOffset + 16);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.opponentSizeConditions = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).opponentSizeConditions = toUint32(intBuffer.getInt());
                 
                 channel.position(entryStartOffset + 20);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.minimumLoopDuration = toUShort(shortBuffer.getShort());
+                bcmHashMap.get(allEntries.get(i)).minimumLoopDuration = toUShort(shortBuffer.getShort());
 
                 channel.position(entryStartOffset + 22);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.maximumLoopDuration = toUShort(shortBuffer.getShort());
+                bcmHashMap.get(allEntries.get(i)).maximumLoopDuration = toUShort(shortBuffer.getShort());
 
                 channel.position(entryStartOffset + 24);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.primaryActivatorConditions = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).primaryActivatorConditions = toUint32(intBuffer.getInt());
                 
                 channel.position(entryStartOffset + 28);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.activatorState = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).activatorState = toUint32(intBuffer.getInt());
               
                 channel.position(entryStartOffset + 32);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.bacEntryPrimary = shortBuffer.getShort();
+                bcmHashMap.get(allEntries.get(i)).bacEntryPrimary = shortBuffer.getShort();
 
                 channel.position(entryStartOffset + 34);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.bacEntryCharge = shortBuffer.getShort();
+                bcmHashMap.get(allEntries.get(i)).bacEntryCharge = shortBuffer.getShort();
 
                 channel.position(entryStartOffset + 36);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.i36 = shortBuffer.getShort();
+                bcmHashMap.get(allEntries.get(i)).i36 = shortBuffer.getShort();
 
                 channel.position(entryStartOffset + 38);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.bacEntryUserConnect = shortBuffer.getShort();
+                bcmHashMap.get(allEntries.get(i)).bacEntryUserConnect = shortBuffer.getShort();
 
                 channel.position(entryStartOffset + 40);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.bacEntryVictimConnect = shortBuffer.getShort();
+                bcmHashMap.get(allEntries.get(i)).bacEntryVictimConnect = shortBuffer.getShort();
 
                 channel.position(entryStartOffset + 42);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.bacEntryAirborne = shortBuffer.getShort();
+                bcmHashMap.get(allEntries.get(i)).bacEntryAirborne = shortBuffer.getShort();
 
                 channel.position(entryStartOffset + 44);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.bacEntryTargetingOverride = toUShort(shortBuffer.getShort());
+                bcmHashMap.get(allEntries.get(i)).bacEntryTargetingOverride = toUShort(shortBuffer.getShort());
                 
                 channel.position(entryStartOffset + 46);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.bacRandomFlags = toUShort(shortBuffer.getShort());
+                bcmHashMap.get(allEntries.get(i)).bacRandomFlags = toUShort(shortBuffer.getShort());
                
                 channel.position(siblingOffset);
                 intBuffer.clear();
@@ -3824,79 +1141,79 @@ public class Bcm {
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.kiCost = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).kiCost = toUint32(intBuffer.getInt());
 
                 channel.position(entryStartOffset + 68);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.i68 = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).i68 = toUint32(intBuffer.getInt());
 
                 channel.position(entryStartOffset + 72);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.i72 = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).i72 = toUint32(intBuffer.getInt());
 
                 channel.position(entryStartOffset + 76);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.receiverLinkId = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).receiverLinkId = toUint32(intBuffer.getInt());
 
                 channel.position(entryStartOffset + 80);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.i80 = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).i80 = toUint32(intBuffer.getInt());
 
                 channel.position(entryStartOffset + 84);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.staminaCost = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).staminaCost = toUint32(intBuffer.getInt());
 
                 channel.position(entryStartOffset + 88);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.i88 = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).i88 = toUint32(intBuffer.getInt());
 
                 channel.position(entryStartOffset + 92);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.kiRequired = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).kiRequired = toUint32(intBuffer.getInt());
 
                 channel.position(entryStartOffset + 96);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.healthRequired = intBuffer.getFloat();
+                bcmHashMap.get(allEntries.get(i)).healthRequired = intBuffer.getFloat();
 
                 channel.position(entryStartOffset + 100);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.transformationStage = shortBuffer.getShort();
+                bcmHashMap.get(allEntries.get(i)).transformationStage = shortBuffer.getShort();
 
                 channel.position(entryStartOffset + 102);
                 shortBuffer.clear();
                 channel.read(shortBuffer);
                 shortBuffer.flip();
-                bcmEntry.cusAura = shortBuffer.getShort();
+                bcmHashMap.get(allEntries.get(i)).cusAura = shortBuffer.getShort();
 
                 channel.position(entryStartOffset + 104);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.i104 = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).i104 = toUint32(intBuffer.getInt());
                 
                 channel.position(entryStartOffset + 108);
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmEntry.raceGender = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).characterCondition = toUint32(intBuffer.getInt());
             }
         }
         catch (IOException e) {
@@ -3934,112 +1251,111 @@ public class Bcm {
             channel.write(intBuffer);
             
             for (int i = 0; i < allEntries.size(); i++) {
-                BcmEntry bcmEntry = bcmEntries.get(i);
                 int entryStartOffset = 16 + (112 * i);
                 int siblingOffset = entryStartOffset + 48;
                 int childOffset = entryStartOffset + 52;
-                int rootParentOffset=entryStartOffset+56;
-                int parentOffset=entryStartOffset+60;
+                int rootParentOffset = entryStartOffset + 56;
+                int parentOffset = entryStartOffset + 60;
                 
                 channel.position(entryStartOffset);
                 intBuffer.clear();
-                intBuffer.putInt(((int)bcmEntry.i00));
+                intBuffer.putInt(((int) bcmHashMap.get(allEntries.get(i)).skillConditions));
                 intBuffer.flip();
                 channel.write(intBuffer);
                     
                 channel.position(entryStartOffset + 4);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.directionalInputs);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).directionalInputs);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 8);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.buttonInputs);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).buttonInputs);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 12);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.holdDownConditions);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).holdDownConditions);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 16);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.opponentSizeConditions);
+                intBuffer.putInt((int)bcmHashMap.get(allEntries.get(i)).opponentSizeConditions);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 20);
                 shortBuffer.clear();
-                shortBuffer.putShort((short)bcmEntry.minimumLoopDuration);
+                shortBuffer.putShort((short)bcmHashMap.get(allEntries.get(i)).minimumLoopDuration);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
                 channel.position(entryStartOffset + 22);
                 shortBuffer.clear();
-                shortBuffer.putShort((short)bcmEntry.maximumLoopDuration);
+                shortBuffer.putShort((short)bcmHashMap.get(allEntries.get(i)).maximumLoopDuration);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
                 channel.position(entryStartOffset + 24);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.primaryActivatorConditions);
+                intBuffer.putInt((int)bcmHashMap.get(allEntries.get(i)).primaryActivatorConditions);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 28);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.activatorState);
+                intBuffer.putInt((int)bcmHashMap.get(allEntries.get(i)).activatorState);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 32);
                 shortBuffer.clear();
-                shortBuffer.putShort(bcmEntry.bacEntryPrimary);
+                shortBuffer.putShort(bcmHashMap.get(allEntries.get(i)).bacEntryPrimary);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
                 channel.position(entryStartOffset + 34);
                 shortBuffer.clear();
-                shortBuffer.putShort(bcmEntry.bacEntryCharge);
+                shortBuffer.putShort(bcmHashMap.get(allEntries.get(i)).bacEntryCharge);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
                 channel.position(entryStartOffset + 36);
                 shortBuffer.clear();
-                shortBuffer.putShort(bcmEntry.i36);
+                shortBuffer.putShort(bcmHashMap.get(allEntries.get(i)).i36);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
                 channel.position(entryStartOffset + 38);
                 shortBuffer.clear();
-                shortBuffer.putShort(bcmEntry.bacEntryUserConnect);
+                shortBuffer.putShort(bcmHashMap.get(allEntries.get(i)).bacEntryUserConnect);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
                 channel.position(entryStartOffset + 40);
                 shortBuffer.clear();
-                shortBuffer.putShort(bcmEntry.bacEntryVictimConnect);
+                shortBuffer.putShort(bcmHashMap.get(allEntries.get(i)).bacEntryVictimConnect);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
                 channel.position(entryStartOffset + 42);
                 shortBuffer.clear();
-                shortBuffer.putShort(bcmEntry.bacEntryAirborne);
+                shortBuffer.putShort(bcmHashMap.get(allEntries.get(i)).bacEntryAirborne);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
                 channel.position(entryStartOffset + 44);
                 shortBuffer.clear();
-                shortBuffer.putShort((short)bcmEntry.bacEntryTargetingOverride);
+                shortBuffer.putShort((short)bcmHashMap.get(allEntries.get(i)).bacEntryTargetingOverride);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
                 channel.position(entryStartOffset + 46);
                 shortBuffer.clear();
-                shortBuffer.putShort((short)bcmEntry.bacRandomFlags);
+                shortBuffer.putShort((short)bcmHashMap.get(allEntries.get(i)).bacRandomFlags);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
@@ -4092,79 +1408,79 @@ public class Bcm {
              
                 channel.position(entryStartOffset + 64);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.kiCost);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).kiCost);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 68);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.i68);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).i68);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 72);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.i72);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).i72);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 76);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.receiverLinkId);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).receiverLinkId);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 80);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.i80);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).i80);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 84);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.staminaCost);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).staminaCost);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 88);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.i88);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).i88);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 92);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.kiRequired);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).kiRequired);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 96);
                 intBuffer.clear();
-                intBuffer.putFloat(bcmEntry.healthRequired);
+                intBuffer.putFloat(bcmHashMap.get(allEntries.get(i)).healthRequired);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 100);
                 intBuffer.clear();
-                intBuffer.putInt(bcmEntry.transformationStage);
+                intBuffer.putInt(bcmHashMap.get(allEntries.get(i)).transformationStage);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 102);
                 intBuffer.clear();
-                intBuffer.putInt(bcmEntry.cusAura);
+                intBuffer.putInt(bcmHashMap.get(allEntries.get(i)).cusAura);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 104);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.i104);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).i104);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 108);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmEntry.raceGender);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).characterCondition);
                 intBuffer.flip();
                 channel.write(intBuffer);
             }
@@ -4173,52 +1489,144 @@ public class Bcm {
             e.printStackTrace();
         }
     }
+
+    public static enum SkillConditions {
+        None(0),
+        UseSkillUpgrades(1),
+        Unknown2(2),
+        Unknown3(4),
+        Unknown4(8),
+        OpponentRachedGround(16);
+
+        final int index;
+
+        SkillConditions(int index) {
+            this.index = index;
+        }
+    }
+
+    public static enum OpponentSizeConditions {
+        AllSizes(0),
+        Unknown1(1),
+        Unknown2(3),
+        SmallCharacters(131072),
+        DefaultSize(262144),
+        Medium(327680),
+        MeduimLarge(393216),
+        Large(458752),
+        GreatApe(524288);
+
+        final long index;
+
+        OpponentSizeConditions(long index) {
+            this.index = index;
+        }
+    }
+
+    public static enum RandomFlags {
+        None(0),
+        Random_BAC_Entry(1),
+        NoTargetCorrection(2),
+        ThreeInstanceSetup(3),
+        Unknown4(4),
+        Unknown6(6);
+
+        final int index;
+
+        RandomFlags(int index) {
+            this.index = index;
+        }
+    }
+
+    public static enum CharacterConditions {
+        None(0),
+        CustomCharacter(1),
+        HumanMale(2),
+        HumanFemale(3),
+        SaiyanMale(4),
+        SaiyanFemale(5),
+        Namekian(6),
+        FriezaRace(7),
+        MajinMale(8),
+        MajinFemale(9);
+
+        final int index;
+
+        CharacterConditions(int index) {
+            this.index = index;
+        }
+    }
+
+    public static enum BcmValues {
+        Mode,
+        DirectionalInput,
+        ButtonInput,
+        HoldDownConditions,
+        OpponentSizeConditions,
+        MinimumLoopDuration,
+        MaximumLoopDuration,
+        PrimaryActivatorConditions,
+        ActivatorState,
+        BAC_EntryPrimary,
+        BAC_EntryCharge,
+        I36,
+        BAC_EntryUserConnect,
+        BAC_EntryVictimConnect,
+        BAC_EntryAirborne,
+        BAC_EntryTargetingOverride,
+        BAC_RandomFlags,
+        KiCost,
+        I68,
+        I72,
+        ReceiverLinkID,
+        I80,
+        StaminaCost,
+        I88,
+        KiRequired,
+        HealthRequired,
+        TransformationStage,
+        CUS_Aura,
+        I104,
+        CharacterCondition;
+    }
 }
 
 class BcmEntry {
-    //inputs
+    public long skillConditions;
     public long directionalInputs;
     public long buttonInputs;
     public long holdDownConditions;
-    
-    // activator
     public long opponentSizeConditions;
     public int minimumLoopDuration;
     public int maximumLoopDuration;
     public long primaryActivatorConditions;
     public long activatorState;
-
-    //bac
     public short bacEntryPrimary;
     public short bacEntryCharge;
+    public short i36;
     public short bacEntryUserConnect;
     public short bacEntryVictimConnect;
     public short bacEntryAirborne;
     public int bacEntryTargetingOverride;
     public int bacRandomFlags;
-
-    //misc
     public long kiCost;
+    public long i68;
+    public long i72;
     public long receiverLinkId;
+    public long i80;
     public long staminaCost;
+    public long i88;
     public long kiRequired;
     public float healthRequired;
     public short transformationStage;
     public short cusAura;
-    public long raceGender;
-
-    //unknowns
-    public long i00;
-    public short i36;
-    public long i68;
-    public long i72;
-    public long i80;
-    public long i88;
     public long i104;
-
+    public long characterCondition;
+    
     public BcmEntry() {}
 
     public BcmEntry(BcmEntry other) {
+        this.skillConditions = other.skillConditions;
         this.directionalInputs = other.directionalInputs;
         this.buttonInputs = other.buttonInputs;
         this.holdDownConditions = other.holdDownConditions;
@@ -4229,25 +1637,24 @@ class BcmEntry {
         this.activatorState = other.activatorState;
         this.bacEntryPrimary = other.bacEntryPrimary;
         this.bacEntryCharge = other.bacEntryCharge;
+        this.i36 = other.i36;
         this.bacEntryUserConnect = other.bacEntryUserConnect;
         this.bacEntryVictimConnect = other.bacEntryVictimConnect;
         this.bacEntryAirborne = other.bacEntryAirborne;
         this.bacEntryTargetingOverride = other.bacEntryTargetingOverride;
         this.bacRandomFlags = other.bacRandomFlags;
         this.kiCost = other.kiCost;
+        this.i68 = other.i68;
+        this.i72 = other.i72;
         this.receiverLinkId = other.receiverLinkId;
+        this.i80 = other.i80;
         this.staminaCost = other.staminaCost;
+        this.i88 = other.i88;
         this.kiRequired = other.kiRequired;
         this.healthRequired = other.healthRequired;
         this.transformationStage = other.transformationStage;
         this.cusAura = other.cusAura;
-        this.raceGender = other.raceGender;
-        this.i00 = other.i00;
-        this.i36 = other.i36;
-        this.i68 = other.i68;
-        this.i72 = other.i72;
-        this.i80 = other.i80;
-        this.i88 = other.i88;
         this.i104 = other.i104;
+        this.characterCondition = other.characterCondition;
     }
 }
