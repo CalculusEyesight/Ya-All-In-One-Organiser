@@ -32,6 +32,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import xv2.Bdm.BdmValues.ACBTypes;
+import xv2.Bdm.BdmValues.Effect_EEPK_Types;
+import xv2.Bdm.BdmValues.DamageTypes;
 
 public class Bdm {
     ArrayList<BdmEntry> bdmEntries = new ArrayList<>();
@@ -179,38 +182,38 @@ public class Bdm {
         };
 
         RadioButton[] damageTypeRadioButtonsList = new RadioButton[] {
-            createRadioButton("No Effect", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.NoEffect),
-            createRadioButton("Block", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Block),
-            createRadioButton("Guard Break", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.GuardBreak),
-            createRadioButton("Standard", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Standard),
-            createRadioButton("Heavy", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Heavy),
-            createRadioButton("Knockback", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Knockback),
-            createRadioButton("Knockback 1", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Knockback1),
-            createRadioButton("Knockback 2", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Knockback2),
-            createRadioButton("Knockback 3", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Knockback3),
-            createRadioButton("Knockback 4", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Knockback4),
-            createRadioButton("Grab", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Grab),
-            createRadioButton("Hold Stomach", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.HoldStomach),
-            createRadioButton("Hold Eyes", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.HoldEyes),
-            createRadioButton("Knockback 5", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Knockback5),
-            createRadioButton("Electric", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Electric),
-            createRadioButton("Dazed", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Dazed),
-            createRadioButton("Paralysis", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Paralysis),
-            createRadioButton("Freeze", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Freeze),
-            createRadioButton("Wild-Card", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.WildCard),
-            createRadioButton("Unused", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Unused),
-            createRadioButton("Heavy Stamina Break", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.HeavyStaminaBreak),
-            createRadioButton("Light Stamina Break", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.LightStaminaBreak),
-            createRadioButton("Gigantic Ki Blast Push", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.GiganticKiBlastPush),
-            createRadioButton("Brain Wash", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.BrainWash),
-            createRadioButton("Gigantic Ki Blast Return", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.GiganticKiBlastReturn),
-            createRadioButton("Knockback 6", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Knockback6),
-            createRadioButton("Knockback 7", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Knockback7),
-            createRadioButton("Knockback 8", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Knockback8),
-            createRadioButton("Knockback 9", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.Knockback9),
-            createRadioButton("Slow Opponent", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.SlowOpponent),
-            createRadioButton("Brain Wash 2", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.BrainWash2),
-            createRadioButton("Time Stop", damageTypeToggleGroup, subEntry.damageType, BdmValues.DamageTypes.TimeStop),
+            createRadioButton("No Effect", damageTypeToggleGroup, subEntry.damageType, DamageTypes.NoEffect),
+            createRadioButton("Block", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Block),
+            createRadioButton("Guard Break", damageTypeToggleGroup, subEntry.damageType, DamageTypes.GuardBreak),
+            createRadioButton("Standard", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Standard),
+            createRadioButton("Heavy", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Heavy),
+            createRadioButton("Knockback", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback),
+            createRadioButton("Knockback 1", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback1),
+            createRadioButton("Knockback 2", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback2),
+            createRadioButton("Knockback 3", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback3),
+            createRadioButton("Knockback 4", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback4),
+            createRadioButton("Grab", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Grab),
+            createRadioButton("Hold Stomach", damageTypeToggleGroup, subEntry.damageType, DamageTypes.HoldStomach),
+            createRadioButton("Hold Eyes", damageTypeToggleGroup, subEntry.damageType, DamageTypes.HoldEyes),
+            createRadioButton("Knockback 5", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback5),
+            createRadioButton("Electric", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Electric),
+            createRadioButton("Dazed", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Dazed),
+            createRadioButton("Paralysis", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Paralysis),
+            createRadioButton("Freeze", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Freeze),
+            createRadioButton("Wild-Card", damageTypeToggleGroup, subEntry.damageType, DamageTypes.WildCard),
+            createRadioButton("Unused", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Unused),
+            createRadioButton("Heavy Stamina Break", damageTypeToggleGroup, subEntry.damageType, DamageTypes.HeavyStaminaBreak),
+            createRadioButton("Light Stamina Break", damageTypeToggleGroup, subEntry.damageType, DamageTypes.LightStaminaBreak),
+            createRadioButton("Gigantic Ki Blast Push", damageTypeToggleGroup, subEntry.damageType, DamageTypes.GiganticKiBlastPush),
+            createRadioButton("Brain Wash", damageTypeToggleGroup, subEntry.damageType, DamageTypes.BrainWash),
+            createRadioButton("Gigantic Ki Blast Return", damageTypeToggleGroup, subEntry.damageType, DamageTypes.GiganticKiBlastReturn),
+            createRadioButton("Knockback 6", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback6),
+            createRadioButton("Knockback 7", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback7),
+            createRadioButton("Knockback 8", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback8),
+            createRadioButton("Knockback 9", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback9),
+            createRadioButton("Slow Opponent", damageTypeToggleGroup, subEntry.damageType, DamageTypes.SlowOpponent),
+            createRadioButton("Brain Wash 2", damageTypeToggleGroup, subEntry.damageType, DamageTypes.BrainWash2),
+            createRadioButton("Time Stop", damageTypeToggleGroup, subEntry.damageType, DamageTypes.TimeStop),
         };
 
         VBox mainVBox = new VBox(45,
@@ -242,11 +245,11 @@ public class Bdm {
         ToggleGroup acbTypeToggleGroup = new ToggleGroup();
 
         RadioButton[] radioButtonsList = new RadioButton[] {
-            createRadioButton("Common", acbTypeToggleGroup, subEntry.acbType, BdmValues.ACBTypes.Common), 
-            createRadioButton("Character SE", acbTypeToggleGroup, subEntry.acbType, BdmValues.ACBTypes.CharacterSE),
-            createRadioButton("Character VOX", acbTypeToggleGroup, subEntry.acbType, BdmValues.ACBTypes.CharacterVOX),
-            createRadioButton("Skill SE", acbTypeToggleGroup, subEntry.acbType, BdmValues.ACBTypes.SkillSE),
-            createRadioButton("Skill VOX", acbTypeToggleGroup, subEntry.acbType, BdmValues.ACBTypes.SkillVOX)
+            createRadioButton("Common", acbTypeToggleGroup, subEntry.acbType, ACBTypes.Common), 
+            createRadioButton("Character SE", acbTypeToggleGroup, subEntry.acbType, ACBTypes.CharacterSE),
+            createRadioButton("Character VOX", acbTypeToggleGroup, subEntry.acbType, ACBTypes.CharacterVOX),
+            createRadioButton("Skill SE", acbTypeToggleGroup, subEntry.acbType, ACBTypes.SkillSE),
+            createRadioButton("Skill VOX", acbTypeToggleGroup, subEntry.acbType, ACBTypes.SkillVOX)
         };
 
         VBox soundVBox = new VBox(30, 
@@ -262,43 +265,43 @@ public class Bdm {
         ToggleGroup effect1EepkTypeToggleGroup = new ToggleGroup();
 
         RadioButton[] effect1List = new RadioButton[] {
-            createRadioButton("Common", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, BdmValues.Effect_EEPK_Types.Common, 1),
-            createRadioButton("StageBG", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, BdmValues.Effect_EEPK_Types.StageBG, 1),
-            createRadioButton("Character", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, BdmValues.Effect_EEPK_Types.CharacterEffect, 1),
-            createRadioButton("Awoken Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, BdmValues.Effect_EEPK_Types.AwokenSkill, 1),
-            createRadioButton("Super Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, BdmValues.Effect_EEPK_Types.SuperSkill, 1),
-            createRadioButton("Ultimate Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, BdmValues.Effect_EEPK_Types.UltimateSkill, 1),
-            createRadioButton("Evasive Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, BdmValues.Effect_EEPK_Types.EvasiveSkill, 1),
-            createRadioButton("Ki Blast Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, BdmValues.Effect_EEPK_Types.KiBlastSkill, 1),
-            createRadioButton("Stage", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, BdmValues.Effect_EEPK_Types.StageEffect, 1),
+            createRadioButton("Common", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.Common, 1),
+            createRadioButton("StageBG", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.StageBG, 1),
+            createRadioButton("Character", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.CharacterEffect, 1),
+            createRadioButton("Awoken Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.AwokenSkill, 1),
+            createRadioButton("Super Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.SuperSkill, 1),
+            createRadioButton("Ultimate Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.UltimateSkill, 1),
+            createRadioButton("Evasive Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.EvasiveSkill, 1),
+            createRadioButton("Ki Blast Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.KiBlastSkill, 1),
+            createRadioButton("Stage", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.StageEffect, 1),
         };
 
         ToggleGroup effect2EepkTypeToggleGroup = new ToggleGroup();
 
         RadioButton[] effect2List = new RadioButton[] {
-            createRadioButton("Common", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, BdmValues.Effect_EEPK_Types.Common, 2),
-            createRadioButton("StageBG", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, BdmValues.Effect_EEPK_Types.StageBG, 2),
-            createRadioButton("Character", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, BdmValues.Effect_EEPK_Types.CharacterEffect, 2),
-            createRadioButton("Awoken Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, BdmValues.Effect_EEPK_Types.AwokenSkill, 2),
-            createRadioButton("Super Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, BdmValues.Effect_EEPK_Types.SuperSkill, 2),
-            createRadioButton("Ultimate Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, BdmValues.Effect_EEPK_Types.UltimateSkill, 2),
-            createRadioButton("Evasive Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, BdmValues.Effect_EEPK_Types.EvasiveSkill, 2),
-            createRadioButton("Ki Blast Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, BdmValues.Effect_EEPK_Types.KiBlastSkill, 2),
-            createRadioButton("Stage", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, BdmValues.Effect_EEPK_Types.StageEffect, 2),
+            createRadioButton("Common", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.Common, 2),
+            createRadioButton("StageBG", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.StageBG, 2),
+            createRadioButton("Character", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.CharacterEffect, 2),
+            createRadioButton("Awoken Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.AwokenSkill, 2),
+            createRadioButton("Super Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.SuperSkill, 2),
+            createRadioButton("Ultimate Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.UltimateSkill, 2),
+            createRadioButton("Evasive Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.EvasiveSkill, 2),
+            createRadioButton("Ki Blast Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.KiBlastSkill, 2),
+            createRadioButton("Stage", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.StageEffect, 2),
         };
 
         ToggleGroup effect3EepkTypeToggleGroup = new ToggleGroup();
 
         RadioButton[] effect3List = new RadioButton[] {
-            createRadioButton("Common", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, BdmValues.Effect_EEPK_Types.Common, 3),
-            createRadioButton("StageBG", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, BdmValues.Effect_EEPK_Types.StageBG, 3),
-            createRadioButton("Character", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, BdmValues.Effect_EEPK_Types.CharacterEffect, 3),
-            createRadioButton("Awoken Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, BdmValues.Effect_EEPK_Types.AwokenSkill, 3),
-            createRadioButton("Super Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, BdmValues.Effect_EEPK_Types.SuperSkill, 3),
-            createRadioButton("Ultimate Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, BdmValues.Effect_EEPK_Types.UltimateSkill, 3),
-            createRadioButton("Evasive Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, BdmValues.Effect_EEPK_Types.EvasiveSkill, 3),
-            createRadioButton("Ki Blast Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, BdmValues.Effect_EEPK_Types.KiBlastSkill, 3),
-            createRadioButton("Stage", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, BdmValues.Effect_EEPK_Types.StageEffect, 3),
+            createRadioButton("Common", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.Common, 3),
+            createRadioButton("StageBG", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.StageBG, 3),
+            createRadioButton("Character", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.CharacterEffect, 3),
+            createRadioButton("Awoken Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.AwokenSkill, 3),
+            createRadioButton("Super Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.SuperSkill, 3),
+            createRadioButton("Ultimate Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.UltimateSkill, 3),
+            createRadioButton("Evasive Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.EvasiveSkill, 3),
+            createRadioButton("Ki Blast Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.KiBlastSkill, 3),
+            createRadioButton("Stage", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.StageEffect, 3),
         };
 
         VBox effectsVBox = new VBox(35, 
@@ -477,7 +480,7 @@ public class Bdm {
         return label;
     }
 
-    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, int value, BdmValues.DamageTypes damageType) {
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, int value, DamageTypes damageType) {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setToggleGroup(toggleGroup);
 
@@ -526,7 +529,7 @@ public class Bdm {
         return radioButton;
     }
 
-    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, int value, BdmValues.ACBTypes ACBType) {
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, int value, ACBTypes ACBType) {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setToggleGroup(toggleGroup);
 
@@ -548,7 +551,7 @@ public class Bdm {
         return radioButton;
     }
 
-    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, int value, BdmValues.Effect_EEPK_Types effect_EEPK_Type, int type) {
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, int value, Effect_EEPK_Types effect_EEPK_Type, int type) {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setToggleGroup(toggleGroup);
 
