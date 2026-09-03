@@ -474,12 +474,12 @@ public class Bcm {
             }
             try {
                 switch (bcmValue) {
-                    case BcmValues.I36 -> bcmHashMap.get(currentEntry).i36 = Short.parseShort(newText);
-                    case BcmValues.I68 -> bcmHashMap.get(currentEntry).i68 = Long.parseLong(newText);
-                    case BcmValues.I72 -> bcmHashMap.get(currentEntry).i72 = Long.parseLong(newText);
-                    case BcmValues.I80 -> bcmHashMap.get(currentEntry).i80 = Long.parseLong(newText);
-                    case BcmValues.I88 -> bcmHashMap.get(currentEntry).i88 = Long.parseLong(newText);
-                    case BcmValues.I104 -> bcmHashMap.get(currentEntry).i104 = Long.parseLong(newText);
+                    case I36 -> bcmHashMap.get(currentEntry).i36 = Short.parseShort(newText);
+                    case I68 -> bcmHashMap.get(currentEntry).i68 = Long.parseLong(newText);
+                    case I72 -> bcmHashMap.get(currentEntry).i72 = Long.parseLong(newText);
+                    case I80 -> bcmHashMap.get(currentEntry).i80 = Long.parseLong(newText);
+                    case I88 -> bcmHashMap.get(currentEntry).i88 = Long.parseLong(newText);
+                    case I104 -> bcmHashMap.get(currentEntry).i104 = Long.parseLong(newText);
                     default -> throw new IllegalArgumentException("Unexpected value: " + bcmValue);
                 }
             } catch (NumberFormatException e) {

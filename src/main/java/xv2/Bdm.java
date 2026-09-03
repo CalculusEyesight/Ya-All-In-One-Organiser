@@ -616,18 +616,18 @@ public class Bdm {
             }
             try {
                 switch (bdmValue) {
-                    case BdmValues.I02 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i02 = Integer.parseInt(newText);
-                    case BdmValues.I06 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i06 = Integer.parseInt(newText);
-                    case BdmValues.F08 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].f08 = Float.parseFloat(newText);
-                    case BdmValues.I22 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i22 = Integer.parseInt(newText);
-                    case BdmValues.I30 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i30 = Integer.parseInt(newText);
-                    case BdmValues.I38 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i38 = Integer.parseInt(newText);
-                    case BdmValues.I58 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i58 = Integer.parseInt(newText);
-                    case BdmValues.I76 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i76 = Integer.parseInt(newText);
-                    case BdmValues.I82 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i82 = Integer.parseInt(newText);
-                    case BdmValues.I88 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i88 = Integer.parseInt(newText);
-                    case BdmValues.I90 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i90 = Integer.parseInt(newText);
-                    case BdmValues.I92 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i92 = Integer.parseInt(newText);
+                    case I02 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i02 = Integer.parseInt(newText);
+                    case I06 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i06 = Integer.parseInt(newText);
+                    case F08 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].f08 = Float.parseFloat(newText);
+                    case I22 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i22 = Integer.parseInt(newText);
+                    case I30 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i30 = Integer.parseInt(newText);
+                    case I38 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i38 = Integer.parseInt(newText);
+                    case I58 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i58 = Integer.parseInt(newText);
+                    case I76 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i76 = Integer.parseInt(newText);
+                    case I82 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i82 = Integer.parseInt(newText);
+                    case I88 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i88 = Integer.parseInt(newText);
+                    case I90 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i90 = Integer.parseInt(newText);
+                    case I92 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i92 = Integer.parseInt(newText);
                     default -> throw new IllegalArgumentException("Unexpected value: " + bdmValue);
                 }
             } catch (NumberFormatException e) {
