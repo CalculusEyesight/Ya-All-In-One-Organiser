@@ -68,7 +68,14 @@ public class Popups {
     public static void ItemNotFound() {
         Toolkit.getDefaultToolkit().beep();
         Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setContentText("Item Not Found");
+        alert.setContentText("Item not found");
+        alert.showAndWait();
+    }
+
+    public static void ItemsReplaced() {
+        Toolkit.getDefaultToolkit().beep();
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setContentText("Items have been replaced");
         alert.showAndWait();
     }
 
@@ -85,16 +92,18 @@ public class Popups {
     }
 
     public static VBox createFindDialog(String EntryType, Object[] indexList, ObservableList<String> entriesList) {
-        Label auraEntryLabel = new Label(EntryType);
-        auraEntryLabel.setPrefWidth(70);
-        ComboBox<String> auraEntriesComboBox = new ComboBox<>(entriesList);
-        auraEntriesComboBox.setPrefWidth(150);
-        auraEntriesComboBox.getSelectionModel().select(0);
-        auraEntriesComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+        Label entryLabel = new Label(EntryType);
+        entryLabel.setPrefWidth(70);
+
+        ComboBox<String> entriesComboBox = new ComboBox<>(entriesList);
+        entriesComboBox.setPrefWidth(150);
+        entriesComboBox.getSelectionModel().select(0);
+        entriesComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
             indexList[0] = newValue.intValue();
         });
-        HBox auraEntriesHBox = new HBox(auraEntryLabel, auraEntriesComboBox);
-        auraEntriesHBox.setAlignment(Pos.CENTER_LEFT);
+
+        HBox entriesHBox = new HBox(entryLabel, entriesComboBox);
+        entriesHBox.setAlignment(Pos.CENTER_LEFT);
 
         Label findNextLabel = new Label("Find Next: ");
         findNextLabel.setPrefWidth(70);
@@ -106,9 +115,57 @@ public class Popups {
                 e.printStackTrace();
             }
         });
+
         HBox findNextHBox = new HBox(findNextLabel, findNextTextField);
         findNextHBox.setAlignment(Pos.CENTER_LEFT);
 
-        return new VBox(8, auraEntriesHBox, findNextHBox);
+        return new VBox(8, entriesHBox, findNextHBox);
+    }
+
+    public static VBox createReplaceDialog(String EntryType, Object[] indexList, ObservableList<String> entriesList) {
+        Label entryLabel = new Label(EntryType);
+        entryLabel.setPrefWidth(100);
+
+        ComboBox<String> entriesComboBox = new ComboBox<>(entriesList);
+        entriesComboBox.setPrefWidth(150);
+        entriesComboBox.getSelectionModel().select(0);
+        entriesComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+            indexList[0] = newValue.intValue();
+        });
+
+        HBox entriesHBox = new HBox(entryLabel, entriesComboBox);
+        entriesHBox.setAlignment(Pos.CENTER_LEFT);
+
+        Label findNextLabel = new Label("Find Next: ");
+        findNextLabel.setPrefWidth(100);
+
+        TextField findNextTextField = new TextField();
+        findNextTextField.textProperty().addListener((obs, oldText, newText) -> {
+            try {
+                indexList[1] = newText;
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        HBox findNextHBox = new HBox(findNextLabel, findNextTextField);
+        findNextHBox.setAlignment(Pos.CENTER_LEFT);
+
+        Label replaceNextLabel = new Label("Replace Next: ");
+        replaceNextLabel.setPrefWidth(100);
+        
+        TextField replaceNextTextField = new TextField();
+        replaceNextTextField.textProperty().addListener((obs, oldText, newText) -> {
+            try {
+                indexList[2] = newText;
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        HBox replaceNextHBox = new HBox(replaceNextLabel, replaceNextTextField);
+        replaceNextHBox.setAlignment(Pos.CENTER_LEFT);
+
+        return new VBox(8, entriesHBox, findNextHBox, replaceNextHBox);
     }
 }
