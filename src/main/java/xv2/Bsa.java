@@ -1,7 +1,7 @@
 package xv2;
-import static xv2.BinaryUtilities.toUByte;
-import static xv2.BinaryUtilities.toUShort;
-import static xv2.BinaryUtilities.toUint32;
+import static xv2.Unsigned.toUByte;
+import static xv2.Unsigned.toUShort;
+import static xv2.Unsigned.toUint32;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -14,6 +14,7 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -26,7 +27,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -37,12 +37,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import xv2.Bsa.BsaType12Values.DeliveryMode;
+import xv2.Bsa.BsaType13Values.ProtectAdditionalSelectorsFlags;
+import xv2.Bsa.BsaType13Values.ProtectionFlags;
+import xv2.Bsa.BsaType14Values.CMN_EEPK_Types;
+import xv2.Bsa.BsaType14Values.PlacementModes;
+import xv2.Bsa.BsaType3Values.BoundsTypes;
+import xv2.Bsa.BsaType3Values.GrowMaxBoundsFlags;
+import xv2.Bsa.BsaType6Values.EffectSwitchFlags;
+
 public class Bsa {
     TreeView<String> treeView = new TreeView<>();
 
     HashMap<TreeItem<String>, BsaMainEntry> bsaMainHashMap = new HashMap<>();
     HashMap<TreeItem<String>, BsaCollisionEntry> bsaCollisionHashMap = new HashMap<>();
-    HashMap<TreeItem<String>, BsaExpirationEntry> bsaExpirationHashMap = new HashMap<>();
+    HashMap<TreeItem<String>, BsaCollisionSoundEntry> bsaCollisionSoundHashMap = new HashMap<>();
     HashMap<TreeItem<String>, BsaType0Entry> bsaType0HashMap = new HashMap<>();
     HashMap<TreeItem<String>, BsaType1Entry> bsaType1HashMap = new HashMap<>();
     HashMap<TreeItem<String>, BsaType2Entry> bsaType2HashMap = new HashMap<>();
@@ -71,19 +80,19 @@ public class Bsa {
     MenuItem addItemCopy = new MenuItem();
 
     MenuItem collisionMenuItem = new MenuItem("Collision (After Effects)");
-    MenuItem expirationMenuItem = new MenuItem("Expiration (After Effects)");
+    MenuItem collisionSoundMenuItem = new MenuItem("Collision Sound (After Effects)");
     MenuItem type0MenuItem = new MenuItem("BSA Entry Passing");
     MenuItem type1MenuItem = new MenuItem("Movement");
-    MenuItem type2MenuItem = new MenuItem("BSA Type 2");
+    MenuItem type2MenuItem = new MenuItem("Projectile Timeline Remap");
     MenuItem type3MenuItem = new MenuItem("Hitbox");
     MenuItem type4MenuItem = new MenuItem("Deflection");
     MenuItem type6MenuItem = new MenuItem("Effect");
     MenuItem type7MenuItem = new MenuItem("Sound");
     MenuItem type8MenuItem = new MenuItem("Screen Effect");
     MenuItem type10MenuItem = new MenuItem("BSA Type 10");
-    MenuItem type12MenuItem = new MenuItem("BSA Type 12");
-    MenuItem type13MenuItem = new MenuItem("BSA Type 13");
-    MenuItem type14MenuItem = new MenuItem("BSA Type 14");
+    MenuItem type12MenuItem = new MenuItem("Send Projectile Signal");
+    MenuItem type13MenuItem = new MenuItem("Projectile Protection");
+    MenuItem type14MenuItem = new MenuItem("Effect Placement");
 
     TabPane tabPane = new TabPane();
 
@@ -100,4462 +109,1893 @@ public class Bsa {
 
     public SplitPane createSplitPane() {
         SplitPane splitPane = new SplitPane();
-
         splitPane.getItems().addAll(treeView, tabPane);
         splitPane.setDividerPositions(0.245);
         splitPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm()); 
+
         return splitPane;
     }
 
     private void createBsaMain(BsaMainEntry entry) {
-        //i00
-        Label i00Label = new Label("I_00");
-        i00Label.setPrefWidth(60);
+        Node[] impactProperties = new Node[] {
+            createLabel("A", 0),
+            createSpinner(50, 0, 15, entry.i16_a, BsaMainValues.I16_A),
+            createLabel("B", 0),
+            createSpinner(50, 0, 15, entry.i16_b, BsaMainValues.I16_B),
+        };
 
-        TextField i00TextField = new TextField(String.valueOf(entry.i00));
-        i00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i00TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i00 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i00HBox = new HBox(i00Label, i00TextField);
-        i00HBox.setAlignment(Pos.CENTER_LEFT);
-        //i00
-
-        //impact properties
-        Label impactPropertiesLabel = new Label("Impact Properties"); 
-        impactPropertiesLabel.setPrefWidth(150);
-
-        //i16_a
-        Label A = new Label("A");
-
-        Spinner <Integer> i16_aSpinner  = new Spinner<>(0, 15, entry.i16_a);
-        i16_aSpinner.setEditable(true);
-        i16_aSpinner.setPrefWidth(60);
-        i16_aSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.i16_a = newValue.byteValue();
-            }
-        });
-        //i16_a
-
-        //i16_b
-        Label B = new Label("B");
-
-        Spinner <Integer> i16_bSpinner  = new Spinner<>(0, 15, entry.i16_b);
-        i16_bSpinner.setEditable(true);
-        i16_bSpinner.setPrefWidth(60);
-        i16_bSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.i16_b = newValue.byteValue();
-            }
-        });
-        //i16_b
-
-        HBox impactPropertiesHBox = new HBox(15, impactPropertiesLabel, A, i16_aSpinner, B, i16_bSpinner);
-        impactPropertiesHBox.setAlignment(Pos.CENTER_LEFT);
-        //impact properties
-
-        //i17
-        Label i17Label = new Label("I_17");
-        i17Label.setPrefWidth(60);
-
-        TextField I17TextField = new TextField(String.valueOf(entry.i17));
-        I17TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (I17TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i17 = Byte.parseByte(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i17HBox = new HBox(i17Label, I17TextField);
-        i17HBox.setAlignment(Pos.CENTER_LEFT);
-        //i17
-
-        //i18
-        Label i18Label = new Label("I_18");
-        i18Label.setPrefWidth(60);
-
-        TextField i18TextField = new TextField(String.valueOf(entry.i18));
-        i18TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i18TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i18 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i18HBox = new HBox(i18Label, i18TextField);
-        i18HBox.setAlignment(Pos.CENTER_LEFT);
-        //i18
-
-        //lifetime
-        Label lifetimeLabel = new Label("Lifetime");
-        lifetimeLabel.setPrefWidth(150);
-        
-        Spinner <Integer> lifetimeSpinner = new Spinner<>(0, 65535, entry.lifetime);
-        lifetimeSpinner.setEditable(true);
-        lifetimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.lifetime = newValue;
-            }
-        });
-
-        HBox lifetimeHBox = new HBox(15, lifetimeLabel, lifetimeSpinner);
-        lifetimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //lifetime
-
-        //i24
-        Label i24Label = new Label("I_24");
-        i24Label.setPrefWidth(60);
-
-        TextField i24TextField = new TextField(String.valueOf(entry.i24));
-        i24TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i24TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i24 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i24HBox = new HBox(i24Label, i24TextField);
-        i24HBox.setAlignment(Pos.CENTER_LEFT);
-        //i24
-
-        //expires
-        Label expiresLabel = new Label("Entry Pass On When Expires");
-        expiresLabel.setPrefWidth(150);
-        
-        Spinner <Integer> expiresSpinner = new Spinner<>(0, 65535, entry.expires);
-        expiresSpinner.setEditable(true);
-        expiresSpinner.valueProperty().addListener((obs, oldValue,newValue) -> {
-            if (newValue != null) { 
-                entry.expires = newValue;
-            }
-        });
-
-        HBox expiresHBox = new HBox(15, expiresLabel, expiresSpinner);
-        expiresHBox.setAlignment(Pos.CENTER_LEFT);
-        //expires
-
-        //impact projectile
-        Label impactProjectileLabel = new Label("Impact Projectile");
-        impactProjectileLabel.setPrefWidth(150);
-        
-        Spinner <Integer> impactProjectileSpinner = new Spinner<>(0, 65535, entry.impactProjectile);
-        impactProjectileSpinner.setEditable(true);
-        impactProjectileSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.impactProjectile = newValue;
-            }
-        });
-
-        HBox impactProjectileHBox = new HBox(15, impactProjectileLabel, impactProjectileSpinner);
-        impactProjectileHBox.setAlignment(Pos.CENTER_LEFT);
-        //impact projectile
-
-        //impact enemy
-        Label impactEnemyLabel = new Label("Impact Enemy");
-        impactEnemyLabel.setPrefWidth(150);
-        
-        Spinner <Integer> impactEnemySpinner = new Spinner<>(0, 65535, entry.impactEnemy);
-        impactEnemySpinner.setEditable(true);
-        impactEnemySpinner.valueProperty().addListener((obs,oldValue,newValue) -> {
-            if (newValue != null) {
-                entry.impactEnemy = newValue;
-            }
-        });
-
-        HBox impactEnemyHBox = new HBox(15, impactEnemyLabel, impactEnemySpinner);
-        impactEnemyHBox.setAlignment(Pos.CENTER_LEFT);
-        //impact enemy
-
-        //impact ground
-        Label impactGroundLabel = new Label("Impact Ground");
-        impactGroundLabel.setPrefWidth(150);
-        
-        Spinner <Integer> impactGroundSpinner = new Spinner<>(0, 65535, entry.impactGround);
-        impactGroundSpinner.setEditable(true);
-        impactGroundSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.impactGround = newValue;
-            }
-        });
-        
-        HBox impactGroundHBox = new HBox(15, impactGroundLabel, impactGroundSpinner);
-        impactGroundHBox.setAlignment(Pos.CENTER_LEFT);
-        //impact ground
-        
-        //i40
-        Label i40Label = new Label("I_40");
-        i40Label.setPrefWidth(60);
-
-        TextField i40TextField = new TextField(String.valueOf(entry.i40));
-        i40TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i40TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i40 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i40HBox = new HBox(i40Label, i40TextField);
-        i40HBox.setAlignment(Pos.CENTER_LEFT);
-        //i40
-
-        //i44
-        Label i44Label = new Label("I_44");
-        i44Label.setPrefWidth(60);
-
-        TextField i44TextField = new TextField(String.valueOf(entry.i44));
-        i44TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i44TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i44 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i44HBox = new HBox(i44Label, i44TextField);
-        i44HBox.setAlignment(Pos.CENTER_LEFT);
-        //i44
-
-        //i48
-        Label i48Label = new Label("I_48");
-        i48Label.setPrefWidth(60);
-
-        TextField i48TextField = new TextField(String.valueOf(entry.i48));
-        i48TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i48TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i48 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i48HBox=new HBox(i48Label, i48TextField);
-        i48HBox.setAlignment(Pos.CENTER_LEFT);
-        //i48
-
-        //entry
         VBox entryVBox = new VBox(30, 
-            impactPropertiesHBox, lifetimeHBox, 
-            expiresHBox, impactProjectileHBox, 
-            impactEnemyHBox, impactGroundHBox
+            createHBox(0, createLabel("Impact Properties", 250), createHBox(10, impactProperties, false)),
+            createHBox(0, createLabel("Lifetime", 250), createSpinner(0, 0, 65535, entry.lifetime, BsaMainValues.Lifetime)),
+            createHBox(0, createLabel("Entry Pass On When Expires", 250), createSpinner(0, 0, 65535, entry.expires, BsaMainValues.Expires)),
+            createHBox(0, createLabel("Entry Pass On When Impact Projectile", 250), createSpinner(0, 0, 65535, entry.impactProjectile, BsaMainValues.ImpactProjectile)),
+            createHBox(0, createLabel("Entry Pass On When Impact Enemy", 250), createSpinner(0, 0, 65535, entry.impactEnemy, BsaMainValues.ImpactEnemy)), 
+            createHBox(0, createLabel("Entry Pass On When Impact Ground", 250), createSpinner(0, 0, 65535, entry.impactGround, BsaMainValues.ImpactGround))
         );
         entryVBox.setPadding(new Insets(20, 0, 0, 16));
 
-        Tab entryTab = new Tab("Entry", entryVBox);
-        entryTab.setClosable(false);
-        //entry
-
-        //unknown
         VBox unknownVBox = new VBox(30, 
-            i00HBox, i17HBox, 
-            i18HBox, i24HBox, 
-            i40HBox, i44HBox, 
-            i48HBox
+            createHBox(0, createLabel("I_00", 60), createTextField(entry.i00, BsaMainValues.I00)), 
+            createHBox(0, createLabel("I_17", 60), createTextField(entry.i17, BsaMainValues.I17)), 
+            createHBox(0, createLabel("I_18", 60), createTextField(entry.i18, BsaMainValues.I18)),
+            createHBox(0, createLabel("I_24", 60), createTextField(entry.i24, BsaMainValues.I24)),
+            createHBox(0, createLabel("I_40", 60), createTextField(entry.i40, BsaMainValues.I40)), 
+            createHBox(0, createLabel("I_44", 60), createTextField(entry.i44, BsaMainValues.I44)), 
+            createHBox(0, createLabel("I_48", 60), createTextField(entry.i48, BsaMainValues.I48))
         );
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
+        Tab entryTab = new Tab("Entry", entryVBox);
+        entryTab.setClosable(false);
+
         Tab unknownTab = new Tab("Unknown", unknownVBox);
         unknownTab.setClosable(false);
-        //unknown
 
         tabPane.getTabs().addAll(entryTab, unknownTab);
     }
 
     private void createBsaCollision(BsaCollisionEntry entry) {
-        //eepk type
-        Label eepkTypeLabel = new Label("EEPK Type");
-        eepkTypeLabel.setPrefWidth(100);
-
         ToggleGroup eepkTypeToggleGroup = new ToggleGroup();
 
-        RadioButton common = new RadioButton("Common");
-        common.setToggleGroup(eepkTypeToggleGroup);
+        RadioButton[] eepkTypes = new RadioButton[] {
+            createRadioButton("Common", eepkTypeToggleGroup, BsaCollisionValues.EEPK_Types.Common),
+            createRadioButton("StageBG", eepkTypeToggleGroup, BsaCollisionValues.EEPK_Types.StageBG),
+            createRadioButton("Character", eepkTypeToggleGroup, BsaCollisionValues.EEPK_Types.CharacterEffect),
+            createRadioButton("Awoken Skill", eepkTypeToggleGroup, BsaCollisionValues.EEPK_Types.AwokenSkill),
+            createRadioButton("Super Skill", eepkTypeToggleGroup, BsaCollisionValues.EEPK_Types.SuperSkill),
+            createRadioButton("Ultimate Skill", eepkTypeToggleGroup, BsaCollisionValues.EEPK_Types.UltimateSkill),
+            createRadioButton("Evasive Skill", eepkTypeToggleGroup, BsaCollisionValues.EEPK_Types.EvasiveSkill),
+            createRadioButton("Ki Blast Skill", eepkTypeToggleGroup, BsaCollisionValues.EEPK_Types.KiBlastSkill),
+            createRadioButton("Stage", eepkTypeToggleGroup, BsaCollisionValues.EEPK_Types.Stage),
+        };
 
-        RadioButton stageBG = new RadioButton("Stage BG");
-        stageBG.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton character = new RadioButton("Character");
-        character.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton awokenSkill = new RadioButton("Awoken Skill");
-        awokenSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton superSkill = new RadioButton("Super Skill");
-        superSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton ultimateSkill = new RadioButton("Ultimate Skill");
-        ultimateSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton evasiveSkill = new RadioButton("Evasive Skill");
-        evasiveSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton kiBlastSkill = new RadioButton("Ki Blast Skill");
-        kiBlastSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton stage = new RadioButton("Stage");
-        stage.setToggleGroup(eepkTypeToggleGroup);
-
-        switch (entry.eepkType) {
-            case 1 -> stageBG.setSelected(true);
-            case 2 -> character.setSelected(true);
-            case 3 -> awokenSkill.setSelected(true);
-            case 5 -> superSkill.setSelected(true);
-            case 6 -> ultimateSkill.setSelected(true);
-            case 7 -> evasiveSkill.setSelected(true);
-            case 9 -> kiBlastSkill.setSelected(true);
-            case 11 -> stage.setSelected(true);
-            default -> common.setSelected(true);
-        }
-
-        eepkTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue)-> {
-            if (newValue.isSelected()) {
-                if ((RadioButton) newValue == common) { 
-                    entry.eepkType = 0;
-                }
-                else if ((RadioButton) newValue == stageBG) { 
-                    entry.eepkType = 1;
-                }
-                else if ((RadioButton) newValue == character) { 
-                    entry.eepkType = 2;
-                }
-                else if ((RadioButton) newValue == awokenSkill) { 
-                    entry.eepkType = 3;
-                }
-                else if ((RadioButton) newValue == superSkill) { 
-                    entry.eepkType = 5;
-                }
-                else if ((RadioButton) newValue == ultimateSkill) { 
-                    entry.eepkType = 6;
-                }
-                else if ((RadioButton) newValue == evasiveSkill) { 
-                    entry.eepkType = 7;
-                }
-                else if ((RadioButton) newValue == kiBlastSkill) { 
-                    entry.eepkType = 9;
-                }
-                else if ((RadioButton) newValue == stage) {
-                    entry.eepkType = 11;
-                }
-            }
-        });
-
-        GridPane eepkTypeGridPane = new GridPane(10, 10);
-        eepkTypeGridPane.getStyleClass().add("titled-address-box");
-        eepkTypeGridPane.add(common, 0, 0);   
-        eepkTypeGridPane.add(stageBG, 1, 0);          
-        eepkTypeGridPane.add(character, 2, 0);          
-        eepkTypeGridPane.add(awokenSkill, 0, 1);          
-        eepkTypeGridPane.add(superSkill, 1, 1);          
-        eepkTypeGridPane.add(ultimateSkill, 2, 1);          
-        eepkTypeGridPane.add(evasiveSkill, 0, 2);          
-        eepkTypeGridPane.add(kiBlastSkill, 1, 2);          
-        eepkTypeGridPane.add(stage, 2, 2);          
-
-        HBox eepkTypeHBox=new HBox(eepkTypeLabel, eepkTypeGridPane);
-        eepkTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //eepk type
-
-        //skill id
-        Label skillIdLabel = new Label("Skill ID");
-        skillIdLabel.setPrefWidth(100);
-        
-        Spinner <Integer> skillIdSpinner = new Spinner<>(0, 65535, entry.skillId);
-        skillIdSpinner.setEditable(true);
-        skillIdSpinner.valueProperty().addListener((obs, oldValue, newValue)-> {
-            if (newValue != null) {
-                entry.skillId = newValue;
-            }
-        });
-
-        HBox skillIdHBox = new HBox(skillIdLabel, skillIdSpinner);
-        skillIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //skill id
-
-        //effect id
-        Label effectIdLabel = new Label("Effect ID");
-        effectIdLabel.setPrefWidth(100);
-        
-        Spinner <Integer> effectIdSpinner = new Spinner<>(0, 65535, entry.effectId);
-        effectIdSpinner.setEditable(true);
-        effectIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue!=null) {
-                entry.effectId = newValue;
-            }
-        });
-
-        HBox effectIdHBox = new HBox(effectIdLabel, effectIdSpinner);
-        effectIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //effect id
-        
-        //i06
-        Label i06Label = new Label("I_06");
-        i06Label.setPrefWidth(60);
-
-        TextField i06TextField = new TextField(String.valueOf(entry.i06));
-        i06TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i06TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i06 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i06HBox = new HBox(i06Label, i06TextField);
-        i06HBox.setAlignment(Pos.CENTER_LEFT);
-        //i06
-
-        //i08
-        Label i08Label = new Label("I_08");
-        i08Label.setPrefWidth(60);
-
-        TextField i08TextField = new TextField(String.valueOf(entry.i08));
-        i08TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i08TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i08 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i08HBox = new HBox(i08Label, i08TextField);
-        i08HBox.setAlignment(Pos.CENTER_LEFT);
-        //i08
-
-        //i12
-        Label i12Label = new Label("I_12");
-        i12Label.setPrefWidth(60);
-
-        TextField i12TextField=new TextField(String.valueOf(entry.i12));
-        i12TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i12TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i12 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        HBox i12HBox = new HBox(i12Label, i12TextField);
-        i12HBox.setAlignment(Pos.CENTER_LEFT);
-        //i12
-
-        //i16
-        Label i16Label = new Label("I_16");
-        i16Label.setPrefWidth(60);
-
-        TextField i16Textfield = new TextField(String.valueOf(entry.i16));
-        i16Textfield.textProperty().addListener((obs, oldText, newText) -> {
-            if (i16Textfield.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i16 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i16HBox=new HBox(i16Label, i16Textfield);
-        i16HBox.setAlignment(Pos.CENTER_LEFT);
-        //i16
-
-        //i20
-        Label i20Label = new Label("I_20");
-        i20Label.setPrefWidth(60);
-
-        TextField i20TextField = new TextField(String.valueOf(entry.i20));
-        i20TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i20TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i20 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i20HBox = new HBox(i20Label, i20TextField);
-        i20HBox.setAlignment(Pos.CENTER_LEFT);
-        //i20
-
-        //collision
-        VBox collisionVBox = new VBox(30, eepkTypeHBox, skillIdHBox, effectIdHBox);
+        VBox collisionVBox = new VBox(30, 
+            createHBox(0, createLabel("EEPK Type", 100), createGridPane(3, 3, eepkTypes, true)), 
+            createHBox(0, createLabel("Skill ID", 100), createSpinner(0, 65535, entry.skillId, BsaCollisionValues.Skill_ID)), 
+            createHBox(0, createLabel("Effect ID", 100), createSpinner(0, 65535, entry.effectId, BsaCollisionValues.Effect_ID))
+        );
         collisionVBox.setPadding(new Insets(20, 0, 0, 16));
  
+        VBox unknownVBox = new VBox(30, 
+            createHBox(0, createLabel("I_06", 60), createTextField(entry.i06, BsaCollisionValues.I06)), 
+            createHBox(0, createLabel("I_08", 60), createTextField(entry.i08, BsaCollisionValues.I08)), 
+            createHBox(0, createLabel("I_12", 60), createTextField(entry.i12, BsaCollisionValues.I12)), 
+            createHBox(0, createLabel("I_16", 60), createTextField(entry.i16, BsaCollisionValues.I16)), 
+            createHBox(0, createLabel("I_20", 60), createTextField(entry.i20, BsaCollisionValues.I20))
+        );
+        unknownVBox.setPadding(new Insets(20, 0, 0, 16));
+
         Tab collisionTab = new Tab("Collision", collisionVBox);
         collisionTab.setClosable(false);
-        //collison
-
-        //unknown
-        VBox unknownVBox = new VBox(30, i06HBox, i08HBox, i12HBox, i16HBox, i20HBox);
-        unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
         unknownTab.setClosable(false);
-        //unknown
 
         tabPane.getTabs().addAll(collisionTab, unknownTab);
     }
 
-    private void createBsaExpiration(BsaExpirationEntry entry) {
-        //i00
-        Label i00Label = new Label("I_00");
-        i00Label.setPrefWidth(60);
+    private void createBsaCollisionSound(BsaCollisionSoundEntry entry) {
+        ToggleGroup acbTypeToggleGroup = new ToggleGroup();
 
-        TextField i00TextField = new TextField(String.valueOf(entry.i00));
-        i00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i00TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i00 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
+        RadioButton[] acbTypes = new RadioButton[] {
+            createRadioButton("Common", acbTypeToggleGroup, BsaCollisionSoundValues.ACB_Types.Common_SE), 
+            createRadioButton("Character SE", acbTypeToggleGroup, BsaCollisionSoundValues.ACB_Types.Character_SE),
+            createRadioButton("Character VOX", acbTypeToggleGroup, BsaCollisionSoundValues.ACB_Types.Character_VOX),
+            createRadioButton("Skill SE", acbTypeToggleGroup, BsaCollisionSoundValues.ACB_Types.Skill_SE),
+            createRadioButton("Skill VOX", acbTypeToggleGroup, BsaCollisionSoundValues.ACB_Types.Skill_VOX)
+        };
 
-        HBox i00HBox = new HBox(i00Label, i00TextField);
-        i00HBox.setAlignment(Pos.CENTER_LEFT);
-        //i00
-
-        //i02
-        Label i02Label = new Label("I_02");
-        i02Label.setPrefWidth(60);
-
-        TextField i02TextField = new TextField(String.valueOf(entry.i02));
-        i02TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i02TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i02 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i02HBox = new HBox(i02Label, i02TextField);
-        i02HBox.setAlignment(Pos.CENTER_LEFT);
-        //i02
-
-        //i04
-        Label i04Label = new Label("I_04");
-        i04Label.setPrefWidth(60);
-
-        TextField i04TextField = new TextField(String.valueOf(entry.i04));
-        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i04 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i04HBox = new HBox(i04Label, i04TextField);
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        //i04
-        
-        //i06
-        Label i06Label = new Label("I_06");
-        i06Label.setPrefWidth(60);
-        
-        TextField i06Textfield = new TextField(String.valueOf(entry.i06));
-        i06Textfield.textProperty().addListener((obs, oldText, newText) -> {
-            if (i06Textfield.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i06 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i06HBox = new HBox(i06Label, i06Textfield);
-        i06HBox.setAlignment(Pos.CENTER_LEFT);
-        //i06
-
-        //expiration
-        VBox expirationVBox = new VBox(30, i00HBox, i02HBox, i04HBox, i06HBox);
-        expirationVBox.setPadding(new Insets(20, 0, 0, 16));
-
-        Tab expirationTab = new Tab("Expiration", expirationVBox);
-        expirationTab.setClosable(false);
-        //expiration
-
-        tabPane.getTabs().add(expirationTab);
-    }
-
-    private void createBsaType0(BsaType0Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(120);
-        
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true);
-        startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
-
-        HBox startTimeHBox = new HBox(15,startTimeLabel,startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
-
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(120);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
-
-        HBox durationHBox = new HBox(15, durationLabel, durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
-
-        //first condition
-        Label firstConditionLabel = new Label("First Conditon");
-        firstConditionLabel.setPrefWidth(120);
-
-        Spinner <Integer> firstConditonSpinner = new Spinner<>(0, 65535, entry.firstCondition);
-        firstConditonSpinner.setEditable(true);
-        firstConditonSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.firstCondition = newValue;
-            }
-        });
-
-        Label firstConditionIndicatorLabel = new Label();
-        firstConditionIndicatorLabel.setTextFill(Color.CRIMSON);
-        
-        firstConditionIndicatorLabel.textProperty().bind(
-            Bindings.createStringBinding(() -> {
-                return switch (firstConditonSpinner.getValue()) {
-                    case 4 -> "Pass When Attack Hits?";
-                    case 5 -> "BAC Related Pass?";
-                    default -> "Unknown";
-                };
-            }, firstConditonSpinner.valueProperty())
+        VBox collisionSoundVBox = new VBox(30, 
+            createHBox(0, createLabel("ACB Type", 100), createHBox(15, acbTypes, true)),
+            createHBox(0, createLabel("Cue ID", 100), createSpinner(0, 65535, entry.cueId, BsaCollisionSoundValues.CUE_ID))
         );
-        
-        HBox firstConditionHBox = new HBox(15, firstConditionLabel, firstConditonSpinner, firstConditionIndicatorLabel);
-        firstConditionHBox.setAlignment(Pos.CENTER_LEFT);
-        //first condition
+        collisionSoundVBox.setPadding(new Insets(20, 0, 0, 16));
 
-        //second condition
-        Label secondConditionLabel = new Label("Second Condition");
-        secondConditionLabel.setPrefWidth(130);
-
-        //option 1
-        Label option1Label = new Label("Option 1");
-        option1Label.getStyleClass().add("titled-address-label");
-        option1Label.setTranslateY(-8); 
-        option1Label.setTranslateX(10);
-
-        CheckBox unknown1 = new CheckBox("Unknown 1");
-        CheckBox unknown2 = new CheckBox("Unknown 2");
-        CheckBox unknown3 = new CheckBox("Unknown 3");
-        CheckBox bacConditionFromSystem = new CheckBox("Bac Condition From System");
-
-        unknown1.setSelected((entry.secondCondition & 1) != 0);
-        unknown2.setSelected((entry.secondCondition & 2) != 0);
-        unknown3.setSelected((entry.secondCondition & 4) != 0);
-        bacConditionFromSystem.setSelected((entry.secondCondition & 8) != 0);
-
-        unknown1.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 1;
-            }
-            else {
-                entry.secondCondition &= ~1;
-            }
-        });
-        unknown2.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 2;
-            }
-            else {
-                entry.secondCondition &= ~2;
-            }
-        });
-        unknown3.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 4;
-            }
-            else {
-                entry.secondCondition &= ~4;
-            }
-        });
-        bacConditionFromSystem.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 8;
-            }
-            else {
-                entry.secondCondition &= ~8;
-            }
-        });
-
-        VBox Option1Box = new VBox(2, unknown1, unknown2, unknown3, bacConditionFromSystem);
-
-        VBox borderContainerOption1=new VBox(Option1Box);
-        borderContainerOption1.getStyleClass().add("titled-address-box");
-        borderContainerOption1.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option1BoxStackPane = new StackPane(borderContainerOption1,option1Label);
-        StackPane.setAlignment(option1Label, Pos.TOP_LEFT);
-        //option 1
-
-        //option 2
-        Label option2Label = new Label("Option 2");
-        option2Label.getStyleClass().add("titled-address-label");
-        option2Label.setTranslateY(-8); 
-        option2Label.setTranslateX(10);
-
-        CheckBox unknown5 = new CheckBox("Unknown 5");
-        CheckBox unknown6 = new CheckBox("Unknown 6");
-        CheckBox unknown7 = new CheckBox("Unknown 7");
-        CheckBox unknown8 = new CheckBox("Unknown 8");
-
-        unknown5.setSelected((entry.secondCondition & 16) != 0);
-        unknown6.setSelected((entry.secondCondition & 32) != 0);
-        unknown7.setSelected((entry.secondCondition & 64) != 0);
-        unknown8.setSelected((entry.secondCondition & 128) != 0);
-
-        unknown5.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 16;
-            }
-            else {
-                entry.secondCondition &= ~16;
-            }
-        });
-        unknown6.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 32;
-            }
-            else {
-                entry.secondCondition &= ~32;
-            }
-        });
-        unknown7.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 64;
-            }
-            else {
-                entry.secondCondition &= ~64;
-            }
-        });
-        unknown8.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 128;
-            }
-            else {
-                entry.secondCondition &= ~128;
-            }
-        });
-
-        VBox Option2Box = new VBox(2, unknown5, unknown6, unknown7, unknown8);
-
-        VBox borderContainerOption2=new VBox(Option2Box);
-        borderContainerOption2.getStyleClass().add("titled-address-box");
-        borderContainerOption2.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option2BoxStackPane = new StackPane(borderContainerOption2, option2Label);
-        StackPane.setAlignment(option2Label, Pos.TOP_LEFT);
-        //option 2
-
-        //option 3
-        Label option3Label = new Label("Option 3");
-        option3Label.getStyleClass().add("titled-address-label");
-        option3Label.setTranslateY(-8); 
-        option3Label.setTranslateX(10);
-
-        CheckBox unknown9 = new CheckBox("Unknown 9");
-        CheckBox unknown10 = new CheckBox("Unknown 10");
-        CheckBox unknown11 = new CheckBox("Unknown 11");
-        CheckBox unknown12 = new CheckBox("Unknown 12");
-
-        unknown9.setSelected((entry.secondCondition & 256) != 0);
-        unknown10.setSelected((entry.secondCondition & 512) != 0);
-        unknown11.setSelected((entry.secondCondition & 1024) != 0);
-        unknown12.setSelected((entry.secondCondition & 2048) != 0);
-
-        unknown9.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 256;
-            }
-            else {
-                entry.secondCondition &= ~256;
-            }
-        });
-        unknown10.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 512;
-            }
-            else {
-                entry.secondCondition &= ~512;
-            }
-        });
-        unknown11.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 1024;
-            }
-            else {
-                entry.secondCondition &= ~1024;
-            }
-        });
-        unknown12.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 2048;
-            }
-            else {
-                entry.secondCondition &= ~2048;
-            }
-        });
-
-        VBox Option3Box = new VBox(2, unknown9, unknown10, unknown11, unknown12);
-
-        VBox borderContainerOption3=new VBox(Option3Box);
-        borderContainerOption3.getStyleClass().add("titled-address-box");
-        borderContainerOption3.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option3BoxStackPane = new StackPane(borderContainerOption3, option3Label);
-        StackPane.setAlignment(option3Label, Pos.TOP_LEFT);
-        //option 3
-
-        //option 4
-        Label option4Label = new Label("Option 4");
-        option4Label.getStyleClass().add("titled-address-label");
-        option4Label.setTranslateY(-8); 
-        option4Label.setTranslateX(10);
-
-        CheckBox unknown13 = new CheckBox("Unknown 13");
-        CheckBox unknown14 = new CheckBox("Unknown 14");
-        CheckBox unknown15 = new CheckBox("Unknown 15");
-        CheckBox unknown16 = new CheckBox("Unknown 16");
-
-        unknown13.setSelected((entry.secondCondition & 4096) != 0);
-        unknown14.setSelected((entry.secondCondition & 8192) != 0);
-        unknown15.setSelected((entry.secondCondition & 16384) != 0);
-        unknown16.setSelected((entry.secondCondition & 32768) != 0);
-
-        unknown13.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 4096;
-            }
-            else {
-                entry.secondCondition &= ~4096;
-            }
-        });
-        unknown14.selectedProperty().addListener((obs, oldValue, newValue) -> { 
-            if (newValue) {
-                entry.secondCondition |= 8192;
-            }
-            else {
-                entry.secondCondition &= ~8192;
-            }
-        });
-        unknown15.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 16384;
-            }
-            else {
-                entry.secondCondition &= ~16384;
-            }
-        });
-        unknown16.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.secondCondition |= 32768;
-            }
-            else {
-                entry.secondCondition &= ~32768;
-            }
-        });
-
-        VBox Option4Box = new VBox(2, unknown13, unknown14, unknown15, unknown16);
-
-        VBox borderContainerOption4=new VBox(Option4Box);
-        borderContainerOption4.getStyleClass().add("titled-address-box");
-        borderContainerOption4.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option4BoxStackPane = new StackPane(borderContainerOption4, option4Label);
-        StackPane.setAlignment(option4Label, Pos.TOP_LEFT);
-        //option 4
-
-        HBox secondConditionHBox = new HBox(5, secondConditionLabel, option1BoxStackPane, option2BoxStackPane, option3BoxStackPane, option4BoxStackPane);
-        secondConditionHBox.setAlignment(Pos.CENTER_LEFT);
-        //second condition
-
-        //bsa entry id
-        Label bsaEntryIdLabel = new Label("BSA Entry ID");
-        bsaEntryIdLabel.setPrefWidth(120);
-        
-        Spinner <Integer> bsaEntryIdSpinner = new Spinner<>(0, 65535, entry.bsaEntryId);
-        bsaEntryIdSpinner.setEditable(true);
-        bsaEntryIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.bsaEntryId = newValue;
-            }
-        });
-
-        HBox bsaEntryIdHBox = new HBox(15, bsaEntryIdLabel, bsaEntryIdSpinner);
-        bsaEntryIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //bsa entry id
-
-        //jump to bac entry id
-        Label i06Label=new Label("Jump To BAC Entry Id?");
-        i06Label.setPrefWidth(120);
-        
-        Spinner <Integer> i06Spinner = new Spinner<>(0, 65535, entry.i06);
-        i06Spinner.setEditable(true);
-        i06Spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.i06 = newValue;
-            }
-        });
-
-        HBox i06HBox = new HBox(15, i06Label, i06Spinner);
-        i06HBox.setAlignment(Pos.CENTER_LEFT);
-        //jump to bac entry id
-
-        //bac condition
-        Label bacConditionLabel = new Label("BAC Condition");
-        bacConditionLabel.setPrefWidth(120);
-        
-        Spinner <Double> bacConditionSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.bacCondition);
-        bacConditionSpinner.setEditable(true);
-        bacConditionSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.bacCondition = newValue.floatValue();
-            }
-        });
-
-        HBox bacConditionHBox = new HBox(15, bacConditionLabel, bacConditionSpinner);
-        bacConditionHBox.setAlignment(Pos.CENTER_LEFT);
-        //bac condition
-
-        //f12
-        Label f12Label = new Label("F_12");
-        f12Label.setPrefWidth(60);
-        
-        TextField f12TextField=new TextField(String.valueOf(entry.f12));
-        f12TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f12TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f12= Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f12HBox = new HBox(f12Label,f12TextField);
-        f12HBox.setAlignment(Pos.CENTER_LEFT);
-        //f12
-
-        //entry passing
-        VBox entryPassingVBox = new VBox(35, startTimeHBox, durationHBox, 
-            firstConditionHBox, secondConditionHBox, 
-            bsaEntryIdHBox, i06HBox, 
-            bacConditionHBox
+        VBox unknownVBox = new VBox(30,
+            createHBox(0, createLabel("I_02", 60), createTextField(entry.i02, BsaCollisionSoundValues.I02)), 
+            createHBox(0, createLabel("I_06", 60), createTextField(entry.i06, BsaCollisionSoundValues.I06))
         );
-        entryPassingVBox.setPadding(new Insets(20 ,0, 0, 16));
-
-        Tab entryPassingTab = new Tab("Entry Passing", entryPassingVBox);
-        entryPassingTab.setClosable(false);
-        //entry passing
-
-        //unknown
-        VBox unknownVBox = new VBox(35, f12HBox);
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
+
+        Tab collisionSoundTab = new Tab("Collision Sound", collisionSoundVBox);
+        collisionSoundTab.setClosable(false);
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
         unknownTab.setClosable(false);
-        //unknown
+
+        tabPane.getTabs().addAll(collisionSoundTab, unknownTab);
+    }
+
+    private void createBsaType0(BsaType0Entry entry) {
+        VBox entryPassingVBox = new VBox(35,
+            createHBox(0, createLabel("Start Time", 120), createSpinner(0, 65535, entry.startTime, BsaType0Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 120), createSpinner(0, 65535, entry.duration, BsaType0Values.Duration)),  
+            createHBox(0, createLabel("BSA Entry ID", 120), createSpinner(0, 65535, entry.bsaEntryId, BsaType0Values.BsaEntryID)),
+            createHBox(0, createLabel("Main Condition", 120), createSpinner(0, 65535, entry.mainCondition, BsaType0Values.MainConditon)),
+            createHBox(0, createLabel("BAC Conditon", 120), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.bacCondition, BsaType0Values.BAC_Conditon))
+        );
+        entryPassingVBox.setPadding(new Insets(20 ,0, 0, 16));
+
+        VBox unknownVBox = new VBox(35,
+            createHBox(0, createLabel("I_00", 60), createTextField(entry.i00, BsaType0Values.I00)),
+            createHBox(0, createLabel("I_06", 60), createTextField(entry.i06, BsaType0Values.I06)),
+            createHBox(0, createLabel("F_12", 60), createTextField(entry.f12, BsaType0Values.F12))
+        );
+        unknownVBox.setPadding(new Insets(20, 0, 0, 16));
+
+        Tab entryPassingTab = new Tab("Entry Passing", entryPassingVBox);
+        entryPassingTab.setClosable(false);
+
+        Tab unknownTab = new Tab("Unknown", unknownVBox);
+        unknownTab.setClosable(false);
 
         tabPane.getTabs().addAll(entryPassingTab, unknownTab);
     }
 
     private void createBsaType1(BsaType1Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(120);
+        CheckBox[] option1 = new CheckBox[] {
+            new CheckBox("Unknown 1"),
+            new CheckBox("Unknown 2"),
+            new CheckBox("Unknown 3"),
+            new CheckBox("Unknown 4")
+        };
+
+        CheckBox[] option2 = new CheckBox[] {
+            new CheckBox("Unknown 5"),
+            new CheckBox("Unknown 6"),
+            new CheckBox("Unknown 7"),
+            new CheckBox("Unknown 8")
+        };
+
+        CheckBox[] option3 = new CheckBox[] {
+            new CheckBox("Unknown 9"),
+            new CheckBox("Unknown 10"),
+            new CheckBox("Unknown 11"),
+            new CheckBox("Unknown 12")
+        };
+
+        CheckBox[] option4 = new CheckBox[] {
+            new CheckBox("Unknown 13"),
+            new CheckBox("Unknown 14"),
+            new CheckBox("Unknown 15"),
+            new CheckBox("Unknown 16")
+        };
+
+        CheckBox[] option5 = new CheckBox[] {
+            new CheckBox("Unknown 17"),
+            new CheckBox("Opponent Tracking"),
+            new CheckBox("Unknown 19"),
+            new CheckBox("Unknown 20")
+        };
+
+        CheckBox[] option6 = new CheckBox[] {
+            new CheckBox("Unknown 21"),
+            new CheckBox("Free Movement"),
+            new CheckBox("Unknown 23"),
+            new CheckBox("Unknown 24")
+        };
+
+        CheckBox[] option7 = new CheckBox[] {
+            new CheckBox("Unknown 25"),
+            new CheckBox("Unknown 26"),
+            new CheckBox("Unknown 27"),
+            new CheckBox("Unknown 28")
+        };
+
+        CheckBox[] option8 = new CheckBox[] {
+            new CheckBox("Unknown 29"),
+            new CheckBox("Unknown 30"),
+            new CheckBox("Unknown 31"),
+            new CheckBox("Unknown 32")
+        };
+
+        Node[] motionFlags = new Node[] {
+            createCheckBoxGroup("Options 1", option1, 1L, BsaType1Values.MotionFlags),
+            createCheckBoxGroup("Options 2", option2, 16L, BsaType1Values.MotionFlags),
+            createCheckBoxGroup("Options 3", option3, 256L, BsaType1Values.MotionFlags),
+            createCheckBoxGroup("Options 4", option4, 4096L, BsaType1Values.MotionFlags),
+            createCheckBoxGroup("Options 5", option5, 65536L, BsaType1Values.MotionFlags),
+            createCheckBoxGroup("Options 6", option6, 1048576L, BsaType1Values.MotionFlags),
+            createCheckBoxGroup("Options 7", option7, 16777216L, BsaType1Values.MotionFlags),
+            createCheckBoxGroup("Options 8", option8, 268435456L, BsaType1Values.MotionFlags)
+        };
 
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true);
-        startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
-
-        HBox startTimeHBox = new HBox(2, startTimeLabel, startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
-
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(120);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
-
-        HBox durationHBox = new HBox(2, durationLabel, durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
-
-        //motion flags
-        Label motionFlagsLabel = new Label("Motion Flags");
-        motionFlagsLabel.setPrefWidth(120);
-
-        //option 1
-        Label option1Label = new Label("Option 1");
-        option1Label.getStyleClass().add("titled-address-label");
-
-        CheckBox unknown1 = new CheckBox("Unknown 1");
-        CheckBox unknown2 = new CheckBox("Unknown 2");
-        CheckBox unknown3 = new CheckBox("Unknown 3");
-        CheckBox unknown4 = new CheckBox("Unknown 4");
-
-        unknown1.setSelected((entry.motionFlags & 1L) != 0);
-        unknown2.setSelected((entry.motionFlags & 2L) != 0);
-        unknown3.setSelected((entry.motionFlags & 4L) != 0);
-        unknown4.setSelected((entry.motionFlags & 8L) != 0);
-
-        unknown1.selectedProperty().addListener((obs, oldValue, newValue) -> {
-             if (newValue) {
-                entry.motionFlags |= 1L;
-            }
-            else {
-                entry.motionFlags &= ~1L;
-            }
-        });
-        unknown2.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 2L;
-            }
-            else {
-                entry.motionFlags &= ~2L;
-            }
-        });
-        unknown3.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 4L;
-            }
-            else {
-                entry.motionFlags &= ~4L;
-            }
-        });
-        unknown4.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 8L;
-            }
-            else {
-                entry.motionFlags &= ~8L;
-            }
-        });
-
-        VBox Option1Box = new VBox(2, unknown1, unknown2, unknown3, unknown4);
-
-        VBox borderContainerOption1 = new VBox(Option1Box);
-        borderContainerOption1.getStyleClass().add("titled-address-box");
-        borderContainerOption1.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option1BoxStackPane = new StackPane(borderContainerOption1, option1Label);
-        StackPane.setAlignment(option1Label, Pos.TOP_LEFT);
-        option1Label.setTranslateY(-8); 
-        option1Label.setTranslateX(10);
-        //option 1
-
-        //option 2
-        Label option2Label = new Label("Option 2");
-        option2Label.getStyleClass().add("titled-address-label");
-
-        CheckBox unknown5 = new CheckBox("Unknown 5");
-        CheckBox unknown6 = new CheckBox("Unknown 6");
-        CheckBox unknown7 = new CheckBox("Unknown 7");
-        CheckBox unknown8 = new CheckBox("Unknown 8");
-
-        unknown5.setSelected((entry.motionFlags & 16L) != 0);
-        unknown6.setSelected((entry.motionFlags & 32L) != 0);
-        unknown7.setSelected((entry.motionFlags & 64L) != 0);
-        unknown8.setSelected((entry.motionFlags & 128L) != 0);
-
-        unknown5.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 16L;
-            }
-            else {
-                entry.motionFlags &= ~16L;
-            }
-        });
-        unknown6.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 32L;
-            }
-            else {
-                entry.motionFlags &= ~32L;
-            }
-        });
-        unknown7.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 64L;
-            }
-            else {
-                entry.motionFlags &= ~64L;
-            }
-        });
-        unknown8.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 128L;
-            }
-            else {
-                entry.motionFlags &= ~128L;
-            }
-        });
-        VBox Option2Box = new VBox(2, unknown5, unknown6, unknown7, unknown8);
-
-        VBox borderContainerOption2 = new VBox(Option2Box);
-        borderContainerOption2.getStyleClass().add("titled-address-box");
-        borderContainerOption2.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option2BoxStackPane = new StackPane(borderContainerOption2, option2Label);
-        StackPane.setAlignment(option2Label, Pos.TOP_LEFT);
-
-        option2Label.setTranslateY(-8); 
-        option2Label.setTranslateX(10);
-        //option 2
-
-        //option 3
-        Label option3Label = new Label("Option 3");
-        option3Label.getStyleClass().add("titled-address-label");
-
-        CheckBox unknown9 = new CheckBox("Unknown 9");
-        CheckBox unknown10 = new CheckBox("Unknown 10");
-        CheckBox unknown11 = new CheckBox("Unknown 11");
-        CheckBox unknown12 = new CheckBox("Unknown 12");
-
-        unknown9.setSelected((entry.motionFlags & 256L) != 0);
-        unknown10.setSelected((entry.motionFlags & 512L) != 0);
-        unknown11.setSelected((entry.motionFlags & 1024L) != 0);
-        unknown12.setSelected((entry.motionFlags & 2048L) != 0);
-
-        unknown9.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 256L;
-            }
-            else {
-                entry.motionFlags &= ~256L;
-            }
-        });
-        unknown10.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 512L;
-            }
-            else {
-                entry.motionFlags &= ~512L;
-            }
-        });
-        unknown11.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 1024L;
-            }
-            else {
-                entry.motionFlags &= ~1024L;
-            }
-        });
-        unknown12.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 2048L;
-            }
-            else {
-                entry.motionFlags &= ~2048L;
-            }
-        });
-        VBox Option3Box = new VBox(2, unknown9, unknown10, unknown11, unknown12);
-
-        VBox borderContainerOption3 = new VBox(Option3Box);
-        borderContainerOption3.getStyleClass().add("titled-address-box");
-        borderContainerOption3.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option3BoxStackPane = new StackPane(borderContainerOption3,option3Label);
-        StackPane.setAlignment(option3Label, Pos.TOP_LEFT);
-        option3Label.setTranslateY(-8); 
-        option3Label.setTranslateX(10);
-        //option 3
-
-        //option 4
-        Label option4Label = new Label("Option 4");
-        option4Label.getStyleClass().add("titled-address-label");
-
-        CheckBox unknown13 = new CheckBox("Unknown 13");
-        CheckBox unknown14 = new CheckBox("Unknown 14");
-        CheckBox unknown15 = new CheckBox("Unknown 15");
-        CheckBox unknown16 = new CheckBox("Unknown 16");
-
-        unknown13.setSelected((entry.motionFlags & 4096L) != 0);
-        unknown14.setSelected((entry.motionFlags & 8192L) != 0);
-        unknown15.setSelected((entry.motionFlags & 16384L) != 0);
-        unknown16.setSelected((entry.motionFlags & 32768L) != 0);
-
-        unknown13.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 4096L;
-            }
-            else {
-                entry.motionFlags &= ~4096L;
-            }
-        });
-        unknown14.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 8192L;
-            }
-            else {
-                entry.motionFlags &= ~8192L;
-            }
-        });
-        unknown15.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 16384L;
-            }
-            else {
-                entry.motionFlags &= ~16384L;
-            }
-        });
-        unknown16.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 32768L;
-            }
-            else {
-                entry.motionFlags &= ~32768L;
-            }
-        });
-        VBox Option4Box = new VBox(2, unknown13, unknown14, unknown15, unknown16);
-
-        VBox borderContainerOption4 = new VBox(Option4Box);
-        borderContainerOption4.getStyleClass().add("titled-address-box");
-        borderContainerOption4.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option4BoxStackPane = new StackPane(borderContainerOption4, option4Label);
-        StackPane.setAlignment(option4Label, Pos.TOP_LEFT);
-        option4Label.setTranslateY(-8); 
-        option4Label.setTranslateX(10);
-        //option 4
-
-        //option 5
-        Label option5Label = new Label("Option 5");
-        option5Label.getStyleClass().add("titled-address-label");
-
-        CheckBox unknown17 = new CheckBox("Unknown 17");
-        CheckBox opponentTracking = new CheckBox("Opponent Tracking");
-        CheckBox unknown19 = new CheckBox("Unknown 18");
-        CheckBox unknown20 = new CheckBox("Unknown 20");
-
-        unknown17.setSelected((entry.motionFlags & 65536L) != 0);
-        opponentTracking.setSelected((entry.motionFlags & 131072L) != 0);
-        unknown19.setSelected((entry.motionFlags & 262144L) != 0);
-        unknown20.setSelected((entry.motionFlags & 524288L) != 0);
-
-        unknown17.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 65536L;
-            }
-            else {
-                entry.motionFlags &= ~65536L;
-            }
-        });
-        opponentTracking.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 131072L;
-            }
-            else {
-                entry.motionFlags &= ~131072L;
-            }
-        });
-        unknown19.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 262144L;
-            }
-            else {
-                entry.motionFlags &= ~262144L;
-            }
-        });
-        unknown20.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 524288L;
-            }
-            else {
-                entry.motionFlags &= ~524288L;
-            }
-        });
-        VBox Option5Box = new VBox(2, unknown17, opponentTracking, unknown19, unknown20);
-
-        VBox borderContainerOption5 = new VBox(Option5Box);
-        borderContainerOption5.getStyleClass().add("titled-address-box");
-        borderContainerOption5.setPadding(new Insets(12,0,0,0));
-
-        StackPane option5BoxStackPane = new StackPane(borderContainerOption5,option5Label);
-        StackPane.setAlignment(option5Label, Pos.TOP_LEFT);
-        option5Label.setTranslateY(-8); 
-        option5Label.setTranslateX(10);
-        //option 5
-
-        //option 6
-        Label option6Label = new Label("Option 6");
-        option6Label.getStyleClass().add("titled-address-label");
-
-        CheckBox unknown21 = new CheckBox("Unknown 21");
-        CheckBox unknown22 = new CheckBox("Free Movement?");
-        CheckBox unknown23 = new CheckBox("Unknown 23");
-        CheckBox unknown24 = new CheckBox("Unknown 24");
-
-        unknown21.setSelected((entry.motionFlags & 1048576L) != 0);
-        unknown22.setSelected((entry.motionFlags & 2097152L) != 0);
-        unknown23.setSelected((entry.motionFlags & 4194304L) != 0);
-        unknown24.setSelected((entry.motionFlags & 8388608L) != 0);
-
-        unknown21.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 1048576L;
-            }
-            else {
-                entry.motionFlags &= ~1048576L;
-            }
-        });
-        unknown22.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 2097152L;
-            }
-            else {
-                entry.motionFlags &= ~2097152L;
-            }
-        });
-        unknown23.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 4194304L;
-            }
-            else {
-                entry.motionFlags &= ~4194304L;
-            }
-        });
-        unknown24.selectedProperty().addListener((obs, oldValue, newValue)-> {
-            if (newValue) {
-                entry.motionFlags |= 8388608L;
-            }
-            else {
-                entry.motionFlags &= ~8388608L;
-            }
-        });
-        VBox Option6Box = new VBox(2, unknown21, unknown22, unknown23, unknown24);
-
-        VBox borderContainerOption6 = new VBox(Option6Box);
-        borderContainerOption6.getStyleClass().add("titled-address-box");
-        borderContainerOption6.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option6BoxStackPane = new StackPane(borderContainerOption6,option6Label);
-        StackPane.setAlignment(option6Label, Pos.TOP_LEFT);
-        option6Label.setTranslateY(-8); 
-        option6Label.setTranslateX(10);
-        //option 6
-
-        //option 7
-        Label option7Label = new Label("Option 7");
-        option7Label.getStyleClass().add("titled-address-label");
-
-        CheckBox unknown25 = new CheckBox("Unknown 25");
-        CheckBox unknown26 = new CheckBox("Unknown 26");
-        CheckBox unknown27 = new CheckBox("Unknown 27");
-        CheckBox unknown28 = new CheckBox("Unknown 28");
-
-        unknown25.setSelected((entry.motionFlags & 16777216L) != 0);
-        unknown26.setSelected((entry.motionFlags & 33554432L) != 0);
-        unknown27.setSelected((entry.motionFlags & 67108864L) != 0);
-        unknown28.setSelected((entry.motionFlags & 134217728L) != 0);
-
-        unknown25.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 16777216L;
-            }
-            else {
-                entry.motionFlags &= ~16777216L;
-            }
-        });
-        unknown26.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 33554432L;
-            }
-            else {
-                entry.motionFlags &= ~33554432L;
-            }
-        });
-        unknown27.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 67108864L;
-            }
-            else {
-                entry.motionFlags &= ~67108864L;
-            }
-        });
-        unknown28.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 134217728L;
-            }
-            else {
-                entry.motionFlags &= ~134217728L;
-            }
-        });
-        VBox Option7Box = new VBox(2, unknown25, unknown26, unknown27, unknown28);
-
-        VBox borderContainerOption7 = new VBox(Option7Box);
-        borderContainerOption7.getStyleClass().add("titled-address-box");
-        borderContainerOption7.setPadding(new Insets(12, 0, 0,  0));
-
-        StackPane option7BoxStackPane = new StackPane(borderContainerOption7, option7Label);
-        StackPane.setAlignment(option7Label, Pos.TOP_LEFT);
-        option7Label.setTranslateY(-8); 
-        option7Label.setTranslateX(10);
-        //option 7
-
-        //option 8
-        Label option8Label = new Label("Option 8");
-        option8Label.getStyleClass().add("titled-address-label");
-
-        CheckBox unknown29 = new CheckBox("Unknown 29");
-        CheckBox unknown30 = new CheckBox("Unknown 30");
-        CheckBox unknown31 = new CheckBox("Unknown 31");
-        CheckBox unknown32 = new CheckBox("Unknown 32");
-
-        unknown29.setSelected((entry.motionFlags & 268435456L) != 0);
-        unknown30.setSelected((entry.motionFlags & 536870912L) != 0);
-        unknown31.setSelected((entry.motionFlags & 1073741824L) != 0);
-        unknown32.setSelected((entry.motionFlags & 2147483648L) != 0);
-
-        unknown29.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) { 
-                entry.motionFlags |= 268435456L;
-            }
-            else {
-                entry.motionFlags &= ~268435456L;
-            }
-        });
-        unknown30.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 536870912L;
-            }
-            else {
-                entry.motionFlags &= ~536870912L;
-            }
-        });
-        unknown31.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 1073741824L;
-            }
-            else {
-                entry.motionFlags &= ~1073741824L;
-            }
-        });
-        unknown32.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.motionFlags |= 2147483648L;
-            }
-            else {
-                entry.motionFlags &= ~2147483648L;
-            }
-        });
-        VBox Option8Box = new VBox(2, unknown29, unknown30, unknown31, unknown32);
-
-        VBox borderContainerOption8 = new VBox(Option8Box);
-        borderContainerOption8.getStyleClass().add("titled-address-box");
-        borderContainerOption8.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane option8BoxStackPane = new StackPane(borderContainerOption8, option8Label);
-        StackPane.setAlignment(option8Label, Pos.TOP_LEFT);
-        option8Label.setTranslateY(-8); 
-        option8Label.setTranslateX(10);
-        //option 8
-
-        GridPane motionFlagsGridPane = new GridPane(10, 10);
-        motionFlagsGridPane.add(option1BoxStackPane, 0, 0);
-        motionFlagsGridPane.add(option2BoxStackPane, 1, 0);
-        motionFlagsGridPane.add(option3BoxStackPane, 2, 0);
-        motionFlagsGridPane.add(option4BoxStackPane, 3, 0);
-        motionFlagsGridPane.add(option5BoxStackPane, 0, 1);
-        motionFlagsGridPane.add(option6BoxStackPane, 1, 1);
-        motionFlagsGridPane.add(option7BoxStackPane, 2, 1);
-        motionFlagsGridPane.add(option8BoxStackPane, 3, 1);
-
-        HBox motionFlagsHBox = new HBox(2, motionFlagsLabel, motionFlagsGridPane);
-        motionFlagsHBox.setAlignment(Pos.CENTER_LEFT);
-        //motion flags
-
-        //speed x
-        Label speedXLabel = new Label("Speed X");
-        speedXLabel.setPrefWidth(120);
-        
-        Spinner <Double> speedXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.speedX);
-        speedXSpinner.setEditable(true);
-        speedXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.speedX = newValue.floatValue();
-            }
-        });
-
-        HBox speedXHBox = new HBox(2, speedXLabel, speedXSpinner);
-        speedXHBox.setAlignment(Pos.CENTER_LEFT);
-        //speed x
-
-        //speed y
-        Label speedYLabel = new Label("Speed Y");
-        speedYLabel.setPrefWidth(120);
-        
-        Spinner <Double> speedYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.speedY);
-        speedYSpinner.setEditable(true);
-        speedYSpinner.valueProperty().addListener((obs ,oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.speedY = newValue.floatValue();
-            }
-        });
-
-        HBox speedYHBox = new HBox(2, speedYLabel, speedYSpinner);
-        speedYHBox.setAlignment(Pos.CENTER_LEFT);
-        //speed y
-
-        //speed z
-        Label speedZLabel = new Label("Speed Z");
-        speedZLabel.setPrefWidth(120);
-        
-        Spinner <Double> speedZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.speedZ);
-        speedZSpinner.setEditable(true);
-        speedZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.speedZ = newValue.floatValue();
-            }
-        });
-
-        HBox speedZHBox = new HBox(2, speedZLabel, speedZSpinner);
-        speedZHBox.setAlignment(Pos.CENTER_LEFT);
-        //speed z
-
-        //f16
-        Label f16Label = new Label("F_16");
-        f16Label.setPrefWidth(60);
-        
-        TextField f16TextField = new TextField(String.valueOf(entry.f16));
-        f16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f16TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f16 = Float.parseFloat(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f16HBox = new HBox(f16Label, f16TextField);
-        f16HBox.setAlignment(Pos.CENTER_LEFT);
-        //f16
-
-        //acceleration x
-        Label accelerationXLabel = new Label("Acceleration X");
-        accelerationXLabel.setPrefWidth(120);
-        
-        Spinner <Double> accelerationXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.accelerationX);
-        accelerationXSpinner.setEditable(true);
-        accelerationXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.accelerationX = newValue.floatValue();
-            }
-        }); 
-
-        HBox accelerationXHBox = new HBox(2, accelerationXLabel, accelerationXSpinner);
-        accelerationXHBox.setAlignment(Pos.CENTER_LEFT);
-        //acceleration x
-
-        //acceleration y
-        
-        Label accelerationYLabel = new Label("Acceleration Y");
-        accelerationYLabel.setPrefWidth(120);
-        
-        Spinner <Double> accelerationYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.accelerationY);
-        accelerationYSpinner.setEditable(true);
-        accelerationYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.speedY = newValue.floatValue();
-            }
-        });
-
-        HBox accelerationYHBox = new HBox(2, accelerationYLabel, accelerationYSpinner);
-        accelerationYHBox.setAlignment(Pos.CENTER_LEFT);
-        //acceleration y
-
-        //acceleration z
-        Label accelerationZLabel = new Label("Acceleration Z");
-        accelerationZLabel.setPrefWidth(120);
-        
-        Spinner <Double> accelerationZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.accelerationZ);
-        accelerationZSpinner.setEditable(true);
-        accelerationZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.accelerationZ = newValue.floatValue();
-            }
-        });
-
-        HBox accelerationZHBox = new HBox(2, accelerationZLabel, accelerationZSpinner);
-        accelerationZHBox.setAlignment(Pos.CENTER_LEFT);
-        //acceleration z
-
-        //falloff strength
-        Label falloffStrengthLabel = new Label("Falloff Strength");
-        falloffStrengthLabel.setPrefWidth(120);
-        
-        Spinner <Double> falloffStrengthSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.fallofStrength);
-        falloffStrengthSpinner.setEditable(true);
-        falloffStrengthSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.fallofStrength = newValue.floatValue();
-            }
-        });
-
-        HBox falloffStrengthHBox = new HBox(2, falloffStrengthLabel, falloffStrengthSpinner);
-        falloffStrengthHBox.setAlignment(Pos.CENTER_LEFT);
-        //falloff strength
-
-        //spread direction x
-        Label spreadDirectionXLabel = new Label("Spread Direction X");
-        spreadDirectionXLabel.setPrefWidth(120);
-        
-        Spinner <Double> spreadDirectionXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.spreadDirectionX);
-        spreadDirectionXSpinner.setEditable(true);
-        spreadDirectionXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.spreadDirectionX = newValue.floatValue();
-            }
-        });
-
-        HBox spreadDirectionXHBox = new HBox(2, spreadDirectionXLabel, spreadDirectionXSpinner);
-        spreadDirectionXHBox.setAlignment(Pos.CENTER_LEFT);
-        //spread direction x
-        
-        //spread direction y
-        Label spreadDirectionYLabel = new Label("Spread Direction Y");
-        spreadDirectionYLabel.setPrefWidth(120);
-        
-        Spinner <Double> spreadDirectionYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.spreadDirectionY);
-        spreadDirectionYSpinner.setEditable(true);
-        spreadDirectionYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.spreadDirectionY = newValue.floatValue();
-            }
-        });
-
-        HBox spreadDirectionYHBox = new HBox(2, spreadDirectionYLabel, spreadDirectionYSpinner);
-        spreadDirectionYHBox.setAlignment(Pos.CENTER_LEFT);
-        //spread direction y
-
-        //spread direction z
-        Label spreadDirectionZLabel = new Label("Spread Direction Z");
-        spreadDirectionZLabel.setPrefWidth(120);
-        
-        Spinner <Double> spreadDirectionZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.spreadDirectionZ);
-        spreadDirectionZSpinner.setEditable(true);
-        spreadDirectionZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.spreadDirectionZ = newValue.floatValue();
-            }
-        });
-
-        HBox spreadDirectionZHBox = new HBox(2, spreadDirectionZLabel, spreadDirectionZSpinner);
-        spreadDirectionZHBox.setAlignment(Pos.CENTER_LEFT);
-        //spread direction z
-        
-        //movement
         VBox movementVBox = new VBox(35, 
-            startTimeHBox, durationHBox, 
-            motionFlagsHBox, speedXHBox, 
-            speedYHBox, speedZHBox, 
-            accelerationXHBox, accelerationYHBox, 
-            accelerationZHBox, falloffStrengthHBox, 
-            spreadDirectionXHBox, spreadDirectionYHBox, 
-            spreadDirectionZHBox
+            createHBox(0, createLabel("Start Time", 120), createSpinner(0, 65535, entry.startTime, BsaType1Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 120), createSpinner(0, 65535, entry.duration, BsaType1Values.Duration)), 
+            createHBox(0, createLabel("Motion Flags", 120), createGridPane(4, 2, motionFlags, false)), 
+            createHBox(0, createLabel("Speed X", 120), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.speedX, BsaType1Values.SpeedX)),
+            createHBox(0, createLabel("Speed Y", 120), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.speedY, BsaType1Values.SpeedY)), 
+            createHBox(0, createLabel("Speed Z", 120), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.speedZ, BsaType1Values.SpeedZ)), 
+            createHBox(0, createLabel("Acceleration X", 120), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.accelerationX, BsaType1Values.AccelerationX)),
+            createHBox(0, createLabel("Acceleration Y", 120), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.accelerationY, BsaType1Values.AccelerationY)), 
+            createHBox(0, createLabel("Acceleration Z", 120), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.accelerationZ, BsaType1Values.AccelerationZ)),  
+            createHBox(0, createLabel("Falloff Strenght", 120), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.fallofStrength, BsaType1Values.FalloffStrength)),
+            createHBox(0, createLabel("Spread Direction X", 120), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.spreadDirectionX, BsaType1Values.SpreadDirectionX)),
+            createHBox(0, createLabel("Spread Direction Y", 120), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.spreadDirectionY, BsaType1Values.SpreadDirectionY)), 
+            createHBox(0, createLabel("Spread Direction Z", 120), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.spreadDirectionZ, BsaType1Values.SpreadDirectionZ))
         );
         movementVBox.setPadding(new Insets(20, 0, 20, 16));
 
-        Tab movementTab = new Tab("Movement", new ScrollPane(movementVBox));
-
-        movementTab.setClosable(false);
-        //movement
-
-        //unknown
-        VBox unknownVBox = new VBox(30, f16HBox);
+        VBox unknownVBox = new VBox(30, 
+            createHBox(0, createLabel("F_16", 60), createTextField(entry.f16, BsaType1Values.F16))
+        );
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
+
+        Tab movementTab = new Tab("Movement", new ScrollPane(movementVBox));
+        movementTab.setClosable(false);
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
         unknownTab.setClosable(false);
-        //unknown
 
         tabPane.getTabs().addAll(movementTab, unknownTab);
     }
 
     private void createBsaType2(BsaType2Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(80);
-
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true); 
-        startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
-
-        HBox startTimeHBox = new HBox(startTimeLabel, startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
-
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(80);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue ,newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
-
-        HBox durationHBox = new HBox(durationLabel, durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
-
-        //i00
-        Label i00Label = new Label("I_00");
-        i00Label.setPrefWidth(80);
-
-        TextField i00TextField = new TextField(String.valueOf(entry.i00));
-        i00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i00TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i00 = Short.parseShort(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i00HBox = new HBox(i00Label, i00TextField);
-        i00HBox.setAlignment(Pos.CENTER_LEFT);
-        //i00
-
-        //i02
-        Label i02Label = new Label("I_02");
-        i02Label.setPrefWidth(80);
-
-        TextField i02TextField = new TextField(String.valueOf(entry.i02));
-        i02TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i02TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i02 = Short.parseShort(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i02HBox = new HBox(i02Label, i02TextField);
-        i02HBox.setAlignment(Pos.CENTER_LEFT);
-        //i02
-
-        //i04
-        Label i04Label = new Label("I_04");
-        i04Label.setPrefWidth(80);
-
-        TextField i04TextField = new TextField(String.valueOf(entry.i04));
-        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i04 = Short.parseShort(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i04HBox = new HBox(i04Label, i04TextField);
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        //i04
-
-        //i06
-        Label i06Label = new Label("I_06");
-        i06Label.setPrefWidth(80);
-
-        TextField i06TextField = new TextField(String.valueOf(entry.i06));
-        i06TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i06TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i06 = Short.parseShort(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i06HBox = new HBox(i06Label, i06TextField);
-        i06HBox.setAlignment(Pos.CENTER_LEFT);
-        //i06
-
-        //type 2
-        VBox type2VBox = new VBox(30,startTimeHBox, durationHBox, i00HBox, i02HBox, i04HBox, i06HBox);
-        type2VBox.setPadding(new Insets(20, 0, 0, 16));
-
-        Tab type2Tab = new Tab("Type 2", type2VBox);
-        type2Tab.setClosable(false);
-        //type 2
-
-        tabPane.getTabs().add(type2Tab);
-    }
-
-    private void createBsaType3(BsaType3Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(120);
-
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true);
-        startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
-
-        HBox startTimeHBox = new HBox(15, startTimeLabel, startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
-
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(120);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
-
-        HBox durationHBox = new HBox(15, durationLabel, durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
-
-        //matrix flags
-        CheckBox matrixFlagsCheckBox = new CheckBox("Enable Min and Max Bounds");
-        matrixFlagsCheckBox.setSelected(entry.matrixFlag);
-        matrixFlagsCheckBox.setStyle("-fx-border-color: black; " + "-fx-border-width: 1px; " + "-fx-padding: 10px;");
-        matrixFlagsCheckBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            try {
-                entry.matrixFlag = newValue;
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        //matrix flags
-
-        //i04
-        Label i04Label = new Label("I_04");
-        i04Label.setPrefWidth(60);
-
-        TextField i04TextField = new TextField(String.valueOf(entry.i04));
-        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i04 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i04HBox = new HBox(i04Label, i04TextField);
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        //i04
-
-        //i06
-        Label impactPropertiesLabel = new Label("I_06"); 
-        impactPropertiesLabel.setPrefWidth(120);
-
-        //i06_a
-        Label A = new Label("A");
-
-        Spinner <Integer> i06_aSpinner  = new Spinner<>(0, 15, entry.i06_a);
-        i06_aSpinner.setEditable(true);
-        i06_aSpinner.setPrefWidth(60);
-        i06_aSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.i06_a = newValue.byteValue();
-            }
-        });
-        //i06_a
-
-        //i06_b
-        Label B = new Label("B");
-
-        Spinner <Integer> i06_bSpinner  = new Spinner<>(0, 15, entry.i06_b);
-        i06_bSpinner.setEditable(true);
-        i06_bSpinner.setPrefWidth(60);
-        i06_bSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.i06_b = newValue.byteValue();
-            }
-        });
-        //i06_b
-
-        //i06_c
-        Label C = new Label("C");
-
-        Spinner <Integer> i06_cSpinner  = new Spinner<>(0, 15, entry.i06_c);
-        i06_cSpinner.setEditable(true);
-        i06_cSpinner.setPrefWidth(60);
-        i06_cSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.i06_c = newValue.byteValue();
-            }
-        });
-        //i06_c
-
-        //i06_b
-        Label D = new Label("D");
-
-        Spinner <Integer> i06_dSpinner  = new Spinner<>(0, 15, entry.i06_d);
-        i06_dSpinner.setEditable(true);
-        i06_dSpinner.setPrefWidth(60);
-        i06_dSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.i06_d = newValue.byteValue();
-            }
-        });
-        //i06_b
-
-        HBox i06HBox = new HBox(15, impactPropertiesLabel, A , i06_aSpinner, B, i06_bSpinner, C ,i06_cSpinner, D, i06_dSpinner);
-        i06HBox.setAlignment(Pos.CENTER_LEFT);
-        //i06
-
-        //position x
-        Label speedXLabel = new Label("Position X");
-        speedXLabel.setPrefWidth(120);
-        
-        Spinner <Double> positionXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionX);
-        positionXSpinner.setEditable(true);
-        positionXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.positionX = newValue.floatValue();
-            }
-        });
-
-        HBox positionXHBox = new HBox(15, speedXLabel, positionXSpinner);
-        positionXHBox.setAlignment(Pos.CENTER_LEFT);
-        //position x
-
-        //position y
-        Label speedYLabel = new Label("Position Y");
-        speedYLabel.setPrefWidth(120);
-        
-        Spinner <Double> positionYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionY);
-        positionYSpinner.setEditable(true);
-        positionYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.positionY = newValue.floatValue();
-            }
-        });
-
-        HBox positionYHBox = new HBox(15, speedYLabel, positionYSpinner);
-        positionYHBox.setAlignment(Pos.CENTER_LEFT);
-        //position y
-
-        //position z
-        Label speedZLabel = new Label("Position Z");
-        speedZLabel.setPrefWidth(120);
-        
-        Spinner <Double> positionZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionZ);
-        positionZSpinner.setEditable(true);
-        positionZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.positionZ = newValue.floatValue();
-            }
-        });
-
-        HBox positionZHBox = new HBox(15, speedZLabel, positionZSpinner);
-        positionZHBox.setAlignment(Pos.CENTER_LEFT);
-        //position z
-
-        //hitbox scale
-        Label hitboxScaleLabel = new Label("Hitbox Scale");
-        hitboxScaleLabel.setPrefWidth(120);
-        
-        Spinner <Double> hitboxScaleSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.hitboxScale);
-        hitboxScaleSpinner.setEditable(true);
-        hitboxScaleSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.hitboxScale = newValue.floatValue();
-            }
-        });
-
-        HBox hitboxScaleHBox = new HBox(15, hitboxScaleLabel, hitboxScaleSpinner);
-        hitboxScaleHBox.setAlignment(Pos.CENTER_LEFT);
-        //hitbox scale
-
-        //maximum box x
-        Label maximumBoxXLabel = new Label("Maximum Box X");
-        maximumBoxXLabel.setPrefWidth(120);
-        
-        Spinner <Double> maximumBoxXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.maximumX);
-        maximumBoxXSpinner.setEditable(true); 
-        maximumBoxXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.maximumX = newValue.floatValue();
-            }
-        });
-
-        HBox maximumBoxXHBox = new HBox(maximumBoxXLabel, maximumBoxXSpinner);
-        maximumBoxXHBox.setAlignment(Pos.CENTER_LEFT);
-        //maximum box x
-
-        //maximum box y
-        Label maximumBoxYLabel = new Label("Maximum Box Y");
-        maximumBoxYLabel.setPrefWidth(120);
-        
-        Spinner <Double> maximumBoxYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.maximumY);
-        maximumBoxYSpinner.setEditable(true);
-        maximumBoxYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.maximumY = newValue.floatValue();
-            }
-        });
-
-        HBox maximumBoxYHBox = new HBox(maximumBoxYLabel, maximumBoxYSpinner);
-        maximumBoxYHBox.setAlignment(Pos.CENTER_LEFT);
-        //maximum box y
-
-        //maximum box z
-        Label maximumBoxZLabel = new Label("Maximum Box Z");
-        maximumBoxZLabel.setPrefWidth(120);
-        
-        Spinner <Double> maximumBoxZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.maximumZ);
-        maximumBoxZSpinner.setEditable(true);
-        maximumBoxZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.maximumZ = newValue.floatValue();
-            }
-        });
-
-        HBox maximumBoxZHBox = new HBox(maximumBoxZLabel, maximumBoxZSpinner);
-        maximumBoxZHBox.setAlignment(Pos.CENTER_LEFT);
-        //maximum box z
-
-        //minimum box x
-        Label minimumBoxXLabel = new Label("Minimum Box X");
-        minimumBoxXLabel.setPrefWidth(120);
-        
-        Spinner <Double> minimumBoxXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.minimumX);
-        minimumBoxXSpinner.setEditable(true);
-        minimumBoxXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.minimumX = newValue.floatValue();
-            }
-        });
-
-        HBox minimumBoxXHBox = new HBox(minimumBoxXLabel, minimumBoxXSpinner);
-        minimumBoxXHBox.setAlignment(Pos.CENTER_LEFT);
-        //minimum box x
-
-        //maximum box y
-        Label minimumBoxYLabel = new Label("Minimum Box Y");
-        minimumBoxYLabel.setPrefWidth(120);
-        
-        Spinner <Double> minimumBoxYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.minimumY);
-        minimumBoxYSpinner.setEditable(true);
-        minimumBoxYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.minimumY = newValue.floatValue();
-            }
-        });
-
-        HBox minimumBoxYHBox = new HBox(minimumBoxYLabel, minimumBoxYSpinner);
-        minimumBoxYHBox.setAlignment(Pos.CENTER_LEFT);
-        //maximum box y
-
-        //maximum box z
-        Label minimumBoxZLabel = new Label("Minimum Box Z");
-        minimumBoxZLabel.setPrefWidth(120);
-        
-        Spinner <Double> minimumBoxZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.minimumZ);
-        minimumBoxZSpinner.setEditable(true);
-        minimumBoxZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.minimumZ = newValue.floatValue();
-            }
-        });
-
-        HBox minimumBoxZHBox = new HBox(minimumBoxZLabel, minimumBoxZSpinner);
-        minimumBoxZHBox.setAlignment(Pos.CENTER_LEFT);
-        //maximum box z
-
-        //hit amount
-        Label hitAmountLabel = new Label("Hit Amount");
-        hitAmountLabel.setPrefWidth(120);
-
-        Spinner <Integer> hitAmountSpinner = new Spinner<>(0, 65535, entry.hitAmount);
-        hitAmountSpinner.setEditable(true);
-        hitAmountSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.hitAmount = newValue;
-            }
-        });
-
-        HBox hitAmountHBox = new HBox(15, hitAmountLabel, hitAmountSpinner);
-        hitAmountHBox.setAlignment(Pos.CENTER_LEFT);
-        //hit amount
-
-        //hitbox lifetime
-        Label hitboxLifetimeLabel = new Label("Hitbox Lifetime");
-        hitboxLifetimeLabel.setPrefWidth(120);
-
-        Spinner <Integer> hitboxLifetimeSpinner = new Spinner<>(0, 65535, entry.hitboxLifetime);
-        hitboxLifetimeSpinner.setEditable(true);
-        hitboxLifetimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.hitboxLifetime = newValue;
-            }
-        });
-
-        HBox hitboxLifetimeHBox = new HBox(15, hitboxLifetimeLabel, hitboxLifetimeSpinner);
-        hitboxLifetimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //hitbox lifetime
-
-        //i52
-        Label i52Label = new Label("I_52");
-        i52Label.setPrefWidth(60);
-
-        TextField i52TextField = new TextField(String.valueOf(entry.i52));
-        i52TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i52TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i52 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i52HBox = new HBox(i52Label, i52TextField);
-        i52HBox.setAlignment(Pos.CENTER_LEFT);
-        //i52
-
-        //i54
-        Label i54Label=new Label("I_54");
-        i54Label.setPrefWidth(60);
-
-        TextField i54TextField=new TextField(String.valueOf(entry.i54));
-        i54TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i54TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i54 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i54HBox = new HBox(i54Label, i54TextField);
-        i54HBox.setAlignment(Pos.CENTER_LEFT);
-        //i54
-
-        //i56
-        Label i56Label = new Label("I_56");
-        i56Label.setPrefWidth(60);
-
-        TextField i56TextField = new TextField(String.valueOf(entry.i56));
-        i56TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i56TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i56 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i56HBox = new HBox(i56Label, i56TextField);
-        i56HBox.setAlignment(Pos.CENTER_LEFT);
-        //i56
-
-        //first hit
-        Label firstHitLabel = new Label("BDM ID First Hit");
-        firstHitLabel.setPrefWidth(120);
-
-        Spinner <Integer> firstHitSpinner = new Spinner<>(0, 65535, entry.firstHit);
-        firstHitSpinner.setEditable(true);
-        firstHitSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.firstHit = newValue;
-            }
-        });
-
-        HBox firstHitHBox = new HBox(15, firstHitLabel, firstHitSpinner);
-        firstHitHBox.setAlignment(Pos.CENTER_LEFT);
-        //first hit
-
-        //multiple hits
-        Label multipleHitsLabel = new Label("BDM ID Multiple Hits");
-        multipleHitsLabel.setPrefWidth(120);
-
-        Spinner <Integer> multipleHitsSpinner = new Spinner<>(0, 65535, entry.multipleHits);
-        multipleHitsSpinner.setEditable(true);
-        multipleHitsSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.multipleHits= newValue;
-            }
-        });
-
-        HBox multipleHitsHBox = new HBox(15, multipleHitsLabel, multipleHitsSpinner);
-        multipleHitsHBox.setAlignment(Pos.CENTER_LEFT);
-        //multiple hits
-
-        //last hit
-        Label lastHitLabel = new Label("BDM ID Last Hit");
-        lastHitLabel.setPrefWidth(120);
-
-        Spinner <Integer> lastHitSpinner = new Spinner<>(0, 65535, entry.lastHit);
-        lastHitSpinner.setEditable(true);
-        lastHitSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.lastHit = newValue;
-            }
-        });
-
-        HBox lastHitHBox = new HBox(15, lastHitLabel, lastHitSpinner);
-        lastHitHBox.setAlignment(Pos.CENTER_LEFT);
-        //first hit
-
-        //hitbox
-        VBox hitboxVBox = new VBox(40, 
-            startTimeHBox, durationHBox, 
-            i06HBox, positionXHBox, positionYHBox, 
-            positionZHBox, hitboxScaleHBox, 
-            hitAmountHBox, hitboxLifetimeHBox, 
-            firstHitHBox, multipleHitsHBox, 
-            lastHitHBox
+        VBox projectileTimelineRemapVBox = new VBox(30,
+            createHBox(0, createLabel("Start Time", 120), createSpinner(0, 65535, entry.startTime, BsaType2Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 120), createSpinner(0, 65535, entry.duration, BsaType2Values.Duration)),  
+            createHBox(0, createLabel("Output Start Frame", 120), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.outputStartFrame, BsaType2Values.OutputStartFrame)), 
+            createHBox(0, createLabel("Output End Frame", 120), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.outputEndFrame, BsaType2Values.OutputEndFrame)) 
         );
-        hitboxVBox.setPadding(new Insets(20, 0, 0, 16));
+        projectileTimelineRemapVBox.setPadding(new Insets(20, 0, 0, 16));
 
-        Tab hitboxTab = new Tab("Hitbox", hitboxVBox);
-        hitboxTab.setClosable(false);
-        //hitbox
-
-        //matrix
-        VBox matrixVBox = new VBox(30, 
-            matrixFlagsCheckBox, maximumBoxXHBox, 
-            maximumBoxYHBox, maximumBoxZHBox, 
-            minimumBoxXHBox, minimumBoxYHBox, 
-            minimumBoxZHBox
+        VBox unknownVBox = new VBox(30, 
+            createHBox(0, createLabel("I_00", 60), createTextField(entry.i00, BsaType2Values.I00)),
+            createHBox(0, createLabel("I_06", 60), createTextField(entry.i06, BsaType2Values.I06))
         );
-        matrixVBox.setPadding(new Insets(20, 0, 0, 16));
-
-        Tab matrixTab = new Tab("Matrix", matrixVBox);
-        matrixTab.setClosable(false);
-        //matrix
-
-        //unknown
-        VBox unknownVBox = new VBox(30, i04HBox, i52HBox, i54HBox, i56HBox);
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
+
+        Tab projectileTimelineRemapTab = new Tab("Projectile Timeline Remap", projectileTimelineRemapVBox);
+        projectileTimelineRemapTab.setClosable(false);
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
         unknownTab.setClosable(false);
-        //unknown
-        
+
+        tabPane.getTabs().addAll(projectileTimelineRemapTab, unknownTab);
+    }
+
+    private void createBsaType3(BsaType3Entry entry) {
+        ToggleGroup growMaxBoundsToggleGroup = new ToggleGroup();
+        ToggleGroup boundsTypesToggleGroup = new ToggleGroup();
+
+        RadioButton[] growMaxBoundsFlags = new RadioButton[] {
+            createRadioButton("On", growMaxBoundsToggleGroup, GrowMaxBoundsFlags.On), 
+            createRadioButton("Off", growMaxBoundsToggleGroup, GrowMaxBoundsFlags.Off)
+        };
+
+        RadioButton[] boundsTypes = new RadioButton[] {
+            createRadioButton("Uniform", boundsTypesToggleGroup, BoundsTypes.Uniform),
+            createRadioButton("MinMax", boundsTypesToggleGroup, BoundsTypes.MinMax),
+            createRadioButton("Unknown 2", boundsTypesToggleGroup, BoundsTypes.Unknown2),
+            createRadioButton("Unknown 3", boundsTypesToggleGroup, BoundsTypes.Unknown3),
+            createRadioButton("Unknown 4", boundsTypesToggleGroup, BoundsTypes.Unknown4),
+        };
+
+        Node[] i06 = new Node[] {
+            createLabel("A", 0),
+            createSpinner(50, 0, 15, entry.i06_a, BsaType3Values.I06_A),
+            createLabel("B", 0),
+            createSpinner(50, 0, 15, entry.i06_b, BsaType3Values.I06_B),
+            createLabel("C", 0),
+            createSpinner(50, 0, 15, entry.i06_c, BsaType3Values.I06_C),
+            createLabel("D", 0),
+            createSpinner(50, 0, 15, entry.i06_d, BsaType3Values.I06_D),
+        };
+
+        VBox hitboxVBox = new VBox(40, 
+            createHBox(0, createLabel("Start Time", 140), createSpinner(0, 0, 65535, entry.startTime, BsaType3Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 140), createSpinner(0, 0, 65535, entry.duration, BsaType3Values.Duration)),  
+            createHBox(0, createLabel("Position X", 140), createSpinner(0, -Float.MAX_VALUE, Float.MAX_VALUE, entry.positionX, BsaType3Values.PositionX)),
+            createHBox(0, createLabel("Position Y", 140), createSpinner(0, -Float.MAX_VALUE, Float.MAX_VALUE, entry.positionY, BsaType3Values.PositionY)), 
+            createHBox(0, createLabel("Position Z", 140), createSpinner(0, -Float.MAX_VALUE, Float.MAX_VALUE, entry.positionZ, BsaType3Values.PositionZ)),
+            createHBox(0, createLabel("Hitbox Scale", 140), createSpinner(0, -Float.MAX_VALUE, Float.MAX_VALUE, entry.hitboxScale, BsaType3Values.HitboxScale)),
+            createHBox(0, createLabel("Hit Amount", 140), createSpinner(0, 0, 65535, entry.hitAmount, BsaType3Values.HitAmount)), 
+            createHBox(0, createLabel("Hitbox Lifetime", 140), createSpinner(0, 0, 65535, entry.hitboxLifetime, BsaType3Values.HitboxLifetime)), 
+            createHBox(0, createLabel("BDM ID First Hit", 140), createSpinner(0, 0, 65535, entry.firstHit, BsaType3Values.FirstHit)), 
+            createHBox(0, createLabel("BDM ID Multiple Hits", 140), createSpinner(0, 0, 65535, entry.multipleHits, BsaType3Values.MultipleHits)), 
+            createHBox(0, createLabel("BDM ID Last Hit", 140), createSpinner(0, 0, 65535, entry.lastHit, BsaType3Values.LastHit))
+        );
+        hitboxVBox.setPadding(new Insets(20, 0, 16, 16));
+
+        VBox matrixVBox = new VBox(30,
+            createHBox(0, createLabel("Grow Max Bounds", 140), createHBox(15, growMaxBoundsFlags, true)),
+            createHBox(0, createLabel("Bounds Type", 140), createHBox(15, boundsTypes, true)),
+            createHBox(0, createLabel("Maximum X", 140), createSpinner(0, -Float.MAX_VALUE, Float.MAX_VALUE, entry.maximumX, BsaType3Values.MaximumX)),
+            createHBox(0, createLabel("Maximum Y", 140), createSpinner(0, -Float.MAX_VALUE, Float.MAX_VALUE, entry.maximumY, BsaType3Values.MaximumY)), 
+            createHBox(0, createLabel("Maximum Z", 140), createSpinner(0, -Float.MAX_VALUE, Float.MAX_VALUE, entry.maximumZ, BsaType3Values.MaximumZ)), 
+            createHBox(0, createLabel("Minimum X", 140), createSpinner(0, -Float.MAX_VALUE, Float.MAX_VALUE, entry.minimumX, BsaType3Values.MinimumX)),
+            createHBox(0, createLabel("Minimum Y", 140), createSpinner(0, -Float.MAX_VALUE, Float.MAX_VALUE, entry.minimumY, BsaType3Values.MinimumY)), 
+            createHBox(0, createLabel("Minimum Z", 140), createSpinner(0, -Float.MAX_VALUE, Float.MAX_VALUE, entry.minimumZ, BsaType3Values.MinimumZ))
+        );
+        matrixVBox.setPadding(new Insets(20, 0, 0, 16));
+
+        VBox unknownVBox = new VBox(30, 
+            createHBox(0, createLabel("I_02", 60), createTextField(entry.i02, BsaType3Values.I02)),
+            createHBox(0, createLabel("I_06", 60), createHBox(10, i06, false)),
+            createHBox(0, createLabel("I_52", 60), createTextField(entry.i52, BsaType3Values.I52)),
+            createHBox(0, createLabel("I_54", 60), createTextField(entry.i54, BsaType3Values.I54)),
+            createHBox(0, createLabel("I_56", 60), createTextField(entry.i56, BsaType3Values.I56))
+        );
+        unknownVBox.setPadding(new Insets(20, 0, 0, 16));
+
+        Tab hitboxTab = new Tab("Hitbox", hitboxVBox);
+        hitboxTab.setClosable(false);
+
+        Tab matrixTab = new Tab("Matrix", matrixVBox);
+        matrixTab.setClosable(false);
+
+        Tab unknownTab = new Tab("Unknown", unknownVBox);
+        unknownTab.setClosable(false);
+
         tabPane.getTabs().addAll(hitboxTab, matrixTab, unknownTab);
     }
 
     private void createBsaType4(BsaType4Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(80);
-        
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true);
-        startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
-
-        HBox startTimeHBox = new HBox(startTimeLabel, startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
-
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(80);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
-
-        HBox durationHBox = new HBox(durationLabel, durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
-
-        //i00
-        Label i00Label = new Label("I_00");
-        i00Label.setPrefWidth(80);
-
-        TextField i00TextField = new TextField(String.valueOf(entry.i00));
-        i00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i00TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i00 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i00HBox = new HBox(i00Label, i00TextField);
-        i00HBox.setAlignment(Pos.CENTER_LEFT);
-        //i00
-
-        //i04
-        Label i04Label = new Label("I_04");
-        i04Label.setPrefWidth(80);
-
-        TextField i04TextField = new TextField(String.valueOf(entry.i04));
-        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i04 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i04HBox = new HBox(i04Label, i04TextField);
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        //i04
-
-        //i08
-        Label i08Label = new Label("I_08");
-        i08Label.setPrefWidth(80);
-
-        TextField i08TextField = new TextField(String.valueOf(entry.i08));
-        i08TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i08TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i08 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i08HBox = new HBox(i08Label, i08TextField);
-        i08HBox.setAlignment(Pos.CENTER_LEFT);
-        //i08
-
-        //f12
-        Label f12Label = new Label("F_12");
-        f12Label.setPrefWidth(80);
-
-        TextField f12TextField = new TextField(String.valueOf(entry.f12));
-        f12TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f12TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f12 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f12HBox = new HBox(f12Label, f12TextField);
-        f12HBox.setAlignment(Pos.CENTER_LEFT);
-        //f12
-
-        //f16
-        Label f16Label = new Label("F_16");
-        f16Label.setPrefWidth(80);
-
-        TextField f16TextField = new TextField(String.valueOf(entry.f16));
-        f16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f16TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f16 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f16HBox = new HBox(f16Label, f16TextField);
-        f16HBox.setAlignment(Pos.CENTER_LEFT);
-        //f16
-
-        //f20
-        Label f20Label = new Label("F_20");
-        f20Label.setPrefWidth(80);
-
-        TextField f20TextField = new TextField(String.valueOf(entry.f20));
-        f20TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f20TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f20 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f20HBox = new HBox(f20Label ,f20TextField);
-        f20HBox.setAlignment(Pos.CENTER_LEFT);
-        //f20
-
-        //i24
-        Label i24Label = new Label("I_24");
-        i24Label.setPrefWidth(80);
-
-        TextField i24TextField = new TextField(String.valueOf(entry.i24));
-        i24TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i24TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i24 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i24HBox = new HBox(i24Label, i24TextField);
-        i24HBox.setAlignment(Pos.CENTER_LEFT);
-        //i24
-
-        //i28
-        Label i28Label = new Label("I_28");
-        i28Label.setPrefWidth(80);
-
-        TextField i28TextField = new TextField(String.valueOf(entry.i28));
-        i28TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i28TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i28 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i28HBox = new HBox(i28Label, i28TextField);
-        i28HBox.setAlignment(Pos.CENTER_LEFT);
-        //i28
-
-        //i32
-        Label i32Label = new Label("I_32");
-        i32Label.setPrefWidth(80);
-
-        TextField i32TextField = new TextField(String.valueOf(entry.i32));
-        i32TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i32TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i32 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i32HBox = new HBox(i32Label, i32TextField);
-        i32HBox.setAlignment(Pos.CENTER_LEFT);
-        //i32
-
-        //i36
-        Label i36Label = new Label("I_36");
-        i36Label.setPrefWidth(80);
-
-        TextField i36TextField = new TextField(String.valueOf(entry.i36));
-        i36TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i36TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i36 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i36HBox = new HBox(i36Label, i36TextField);
-        i36HBox.setAlignment(Pos.CENTER_LEFT);
-        //i36
-
-        //i40
-        Label i40Label = new Label("I_40");
-        i40Label.setPrefWidth(80);
-
-        TextField i40TextField = new TextField(String.valueOf(entry.i40));
-        i40TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i40TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i40 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i40HBox = new HBox(i40Label, i40TextField);
-        i40HBox.setAlignment(Pos.CENTER_LEFT);
-        //i40
-
-        //i44
-        Label i44Label = new Label("I_44");
-        i44Label.setPrefWidth(80);
-
-        TextField i44TextField = new TextField(String.valueOf(entry.i44));
-        i44TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i44TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i44 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i44HBox = new HBox(i44Label, i44TextField);
-        i44HBox.setAlignment(Pos.CENTER_LEFT);
-        //i44
-
-        //i48
-        Label i48Label = new Label("I_48");
-        i48Label.setPrefWidth(80);
-
-        TextField i48TextField = new TextField(String.valueOf(entry.i48));
-        i48TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i48TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i48 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i48HBox = new HBox(i48Label, i48TextField);
-        i48HBox.setAlignment(Pos.CENTER_LEFT);
-        //i48
-
-        //i50
-        Label i50Label = new Label("I_50");
-        i50Label.setPrefWidth(80);
-
-        TextField i50TextField = new TextField(String.valueOf(entry.i50));
-        i50TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i50TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i50 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i50HBox = new HBox(i50Label, i50TextField);
-        i50HBox.setAlignment(Pos.CENTER_LEFT);
-        //i50
-
-        //i52
-        Label i52Label = new Label("I_52");
-        i52Label.setPrefWidth(80);
-
-        TextField i52TextField = new TextField(String.valueOf(entry.i52));
-        i52TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i52TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i52 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i52HBox = new HBox(i52Label,i52TextField);
-        i52HBox.setAlignment(Pos.CENTER_LEFT);
-        //i52
-
-        //i54
-        Label i54Label = new Label("I_54");
-        i54Label.setPrefWidth(80);
-
-        TextField i54TextField = new TextField(String.valueOf(entry.i54));
-        i54TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i54TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i54 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i54HBox = new HBox(i54Label, i54TextField);
-        i54HBox.setAlignment(Pos.CENTER_LEFT);
-        //i54
-
-        //deflection
         VBox deflectionVBox = new VBox(30, 
-            startTimeHBox, durationHBox, 
-            i00HBox, i04HBox, 
-            i08HBox, f12HBox, 
-            f16HBox, f20HBox, 
-            i24HBox, i28HBox, 
-            i32HBox, i36HBox, 
-            i40HBox, i44HBox, 
-            i48HBox, i50HBox, 
-            i52HBox, i54HBox
+            createHBox(0, createLabel("Start Time", 80), createSpinner(0, 65535, entry.startTime, BsaType4Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 80), createSpinner( 0, 65535, entry.duration, BsaType4Values.Duration)),   
+            createHBox(0, createLabel("I_00", 80), createTextField(entry.i00, BsaType4Values.I00)),
+            createHBox(0, createLabel("I_04", 80), createTextField(entry.i04, BsaType4Values.I04)), 
+            createHBox(0, createLabel("I_08", 80), createTextField(entry.i08, BsaType4Values.I08)), 
+            createHBox(0, createLabel("F_12", 80), createTextField(entry.f12, BsaType4Values.F12)), 
+            createHBox(0, createLabel("F_16", 80), createTextField(entry.f16, BsaType4Values.F16)), 
+            createHBox(0, createLabel("F_20", 80), createTextField(entry.f20, BsaType4Values.F20)), 
+            createHBox(0, createLabel("I_24", 80), createTextField(entry.i24, BsaType4Values.I24)), 
+            createHBox(0, createLabel("I_28", 80), createTextField(entry.i28, BsaType4Values.I28)), 
+            createHBox(0, createLabel("I_32", 80), createTextField(entry.i32, BsaType4Values.I32)), 
+            createHBox(0, createLabel("I_36", 80), createTextField(entry.i36, BsaType4Values.I36)), 
+            createHBox(0, createLabel("I_40", 80), createTextField(entry.i40, BsaType4Values.I40)), 
+            createHBox(0, createLabel("I_44", 80), createTextField(entry.i44, BsaType4Values.I44)), 
+            createHBox(0, createLabel("I_48", 80), createTextField(entry.i48, BsaType4Values.I48)), 
+            createHBox(0, createLabel("I_50", 80), createTextField(entry.i50, BsaType4Values.I50)), 
+            createHBox(0, createLabel("I_52", 80), createTextField(entry.i52, BsaType4Values.I52)), 
+            createHBox(0, createLabel("I_54", 80), createTextField(entry.i54, BsaType4Values.I54))
         );
         deflectionVBox.setPadding(new Insets(20, 0, 20, 16));
 
         Tab deflectionTab = new Tab("Deflection", new ScrollPane(deflectionVBox));
         deflectionTab.setClosable(false);
-        //deflection
 
         tabPane.getTabs().add(deflectionTab);
     }
 
     private void createBsaType6(BsaType6Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(100);
-        
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true);
-        startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
-
-        HBox startTimeHBox = new HBox(startTimeLabel, startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
-
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(100);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
-
-        HBox durationHBox = new HBox(durationLabel, durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
-
-        //eepk type
-        Label eepkTypeLabel = new Label("EEPK Type");
-        eepkTypeLabel.setPrefWidth(100);
-
+        ToggleGroup effectSwitchToggleGroup = new ToggleGroup();
         ToggleGroup eepkTypeToggleGroup = new ToggleGroup();
-        
-        RadioButton common = new RadioButton("Common");
-        common.setToggleGroup(eepkTypeToggleGroup);
 
-        RadioButton stageBG = new RadioButton("Stage BG");
-        stageBG.setToggleGroup(eepkTypeToggleGroup);
+        RadioButton[] eepkTypes = new RadioButton[] {
+            createRadioButton("Common", eepkTypeToggleGroup, BsaType6Values.EEPK_Types.Common),
+            createRadioButton("StageBG", eepkTypeToggleGroup, BsaType6Values.EEPK_Types.StageBG),
+            createRadioButton("Character", eepkTypeToggleGroup, BsaType6Values.EEPK_Types.CharacterEffect),
+            createRadioButton("Awoken Skill", eepkTypeToggleGroup, BsaType6Values.EEPK_Types.AwokenSkill),
+            createRadioButton("Super Skill", eepkTypeToggleGroup, BsaType6Values.EEPK_Types.SuperSkill),
+            createRadioButton("Ultimate Skill", eepkTypeToggleGroup, BsaType6Values.EEPK_Types.UltimateSkill),
+            createRadioButton("Evasive Skill", eepkTypeToggleGroup, BsaType6Values.EEPK_Types.EvasiveSkill),
+            createRadioButton("Ki Blast Skill", eepkTypeToggleGroup, BsaType6Values.EEPK_Types.KiBlastSkill),
+            createRadioButton("Stage", eepkTypeToggleGroup, BsaType6Values.EEPK_Types.Stage),
+        };
 
-        RadioButton character = new RadioButton("Character");
-        character.setToggleGroup(eepkTypeToggleGroup);
+        RadioButton[] effectSwitch = new RadioButton[] {
+            createRadioButton("On", effectSwitchToggleGroup, EffectSwitchFlags.On), 
+            createRadioButton("Off", effectSwitchToggleGroup, EffectSwitchFlags.Off)
+        };
 
-        RadioButton awokenSkill = new RadioButton("Awoken Skill");
-        awokenSkill.setToggleGroup(eepkTypeToggleGroup);
+        VBox effectVBox = new VBox(45, 
+            createHBox(0, createLabel("Start Time", 100), createSpinner(0, 65535, entry.startTime, BsaType6Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 100), createSpinner( 0, 65535, entry.duration, BsaType6Values.Duration)),  
+            createHBox(0, createLabel("EEPK Type", 100), createGridPane(3, 3, eepkTypes, true)), 
+            createHBox(0, createLabel("Skill ID", 100), createSpinner( 0, 65535, entry.skillId, BsaType6Values.Skill_ID)), 
+            createHBox(0, createLabel("Effect ID", 100), createSpinner( 0, 65535, entry.effectId, BsaType6Values.Effect_ID)),
+            createHBox(0, createLabel("Switch", 100), createHBox(15, effectSwitch, true)), 
+            createHBox(0, createLabel("Position X", 100), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.positionX, BsaType6Values.PositionX)),
+            createHBox(0, createLabel("Position Y", 100), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.positionY, BsaType6Values.PositionY)), 
+            createHBox(0, createLabel("Position Z", 100), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.positionZ, BsaType6Values.PositionZ))
+        );
 
-        RadioButton superSkill = new RadioButton("Super Skill");
-        superSkill.setToggleGroup(eepkTypeToggleGroup);
+        VBox unknownVBox = new VBox(30, 
+            createHBox(0, createLabel("I_06", 60), createTextField(entry.i06, BsaType6Values.I06)), 
+            createHBox(0, createLabel("I_10", 60), createTextField(entry.i10, BsaType6Values.I10))
+        );
+        unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
-        RadioButton ultimateSkill = new RadioButton("Ultimate Skill");
-        ultimateSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton evasiveSkill = new RadioButton("Evasive Skill");
-        evasiveSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton kiBlastSkill = new RadioButton("Ki Blast Skill");
-        kiBlastSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton stage = new RadioButton("Stage");
-        stage.setToggleGroup(eepkTypeToggleGroup);
-
-        switch (entry.eepkType) {
-            case 1 -> stageBG.setSelected(true);
-            case 2 -> character.setSelected(true);
-            case 3 -> awokenSkill.setSelected(true);
-            case 5 -> superSkill.setSelected(true);
-            case 6 -> ultimateSkill.setSelected(true);
-            case 7 -> evasiveSkill.setSelected(true);
-            case 9 -> kiBlastSkill.setSelected(true);
-            case 11 -> stage.setSelected(true);
-            default -> common.setSelected(true);
-        }
-
-        eepkTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.isSelected()) {
-                if ((RadioButton) newValue == common) { 
-                    entry.eepkType = 0;
-                }
-                else if ((RadioButton) newValue == stageBG) { 
-                    entry.eepkType = 1;
-                }
-                else if ((RadioButton) newValue == character) { 
-                    entry.eepkType = 2;
-                }
-                else if ((RadioButton) newValue == awokenSkill) { 
-                    entry.eepkType = 3;
-                }
-                else if ((RadioButton) newValue == superSkill) { 
-                    entry.eepkType = 5;
-                }
-                else if ((RadioButton) newValue == ultimateSkill) { 
-                    entry.eepkType = 6;
-                }
-                else if ((RadioButton) newValue == evasiveSkill) { 
-                    entry.eepkType = 7;
-                }
-                else if ((RadioButton) newValue == kiBlastSkill) { 
-                    entry.eepkType = 9;
-                }
-                else if ((RadioButton) newValue == stage) {
-                    entry.eepkType = 11;
-                }
-            }
-        });
-
-        GridPane eepkTypeGridPane = new GridPane(10, 10);
-        eepkTypeGridPane.getStyleClass().add("titled-address-box");
-        eepkTypeGridPane.add(common, 0, 0);   
-        eepkTypeGridPane.add(stageBG, 1, 0);          
-        eepkTypeGridPane.add(character, 2, 0);          
-        eepkTypeGridPane.add(awokenSkill, 0, 1);          
-        eepkTypeGridPane.add(superSkill, 1, 1);          
-        eepkTypeGridPane.add(ultimateSkill, 2, 1);          
-        eepkTypeGridPane.add(evasiveSkill, 0, 2);          
-        eepkTypeGridPane.add(kiBlastSkill, 1, 2);          
-        eepkTypeGridPane.add(stage, 2, 2);          
-
-        HBox eepkTypeHBox=new HBox(eepkTypeLabel, eepkTypeGridPane);
-        eepkTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //eepk type
-
-        //skill id
-        Label skillIdLabel = new Label("Skill ID");
-        skillIdLabel.setPrefWidth(100);
-        
-        Spinner <Integer> skillIdSpinner = new Spinner<>(0, 65535, entry.skillId);
-        skillIdSpinner.setEditable(true);
-        skillIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.skillId = newValue;
-            }
-        });
-
-        HBox skillIdHBox = new HBox(skillIdLabel, skillIdSpinner);
-        skillIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //skill id
-
-        //effect id
-        Label effectIdLabel = new Label("Effect ID");
-        effectIdLabel.setPrefWidth(100);
-        
-        Spinner <Integer> effectIdSpinner = new Spinner<>(0, 65535, entry.effectId);
-        effectIdSpinner.setEditable(true);
-        effectIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.effectId = newValue;
-            }
-        });
-
-        HBox effectIdHBox = new HBox(effectIdLabel, effectIdSpinner);
-        effectIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //effect id
-
-        //i06
-        Label i06Label = new Label("I_06");
-        i06Label.setPrefWidth(60);
-
-        TextField i06TextField = new TextField(String.valueOf(entry.i06));
-        i06TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i06TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i06 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i06HBox = new HBox(i06Label, i06TextField);
-        i06HBox.setAlignment(Pos.CENTER_LEFT);
-        //i06
-
-        //effect switch
-        Label effectSwitchLabel = new Label("Effect Switch");
-        effectSwitchLabel.setPrefWidth(100);
-
-        ToggleGroup effectSwtichGroup = new ToggleGroup();
-
-        RadioButton on = new RadioButton("On");
-        on.setToggleGroup(effectSwtichGroup);
-        
-        RadioButton off = new RadioButton("Off");
-        off.setToggleGroup(effectSwtichGroup);
-
-        switch (entry.effectSwitch) {
-            case 1 -> off.setSelected(true);
-            default -> on.setSelected(true);
-        }
-
-        effectSwtichGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.isSelected()) {
-                if ((RadioButton) newValue == on) { 
-                    entry.effectSwitch = 0;
-                }
-                else if ((RadioButton) newValue == off) { 
-                    entry.effectSwitch = 1;
-                }
-            }
-        });
-
-        HBox effectSwitchRadioButtonsHBox = new HBox(15, on, off);
-        effectSwitchRadioButtonsHBox.getStyleClass().add("titled-address-box");
-
-        HBox effectsSwitchHBox = new HBox(effectSwitchLabel, effectSwitchRadioButtonsHBox);
-        effectsSwitchHBox.setAlignment(Pos.CENTER_LEFT);
-        //effects switch
-
-        //i10
-        Label i10Label = new Label("I_10");
-        i10Label.setPrefWidth(60);
-
-        TextField i10TextField = new TextField(String.valueOf(entry.i10));
-        i10TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i10TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i10 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i10HBox = new HBox(i10Label, i10TextField);
-        i10HBox.setAlignment(Pos.CENTER_LEFT);
-        //i10
-
-        //position x
-        Label speedXLabel = new Label("Position X");
-        speedXLabel.setPrefWidth(100);
-        
-        Spinner <Double> positionXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionX);
-        positionXSpinner.setEditable(true);
-        positionXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.positionX = newValue.floatValue();
-            }
-        });
-
-        HBox positionXHBox = new HBox(speedXLabel, positionXSpinner);
-        positionXHBox.setAlignment(Pos.CENTER_LEFT);
-        //position x
-
-        //position y
-        Label speedYLabel = new Label("Position Y");
-        speedYLabel.setPrefWidth(100);
-        
-        Spinner <Double> positionYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionY);
-        positionYSpinner.setEditable(true);
-        positionYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.positionY = newValue.floatValue();
-            }
-        });
-
-        HBox positionYHBox = new HBox(speedYLabel, positionYSpinner);
-        positionYHBox.setAlignment(Pos.CENTER_LEFT);
-        //position y
-
-        //position z
-        Label speedZLabel = new Label("Position Z");
-        speedZLabel.setPrefWidth(100);
-        
-        Spinner <Double> positionZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.positionZ);
-        positionZSpinner.setEditable(true);
-        positionZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.positionZ = newValue.floatValue();
-            }
-        });
-
-        HBox positionZHBox = new HBox(speedZLabel, positionZSpinner);
-        positionZHBox.setAlignment(Pos.CENTER_LEFT);
-        //position z
-
-        //effect
-        VBox effectVBox = new VBox(45, startTimeHBox, durationHBox, eepkTypeHBox, skillIdHBox, effectIdHBox, effectsSwitchHBox, positionXHBox, positionYHBox, positionZHBox);
         effectVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab effectTab = new Tab("Effect", effectVBox);
         effectTab.setClosable(false);
-        //effect
-
-        //unknown
-        VBox unknownVBox = new VBox(30, i06HBox, i10HBox);
-        unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
         unknownTab.setClosable(false);
-        //unknown
 
         tabPane.getTabs().addAll(effectTab, unknownTab);
     }
 
     private void createBsaType7(BsaType7Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(100);
-        
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true);
-        startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
-
-        HBox startTimeHBox = new HBox(startTimeLabel, startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
-
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(100);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
-
-        HBox durationHBox = new HBox(durationLabel, durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
-
-        //acb type
-        Label acbTypeLabel = new Label("ACB Type");
-        acbTypeLabel.setPrefWidth(100);
-
         ToggleGroup acbTypeToggleGroup = new ToggleGroup();
 
-        RadioButton common = new RadioButton("Common SE");
-        common.setToggleGroup(acbTypeToggleGroup);
+        RadioButton[] acbTypes = new RadioButton[] {
+            createRadioButton("Common", acbTypeToggleGroup, BsaType7Values.ACB_Types.Common_SE), 
+            createRadioButton("Character SE", acbTypeToggleGroup, BsaType7Values.ACB_Types.Character_SE),
+            createRadioButton("Character VOX", acbTypeToggleGroup, BsaType7Values.ACB_Types.Character_VOX),
+            createRadioButton("Skill SE", acbTypeToggleGroup, BsaType7Values.ACB_Types.Skill_SE),
+            createRadioButton("Skill VOX", acbTypeToggleGroup, BsaType7Values.ACB_Types.Skill_VOX)
+        };
 
-        RadioButton characterSE = new RadioButton("Character SE");
-        characterSE.setToggleGroup(acbTypeToggleGroup);
-
-        RadioButton characterVOX = new RadioButton("Character VOX");
-        characterVOX.setToggleGroup(acbTypeToggleGroup);
-
-        RadioButton skillSE = new RadioButton("Skill SE");
-        skillSE.setToggleGroup(acbTypeToggleGroup);
-
-        RadioButton skillVOX = new RadioButton("Skill VOX");
-        skillVOX.setToggleGroup(acbTypeToggleGroup);
-
-
-        switch (entry.acbType) {
-            case 1 ->  characterSE.setSelected(true);           
-            case 2 ->  characterVOX.setSelected(true);          
-            case 3 -> skillSE.setSelected(true);               
-            case 4 -> skillVOX.setSelected(true);              
-            default -> common.setSelected(true);                
-        }
-
-        acbTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null && newValue.isSelected()) {
-                if ((RadioButton) newValue == common)                    { entry.acbType = 0;  }
-                else if ((RadioButton) newValue == characterSE)          { entry.acbType = 1;  }
-                else if ((RadioButton) newValue == characterVOX)         { entry.acbType = 2;  }
-                else if ((RadioButton) newValue == skillSE)              { entry.acbType = 3;  }
-                else if ((RadioButton) newValue == skillVOX)             { entry.acbType = 4;  }
-            }
-        });
-
-        HBox acbTypeRadioButtonsHBox=new HBox(15, common, characterSE, characterVOX, skillSE, skillVOX);
-        acbTypeRadioButtonsHBox.getStyleClass().add("titled-address-box");
-
-        HBox acbTypeHBox = new HBox(acbTypeLabel, acbTypeRadioButtonsHBox);
-        acbTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //acb type
-
-        //i02
-        Label i02Label = new Label("I_02");
-        i02Label.setPrefWidth(60);
-
-        TextField i02TextField = new TextField(String.valueOf(entry.i02));
-        i02TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i02TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i02 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i02HBox = new HBox(i02Label, i02TextField);
-        i02HBox.setAlignment(Pos.CENTER_LEFT);
-        //i02
-
-        //cue id
-        Label cueIdLabel = new Label("Cue ID");
-        cueIdLabel.setPrefWidth(100);
-        
-        Spinner <Integer> cueIdSpinner = new Spinner<>(0, 65535, entry.duration);
-        cueIdSpinner.setEditable(true);
-        cueIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
-
-        HBox cueIdHBox = new HBox(cueIdLabel, cueIdSpinner);
-        cueIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //cue id
-
-        //i06
-        Label i06Label = new Label("I_06");
-        i06Label.setPrefWidth(60);
-
-        TextField i06TextField = new TextField(String.valueOf(entry.i06));
-        i06TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i06TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i06 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i06HBox = new HBox(i06Label, i06TextField);
-        i06HBox.setAlignment(Pos.CENTER_LEFT);
-        //i06
-
-        //sound
-        VBox soundVBox = new VBox(30, startTimeHBox, durationHBox, acbTypeHBox, cueIdHBox);
+        VBox soundVBox = new VBox(30, 
+            createHBox(0, createLabel("Start Time", 100), createSpinner(0, 65535, entry.startTime, BsaType7Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 100), createSpinner( 0, 65535, entry.duration, BsaType7Values.Duration)),
+            createHBox(0, createLabel("ACB Type", 100), createHBox(15, acbTypes, true)), 
+            createHBox(0, createLabel("Cue ID", 100), createSpinner( 0, 65535, entry.cueId, BsaType7Values.Cue_ID))
+        );
         soundVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab soundTab = new Tab("Sound",soundVBox);
         soundTab.setClosable(false);
-        //sound
 
-        //unknown
-        VBox unknownVBox = new VBox(30, i02HBox, i06HBox);
+        VBox unknownVBox = new VBox(30, 
+            createHBox(0, createLabel("I_02", 60), createTextField(entry.i02, BsaType7Values.I02)),
+            createHBox(0, createLabel("I_06", 60), createTextField(entry.i06, BsaType7Values.I06)) 
+        );
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab unknownTab = new Tab("Unknown", unknownVBox);
         unknownTab.setClosable(false);
-        //unknown
 
         tabPane.getTabs().addAll(soundTab, unknownTab);
     }
 
     private void createBsaType8(BsaType8Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(80);
-        
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true);
-        startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
+        Spinner<Number> spinner = createSpinner(0, 65535, entry.bpeEffectId, BsaType8Values.BPE_Effect_ID);
 
-        HBox startTimeHBox = new HBox(15, startTimeLabel, startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
+        CheckBox[] screenEffectsGroup1 = new CheckBox[] {
+            new CheckBox("Unknown 1"),
+            new CheckBox("Disable Effect"),
+            new CheckBox("Unknown 3"),
+            new CheckBox("Allow Loop")
+        };
 
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(80);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
+        CheckBox[] screenEffectsGroup2 = new CheckBox[] {
+            new CheckBox("Unknown 5"),
+            new CheckBox("Unknown 6"),
+            new CheckBox("Unknown 7"),
+            new CheckBox("Unknown 8")
+        };
 
-        HBox durationHBox = new HBox(15, durationLabel, durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
+        CheckBox[] screenEffectsGroup3 = new CheckBox[] {
+            new CheckBox("Unknown 9"),
+            new CheckBox("Unknown 10"),
+            new CheckBox("Unknown 11"),
+            new CheckBox("Unknown 12"),
+        };
 
-        //bpe effect id
-        Label bpeEffectIdLabel = new Label("BPE Effect ID");
-        bpeEffectIdLabel.setPrefWidth(80);
+        CheckBox[] screenEffectsGroup4 = new CheckBox[] {
+            new CheckBox("Unknown 13"),
+            new CheckBox("Unknown 14"),
+            new CheckBox("Unknown 15"),
+            new CheckBox("Unknown 16"),
+        };
 
-        Spinner <Integer> bpeEffectIdSpinner = new Spinner<>(0, 65535, entry.bpeEffectId);
-        bpeEffectIdSpinner.setEditable(true);
-        bpeEffectIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.bpeEffectId = newValue;
-            }
-        });
+        Node[] screenEffectsFlags = new Node[] {
+            createCheckBoxGroup("Flag Group 1", screenEffectsGroup1, 1, BsaType8Values.ScreenEffectFlags),
+            createCheckBoxGroup("Flag Group 2", screenEffectsGroup2, 16, BsaType8Values.ScreenEffectFlags), 
+            createCheckBoxGroup("Flag Group 3", screenEffectsGroup3, 256, BsaType8Values.ScreenEffectFlags),
+            createCheckBoxGroup("Flag Group 4", screenEffectsGroup4, 4096, BsaType8Values.ScreenEffectFlags)
+        };
 
-        Label bpeEffectIdIndicatorLabel = new Label();
-        bpeEffectIdIndicatorLabel.setTextFill(Color.CRIMSON);
-        
-        bpeEffectIdIndicatorLabel.textProperty().bind(
+        Label label = new Label();
+        label.setTextFill(Color.CRIMSON);
+        label.textProperty().bind(
             Bindings.createStringBinding(() -> {
-                return switch (bpeEffectIdSpinner.getValue()) {
-                    case 0,2 -> "Brightens Up The Screen";
-                    case 1 -> "White Screen";
-                    case 3 -> "Quick White Flash";
-                    case 4 -> "Brightness Wavering";
-                    case 5 -> "Red Tint";
-                    case 6 -> "Fast Brightness Wavering";
-                    case 10 -> "Small Motion Blur";
-                    case 11 -> "Strong Motion Blur";
-                    case 12,15,16 -> "Quick Motion Blur";
-                    case 13 -> "Very Small Blur";
-                    case 14 -> "Light Blue Filter";
-                    case 17 -> "Magenta Filter";
-                    case 18 -> "Two Different Motion Blurs";
-                    case 20,21,22,23,26,27 -> "Ripple Blur";
-                    case 24,25 -> "Gravely Blur";
-                    case 30 -> "Solar Flare Screen Effect (Opponent Blind)";
-                    case 31,32,54 -> "Blackening Around The Screen";
-                    case 33,35 -> "Faint Black Circle";
-                    case 34 -> "A Pair Of Faint Black Circles";
-                    case 36 -> "Solar Flare Screen Effect (User Activate)";
-                    case 37 -> "Screen Turns Completely Black";
-                    case 40 -> "Small Transparent Ring Expanding";
-                    case 41,42,46 -> "Transparent Ring";
-                    case 43,44,45,52 -> "Big Transparent Ring";
-                    case 50,51 -> "Brightening Of The Screen";
-                    case 53 -> "Blue Tint";
-                    case 55,56,57,61,63 -> "Screen Slightly Darkens And Desaturates";
-                    case 60 -> "Screen Flashes A Faint White";
-                    case 64 -> "Screen Flashes A Faint Pink For A Second";
-                    case 65 -> "Light Blue Filter Faints In And Out";
-                    case 66 -> "Black Spheres";
-                    case 70 -> "Standard Black Filter And Used During Skill Activation";
+                return switch (spinner.getValue().intValue()) {
+                    case 0, 255, 256 -> "White Flash";
+                    case 1 -> "Strong White Flash";
+                    case 2 -> "Weak White Flash";
+                    case 3 -> "Weaker White Flash";
+                    case 4 -> "Weak Character Illumination";
+                    case 5 -> "Mild Desaturated";
+                    case 6 -> "2 Consecutive Mild Flashes";
+                    case 10 -> "Small Motion Blur/Shake";
+                    case 11 -> "Strong Motion Blur/Shake";
+                    case 12 -> "Rapid Motion Blur/Shake";
+                    case 13 -> "Tiny Motion Blur/Shake";
+                    case 14 -> "Side Screen Shake, Blue Filter";
+                    case 15 -> "Very Quick Sideway Motion Blur/Shake 1";
+                    case 16 -> "Very Quick Sideway Motion Blur/Shake 2";
+                    case 17 -> "Dark, Purple Flash";
+                    case 18 -> "Motion Blur/Shake Sequence";
+                    case 20 -> "Underwater Blur Effect 1";
+                    case 21 -> "Underwater Blur Effect 2";
+                    case 22 -> "Underwater Blur Effect 3";
+                    case 23 -> "Underwater Blur Effect 4";
+                    case 24 -> "Underwater Blur Effect 5";
+                    case 26 -> "Wave-like Blur";
+                    case 27 -> "Upward-flow Liquid Blur";
+                    case 30 -> "Solar Flare Screen Effects";
+                    case 31 -> "Shaking And Dark Flash";
+                    case 32 -> "Shadowy Flash";
+                    case 33 -> "Consecutive Shadowy Flashes";
+                    case 34 -> "Consecutive Shadowy Flashes, Dark Screen";
+                    case 35 -> "Shadowy Flash, Longer";
+                    case 36 -> "Desaturated Flash";
+                    case 37 -> "Black Screen";
+                    case 40 -> "Expanding Transparent Ring 1";
+                    case 41 -> "Expanding Transparent Ring 2";
+                    case 42 -> "Expanding Transparent Ring 3";
+                    case 43 -> "Expanding Distorted Ring";
+                    case 44 -> "Expanding Distorted Ring, Bigger";
+                    case 45 -> "Expanding Transparent Ring 2, Quick";
+                    case 46 -> "Expanding Transparent Ring 3, Quick";
+                    case 50 -> "Brighten Screen 1";
+                    case 51 -> "Brighten Screen 2";
+                    case 52 -> "Expanding Transparent Sphere";
+                    case 53 -> "Flashing Blue Hue";
+                    case 54 -> "Dark Screen 1";
+                    case 55 -> "Darken And Desaturate Screen 1";
+                    case 56 -> "Darken And Desaturate Screen 2";
+                    case 57 -> "Darken Screen 2";
+                    case 59 -> "Darken And Desaturate Screen 3";
+                    case 60 -> "Bright Motion Blur/Shake";
+                    case 61 -> "Dark Screen Slightly (Fade) 1";
+                    case 63 -> "Dark Screen Slightly (Fade) 2";
+                    case 64 -> "Bright Pink Flash";
+                    case 65 -> "Light Blue Filter, Fade To Normal";
+                    case 66 -> "Shadowy Flash, Desaturated";
+                    case 70 -> "Darken Filter For Skill Activation";
+                    case 71 -> "Quick Blur/Shake";
+                    case 72, 74 -> "Render A Black Void";
+                    case 73 -> "Darken Screen 3";
+                    case 75 -> "Flashing Dark Purple Hue";
+                    case 76 -> "Gradual White Screen Blur 1";
+                    case 77 -> "Gradual White Screen Blur 2";
+                    case 78 -> "Invert World Colors";
+                    case 79 -> "Consecutive Transparent Flashes/Shakes";
+                    case 80 -> "Flashing Green Body Outline 1";
+                    case 81 -> "Red Body Outline";
+                    case 82 -> "Flashing Purple Body Outline";
+                    case 83 -> "Flashing White Body Outline 1";
+                    case 84 -> "Flashing White Body Outline 2";
+                    case 85 -> "Flashing White Body Outline 3";
+                    case 86 -> "Flashing Green Body Outline 2";
+                    case 88 -> "Flashing Green Body Outline 3";
+                    case 90 -> "Gradually Darken Background";
+                    case 91 -> "Slightly Fade Out Background";
+                    case 92 -> "Background Flashes Purple";
+                    case 93 -> "Background Flashes Purple, Quick";
+                    case 94 -> "Several Intense Blurs/Shakes";
+                    case 95 -> "Gradually Fade To White";
+                    case 96 -> "Background Flashes Light-Purple";
+                    case 97 -> "Background Flashes Light-Purple, Slow";
+                    case 98 -> "Quick White Flash";
+                    case 100 -> "Distortion Bulge";
+                    case 101 -> "Intense Zoom Blur";
+                    case 110 -> "Light Blue Haze";
+                    case 111 -> "Light Blue Haze, Intense";
+                    case 112 -> "Light Purple Haze";
+                    case 113 -> "Light Purple Haze, Blur";
+                    case 114 -> "Light Blue Haze, Blur, Intense";
+                    case 115 -> "Warm Light-Blue Hue";
+                    case 116 -> "Light Green Hue";
+                    case 117 -> "Flashing Green Hue";
+                    case 118 -> "Saturated Light Purple Hue";
+                    case 119 -> "Saturated Green Hue";
+                    case 120 -> "Darken Backround 1";
+                    case 121 -> "Darken Backround 2";
+                    case 122 -> "Darken Backround 3";
+                    case 123 -> "Black Background";
+                    case 134 -> "Darken Background 4";
+                    case 135, 157 -> "Light Blue Tint";
+                    case 136 -> "Darken Background 5";
+                    case 137 -> "Deep Blue Tint";
+                    case 128 -> "Bleached Light Blue Tint";
+                    case 129 -> "Blue Background";
+                    case 130 -> "Fade Background";
+                    case 131 -> "Fade To Pink Tint";
+                    case 132 -> "Darken Background 6";
+                    case 133 -> "Background Flashes Light Green";
+                    case 140 -> "Thin Green Body Outline 1";
+                    case 141 -> "Thin White Body Outline";
+                    case 142 -> "Thin Green Body Outline 2";
+                    case 150 -> "Very Dark Background";
+                    case 151 -> "Warm Orange Hue 1";
+                    case 152 -> "Warm Blueish Hue";
+                    case 153 -> "Intense Reddish Hue";
+                    case 154 -> "Slightly Darker Background";
+                    case 155 -> "Gradually Darken Screen";
+                    case 156 -> "Warm Orange Hue 2";
+                    case 158 -> "Blue Tint";
+                    case 159 -> "Blue Tint, Weaker";
+                    case 160 -> "Blur";
+                    case 165 -> "Various Distortion Effects (Large)";
+                    case 170 -> "Motion Blur/Shakes";
+                    case 175 -> "Gradually Fade Background To Dark Brown 1";
+                    case 176 -> "Gradually Fade Background To Dark Brown 2";
+                    case 177 -> "Quick Light Blue Tint Flash";
+                    case 178 -> "Large Blue Tint Flash";
+                    case 200 -> "Distortion Bulge Effects";
+                    case 211 -> "Consecutive Shadowy Flashes, Intense";
+                    case 212 -> "Dark Flash, Blur";
+                    case 220 -> "Single Green Hue Flash 1";
+                    case 221 -> "Single Dark Green Hue Flash";
+                    case 222 -> "Single Green Hue Flash 2";
+                    case 225 -> "Vertical Blur";
+                    case 226 -> "Blue Tint Flashes, Shakes";
+                    case 227 -> "Red Tint Flashes, Shakes";
+                    case 230 -> "Gradually Darken Background Slightly";
+                    case 231 -> "Single Pink/Purple Hue Flash";
+                    case 232 -> "Lighten Background";
+                    case 233 -> "Blurry Shakes";
+                    case 234 -> "Light Blue Hue On Bakcground";
+                    case 235 -> "Purple Hue On Bakcground";
+                    case 236 -> "Intense White Flashes, Shakes";
+                    case 237 -> "Intense White Flash -> Purple Flashes/Shakes";
+                    case 240 -> "Light Screen";
+                    case 241 -> "Flash Black Background";
+                    case 245 -> "Red Body Outline";
+                    case 246 -> "Red Tint, Flashing, Quaking";
+                    case 250 -> "Red Body Outline, Red Background";
+                    case 251 -> "Blue Body Outline, Blue Background"; 
+                    case 252 -> "Green Body Outline, Green Background"; 
+                    case 253 -> "Pink Body Outline, Pink Background"; 
+                    case 257 -> "White Body Outline 1";
+                    case 260 -> "White Body Outline 2";
                     default -> "Unknown";
                 };
-            }, bpeEffectIdSpinner.valueProperty())
+            }, spinner.valueProperty())
         );
 
-        HBox bpeEffectIdHBox = new HBox(15, bpeEffectIdLabel, bpeEffectIdSpinner, bpeEffectIdIndicatorLabel);
-        bpeEffectIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //bpe effect id
-
-        //i02
-        Label i02Label = new Label("I_02");
-        i02Label.setPrefWidth(80);
-
-        TextField i02TextField = new TextField(String.valueOf(entry.i02));
-        i02TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i02TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i02 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i02HBox = new HBox(15, i02Label, i02TextField);
-        i02HBox.setAlignment(Pos.CENTER_LEFT);
-        //i02
-
-        //i04
-        Label i04Label = new Label("I_04");
-        i04Label.setPrefWidth(80);
-
-        TextField i04TextField = new TextField(String.valueOf(entry.i04));
-        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i04 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i04HBox = new HBox(15, i04Label, i04TextField);
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        //i04
-
-        //i08
-        Label i08Label = new Label("I_08");
-        i08Label.setPrefWidth(80);
-
-        TextField i08TextField = new TextField(String.valueOf(entry.i08));
-        i08TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i08TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i08 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i08HBox = new HBox(15, i08Label, i08TextField);
-        i08HBox.setAlignment(Pos.CENTER_LEFT);
-        //i08
-
-        //i12
-        Label i12Label = new Label("I_12");
-        i12Label.setPrefWidth(80);
-
-        TextField i12TextField = new TextField(String.valueOf(entry.i12));
-        i12TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i12TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i12 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i12HBox = new HBox(15, i12Label, i12TextField);
-        i12HBox.setAlignment(Pos.CENTER_LEFT);
-        //i12
-
-        //i16
-        Label i16Label = new Label("I_16");
-        i16Label.setPrefWidth(80);
-
-        TextField i16TextField = new TextField(String.valueOf(entry.i16));
-        i16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i16TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i16 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i16HBox = new HBox(15, i16Label, i16TextField);
-        i16HBox.setAlignment(Pos.CENTER_LEFT);
-        //i16
-
-        //i20
-        Label i20Label = new Label("I_20");
-        i20Label.setPrefWidth(80);
-
-        TextField i20TextField = new TextField(String.valueOf(entry.i20));
-        i20TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i20TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i20 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i20HBox = new HBox(15, i20Label, i20TextField);
-        i20HBox.setAlignment(Pos.CENTER_LEFT);
-        //i20
-
-        //screen effect
         VBox screenEffectVBox = new VBox(35, 
-            startTimeHBox, durationHBox, 
-            bpeEffectIdHBox, i02HBox, 
-            i04HBox, i08HBox, 
-            i12HBox, i16HBox, 
-            i20HBox
+            createHBox(0, createLabel("Start Time", 120), createSpinner(0, 65535, entry.startTime, BsaType8Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 120), createSpinner(0, 65535, entry.duration, BsaType8Values.Duration)),
+            createHBox(0, createLabel("BPE Effect ID", 120), createHBox(15, new Node[] {spinner, label}, false)),
+            createHBox(0, createLabel("Screen Effect Flags", 120), createHBox(5, screenEffectsFlags, false))
         );
         screenEffectVBox.setPadding(new Insets(20, 0, 0, 16));
 
+        VBox unknownVBox = new VBox(30,
+            createHBox(0, createLabel("I_04", 60), createTextField(entry.i04, BsaType8Values.I04)), 
+            createHBox(0, createLabel("I_08", 60), createTextField(entry.i08, BsaType8Values.I08)), 
+            createHBox(0, createLabel("I_12", 60), createTextField(entry.i12, BsaType8Values.I12)), 
+            createHBox(0, createLabel("I_16", 60), createTextField(entry.i16, BsaType8Values.I16)),  
+            createHBox(0, createLabel("I_20", 60), createTextField(entry.i20, BsaType8Values.I20))
+        );
+        unknownVBox.setPadding(new Insets(20, 0, 0, 16));
+
         Tab screenEffectTab = new Tab("Screen Effect", screenEffectVBox);
         screenEffectTab.setClosable(false);
-        //screen effect
 
-        tabPane.getTabs().add(screenEffectTab);
+        Tab unknownTab = new Tab("Unknown", unknownVBox);
+        unknownTab.setClosable(false);
+
+        tabPane.getTabs().addAll(screenEffectTab, unknownTab);
     }
 
     private void createBsaType10(BsaType10Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(60);
-        
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true);
-        startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
-
-        HBox startTimeHBox = new HBox(startTimeLabel, startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
-
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(60);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue,newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
-
-        HBox durationHBox = new HBox(durationLabel, durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
-
-        //skill id
-        Label skillIdLabel = new Label("Skill ID");
-        skillIdLabel.setPrefWidth(60);
-        
-        Spinner <Integer> skillIdSpinner = new Spinner<>(0, 65535, entry.skillId);
-        skillIdSpinner.setEditable(true);
-        skillIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.skillId = newValue;
-            }
-        });
-
-        HBox skillIdHBox = new HBox(skillIdLabel, skillIdSpinner);
-        skillIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //skill id
-
-        //i04
-        Label i04Label = new Label("I_04");
-        i04Label.setPrefWidth(60);
-
-        TextField i04TextField = new TextField(String.valueOf(entry.i04));
-        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i04 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i04HBox = new HBox(i04Label, i04TextField);
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        //i04
-
-        //i06
-        Label i06Label = new Label("I_06");
-        i06Label.setPrefWidth(60);
-
-        TextField i06TextField = new TextField(String.valueOf(entry.i06));
-        i06TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i06TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i06 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i06HBox = new HBox(i06Label,i06TextField);
-        i06HBox.setAlignment(Pos.CENTER_LEFT);
-        //i06
-
-        //type 10
-        VBox type10VBox = new VBox(30, startTimeHBox, durationHBox, skillIdHBox, i04HBox, i06HBox);
+        VBox type10VBox = new VBox(30, 
+            createHBox(0, createLabel("Start Time", 60), createSpinner(0, 65535, entry.startTime, BsaType10Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 60), createSpinner(0, 65535, entry.duration, BsaType10Values.Duration)),
+            createHBox(0, createLabel("Skill ID", 60), createSpinner(Integer.MIN_VALUE, Integer.MAX_VALUE, entry.skillId, BsaType10Values.Skill_ID)),
+            createHBox(0, createLabel("I_04", 60), createTextField(entry.i04, BsaType10Values.I04)), 
+            createHBox(0, createLabel("I_06", 60), createTextField(entry.i06, BsaType10Values.I06))
+        );
         type10VBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab type10Tab = new Tab("Type 10", type10VBox);
         type10Tab.setClosable(false);
-        //type 10
 
         tabPane.getTabs().add(type10Tab);
     }
 
     private void createBsaType12(BsaType12Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(80);
-        
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true);
-        startTimeSpinner.valueProperty().addListener((obs,oldValue,newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
+        ToggleGroup skillTypesToggleGroup = new ToggleGroup();
+        ToggleGroup deliveryModeToggleGroup = new ToggleGroup();
 
-        HBox startTimeHBox = new HBox(startTimeLabel, startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
+        RadioButton[] sikillTypes = new RadioButton[] {
+            createRadioButton("Common", skillTypesToggleGroup, BsaType12Values.SkillTypes.Common),
+            createRadioButton("StageBG", skillTypesToggleGroup, BsaType12Values.SkillTypes.StageBG),
+            createRadioButton("Character", skillTypesToggleGroup, BsaType12Values.SkillTypes.CharacterEffect),
+            createRadioButton("Awoken Skill", skillTypesToggleGroup, BsaType12Values.SkillTypes.AwokenSkill),
+            createRadioButton("Super Skill", skillTypesToggleGroup, BsaType12Values.SkillTypes.SuperSkill),
+            createRadioButton("Ultimate Skill", skillTypesToggleGroup, BsaType12Values.SkillTypes.UltimateSkill),
+            createRadioButton("Evasive Skill", skillTypesToggleGroup, BsaType12Values.SkillTypes.EvasiveSkill),
+            createRadioButton("Ki Blast Skill", skillTypesToggleGroup, BsaType12Values.SkillTypes.KiBlastSkill),
+            createRadioButton("Stage", skillTypesToggleGroup, BsaType12Values.SkillTypes.Stage),
+        };
 
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(80);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
+        RadioButton[] deliveryMode = new RadioButton[] {
+            createRadioButton("Broadcast", deliveryModeToggleGroup, DeliveryMode.Broadcast), 
+            createRadioButton("Same-Context Highest Priority", deliveryModeToggleGroup, DeliveryMode.Same_ContextHighestPriority)
+        };
 
-        HBox durationHBox = new HBox(durationLabel ,durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
+        VBox sendProjectileSignalVBox = new VBox(40, 
+            createHBox(0, createLabel("Start Time", 180), createSpinner(0, 65535, entry.startTime, BsaType12Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 180), createSpinner(0, 65535, entry.duration, BsaType12Values.Duration)), 
+            createHBox(0, createLabel("Signal Value", 180), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.signalValue, BsaType12Values.SignalValue)), 
+            createHBox(0, createLabel("Skill Type", 180), createGridPane(3, 3, sikillTypes, true)), 
+            createHBox(0, createLabel("Skill ID", 180), createSpinner(Integer.MIN_VALUE, Integer.MAX_VALUE, entry.skillId, BsaType12Values.Skill_ID)), 
+            createHBox(0, createLabel("Delivery Mode", 180), createHBox(15, deliveryMode, true)),
+            createHBox(0, createLabel("Pause Recipient Timeline\n(One Update)", 180), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.pauseRecipientTimeline, BsaType12Values.PauseRecipientTimeline))
+        );
+        sendProjectileSignalVBox.setPadding(new Insets(20, 0, 0, 16));
 
-        //f00
-        Label f00Label = new Label("F_00");
-        f00Label.setPrefWidth(80);
+        Tab endProjectileSignalTab = new Tab("Projectile Signal", sendProjectileSignalVBox);
+        endProjectileSignalTab.setClosable(false);
 
-        TextField f00TextField = new TextField(String.valueOf(entry.f00));
-        f00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f00TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f00 = Float.parseFloat(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f00HBox = new HBox(f00Label, f00TextField);
-        f00HBox.setAlignment(Pos.CENTER_LEFT);
-        //f00
-
-        //eepk type
-        Label eepkTypeLabel = new Label("EEPK Type");
-        eepkTypeLabel.setPrefWidth(80);
-
-        ToggleGroup eepkTypeToggleGroup = new ToggleGroup();
-
-        RadioButton common = new RadioButton("Common");
-        common.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton stageBG = new RadioButton("Stage BG");
-        stageBG.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton character = new RadioButton("Character");
-        character.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton awokenSkill = new RadioButton("Awoken Skill");
-        awokenSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton superSkill = new RadioButton("Super Skill");
-        superSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton ultimateSkill = new RadioButton("Ultimate Skill");
-        ultimateSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton evasiveSkill = new RadioButton("Evasive Skill");
-        evasiveSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton kiBlastSkill = new RadioButton("Ki Blast Skill");
-        kiBlastSkill.setToggleGroup(eepkTypeToggleGroup);
-
-        RadioButton stage = new RadioButton("Stage");
-        stage.setToggleGroup(eepkTypeToggleGroup);
-
-        switch (entry.eepkType) {
-            case 1 -> stageBG.setSelected(true);
-            case 2 -> character.setSelected(true);
-            case 3 -> awokenSkill.setSelected(true);
-            case 5 -> superSkill.setSelected(true);
-            case 6 -> ultimateSkill.setSelected(true);
-            case 7 -> evasiveSkill.setSelected(true);
-            case 9 -> kiBlastSkill.setSelected(true);
-            case 11 -> stage.setSelected(true);
-            default -> common.setSelected(true);
-        }
-
-        eepkTypeToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.isSelected()) {
-                if ((RadioButton) newValue == common) { 
-                    entry.eepkType = 0;
-                }
-                else if ((RadioButton) newValue == stageBG) { 
-                    entry.eepkType = 1;
-                }
-                else if ((RadioButton) newValue == character) { 
-                    entry.eepkType = 2;
-                }
-                else if ((RadioButton) newValue == awokenSkill) { 
-                    entry.eepkType = 3;
-                }
-                else if ((RadioButton) newValue == superSkill) { 
-                    entry.eepkType = 5;
-                }
-                else if ((RadioButton) newValue == ultimateSkill) { 
-                    entry.eepkType = 6;
-                }
-                else if ((RadioButton) newValue == evasiveSkill) { 
-                    entry.eepkType = 7;
-                }
-                else if ((RadioButton) newValue == kiBlastSkill) { 
-                    entry.eepkType = 9;
-                }
-                else if ((RadioButton) newValue == stage) {
-                    entry.eepkType = 11;
-                }
-            }
-        });
-
-        GridPane eepkTypeGridPane = new GridPane(10, 10);
-        eepkTypeGridPane.getStyleClass().add("titled-address-box");
-        eepkTypeGridPane.add(common, 0, 0);   
-        eepkTypeGridPane.add(stageBG, 1, 0);          
-        eepkTypeGridPane.add(character, 2, 0);          
-        eepkTypeGridPane.add(awokenSkill, 0, 1);          
-        eepkTypeGridPane.add(superSkill, 1, 1);          
-        eepkTypeGridPane.add(ultimateSkill, 2, 1);          
-        eepkTypeGridPane.add(evasiveSkill, 0, 2);          
-        eepkTypeGridPane.add(kiBlastSkill, 1, 2);          
-        eepkTypeGridPane.add(stage, 2, 2);          
-
-        HBox eepkTypeHBox = new HBox(eepkTypeLabel, eepkTypeGridPane);
-        eepkTypeHBox.setAlignment(Pos.CENTER_LEFT);
-        //eepk type
-
-        //skill id
-        Label skillIdLabel = new Label("Skill ID");
-        skillIdLabel.setPrefWidth(80);
-        
-        Spinner <Integer> skillIdSpinner = new Spinner<>(0, 65535, entry.skillId);
-        skillIdSpinner.setEditable(true);
-        skillIdSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.skillId = newValue;
-            }
-        });
-
-        HBox skillIdHBox = new HBox(skillIdLabel, skillIdSpinner);
-        skillIdHBox.setAlignment(Pos.CENTER_LEFT);
-        //skill id
-
-        //i12
-        Label i12Label = new Label("I_12");
-        i12Label.setPrefWidth(80);
-
-        TextField i12TextField = new TextField(String.valueOf(entry.i12));
-        i12TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i12TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i12 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i12HBox = new HBox(i12Label, i12TextField);
-        i12HBox.setAlignment(Pos.CENTER_LEFT);
-        //i12
-
-        //f16
-        Label f16Label = new Label("F_16");
-        f16Label.setPrefWidth(80);
-
-        TextField f16TextField = new TextField(String.valueOf(entry.f16));
-        f16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f16TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f16 = Float.parseFloat(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f16HBox = new HBox(f16Label, f16TextField);
-        f16HBox.setAlignment(Pos.CENTER_LEFT);
-        //f16
-
-        VBox type12VBox = new VBox(40, startTimeHBox, durationHBox, f00HBox, eepkTypeHBox, skillIdHBox, i12HBox, f16HBox);
-        type12VBox.setPadding(new Insets(20, 0, 0, 16));
-
-        Tab type12Tab = new Tab("Type 12", type12VBox);
-        type12Tab.setClosable(false);
-
-        tabPane.getTabs().add(type12Tab);
+        tabPane.getTabs().add(endProjectileSignalTab);
     }
 
     private void createBsaType13(BsaType13Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(80);
-        
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true);
-        startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
+        ToggleGroup protectionFlagsToggleGroup = new ToggleGroup();
+        ToggleGroup protectAdditionalSelectorsFlagsToggleGroup = new ToggleGroup();
 
-        HBox startTimeHBox = new HBox(startTimeLabel, startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
+        RadioButton[] protectionFlags = new RadioButton[] {
+            createRadioButton("On", protectionFlagsToggleGroup, ProtectionFlags.On), 
+            createRadioButton("Off", protectionFlagsToggleGroup, ProtectionFlags.Off)
+        };
 
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(80);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
+        RadioButton[] protectAdditionalSelectorsFlags = new RadioButton[] {
+            createRadioButton("None", protectAdditionalSelectorsFlagsToggleGroup, ProtectAdditionalSelectorsFlags.None),
+            createRadioButton("Selectors 4 And 5", protectAdditionalSelectorsFlagsToggleGroup, ProtectAdditionalSelectorsFlags.Selectors_4_And_5),
+            createRadioButton("Selector 6", protectAdditionalSelectorsFlagsToggleGroup, ProtectAdditionalSelectorsFlags.Selector6),
+            createRadioButton("Selectors 4, 5 And 6", protectAdditionalSelectorsFlagsToggleGroup, ProtectAdditionalSelectorsFlags.Selectors_4_5_And_6),
+        };
 
-        HBox durationHBox = new HBox(durationLabel, durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
-
-        //i00
-        Label i00Label=new Label("I_00");
-        i00Label.setPrefWidth(80);
-
-        TextField i00TextField = new TextField(String.valueOf(entry.i00));
-        i00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i00TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i00 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i00HBox = new HBox(i00Label, i00TextField);
-        i00HBox.setAlignment(Pos.CENTER_LEFT);
-        //i00
-
-        //i02
-        Label i02Label = new Label("I_02");
-        i02Label.setPrefWidth(80);
-
-        TextField i02TextField = new TextField(String.valueOf(entry.i02));
-        i02TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i02TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i02 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i02HBox = new HBox(i02Label, i02TextField);
-        i02HBox.setAlignment(Pos.CENTER_LEFT);
-        //i02
-
-        //f04
-        Label f04Label = new Label("F_04");
-        f04Label.setPrefWidth(80);
-
-        TextField f04TextField = new TextField(String.valueOf(entry.f04));
-        f04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f04 = Float.parseFloat(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f04HBox = new HBox(f04Label, f04TextField);
-        f04HBox.setAlignment(Pos.CENTER_LEFT);
-        //f04
-
-        //f08
-        Label f08Label = new Label("F_08");
-        f08Label.setPrefWidth(80);
-
-        TextField f08TextField = new TextField(String.valueOf(entry.f08));
-        f08TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f08TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f08 = Float.parseFloat(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f08HBox = new HBox(f08Label, f08TextField);
-        f08HBox.setAlignment(Pos.CENTER_LEFT);
-        //f08
-
-        //i12
-        Label i12Label = new Label("I_12");
-        i12Label.setPrefWidth(80);
-
-        TextField i12TextField = new TextField(String.valueOf(entry.i12));
-        i12TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i12TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i12 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        HBox i12HBox = new HBox(i12Label, i12TextField);
-        i12HBox.setAlignment(Pos.CENTER_LEFT);
-        //i12
-
-        //f16
-        Label f16Label = new Label("F_16");
-        f16Label.setPrefWidth(80);
-
-        TextField f16TextField = new TextField(String.valueOf(entry.f16));
-        f16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f16TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f16 = Float.parseFloat(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        
-        HBox f16HBox = new HBox(f16Label, f16TextField);
-        f16HBox.setAlignment(Pos.CENTER_LEFT);
-        //f16
-
-        //i20
-        Label i20Label = new Label("I_20");
-        i20Label.setPrefWidth(80);
-
-        TextField i20TextField = new TextField(String.valueOf(entry.i20));
-        i20TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i20TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i20 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i20HBox = new HBox(i20Label, i20TextField);
-        i20HBox.setAlignment(Pos.CENTER_LEFT);
-        //i20
-
-        //i24
-        Label i24Label = new Label("I_24");
-        i24Label.setPrefWidth(80);
-
-        TextField i24TextField = new TextField(String.valueOf(entry.i24));
-        i24TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i24TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i24 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i24HBox = new HBox(i24Label, i24TextField);
-        i24HBox.setAlignment(Pos.CENTER_LEFT);
-        //i24
-
-        //i28
-        Label i28Label = new Label("I_28");
-        i28Label.setPrefWidth(80);
-
-        TextField i28TextField = new TextField(String.valueOf(entry.i28));
-        i28TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i28TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i28 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i28HBox = new HBox(i28Label, i28TextField);
-        i28HBox.setAlignment(Pos.CENTER_LEFT);
-        //i28
-
-        //type 13
-        VBox type13VBox = new VBox(40,
-            startTimeHBox, durationHBox, 
-            i00HBox, i02HBox, 
-            f04HBox, f08HBox, 
-            i12HBox, f16HBox, 
-            i20HBox, i24HBox, 
-            i28HBox
+        VBox projectileProtectionVBox = new VBox(35,
+            createHBox(0, createLabel("Start Time", 180), createSpinner(0, 65535, entry.startTime, BsaType13Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 180), createSpinner(0, 65535, entry.duration, BsaType13Values.Duration)),
+            createHBox(0, createLabel("Protection", 180), createHBox(15, protectionFlags, true)),
+            createHBox(0, createLabel("Max Hitbox Power", 180), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.maxHitboxPower, BsaType13Values.MaxHitboxPower)),
+            createHBox(0, createLabel("Protect Selectors 0-3", 180), createCheckBox(entry.protectSelectors_0_3, BsaType13Values.ProtectSelectors_0_3)),
+            createHBox(0, createLabel("Protect Additional Selectors", 180), createHBox(15, protectAdditionalSelectorsFlags, true)),
+            createHBox(0, createLabel("Entry Passing Signal", 180), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.entryPassingSignal, BsaType13Values.EntryPassingSignal)),
+            createHBox(0, createLabel("Mark Protected Hit", 180), createCheckBox(entry.markProtectedHit, BsaType13Values.MarkProtectedHit))
         );
-        type13VBox.setPadding(new Insets(20, 0, 0, 16));
+        projectileProtectionVBox.setPadding(new Insets(20, 0, 0, 16));
+        
+        VBox unknownVBox = new VBox(30,
+            createHBox(0, createLabel("I_02", 60), createTextField(entry.i02, BsaType13Values.I02)), 
+            createHBox(0, createLabel("I_24", 60), createTextField(entry.i24, BsaType13Values.I24)),
+            createHBox(0, createLabel("I_28", 60), createTextField(entry.i28, BsaType13Values.I28))
+        );
+        unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
-        Tab type13Tab = new Tab("Type 13", type13VBox);
-        type13Tab.setClosable(false);
-        //type 13
+        Tab projectileProtectionTab = new Tab("Projectile Projection", projectileProtectionVBox);
+        projectileProtectionTab.setClosable(false);
 
-        tabPane.getTabs().add(type13Tab);
+        Tab unknownTab = new Tab("Unknown", unknownVBox);
+        unknownTab.setClosable(false);
+
+        tabPane.getTabs().addAll(projectileProtectionTab, unknownTab);
     }
 
     private void createBsaType14(BsaType14Entry entry) {
-        //start time
-        Label startTimeLabel = new Label("Start Time");
-        startTimeLabel.setPrefWidth(80);
-        
-        Spinner <Integer> startTimeSpinner = new Spinner<>(0, 65535, entry.startTime);
-        startTimeSpinner.setEditable(true);
-        startTimeSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.startTime = newValue;
-            }
-        });
-
-        HBox startTimeHBox = new HBox(startTimeLabel, startTimeSpinner);
-        startTimeHBox.setAlignment(Pos.CENTER_LEFT);
-        //start time
-
-        //duration
-        Label durationLabel = new Label("Duration");
-        durationLabel.setPrefWidth(80);
-        
-        Spinner <Integer> durationSpinner = new Spinner<>(0, 65535, entry.duration);
-        durationSpinner.setEditable(true);
-        durationSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.duration = newValue;
-            }
-        });
-
-        HBox durationHBox = new HBox(durationLabel, durationSpinner);
-        durationHBox.setAlignment(Pos.CENTER_LEFT);
-        //duration
-
-        //i00
-        Label i00Label = new Label("I_00");
-        i00Label.setPrefWidth(80);
-
-        TextField i00TextField = new TextField(String.valueOf(entry.i00));
-        i00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i00TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i00 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i00HBox = new HBox(i00Label ,i00TextField);
-        i00HBox.setAlignment(Pos.CENTER_LEFT);
-        //i00
-
-        //i02
-        Label i02Label = new Label("I_02");
-        i02Label.setPrefWidth(80);
-
-        TextField i02TextField = new TextField(String.valueOf(entry.i02));
-        i02TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i02TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i02 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i02HBox = new HBox(i02Label, i02TextField);
-        i02HBox.setAlignment(Pos.CENTER_LEFT);
-        //i02
-
-        //f04
-        Label f04Label = new Label("F_04");
-        f04Label.setPrefWidth(80);
-
-        TextField f04TextField = new TextField(String.valueOf(entry.f04));
-        f04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f04 = Float.parseFloat(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f04HBox = new HBox(f04Label, f04TextField);
-        f04HBox.setAlignment(Pos.CENTER_LEFT);
-        //f04
-
-        //i08
-        Label i08Label = new Label("I_08");
-        i08Label.setPrefWidth(80);
-
-        TextField i08TextField = new TextField(String.valueOf(entry.i08));
-        i08TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i08TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i08 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i08HBox = new HBox(i08Label, i08TextField);
-        i08HBox.setAlignment(Pos.CENTER_LEFT);
-        //i08
-
-        //f12
-        Label f12Label = new Label("F_12");
-        f12Label.setPrefWidth(80);
-        
-        TextField f12TextField = new TextField(String.valueOf(entry.f12));
-        f12TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f12TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f12 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f12HBox = new HBox(f12Label, f12TextField);
-        f12HBox.setAlignment(Pos.CENTER_LEFT);
-        //f12
-
-        //i16
-        Label i16Label = new Label("I_16");
-        i16Label.setPrefWidth(80);
-
-        TextField i16TextField = new TextField(String.valueOf(entry.i16));
-        i16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i16TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i16 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i16HBox = new HBox(i16Label, i16TextField);
-        i16HBox.setAlignment(Pos.CENTER_LEFT);
-        //i16
-
-        //f20
-        Label f20Label = new Label("F_20");
-        f20Label.setPrefWidth(80);
-        
-        TextField f20TextField = new TextField(String.valueOf(entry.f20));
-        f20TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f20TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f20 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f20HBox = new HBox(f20Label, f20TextField);
-        f20HBox.setAlignment(Pos.CENTER_LEFT);
-        //f20
-
-        //i24
-        Label i24Label = new Label("I_24");
-        i24Label.setPrefWidth(80);
-
-        TextField i24TextField = new TextField(String.valueOf(entry.i24));
-        i24TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i24TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i24 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i24HBox = new HBox(i24Label, i24TextField);
-        i24HBox.setAlignment(Pos.CENTER_LEFT);
-        //i24
-
-        //f28
-        Label f28Label = new Label("F_28");
-        f28Label.setPrefWidth(80);
-        
-        TextField f28TextField = new TextField(String.valueOf(entry.f28));
-        f28TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f28TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f28 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f28HBox = new HBox(f28Label, f28TextField);
-        f28HBox.setAlignment(Pos.CENTER_LEFT);
-        //f28
-
-        //i32
-        Label i32Label = new Label("I_32");
-        i32Label.setPrefWidth(80);
-
-        TextField i32TextField = new TextField(String.valueOf(entry.i32));
-        i32TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i32TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i32 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i32HBox = new HBox(i32Label, i32TextField);
-        i32HBox.setAlignment(Pos.CENTER_LEFT);
-        //i32
-
-        //i36
-        Label i36Label = new Label("I_36");
-        i36Label.setPrefWidth(80);
-
-        TextField i36TextField = new TextField(String.valueOf(entry.i36));
-        i36TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i36TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i36 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i36HBox = new HBox(i36Label, i36TextField);
-        i36HBox.setAlignment(Pos.CENTER_LEFT);
-        //i36
-
-        //i40
-        Label i40Label = new Label("I_40");
-        i40Label.setPrefWidth(80);
-
-        TextField i40TextField = new TextField(String.valueOf(entry.i40));
-        i40TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i40TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i40 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i40HBox = new HBox(i40Label, i40TextField);
-        i40HBox.setAlignment(Pos.CENTER_LEFT);
-        //i40
-
-        //f44
-        Label f44Label = new Label("F_44");
-        f44Label.setPrefWidth(80);
-        
-        TextField f44TextField = new TextField(String.valueOf(entry.f44));
-        f44TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f44TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f44 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f44HBox = new HBox(f44Label, f44TextField);
-        f44HBox.setAlignment(Pos.CENTER_LEFT);
-        //f44
-
-        //i48
-        Label i48Label = new Label("I_48");
-        i48Label.setPrefWidth(80);
-
-        TextField i48TextField = new TextField(String.valueOf(entry.i48));
-        i48TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i48TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i48 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i48HBox = new HBox(i48Label, i48TextField);
-        i48HBox.setAlignment(Pos.CENTER_LEFT);
-        //i48
-
-        //f52
-        Label f52Label = new Label("F_52");
-        f52Label.setPrefWidth(80);
-        
-        TextField f52TextField = new TextField(String.valueOf(entry.f52));
-        f52TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f52TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f52 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f52HBox = new HBox(f52Label, f52TextField);
-        f52HBox.setAlignment(Pos.CENTER_LEFT);
-        //f52
-
-        //i56
-        Label i56Label = new Label("I_56");
-        i56Label.setPrefWidth(80);
-
-        TextField i56TextField = new TextField(String.valueOf(entry.i56));
-        i56TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i56TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i56 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i56HBox = new HBox(i56Label, i56TextField);
-        i56HBox.setAlignment(Pos.CENTER_LEFT);
-        //i56
-
-        //f60
-        Label f60Label = new Label("F_60");
-        f60Label.setPrefWidth(80);
-        
-        TextField f60TextField = new TextField(String.valueOf(entry.f60));
-        f60TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f60TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f60 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f60HBox = new HBox(f60Label, f60TextField);
-        f60HBox.setAlignment(Pos.CENTER_LEFT);
-        //f60
-
-        //i64
-        Label i64Label = new Label("I_64");
-        i64Label.setPrefWidth(80);
-
-        TextField i64TextField = new TextField(String.valueOf(entry.i64));
-        i64TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i64TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i64 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i64HBox = new HBox(i64Label, i64TextField);
-        i64HBox.setAlignment(Pos.CENTER_LEFT);
-        //i64
-
-        //f68
-        Label f68Label = new Label("F_68");
-        f68Label.setPrefWidth(80);
-        
-        TextField f68TextField = new TextField(String.valueOf(entry.f68));
-        f68TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f68TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f68 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f68HBox = new HBox(f68Label, f68TextField);
-        f68HBox.setAlignment(Pos.CENTER_LEFT);
-        //f68
-
-        //i72
-        Label i72Label = new Label("I_72");
-        i72Label.setPrefWidth(80);
-
-        TextField i72TextField = new TextField(String.valueOf(entry.i72));
-        i72TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i72TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i72 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i72HBox = new HBox(i72Label, i72TextField);
-        i72HBox.setAlignment(Pos.CENTER_LEFT);
-        //i72
-
-        //i76
-        Label i76Label = new Label("I_76");
-        i76Label.setPrefWidth(80);
-
-        TextField i76TextField = new TextField(String.valueOf(entry.i76));
-        i76TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i76TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i76 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i76HBox = new HBox(i76Label, i76TextField);
-        i76HBox.setAlignment(Pos.CENTER_LEFT);
-        //i76
-
-        //i80
-        Label i80Label = new Label("I_80");
-        i80Label.setPrefWidth(80);
-
-        TextField i80TextField = new TextField(String.valueOf(entry.i80));
-        i80TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i80TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i80 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i80HBox = new HBox(i80Label, i80TextField);
-        i80HBox.setAlignment(Pos.CENTER_LEFT);
-        //i80
-
-        //i84
-        Label i84Label = new Label("I_84");
-        i84Label.setPrefWidth(80);
-
-        TextField i84TextField = new TextField(String.valueOf(entry.i84));
-        i84TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i84TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i84 = Long.parseLong(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i84HBox = new HBox(i84Label, i84TextField);
-        i84HBox.setAlignment(Pos.CENTER_LEFT);
-        //i84
-
-        //type 14
-        VBox type14VBox = new VBox(30, 
-            startTimeHBox, durationHBox, 
-            i00HBox, i02HBox, 
-            f04HBox, i08HBox, 
-            f12HBox, i16HBox, 
-            f20HBox, i24HBox, 
-            f28HBox, i32HBox, 
-            i36HBox, i40HBox, 
-            f44HBox, i48HBox, 
-            f52HBox, i56HBox, 
-            f60HBox, i64HBox, 
-            f68HBox, i72HBox, 
-            i76HBox, i80HBox, 
-            i84HBox
+        ToggleGroup placementModesToggleGroup = new ToggleGroup();
+        ToggleGroup eepkTypeToggleGroup = new ToggleGroup();
+        ToggleGroup commonEepkTypeToggleGroup = new ToggleGroup();
+
+        RadioButton[] placementModes = new RadioButton[] {
+            createRadioButton("Default Placement", placementModesToggleGroup, PlacementModes.DefaultPlacement), 
+            createRadioButton("Distance-Based Placement", placementModesToggleGroup, PlacementModes.Distance_BasedPlacement),
+            createRadioButton("Explicit Vector Placement", placementModesToggleGroup, PlacementModes.ExplicitVectorPlacement)
+        };
+
+        RadioButton[] eepkTypes = new RadioButton[] {
+            createRadioButton("Common", eepkTypeToggleGroup, BsaType14Values.EEPK_Types.Common),
+            createRadioButton("StageBG", eepkTypeToggleGroup, BsaType14Values.EEPK_Types.StageBG),
+            createRadioButton("Character", eepkTypeToggleGroup, BsaType14Values.EEPK_Types.CharacterEffect),
+            createRadioButton("Awoken Skill", eepkTypeToggleGroup, BsaType14Values.EEPK_Types.AwokenSkill),
+            createRadioButton("Super Skill", eepkTypeToggleGroup, BsaType14Values.EEPK_Types.SuperSkill),
+            createRadioButton("Ultimate Skill", eepkTypeToggleGroup, BsaType14Values.EEPK_Types.UltimateSkill),
+            createRadioButton("Evasive Skill", eepkTypeToggleGroup, BsaType14Values.EEPK_Types.EvasiveSkill),
+            createRadioButton("Ki Blast Skill", eepkTypeToggleGroup, BsaType14Values.EEPK_Types.KiBlastSkill),
+            createRadioButton("Stage", eepkTypeToggleGroup, BsaType14Values.EEPK_Types.Stage),
+        };
+
+        RadioButton[] commonEepkTypes = new RadioButton[] {
+            createRadioButton("BTL_CMN", commonEepkTypeToggleGroup, CMN_EEPK_Types.BTL_CMN),
+            createRadioButton("BTL_AURA", commonEepkTypeToggleGroup, CMN_EEPK_Types.BTL_AURA),
+            createRadioButton("BTL_KDN", commonEepkTypeToggleGroup, CMN_EEPK_Types.BTL_KDN),
+            createRadioButton("lby_cmn/LBY_CMN", commonEepkTypeToggleGroup, CMN_EEPK_Types.lby_cmn_LBY_CMN),
+            createRadioButton("TTL/TTL", commonEepkTypeToggleGroup, CMN_EEPK_Types.TTL_TTL),
+            createRadioButton("ttl_lby/TTL_LBY", commonEepkTypeToggleGroup, CMN_EEPK_Types.ttl_lby_TTL_LBY),
+            createRadioButton("BTL_CMN 2", commonEepkTypeToggleGroup, CMN_EEPK_Types.BTL_CMN2),
+        };
+    
+        VBox effectPlacementVBox = new VBox(30,
+            createHBox(0, createLabel("Start Time", 180), createSpinner(0, 65535, entry.startTime, BsaType14Values.StartTime)), 
+            createHBox(0, createLabel("Duration", 180), createSpinner(0, 65535, entry.duration, BsaType14Values.Duration)),
+            createHBox(0, createLabel("Placement Mode", 180), createHBox(15, placementModes, true)), 
+            createHBox(0, createLabel("Placement Flags", 180), createSpinner(0, 4294967295L, entry.placementFlags, BsaType14Values.PlacementFlags)),
+            createHBox(0, createLabel("Transform /Bone Selector", 180), createSpinner(0, 65535, entry.transform_BoneSelector, BsaType14Values.Transform_BoneSelector)),
+            createHBox(0, createLabel("EEPK Type", 180), createGridPane(3, 3, eepkTypes, true)), 
+            createHBox(0, createLabel("EEPK Type", 180), createHBox(15, commonEepkTypes, true)), 
+            createHBox(0, createLabel("Effect Placement Flags", 180), createSpinner(0, 4294967295L, entry.effectPlacementFlags, BsaType14Values.EffectPlacementFlags))
         );
-        type14VBox.setPadding(new Insets(20,0,20,16));
+        effectPlacementVBox.setPadding(new Insets(20, 0, 20, 16));
 
-        Tab type14Tab = new Tab("Type 14", new ScrollPane(type14VBox));
-        type14Tab.setClosable(false);
+        VBox unknownVBox = new VBox(30,
+            createHBox(0, createLabel("I_02", 60), createTextField(entry.i02, BsaType14Values.I02)),
+            createHBox(0, createLabel("I_08", 60), createTextField(entry.i08, BsaType14Values.I08)),
+            createHBox(0, createLabel("F_12", 60), createTextField(entry.f12, BsaType14Values.F12)),
+            createHBox(0, createLabel("I_16", 60), createTextField(entry.i16, BsaType14Values.I16)),
+            createHBox(0, createLabel("F_20", 60), createTextField(entry.f20, BsaType14Values.F20)),
+            createHBox(0, createLabel("I_24", 60), createTextField(entry.i24, BsaType14Values.I24)),
+            createHBox(0, createLabel("F_28", 60), createTextField(entry.f28, BsaType14Values.F28)),
+            createHBox(0, createLabel("I_32", 60), createTextField(entry.i32, BsaType14Values.I32)),
+            createHBox(0, createLabel("I_36", 60), createTextField(entry.i36, BsaType14Values.I36)),
+            createHBox(0, createLabel("I_40", 60), createTextField(entry.i40, BsaType14Values.I40)),
+            createHBox(0, createLabel("F_44", 60), createTextField(entry.f44, BsaType14Values.F44)),
+            createHBox(0, createLabel("F_60", 60), createTextField(entry.f60, BsaType14Values.F60)),
+            createHBox(0, createLabel("I_64", 60), createTextField(entry.i64, BsaType14Values.I64)),
+            createHBox(0, createLabel("F_68", 60), createTextField(entry.f68, BsaType14Values.F68)),
+            createHBox(0, createLabel("I_72", 60), createTextField(entry.i72, BsaType14Values.I72)),
+            createHBox(0, createLabel("I_76", 60), createTextField(entry.i76, BsaType14Values.I76)),
+            createHBox(0, createLabel("I_80", 60), createTextField(entry.i80, BsaType14Values.I80))
+        );
+        unknownVBox.setPadding(new Insets(20, 0, 20, 16));
+
+        Tab effectPlacementTab = new Tab("Effect Placement", effectPlacementVBox);
+        effectPlacementTab.setClosable(false);
+
+        Tab unknownTab = new Tab("Unknown", new ScrollPane(unknownVBox));
+        unknownTab.setClosable(false);
         
-        tabPane.getTabs().add(type14Tab);
+        tabPane.getTabs().addAll(effectPlacementTab, unknownTab);
+    }
+
+    private Label createLabel(String text, int width) {
+        Label label = new Label(text);
+        if (width != 0) label.setPrefWidth(width);
+
+        return label;
+    }
+
+    private TextField createTextField(Number value, BsaMainValues bsaMainValue) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaMainValue) {
+                    case I00 -> bsaMainHashMap.get(currentEntry).i00 = Integer.parseInt(newText);
+                    case I16_A -> bsaMainHashMap.get(currentEntry).i16_a = Byte.parseByte(newText);
+                    case I16_B -> bsaMainHashMap.get(currentEntry).i16_b = Byte.parseByte(newText);
+                    case I17 -> bsaMainHashMap.get(currentEntry).i17 = Integer.parseInt(newText);
+                    case I18 -> bsaMainHashMap.get(currentEntry).i18 = Integer.parseInt(newText);
+                    case I24 -> bsaMainHashMap.get(currentEntry).i24 = Integer.parseInt(newText);
+                    case I40 -> bsaMainHashMap.get(currentEntry).i40 = Integer.parseInt(newText);
+                    case I44 -> bsaMainHashMap.get(currentEntry).i44 = Integer.parseInt(newText);
+                    case I48 -> bsaMainHashMap.get(currentEntry).i48 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaMainValue);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaCollisionValues bsaCollisionValue) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaCollisionValue) {
+                    case I06 -> bsaCollisionHashMap.get(currentEntry).i06 = Integer.parseInt(newText);
+                    case I08 -> bsaCollisionHashMap.get(currentEntry).i08 = Integer.parseInt(newText);
+                    case I12 -> bsaCollisionHashMap.get(currentEntry).i12 = Integer.parseInt(newText);
+                    case I16 -> bsaCollisionHashMap.get(currentEntry).i16 = Integer.parseInt(newText);
+                    case I20 -> bsaCollisionHashMap.get(currentEntry).i20 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaCollisionValue);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaCollisionSoundValues bsaCollisionSoundValue) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaCollisionSoundValue) {
+                    case I02 -> bsaCollisionSoundHashMap.get(currentEntry).i02 = Integer.parseInt(newText);
+                    case I06 -> bsaCollisionSoundHashMap.get(currentEntry).i06 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaCollisionSoundValue);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaType0Values bsaType0Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaType0Value) {
+                    case I00 -> bsaType0HashMap.get(currentEntry).i00 = Short.parseShort(newText);
+                    case I06 -> bsaType0HashMap.get(currentEntry).i06 = Short.parseShort(newText);
+                    case F12 -> bsaType0HashMap.get(currentEntry).f12 = Float.parseFloat(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType0Value);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaType1Values bsaType1Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaType1Value) {
+                    case F16 -> bsaType1HashMap.get(currentEntry).f16 = Float.parseFloat(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType1Value);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaType2Values bsaType2Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaType2Value) {
+                    case I00 -> bsaType2HashMap.get(currentEntry).i00 = Short.parseShort(newText);
+                    case I06 -> bsaType2HashMap.get(currentEntry).i06 = Short.parseShort(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType2Value);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaType3Values bsaType3Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaType3Value) {
+                    case I02 -> bsaType3HashMap.get(currentEntry).i02 = Integer.parseInt(newText);
+                    case I52 -> bsaType3HashMap.get(currentEntry).i52 = Integer.parseInt(newText);
+                    case I54 -> bsaType3HashMap.get(currentEntry).i54 = Integer.parseInt(newText);
+                    case I56 -> bsaType3HashMap.get(currentEntry).i56 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType3Value);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaType4Values bsaType4Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaType4Value) {
+                    case I00 -> bsaType4HashMap.get(currentEntry).i00 = Integer.parseInt(newText);
+                    case I04 -> bsaType4HashMap.get(currentEntry).i04 = Integer.parseInt(newText);
+                    case I08 -> bsaType4HashMap.get(currentEntry).i08 = Integer.parseInt(newText);
+                    case F12 -> bsaType4HashMap.get(currentEntry).f12 = Float.parseFloat(newText);
+                    case F16 -> bsaType4HashMap.get(currentEntry).f16 = Float.parseFloat(newText);
+                    case F20 -> bsaType4HashMap.get(currentEntry).f20 = Float.parseFloat(newText);
+                    case I24 -> bsaType4HashMap.get(currentEntry).i24 = Integer.parseInt(newText);
+                    case I28 -> bsaType4HashMap.get(currentEntry).i28 = Integer.parseInt(newText);
+                    case I32 -> bsaType4HashMap.get(currentEntry).i32 = Integer.parseInt(newText);
+                    case I36 -> bsaType4HashMap.get(currentEntry).i36 = Integer.parseInt(newText);
+                    case I40 -> bsaType4HashMap.get(currentEntry).i40 = Integer.parseInt(newText);
+                    case I44 -> bsaType4HashMap.get(currentEntry).i44 = Integer.parseInt(newText);
+                    case I48 -> bsaType4HashMap.get(currentEntry).i48 = Integer.parseInt(newText);
+                    case I50 -> bsaType4HashMap.get(currentEntry).i50 = Integer.parseInt(newText);
+                    case I52 -> bsaType4HashMap.get(currentEntry).i52 = Integer.parseInt(newText);
+                    case I54 -> bsaType4HashMap.get(currentEntry).i54 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType4Value);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaType6Values bsaType6Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaType6Value) {
+                    case I06 -> bsaType6HashMap.get(currentEntry).i06 = Integer.parseInt(newText);
+                    case I10 -> bsaType6HashMap.get(currentEntry).i10 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType6Value);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaType7Values bsaType7Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaType7Value) {
+                    case I02 -> bsaType7HashMap.get(currentEntry).i02 = Integer.parseInt(newText);
+                    case I06 -> bsaType7HashMap.get(currentEntry).i06 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType7Value);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaType8Values bsaType8Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaType8Value) {
+                    case I04 -> bsaType8HashMap.get(currentEntry).i04 = Integer.parseInt(newText);
+                    case I08 -> bsaType8HashMap.get(currentEntry).i08 = Integer.parseInt(newText);
+                    case I12 -> bsaType8HashMap.get(currentEntry).i12 = Integer.parseInt(newText);
+                    case I16 -> bsaType8HashMap.get(currentEntry).i16 = Integer.parseInt(newText);
+                    case I20 -> bsaType8HashMap.get(currentEntry).i20 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType8Value);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaType10Values bsaType10Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaType10Value) {
+                    case I04 -> bsaType10HashMap.get(currentEntry).i04 = Integer.parseInt(newText);
+                    case I06 -> bsaType10HashMap.get(currentEntry).i06 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType10Value);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaType13Values bsaType13Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaType13Value) {
+                    case I02 -> bsaType13HashMap.get(currentEntry).i02 = Integer.parseInt(newText);
+                    case I24 -> bsaType13HashMap.get(currentEntry).i24 = Integer.parseInt(newText);
+                    case I28 -> bsaType13HashMap.get(currentEntry).i28 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType13Value);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Number value, BsaType14Values bsaType14Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            if (textField.getText().contains("-")) {
+                return;
+            }
+            try {
+                switch (bsaType14Value) {
+                    case I02 -> bsaType14HashMap.get(currentEntry).i02 = Integer.parseInt(newText);
+                    case I08 -> bsaType14HashMap.get(currentEntry).i08 = Long.parseLong(newText);
+                    case F12 -> bsaType14HashMap.get(currentEntry).f12 = Float.parseFloat(newText);
+                    case I16 -> bsaType14HashMap.get(currentEntry).i16 = Long.parseLong(newText);
+                    case F20 -> bsaType14HashMap.get(currentEntry).f20 = Float.parseFloat(newText);
+                    case I24 -> bsaType14HashMap.get(currentEntry).i24 = Long.parseLong(newText);
+                    case F28 -> bsaType14HashMap.get(currentEntry).f28 = Float.parseFloat(newText);
+                    case I32 -> bsaType14HashMap.get(currentEntry).i32 = Long.parseLong(newText);
+                    case I36 -> bsaType14HashMap.get(currentEntry).i36 = Long.parseLong(newText);
+                    case I40 -> bsaType14HashMap.get(currentEntry).i40 = Long.parseLong(newText);
+                    case F44 -> bsaType14HashMap.get(currentEntry).f44 = Float.parseFloat(newText);
+                    case F60 -> bsaType14HashMap.get(currentEntry).f60 = Float.parseFloat(newText);
+                    case I64 -> bsaType14HashMap.get(currentEntry).i64 = Long.parseLong(newText);
+                    case F68 -> bsaType14HashMap.get(currentEntry).f68 = Float.parseFloat(newText);
+                    case I72 -> bsaType14HashMap.get(currentEntry).i72 = Long.parseLong(newText);
+                    case I76 -> bsaType14HashMap.get(currentEntry).i76 = Long.parseLong(newText);
+                    case I80 -> bsaType14HashMap.get(currentEntry).i80 = Long.parseLong(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType14Value);
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return textField;
+    }
+
+    private CheckBox createCheckBox(boolean value, BsaType13Values bsaType13Value) {
+        CheckBox checkBox = new CheckBox("Enabled");
+        checkBox.setSelected(value);
+        checkBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            switch (bsaType13Value) {
+                case ProtectSelectors_0_3 -> bsaType13HashMap.get(currentEntry).protectSelectors_0_3 = newValue;
+                case MarkProtectedHit -> bsaType13HashMap.get(currentEntry).markProtectedHit = newValue;
+                default -> throw new IllegalArgumentException("Unexpected value: " + bsaType13Value);
+            } 
+        });
+
+        return checkBox;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, BsaCollisionValues.EEPK_Types effect_EEPK_Type) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaCollisionHashMap.get(currentEntry).eepkType == effect_EEPK_Type.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaCollisionHashMap.get(currentEntry).eepkType = effect_EEPK_Type.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, BsaCollisionSoundValues.ACB_Types ACBType) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaCollisionSoundHashMap.get(currentEntry).acbType == ACBType.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaCollisionSoundHashMap.get(currentEntry).acbType = ACBType.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, GrowMaxBoundsFlags growMaxBoundsFlag) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType3HashMap.get(currentEntry).growMaxBounds == growMaxBoundsFlag.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType3HashMap.get(currentEntry).growMaxBounds = growMaxBoundsFlag.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, BoundsTypes boundsType) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType3HashMap.get(currentEntry).boundsType == boundsType.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType3HashMap.get(currentEntry).boundsType = boundsType.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, EffectSwitchFlags effectSwitchFlag) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType6HashMap.get(currentEntry).effectSwitch == effectSwitchFlag.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType6HashMap.get(currentEntry).effectSwitch = effectSwitchFlag.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, BsaType6Values.EEPK_Types effect_EEPK_Type) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType6HashMap.get(currentEntry).eepkType == effect_EEPK_Type.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType6HashMap.get(currentEntry).eepkType = effect_EEPK_Type.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, BsaType7Values.ACB_Types ACBType) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType7HashMap.get(currentEntry).acbType == ACBType.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType7HashMap.get(currentEntry).acbType = ACBType.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, BsaType12Values.SkillTypes skill_Type) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType12HashMap.get(currentEntry).skillType == skill_Type.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType12HashMap.get(currentEntry).skillType = skill_Type.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, DeliveryMode deliveryMode) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType12HashMap.get(currentEntry).deliveryMode == deliveryMode.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType12HashMap.get(currentEntry).deliveryMode = deliveryMode.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, ProtectionFlags protectionFlag) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType13HashMap.get(currentEntry).protection == protectionFlag.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType13HashMap.get(currentEntry).protection = protectionFlag.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, ProtectAdditionalSelectorsFlags protectAdditionalSelectorsFlag) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType13HashMap.get(currentEntry).protectAdditionalSelectors == protectAdditionalSelectorsFlag.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType13HashMap.get(currentEntry).protectAdditionalSelectors = protectAdditionalSelectorsFlag.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, PlacementModes placementMode) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType14HashMap.get(currentEntry).placementMode == placementMode.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType14HashMap.get(currentEntry).placementMode = placementMode.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, BsaType14Values.EEPK_Types effect_EEPK_Type) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType14HashMap.get(currentEntry).eepkType == effect_EEPK_Type.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType14HashMap.get(currentEntry).eepkType = effect_EEPK_Type.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, CMN_EEPK_Types cmn_Eepk_Type) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setToggleGroup(toggleGroup);
+
+        if (bsaType14HashMap.get(currentEntry).commonEepk == cmn_Eepk_Type.index) radioButton.setSelected(true);
+
+        radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                bsaType14HashMap.get(currentEntry).commonEepk = cmn_Eepk_Type.index;
+            }
+        });
+
+        return radioButton;
+    }
+
+    private Spinner<Number> createSpinner(int width, Number MIN_VALUE, Number MAX_VALUE, Number value, BsaMainValues bsaMainValue) {
+        Spinner<Number> spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+
+        if (width != 0) spinner.setPrefWidth(width);
+        
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaMainValue) {
+                    case I16_A -> bsaMainHashMap.get(currentEntry).i16_a = newValue.byteValue(); 
+                    case I16_B -> bsaMainHashMap.get(currentEntry).i16_b = newValue.byteValue(); 
+                    case Lifetime -> bsaMainHashMap.get(currentEntry).lifetime = newValue.intValue();
+                    case Expires -> bsaMainHashMap.get(currentEntry).expires = newValue.intValue();
+                    case ImpactProjectile -> bsaMainHashMap.get(currentEntry).impactProjectile = newValue.intValue();
+                    case ImpactEnemy -> bsaMainHashMap.get(currentEntry).impactEnemy = newValue.intValue();
+                    case ImpactGround -> bsaMainHashMap.get(currentEntry).impactGround = newValue.intValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaMainValue);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaCollisionValues bsaCollisionValue) {
+        Spinner<Number> spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaCollisionValue) {
+                    case Skill_ID -> bsaCollisionHashMap.get(currentEntry).skillId = newValue.intValue(); 
+                    case Effect_ID -> bsaCollisionHashMap.get(currentEntry).effectId = newValue.intValue(); 
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaCollisionValue);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaCollisionSoundValues bsaCollisionSoundValue) {
+        Spinner<Number> spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+        System.out.println(value);
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaCollisionSoundValue) {
+                    case CUE_ID -> bsaCollisionSoundHashMap.get(currentEntry).cueId = newValue.intValue(); 
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaCollisionSoundValue);
+                } 
+                System.out.println(bsaCollisionSoundHashMap.get(currentEntry).cueId);  
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType0Values bsaType0Value) {
+        Spinner<Number> spinner;
+
+        if (value instanceof Float) {
+            spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
+        }
+        else {
+            spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+        }
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType0Value) {
+                    case StartTime -> bsaType0HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType0HashMap.get(currentEntry).duration = newValue.intValue();
+                    case BsaEntryID -> bsaType0HashMap.get(currentEntry).bsaEntryId = newValue.intValue();
+                    case MainConditon -> bsaType0HashMap.get(currentEntry).mainCondition = newValue.intValue();
+                    case BAC_Conditon-> bsaType0HashMap.get(currentEntry).bacCondition = newValue.floatValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType0Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType1Values bsaType1Value) {
+        Spinner<Number> spinner;
+
+        if (value instanceof Float) {
+            spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
+        }
+        else {
+            spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+        }
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType1Value) {
+                    case StartTime -> bsaType1HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType1HashMap.get(currentEntry).duration = newValue.intValue();
+                    case SpeedX -> bsaType1HashMap.get(currentEntry).speedX = newValue.floatValue();
+                    case SpeedY -> bsaType1HashMap.get(currentEntry).speedY = newValue.floatValue();
+                    case SpeedZ -> bsaType1HashMap.get(currentEntry).speedZ = newValue.floatValue();
+                    case AccelerationX -> bsaType1HashMap.get(currentEntry).accelerationX = newValue.floatValue();
+                    case AccelerationY -> bsaType1HashMap.get(currentEntry).accelerationY = newValue.floatValue();
+                    case AccelerationZ -> bsaType1HashMap.get(currentEntry).accelerationZ = newValue.floatValue();
+                    case SpreadDirectionX -> bsaType1HashMap.get(currentEntry).spreadDirectionX = newValue.floatValue();
+                    case SpreadDirectionY -> bsaType1HashMap.get(currentEntry).spreadDirectionY = newValue.floatValue();
+                    case SpreadDirectionZ -> bsaType1HashMap.get(currentEntry).spreadDirectionZ = newValue.floatValue();
+                    case FalloffStrength -> bsaType1HashMap.get(currentEntry).fallofStrength = newValue.floatValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType1Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType2Values bsaType2Value) {
+        Spinner<Number> spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType2Value) {
+                    case StartTime -> bsaType2HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType2HashMap.get(currentEntry).duration = newValue.intValue(); 
+                    case OutputStartFrame -> bsaType2HashMap.get(currentEntry).outputStartFrame = newValue.shortValue(); 
+                    case OutputEndFrame -> bsaType2HashMap.get(currentEntry).outputEndFrame = newValue.shortValue(); 
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType2Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(int width, Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType3Values bsaType3Value) {
+        Spinner<Number> spinner;
+
+        if (value instanceof Float) {
+            spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
+        }
+        else {
+            spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+        }
+
+        if (width != 0) spinner.setPrefWidth(width);
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType3Value) {
+                    case StartTime -> bsaType3HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType3HashMap.get(currentEntry).duration = newValue.intValue();
+                    case I06_A -> bsaType3HashMap.get(currentEntry).i06_a = newValue.byteValue();
+                    case I06_B -> bsaType3HashMap.get(currentEntry).i06_b = newValue.byteValue();
+                    case I06_C -> bsaType3HashMap.get(currentEntry).i06_c = newValue.byteValue();
+                    case I06_D -> bsaType3HashMap.get(currentEntry).i06_d = newValue.byteValue();
+                    case PositionX -> bsaType3HashMap.get(currentEntry).positionX = newValue.floatValue();
+                    case PositionY -> bsaType3HashMap.get(currentEntry).positionY = newValue.floatValue();
+                    case PositionZ -> bsaType3HashMap.get(currentEntry).positionZ = newValue.floatValue();
+                    case HitboxScale -> bsaType3HashMap.get(currentEntry).hitboxScale = newValue.floatValue();
+                    case MaximumX -> bsaType3HashMap.get(currentEntry).maximumX = newValue.floatValue();
+                    case MaximumY -> bsaType3HashMap.get(currentEntry).maximumY = newValue.floatValue();
+                    case MaximumZ -> bsaType3HashMap.get(currentEntry).maximumZ = newValue.floatValue();
+                    case MinimumX -> bsaType3HashMap.get(currentEntry).minimumX = newValue.floatValue();
+                    case MinimumY -> bsaType3HashMap.get(currentEntry).minimumY = newValue.floatValue();
+                    case MinimumZ -> bsaType3HashMap.get(currentEntry).minimumZ = newValue.floatValue();
+                    case HitAmount -> bsaType3HashMap.get(currentEntry).hitAmount = newValue.intValue(); 
+                    case HitboxLifetime -> bsaType3HashMap.get(currentEntry).hitboxLifetime = newValue.intValue(); 
+                    case FirstHit -> bsaType3HashMap.get(currentEntry).firstHit = newValue.intValue(); 
+                    case MultipleHits -> bsaType3HashMap.get(currentEntry).multipleHits = newValue.intValue();
+                    case LastHit -> bsaType3HashMap.get(currentEntry).lastHit = newValue.intValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType3Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType4Values bsaType4Value) {
+        Spinner<Number> spinner;
+
+        if (value instanceof Float) {
+            spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
+        }
+        else {
+            spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+        }
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType4Value) {
+                    case StartTime -> bsaType4HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType4HashMap.get(currentEntry).duration = newValue.intValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType4Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType6Values bsaType6Value) {
+        Spinner<Number> spinner;
+
+        if (value instanceof Float) {
+            spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
+        }
+        else {
+            spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+        }
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType6Value) {
+                    case StartTime -> bsaType6HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType6HashMap.get(currentEntry).duration = newValue.intValue();
+                    case Skill_ID -> bsaType6HashMap.get(currentEntry).skillId = newValue.intValue();
+                    case Effect_ID -> bsaType6HashMap.get(currentEntry).effectId = newValue.intValue();
+                    case PositionX -> bsaType6HashMap.get(currentEntry).positionX = newValue.floatValue();
+                    case PositionY -> bsaType6HashMap.get(currentEntry).positionY = newValue.floatValue();
+                    case PositionZ -> bsaType6HashMap.get(currentEntry).positionZ = newValue.floatValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType6Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType7Values bsaType7Value) {
+        Spinner<Number> spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType7Value) {
+                    case StartTime -> bsaType7HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType7HashMap.get(currentEntry).duration = newValue.intValue();
+                    case Cue_ID -> bsaType7HashMap.get(currentEntry).cueId = newValue.intValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType7Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType8Values bsaType8Value) {
+        Spinner<Number> spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType8Value) {
+                    case StartTime -> bsaType8HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType8HashMap.get(currentEntry).duration = newValue.intValue();
+                    case BPE_Effect_ID -> bsaType8HashMap.get(currentEntry).bpeEffectId = newValue.intValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType8Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType10Values bsaType10Value) {
+        Spinner<Number> spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType10Value) {
+                    case StartTime -> bsaType10HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType10HashMap.get(currentEntry).duration = newValue.intValue();
+                    case Skill_ID -> bsaType10HashMap.get(currentEntry).skillId = newValue.intValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType10Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType12Values bsaType12Value) {
+        Spinner<Number> spinner;
+
+        if (value instanceof Float) {
+            spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
+        }
+        else {
+            spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+        }
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType12Value) {
+                    case StartTime -> bsaType12HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType12HashMap.get(currentEntry).duration = newValue.intValue();
+                    case SignalValue -> bsaType12HashMap.get(currentEntry).signalValue = newValue.floatValue();
+                    case PauseRecipientTimeline -> bsaType12HashMap.get(currentEntry).pauseRecipientTimeline = newValue.floatValue();
+                    case Skill_ID -> bsaType12HashMap.get(currentEntry).skillId = newValue.intValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType12Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType13Values bsaType13Value) {
+        Spinner<Number> spinner;
+
+        if (value instanceof Float) {
+            spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
+        }
+        else {
+            spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+        }
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType13Value) {
+                    case StartTime -> bsaType13HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType13HashMap.get(currentEntry).duration = newValue.intValue();
+                    case MaxHitboxPower -> bsaType13HashMap.get(currentEntry).maxHitboxPower = newValue.floatValue();
+                    case EntryPassingSignal -> bsaType13HashMap.get(currentEntry).entryPassingSignal = newValue.floatValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType13Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaType14Values bsaType14Value) {
+        Spinner<Number> spinner;
+
+        if (value instanceof Long) {
+            spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
+        }
+        else {
+            spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+        }
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bsaType14Value) {
+                    case StartTime -> bsaType14HashMap.get(currentEntry).startTime = newValue.intValue(); 
+                    case Duration -> bsaType14HashMap.get(currentEntry).duration = newValue.intValue();
+                    case PlacementFlags ->bsaType14HashMap.get(currentEntry).placementFlags = newValue.longValue();
+                    case Transform_BoneSelector -> bsaType14HashMap.get(currentEntry).transform_BoneSelector = newValue.intValue();
+                    case EffectPlacementFlags -> bsaType14HashMap.get(currentEntry).effectPlacementFlags = newValue.longValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bsaType14Value);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private StackPane createCheckBoxGroup(String text, CheckBox[] checkBoxsList, long bitMask, BsaType1Values bsaType1Value) {
+        Label label = new Label(text);
+        label.getStyleClass().add("titled-address-label");
+        label.setTranslateY(-8); 
+        label.setTranslateX(10);
+
+        VBox vBox = new VBox(2);
+        vBox.getStyleClass().add("titled-address-box");
+        vBox.setPadding(new Insets(12, 0, 0, 0));
+        
+        for (int i = 0; i < checkBoxsList.length; i++) {
+            final long bitMaskLamda = bitMask;
+
+            checkBoxsList[i].setSelected((bsaType1HashMap.get(currentEntry).motionFlags & bitMask) != 0);
+
+            checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                if (newValue) {
+                    bsaType1HashMap.get(currentEntry).motionFlags |= bitMaskLamda;
+                }
+                else {
+                    bsaType1HashMap.get(currentEntry).motionFlags &= ~bitMaskLamda;
+                }
+            });
+
+            vBox.getChildren().add(checkBoxsList[i]);
+
+            bitMask <<= 1;
+        }
+
+        StackPane stackPane = new StackPane(vBox, label);
+        StackPane.setAlignment(label, Pos.TOP_LEFT);
+
+        return stackPane;
+    }
+
+    private StackPane createCheckBoxGroup(String text, CheckBox[] checkBoxsList, long bitMask, BsaType8Values bsaType8Value) {
+        Label label = new Label(text);
+        label.getStyleClass().add("titled-address-label");
+        label.setTranslateY(-8); 
+        label.setTranslateX(10);
+
+        VBox vBox = new VBox(2);
+        vBox.getStyleClass().add("titled-address-box");
+        vBox.setPadding(new Insets(12, 0, 0, 0));
+        
+        for (int i = 0; i < checkBoxsList.length; i++) {
+            final long bitMaskLamda = bitMask;
+
+            checkBoxsList[i].setSelected((bsaType8HashMap.get(currentEntry).screenEffectFlags & bitMask) != 0);
+
+            checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                if (newValue) {
+                    bsaType8HashMap.get(currentEntry).screenEffectFlags |= bitMaskLamda;
+                }
+                else {
+                    bsaType8HashMap.get(currentEntry).screenEffectFlags &= ~bitMaskLamda;
+                }
+            });
+
+            vBox.getChildren().add(checkBoxsList[i]);
+
+            bitMask <<= 1;
+        }
+
+        StackPane stackPane = new StackPane(vBox, label);
+        StackPane.setAlignment(label, Pos.TOP_LEFT);
+
+        return stackPane;
+    }
+    
+    private GridPane createGridPane(int columns ,int rows, Node[] nodeList, boolean enableStyle) {
+        GridPane gridPane = new GridPane(10, 10);
+        if (enableStyle) gridPane.getStyleClass().add("titled-address-box");
+
+        int index = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                gridPane.add(nodeList[index], j, i);
+                index++;
+            }
+        }
+
+        return gridPane;
+    }
+
+    private HBox createHBox(int width, Label label, Node node) {
+        HBox hBox = new HBox(width, label, node);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        return hBox;
+    }
+
+    private HBox createHBox(int width, Node[] nodeList, boolean enableStyle) {
+        HBox hBox = new HBox(width);
+
+        if (enableStyle) hBox.getStyleClass().add("titled-address-box");
+
+        for (int i = 0; i < nodeList.length; i++) {
+            hBox.getChildren().add(nodeList[i]);
+        }
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        return hBox;
     }
 
     private void entriesActionListener() {
-        addSubEntry.getItems().addAll(collisionMenuItem, expirationMenuItem, type0MenuItem, type1MenuItem, type2MenuItem, type3MenuItem, type4MenuItem, type6MenuItem, type7MenuItem, type8MenuItem, type10MenuItem, type12MenuItem, type13MenuItem, type14MenuItem);
+        addSubEntry.getItems().addAll(collisionMenuItem, collisionSoundMenuItem, type0MenuItem, type1MenuItem, type2MenuItem, type3MenuItem, type4MenuItem, type6MenuItem, type7MenuItem, type8MenuItem, type10MenuItem, type12MenuItem, type13MenuItem, type14MenuItem);
 
         copiedItem.setVisible(false);
         copiedItem.setDisable(true);
@@ -4594,7 +2034,7 @@ public class Bsa {
 
                 addComment.setDisable(false);
 
-                if (pasteItem.getText().equals("Paste Entry  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4607,20 +2047,20 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
                 
-                if (pasteItem.getText().contains("Paste Collision  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if (newValue.getParent().getValue().equals("Expiration (After Effects)")) {
+            else if (newValue.getParent().getValue().equals("Collision Sound (After Effects)")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
                 
                 tabPane.getTabs().clear();
 
-                createBsaExpiration(bsaExpirationHashMap.get(newValue));
+                createBsaCollisionSound(bsaCollisionSoundHashMap.get(newValue));
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Paste Expiration  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4633,7 +2073,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Paste BSA Entry Passing  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4646,11 +2086,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Movement  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if (newValue.getParent().getValue().equals("BSA Type 2")) {
+            else if (newValue.getParent().getValue().equals("Projectile Timeline Remap")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4659,7 +2099,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("BSA Type 2  Ctrl+V")) {
+                if (pasteItem.getText().contains("Projectile Timeline Remap  Ctrl+V")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4672,7 +2112,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Hitbox  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4686,7 +2126,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Deflection  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4699,7 +2139,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Effect  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4712,7 +2152,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Sound  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4725,7 +2165,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("Screen Effect  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4738,11 +2178,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("BSA Type 10  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if (newValue.getParent().getValue().equals("BSA Type 12")) {
+            else if (newValue.getParent().getValue().equals("Send Projectile Signal")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4751,11 +2191,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("BSA Type 12  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if (newValue.getParent().getValue().equals("BSA Type 13")) {
+            else if (newValue.getParent().getValue().equals("Projectile Protection")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4764,11 +2204,11 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("BSA Type 13  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
-            else if (newValue.getParent().getValue().equals("BSA Type 14")) {
+            else if (newValue.getParent().getValue().equals("Effect Placement")) {
                 int index = tabPane.getSelectionModel().getSelectedIndex();
 
                 tabPane.getTabs().clear();
@@ -4777,7 +2217,7 @@ public class Bsa {
 
                 tabPane.getSelectionModel().select(index);
 
-                if (pasteItem.getText().contains("BSA Type 14  Ctrl+V")) {
+                if (!pasteItem.getText().contains("List") && !pasteItem.getText().contains("Entry")) {
                     pasteItem.setDisable(false);
                 }
             }
@@ -4785,545 +2225,93 @@ public class Bsa {
                 tabPane.getTabs().clear();
             } 
 
-            if (newValue.getValue().equals("Collision (After Effects)") && pasteItem.getText().contains("Collision List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("Expiration (After Effects)") && pasteItem.getText().contains("Expiration List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("BSA Entry Passing") && pasteItem.getText().contains("BSA Entry Passing List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("Movement") && pasteItem.getText().contains("Movement List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("BSA Type 2") && pasteItem.getText().contains("Type 2 List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("Hitbox") && pasteItem.getText().contains("Hitbox List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("Deflection") && pasteItem.getText().contains("Deflection List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("Effect") && pasteItem.getText().contains("Effect List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("Sound") && pasteItem.getText().contains("Sound List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("Screen Effect") && pasteItem.getText().contains("Screen Effect List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("BSA Type 10") && pasteItem.getText().contains("Type 10 List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("BSA Type 11") && pasteItem.getText().contains("Type 11 List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("BSA Type 12") && pasteItem.getText().contains("Type 12 List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("BSA Type 13") && pasteItem.getText().contains("Type 13 List")) {
-                pasteItem.setDisable(false);
-            }
-            else if (newValue.getValue().equals("BSA Type 14") && pasteItem.getText().contains("Type 14 List")) {
+            if (pasteItem.getText().contains(newValue.getValue() + " List")) {
                 pasteItem.setDisable(false);
             }
         });
+
         treeView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 contextMenu.setOnAction(event -> {
-                    if (event.getTarget() == addEntry) {
-                        AddEntry();
-                    }
-                    if (event.getTarget() == copy) {
-                        Copy();
-                    }
-                    if (event.getTarget() == delete) {
-                        Delete();
-                    }
-                    if (event.getTarget() == addComment) {
-                        AddComment();
-                    }
-                    if (event.getTarget() == pasteItem) {
-                        Paste();
-                    }
-                    if (event.getTarget() == addItemCopy) {
-                        AddItemCopy();
-                    }
+                    if (event.getTarget() == addEntry) AddEntry();
+                    else if (event.getTarget() == copy) Copy();
+                    else if (event.getTarget() == delete) Delete();
+                    else if (event.getTarget() == addComment) Popups.AddComment(currentEntry);
+                    else if (event.getTarget() == pasteItem) Paste();
+                    else if (event.getTarget() == addItemCopy) AddItemCopy();
                 });
+
                 addSubEntry.setOnAction(ev -> {
                     switch (addSubEntry.getItems().indexOf(ev.getTarget())) {
                         case 0 -> {
-                            boolean hasCollision = false;
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("Collision (After Effects)")) {
-                                    hasCollision = true;
-                                }
-                            }
-                            if (hasCollision) {
-                                TreeItem<String> getParent = grandParentEntry.getChildren().get(0);
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaCollisionHashMap.put(newChild, new BsaCollisionEntry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("Collision (After Effects)"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaCollisionHashMap.put(newChild, new BsaCollisionEntry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(0).getText());
+                            bsaCollisionHashMap.put(newItem, new BsaCollisionEntry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 1 -> {
-                            boolean hasExpiration = false;
-                            TreeItem<String> expirationIndex = new TreeItem<>();
-                            
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("Expiration (After Effects)")) {
-                                    hasExpiration = true;
-                                    expirationIndex = child;
-                                }
-                            }
-                            if (hasExpiration) {
-                                TreeItem<String> getParent = expirationIndex;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaExpirationHashMap.put(newChild, new BsaExpirationEntry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("Expiration (After Effects)"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaExpirationHashMap.put(newChild, new BsaExpirationEntry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(1).getText());
+                            bsaCollisionSoundHashMap.put(newItem, new BsaCollisionSoundEntry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 2 -> {
-                            boolean hasType0 = false;
-                            TreeItem<String> type0Index = new TreeItem<>();
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("BSA Entry Passing")) {
-                                    hasType0 = true;
-                                    type0Index = child;
-                                }
-                            }
-                            if (hasType0) {
-                                TreeItem<String> getParent = type0Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType0HashMap.put(newChild, new BsaType0Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Entry Passing"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType0HashMap.put(newChild, new BsaType0Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(2).getText());
+                            bsaType0HashMap.put(newItem, new BsaType0Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 3 -> {
-                            boolean hasType1 = false;
-                            TreeItem<String> type1Index = new TreeItem<>();
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("Movement")) {
-                                    hasType1 = true;
-                                    type1Index = child;
-                                }
-                            }
-                            if (hasType1) {
-                                TreeItem<String> getParent = type1Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType1HashMap.put(newChild, new BsaType1Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("Movement"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType1HashMap.put(newChild, new BsaType1Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                           TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(3).getText());
+                            bsaType1HashMap.put(newItem, new BsaType1Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 4 -> {
-                            boolean hasType2 = false;
-                            TreeItem<String> type2Index = new TreeItem<>();
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("BSA Type 2")) {
-                                    hasType2 = true;
-                                    type2Index = child;
-                                }
-                            }
-                            if (hasType2) {
-                                TreeItem<String> getParent = type2Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType2HashMap.put(newChild, new BsaType2Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 2"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType2HashMap.put(newChild, new BsaType2Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(4).getText());
+                            bsaType2HashMap.put(newItem, new BsaType2Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 5 -> {
-                            boolean hasType3 = false;
-                            TreeItem<String> type3Index = new TreeItem<>();
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("Hitbox")) {
-                                    hasType3 = true;
-                                    type3Index = child;
-                                }
-                            }
-                            if (hasType3) {
-                                TreeItem<String> getParent = type3Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType3HashMap.put(newChild, new BsaType3Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("Hitbox"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType3HashMap.put(newChild, new BsaType3Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                           TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(5).getText());
+                            bsaType3HashMap.put(newItem, new BsaType3Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 6 -> {
-                            boolean hasType4 = false;
-                            TreeItem<String> type4Index = new TreeItem<>();
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("Deflection")) {
-                                    hasType4 = true;
-                                    type4Index = child;
-                                }
-                            }
-                            if (hasType4) {
-                                TreeItem<String> getParent = type4Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType4HashMap.put(newChild, new BsaType4Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("Deflection"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType4HashMap.put(newChild, new BsaType4Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(6).getText());
+                            bsaType4HashMap.put(newItem, new BsaType4Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 7 -> {
-                            boolean hasType6 = false;
-                            TreeItem<String> type6Index = new TreeItem<>();
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("Effect")) {
-                                    hasType6 = true;
-                                    type6Index = child;
-                                }
-                            }
-                            if (hasType6) {
-                                TreeItem<String> getParent = type6Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType6HashMap.put(newChild, new BsaType6Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("Effect"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType6HashMap.put(newChild, new BsaType6Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(7).getText());
+                            bsaType6HashMap.put(newItem, new BsaType6Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 8 -> {
-                            boolean hasType7 = false;
-                            TreeItem<String> type7Index = new TreeItem<>();
-
-                           for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("Sound")) {
-                                    hasType7 = true;
-                                    type7Index = child;
-                                }
-                            }
-                            if (hasType7) {
-                                TreeItem<String> getParent = type7Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType7HashMap.put(newChild, new BsaType7Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("Sound"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType7HashMap.put(newChild, new BsaType7Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(8).getText());
+                            bsaType7HashMap.put(newItem, new BsaType7Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 9 -> {
-                            boolean hasType8 = false;
-                            TreeItem<String> type8Index = new TreeItem<>();
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("Screen Effect")) {
-                                    hasType8 = true;
-                                    type8Index = child;
-                                }
-                            }
-                            if (hasType8) {
-                                TreeItem<String> getParent = type8Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType8HashMap.put(newChild, new BsaType8Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("Screen Effect"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType8HashMap.put(newChild, new BsaType8Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(9).getText());
+                            bsaType8HashMap.put(newItem, new BsaType8Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 10 -> {
-                            boolean hasType10 = false;
-                            TreeItem<String> type10Index = new TreeItem<>();
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("BSA Type 10")) {
-                                    hasType10 = true;
-                                    type10Index = child;
-                                }
-                            }
-                            if (hasType10) {
-                                TreeItem<String> getParent = type10Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType10HashMap.put(newChild, new BsaType10Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 10"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType10HashMap.put(newChild, new BsaType10Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(10).getText());
+                            bsaType10HashMap.put(newItem, new BsaType10Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 11 -> {
-                            boolean hasType12 = false;
-                            TreeItem<String> type12Index = new TreeItem<>();
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("BSA Type 12")) {
-                                    hasType12 = true;
-                                    type12Index = child;
-                                }
-                            }
-                            if (hasType12) {
-                                TreeItem<String> getParent = type12Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType12HashMap.put(newChild, new BsaType12Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 12"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType12HashMap.put(newChild, new BsaType12Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(11).getText());
+                            bsaType12HashMap.put(newItem, new BsaType12Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 12 -> {
-                            boolean hasType13 = false;
-                            TreeItem<String> type13Index = new TreeItem<>();
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("BSA Type 13")) {
-                                    hasType13 = true;
-                                    type13Index = child;
-                                }
-                            }
-                            if (hasType13) {
-                                TreeItem<String> getParent = type13Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType13HashMap.put(newChild, new BsaType13Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 13"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType13HashMap.put(newChild, new BsaType13Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(12).getText());
+                            bsaType13HashMap.put(newItem, new BsaType13Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                         case 13 -> {
-                            boolean hasType14 = false;
-                            TreeItem<String> type14Index = new TreeItem<>();
-
-                            for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                                if (child.getValue().equals("BSA Type 14")) {
-                                    hasType14 = true;
-                                    type14Index = child;
-                                }
-                            }
-                            if (hasType14) {
-                                TreeItem<String> getParent = type14Index;
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                                getParent.getChildren().add(newChild);
-
-                                bsaType14HashMap.put(newChild, new BsaType14Entry());
-
-                                treeView.getSelectionModel().select(newChild);
-                            } 
-                            else {
-                                grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 14"));
-
-                                TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                                grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                                bsaType14HashMap.put(newChild, new BsaType14Entry());
-
-                                sortTreeItems(grandParentEntry);
-
-                                treeView.getSelectionModel().select(newChild);
-                            }
+                            TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(13).getText());
+                            bsaType14HashMap.put(newItem, new BsaType14Entry());
+                            treeView.getSelectionModel().select(newItem);
                         }
                     }
                 });
@@ -5333,20 +2321,14 @@ public class Bsa {
 
     private void entriesKeysListener() {
         treeView.setOnKeyPressed(e -> {
-            if (e.isControlDown()&&e.getCode() == KeyCode.C) {
-                Copy();
-            }
-            if (e.isControlDown()&&e.getCode() == KeyCode.V) {
-                Paste();
-            }
-            if (e.getCode() == KeyCode.DELETE) {
-                Delete();
-            }
-            if (e.isControlDown()&&e.getCode() == KeyCode.A) {
-                AddItemCopy();
-            }
-            if (e.isControlDown()&&e.getCode() == KeyCode.Q) {
-                AddComment();
+            if (e.isControlDown() && e.getCode() == KeyCode.C) Copy();
+            else if (e.isControlDown() && e.getCode() == KeyCode.V) Paste();
+            else if (e.getCode() == KeyCode.DELETE) Delete();
+            else if (e.isControlDown() && e.getCode() == KeyCode.A) AddItemCopy();
+            else if (e.isControlDown() && e.getCode() == KeyCode.Q) {
+                if (currentEntry == grandParentEntry) {
+                    Popups.AddComment(currentEntry);
+                }
             }
         });
     }
@@ -5371,20 +2353,15 @@ public class Bsa {
 
 
     private void Copy() {
-        copiedItem.setText("Copied %s");
-        pasteItem.setText("Paste %s  Ctrl+V");
-        addItemCopy.setText("Add %s Copy  Ctrl+A");
-
         noCopiedItemFound.setVisible(false);
         copiedItem.setVisible(true);
         pasteItem.setVisible(true);
         addItemCopy.setVisible(true);
 
         pasteItem.setDisable(false);
+
         if (currentEntry.getParent() == treeView.getRoot()) {
-            copiedItem.setText(String.format(copiedItem.getText(), "Entry"));
-            pasteItem.setText(String.format(pasteItem.getText(), "Entry"));
-            addItemCopy.setText(String.format(addItemCopy.getText(), "Entry"));
+            setContextMenuText("Entry");
 
             copyTypesContainer = new String[currentEntry.getChildren().size()];
             copyContainer = new BsaMainEntry(bsaMainHashMap.get(currentEntry));
@@ -5395,88 +2372,46 @@ public class Bsa {
 
                 switch (currentEntry.getChildren().get(i).getValue()) {
                     case "Collision (After Effects)" -> {
-                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaCollisionEntry(bsaCollisionHashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "Collision (After Effects)";
+                        copyEntryItem(bsaCollisionHashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
-                    case "Expiration (After Effects)" -> {
-                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaExpirationEntry(bsaExpirationHashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "Expiration (After Effects)";
+                    case "Collision Sound (After Effects)" -> {
+                        copyEntryItem(bsaCollisionSoundHashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
                     case "BSA Entry Passing" -> {
-                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType0Entry(bsaType0HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "BSA Entry Passing";
+                        copyEntryItem(bsaType0HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
                     case "Movement" -> {
-                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType1Entry(bsaType1HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "Movement";
+                        copyEntryItem(bsaType1HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
-                    case "BSA Type 2" -> {
-                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType2Entry(bsaType2HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "BSA Type 2";
+                    case "Projectile Timeline Remap" -> {
+                        copyEntryItem(bsaType2HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
                     case "Hitbox" -> {
-                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType3Entry(bsaType3HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "Hitbox";
+                        copyEntryItem(bsaType3HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
                     case "Deflection" -> {
-                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType4Entry(bsaType4HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "Deflection";
+                        copyEntryItem(bsaType4HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
                     case "Effect" -> {
-                        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType6Entry(bsaType6HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "Effect";
+                        copyEntryItem(bsaType6HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
                     case "Sound" -> {
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType7Entry(bsaType7HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "Sound";
+                        copyEntryItem(bsaType7HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
                     case "Screen Effect" -> {
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType8Entry(bsaType8HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "Screen Effect";
+                        copyEntryItem(bsaType8HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
                     case "BSA Type 10" -> {
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType10Entry(bsaType10HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "BSA Type 10";
+                        copyEntryItem(bsaType10HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
-                    case "BSA Type 12" -> {
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType12Entry(bsaType12HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "BSA Type 12";
+                    case "Send Projectile Signal" -> {
+                        copyEntryItem(bsaType12HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
-                    case "BSA Type 13" -> {
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType13Entry(bsaType13HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "BSA Type 13";
+                    case "Projectile Protection" -> {
+                        copyEntryItem(bsaType13HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
-                    case "BSA Type 14" -> {
-                        for (int j = 0; j <currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
-                            copyListContainer[i][j] = new BsaType14Entry(bsaType14HashMap.get(currentEntry.getChildren().get(i).getChildren().get(j)));
-                        }
-                        copyTypesContainer[i] = "BSA Type 14";
+                    case "Effect Placement" -> {
+                        copyEntryItem(bsaType14HashMap, currentEntry.getChildren().get(i).getValue(), i);
                     }
                 }
             }
@@ -5484,239 +2419,125 @@ public class Bsa {
         else if (currentEntry.getChildren().isEmpty() && currentEntry.getValue().startsWith("Entry")) {
             switch (currentEntry.getParent().getValue()) {
                 case "Collision (After Effects)" -> {
-                    copyContainer = new BsaCollisionEntry(bsaCollisionHashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Collision"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Collision"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Collision"));
+                    copyChildItem(bsaCollisionHashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
-                case "Expiration (After Effects)" -> {
-                    copyContainer = new BsaExpirationEntry(bsaExpirationHashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Expiration"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Expiration"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Expiration"));
+                case "Collision Sound (After Effects)" -> {
+                    copyChildItem(bsaCollisionSoundHashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
                 case "BSA Entry Passing" -> {
-                    copyContainer = new BsaType0Entry(bsaType0HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Entry Passing"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Entry Passing"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Entry Passing"));
+                    copyChildItem(bsaType0HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
                 case "Movement" -> {
-                    copyContainer = new BsaType1Entry(bsaType1HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Movement"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Movement"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Movement"));
+                    copyChildItem(bsaType1HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
-                case "BSA Type 2" -> {
-                    copyContainer = new BsaType2Entry(bsaType2HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 2"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Type 2"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 2"));
+                case "Projectile Timeline Remap" -> {
+                    copyChildItem(bsaType2HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());;
                 }
                 case "Hitbox" -> {
-                    copyContainer = new BsaType3Entry(bsaType3HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Hitbox"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Hitbox"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Hitbox"));
+                    copyChildItem(bsaType3HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
                 case "Deflection" -> {
-                    copyContainer = new BsaType4Entry(bsaType4HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Deflection"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Deflection"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Deflection"));
+                    copyChildItem(bsaType4HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
                 case "Effect" -> {
-                    copyContainer = new BsaType6Entry(bsaType6HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Effect"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Effect"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Effect"));
+                    copyChildItem(bsaType6HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
                 case "Sound" -> {
-                    copyContainer = new BsaType7Entry(bsaType7HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Sound"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Sound"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Sound"));
+                    copyChildItem(bsaType7HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
                 case "Screen Effect" -> {
-                    copyContainer = new BsaType8Entry(bsaType8HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Screen Effect"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Screen Effect"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Screen Effect"));
+                    copyChildItem(bsaType8HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
                 case "BSA Type 10" -> {
-                    copyContainer = new BsaType10Entry(bsaType10HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 10"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Type 10"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 10"));
+                    copyChildItem(bsaType10HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
-                case "BSA Type 12" -> {
-                    copyContainer = new BsaType12Entry(bsaType12HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 12"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Type 12"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 12"));
+                case "Send Projectile Signal" -> {
+                    copyChildItem(bsaType12HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
-                case "BSA Type 13" -> {
-                    copyContainer = new BsaType13Entry(bsaType13HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 13"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Type 13"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 13"));
+                case "Projectile Protection" -> {
+                    copyChildItem(bsaType13HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
-                case "BSA Type 14" -> {
-                    copyContainer = new BsaType14Entry(bsaType14HashMap.get(currentEntry));
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 14"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Type 14"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 14"));
+                case "Effect Placement" -> {
+                    copyChildItem(bsaType14HashMap);
+                    setContextMenuText(currentEntry.getParent().getValue());
                 }
             }
         }
         else if (currentEntry.getChildren().isEmpty()) {
-            copiedItem.setText(String.format(copiedItem.getText(), "Null"));
-            pasteItem.setText(String.format(pasteItem.getText(), "Null"));
-            addItemCopy.setText(String.format(addItemCopy.getText(), "Null"));
+            setContextMenuText("Null");
         }
         else {
             copyListContainer = new Object[1][currentEntry.getChildren().size()];
 
             switch (currentEntry.getValue()) {
                 case "Collision (After Effects)" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaCollisionEntry(bsaCollisionHashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Collision List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Collision List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Collision List"));
+                    copyListItem(bsaCollisionHashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
-                case "Expiration (After Effects)" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaExpirationEntry(bsaExpirationHashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Expiration List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Expiration List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Expiration"));
+                case "Collision Sound (After Effects)" -> {
+                    copyListItem(bsaCollisionSoundHashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
                 case "BSA Entry Passing" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType0Entry(bsaType0HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Entry Passing List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Entry Passing List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Entry Passing List"));
+                    copyListItem(bsaType0HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
                 case "Movement" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType1Entry(bsaType1HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Movement List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Movement List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Movement List"));
+                    copyListItem(bsaType1HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
-                case "BSA Type 2" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType2Entry(bsaType2HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 2 List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Type 2 List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 2 List"));
+                case "Projectile Timeline Remap" -> {
+                    copyListItem(bsaType2HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
                 case "Hitbox" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType3Entry(bsaType3HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Hitbox List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Hitbox List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Hitbox List"));
+                    copyListItem(bsaType3HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
                 case "Deflection" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType4Entry(bsaType4HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Deflection List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Deflection List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Deflection List"));
+                    copyListItem(bsaType4HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
                 case "Effect" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType6Entry(bsaType6HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Effect List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Effect List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Effect List"));
+                    copyListItem(bsaType6HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
                 case "Sound" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType7Entry(bsaType7HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Sound List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Sound List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Sound List"));
+                    copyListItem(bsaType7HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
                 case "Screen Effect" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType8Entry(bsaType8HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "Screen Effect List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "Screen Effect List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "Screen Effect List"));
+                    copyListItem(bsaType8HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
                 case "BSA Type 10" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType10Entry(bsaType10HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 10 List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Type 10 List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 10 List"));
+                    copyListItem(bsaType10HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
-                case "BSA Type 12" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType12Entry(bsaType12HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 12 List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Type 12 List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 12 List"));
+                case "Send Projectile Signal" -> {
+                    copyListItem(bsaType12HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
-                case "BSA Type 13" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType13Entry(bsaType13HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 13 List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Type 13 List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 13 List"));
+                case "Projectile Protection" -> {
+                    copyListItem(bsaType13HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
-                case "BSA Type 14" -> {
-                    for (TreeItem<String> child : currentEntry.getChildren()) {
-                        copyListContainer[0][currentEntry.getChildren().indexOf(child)] = new BsaType14Entry(bsaType14HashMap.get(child));
-                    }
-
-                    copiedItem.setText(String.format(copiedItem.getText(), "BSA Type 14 List"));
-                    pasteItem.setText(String.format(pasteItem.getText(), "BSA Type 14 List"));
-                    addItemCopy.setText(String.format(addItemCopy.getText(), "BSA Type 14 List"));
+                case "Effect Placement" -> {
+                    copyListItem(bsaType14HashMap);
+                    setContextMenuText(currentEntry.getValue() + " List");
                 }
             }
         }
@@ -5731,9 +2552,9 @@ public class Bsa {
                             bsaCollisionHashMap.remove(child);
                         }
                     }
-                    case "Expiration (After Effects)" -> {
+                    case "Collision Sound (After Effects)" -> {
                         for (TreeItem<String> child : parent.getChildren()) {
-                            bsaExpirationHashMap.remove(child);
+                            bsaCollisionSoundHashMap.remove(child);
                         }
                     }
                     case "BSA Entry Passing" -> {
@@ -5746,7 +2567,7 @@ public class Bsa {
                             bsaType1HashMap.remove(child);
                         }
                     }
-                    case "BSA Type 2" -> {
+                    case "Projectile Timeline Remap" -> {
                         for (TreeItem<String> child : parent.getChildren()) {
                             bsaType2HashMap.remove(child);
                         }
@@ -5781,17 +2602,17 @@ public class Bsa {
                             bsaType10HashMap.remove(child);
                         }
                     }
-                    case "BSA Type 12" -> {
+                    case "Send Projectile Signal" -> {
                         for (TreeItem<String> child : parent.getChildren()) {
                             bsaType12HashMap.remove(child);
                         }
                     }
-                    case "BSA Type 13" -> {
+                    case "Projectile Protection" -> {
                         for (TreeItem<String> child : parent.getChildren()) {
                             bsaType13HashMap.remove(child);
                         }
                     }
-                    case "BSA Type 14" -> {
+                    case "Effect Placement" -> {
                         for (TreeItem<String> child : parent.getChildren()) {
                             bsaType14HashMap.remove(child);
                         }
@@ -5814,13 +2635,13 @@ public class Bsa {
                             bsaCollisionHashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[i][j]));
                         }
                     }
-                    case "Expiration (After Effects)" -> {
-                        currentEntry.getChildren().add(i, new TreeItem<>("Expiration (After Effects)"));
+                    case "Collision Sound (After Effects)" -> {
+                        currentEntry.getChildren().add(i, new TreeItem<>("Collision Sound (After Effects)"));
 
                         for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            bsaExpirationHashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaExpirationEntry((BsaExpirationEntry) copyListContainer[i][j]));
+                            bsaCollisionSoundHashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaCollisionSoundEntry((BsaCollisionSoundEntry) copyListContainer[i][j]));
                         }
                     }
                     case "BSA Entry Passing" -> {
@@ -5841,8 +2662,8 @@ public class Bsa {
                             bsaType1HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType1Entry((BsaType1Entry) copyListContainer[i][j]));
                         }
                     }
-                    case "BSA Type 2" -> {
-                        currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 2"));
+                    case "Projectile Timeline Remap" -> {
+                        currentEntry.getChildren().add(i, new TreeItem<>("Projectile Timeline Remap"));
 
                         for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
@@ -5904,8 +2725,8 @@ public class Bsa {
                             bsaType10HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType10Entry((BsaType10Entry) copyListContainer[i][j]));
                         }
                     }
-                    case "BSA Type 12" -> {
-                        currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 12"));
+                    case "Send Projectile Signal" -> {
+                        currentEntry.getChildren().add(i, new TreeItem<>("Send Projectile Signal"));
 
                         for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
@@ -5913,8 +2734,8 @@ public class Bsa {
                             bsaType12HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType12Entry((BsaType12Entry) copyListContainer[i][j]));
                         }
                     }
-                    case "BSA Type 13" -> {
-                        currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 13"));
+                    case "Projectile Protection" -> {
+                        currentEntry.getChildren().add(i, new TreeItem<>("Projectile Protection"));
 
                         for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
@@ -5922,8 +2743,8 @@ public class Bsa {
                             bsaType13HashMap.put(currentEntry.getChildren().get(i).getChildren().get(j), new BsaType13Entry((BsaType13Entry) copyListContainer[i][j]));
                         }
                     }
-                    case "BSA Type 14" -> {
-                        currentEntry.getChildren().add(i, new TreeItem<>("BSA Type 14"));
+                    case "Effect Placement" -> {
+                        currentEntry.getChildren().add(i, new TreeItem<>("Effect Placement"));
 
                         for (int j = 0; j < copyListContainer[i].length; j++) {
                             currentEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
@@ -5947,11 +2768,11 @@ public class Bsa {
                     createBsaCollision(bsaCollisionHashMap.get(currentEntry));
                     tabPane.getSelectionModel().select(tabPane.getSelectionModel().getSelectedIndex());
                 }
-                case "Expiration (After Effects)" -> {
-                    bsaExpirationHashMap.put(currentEntry, new BsaExpirationEntry((BsaExpirationEntry) copyContainer));
+                case "Collision Sound (After Effects)" -> {
+                    bsaCollisionSoundHashMap.put(currentEntry, new BsaCollisionSoundEntry((BsaCollisionSoundEntry) copyContainer));
                     
                     tabPane.getTabs().clear();
-                    createBsaExpiration(bsaExpirationHashMap.get(currentEntry));
+                    createBsaCollisionSound(bsaCollisionSoundHashMap.get(currentEntry));
                     tabPane.getSelectionModel().select(tabPane.getSelectionModel().getSelectedIndex());
                 }
                 case "BSA Entry Passing" -> {
@@ -5968,7 +2789,7 @@ public class Bsa {
                     createBsaType1(bsaType1HashMap.get(currentEntry));
                     tabPane.getSelectionModel().select(tabPane.getSelectionModel().getSelectedIndex());
                 }
-                case "BSA Type 2" -> {
+                case "Projectile Timeline Remap" -> {
                     bsaType2HashMap.put(currentEntry, new BsaType2Entry((BsaType2Entry) copyContainer));
                     
                     tabPane.getTabs().clear();
@@ -6017,21 +2838,21 @@ public class Bsa {
                     createBsaType10(bsaType10HashMap.get(currentEntry));
                     tabPane.getSelectionModel().select(tabPane.getSelectionModel().getSelectedIndex());
                 }
-                case "BSA Type 12" -> {
+                case "Send Projectile Signal" -> {
                     bsaType12HashMap.put(currentEntry, new BsaType12Entry((BsaType12Entry) copyContainer));
                     
                     tabPane.getTabs().clear();
                     createBsaType12(bsaType12HashMap.get(currentEntry));
                     tabPane.getSelectionModel().select(tabPane.getSelectionModel().getSelectedIndex());
                 }
-                case "BSA Type 13" -> {
+                case "Projectile Protection" -> {
                     bsaType13HashMap.put(currentEntry, new BsaType13Entry((BsaType13Entry) copyContainer));
                     
                     tabPane.getTabs().clear();
                     createBsaType13(bsaType13HashMap.get(currentEntry));
                     tabPane.getSelectionModel().select(tabPane.getSelectionModel().getSelectedIndex());
                 }
-                case "BSA Type 14" -> {
+                case "Effect Placement" -> {
                     bsaType14HashMap.put(currentEntry, new BsaType14Entry((BsaType14Entry) copyContainer));
                     
                     tabPane.getTabs().clear();
@@ -6047,9 +2868,9 @@ public class Bsa {
                         bsaCollisionHashMap.remove(child);
                     }
                 }
-                case "Expiration (After Effects)" -> {
+                case "Collision Sound (After Effects)" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
-                        bsaExpirationHashMap.remove(child);
+                        bsaCollisionSoundHashMap.remove(child);
                     }
                 }
                 case "BSA Entry Passing" -> {
@@ -6062,7 +2883,7 @@ public class Bsa {
                         bsaType1HashMap.remove(child);
                     }
                 }
-                case "BSA Type 2" -> {
+                case "Projectile Timeline Remap" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
                         bsaType2HashMap.remove(child);
                     }
@@ -6097,17 +2918,17 @@ public class Bsa {
                         bsaType10HashMap.remove(child);
                     }
                 }
-                case "BSA Type 12" -> {
+                case "Send Projectile Signal" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
                         bsaType12HashMap.remove(child);
                     }
                 }
-                case "BSA Type 13" -> {
+                case "Projectile Protection" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
                         bsaType13HashMap.remove(child);
                     }
                 }
-                case "BSA Type 14" -> {
+                case "Effect Placement" -> {
                     for (TreeItem<String> child : currentEntry.getChildren()) {
                         bsaType14HashMap.remove(child);
                     }
@@ -6124,11 +2945,11 @@ public class Bsa {
                         bsaCollisionHashMap.put(currentEntry.getChildren().get(i), new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[0][i]));
                     }
                 }
-                case "Expiration (After Effects)" -> {
+                case "Collision Sound (After Effects)" -> {
                     for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
-                        bsaExpirationHashMap.put(currentEntry.getChildren().get(i), new BsaExpirationEntry((BsaExpirationEntry) copyListContainer[0][i]));
+                        bsaCollisionSoundHashMap.put(currentEntry.getChildren().get(i), new BsaCollisionSoundEntry((BsaCollisionSoundEntry) copyListContainer[0][i]));
                     }
                 }
                 case "BSA Entry Passing" -> {
@@ -6145,7 +2966,7 @@ public class Bsa {
                         bsaType1HashMap.put(currentEntry.getChildren().get(i), new BsaType1Entry((BsaType1Entry) copyListContainer[0][i]));
                     }
                 }
-                case "BSA Type 2" -> {
+                case "Projectile Timeline Remap" -> {
                     for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
@@ -6194,21 +3015,21 @@ public class Bsa {
                         bsaType10HashMap.put(currentEntry.getChildren().get(i), new BsaType10Entry((BsaType10Entry) copyListContainer[0][i]));
                     }
                 }
-                case "BSA Type 12" -> {
+                case "Send Projectile Signal" -> {
                     for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType12HashMap.put(currentEntry.getChildren().get(i), new BsaType12Entry((BsaType12Entry) copyListContainer[0][i]));
                     }
                 }
-                case "BSA Type 13" -> {
+                case "Projectile Protection" -> {
                     for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
                         bsaType13HashMap.put(currentEntry.getChildren().get(i), new BsaType13Entry((BsaType13Entry) copyListContainer[0][i]));
                     }
                 }
-                case "BSA Type 14" -> {
+                case "Effect Placement" -> {
                     for (int i = 0; i < copyListContainer[0].length; i++) {
                         currentEntry.getChildren().add(i, new TreeItem<>("Entry " +i));
 
@@ -6223,1063 +3044,300 @@ public class Bsa {
         if (treeView.getRoot().getChildren().isEmpty()) {
             allEntries = 0;
         } 
-        switch (addItemCopy.getText()) {
-            case "Add Entry Copy  Ctrl+A" -> {
-                TreeItem<String> newEntry = new TreeItem<>("Entry " + allEntries);
 
-                treeView.getRoot().getChildren().add(newEntry);
+        if (addItemCopy.getText().contains("Entry") && !addItemCopy.getText().contains("BSA")) {
+            TreeItem<String> newEntry = new TreeItem<>("Entry " + allEntries);
+            treeView.getRoot().getChildren().add(newEntry);
+            bsaMainHashMap.put(newEntry, new BsaMainEntry((BsaMainEntry) copyContainer));
+            allEntries++;
 
-                bsaMainHashMap.put(newEntry, new BsaMainEntry((BsaMainEntry) copyContainer));
+            for (int i = 0; i < copyTypesContainer.length; i++) {
+                switch (copyTypesContainer[i]) {
+                    case "Collision (After Effects)" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Collision (After Effects)"));
 
-                allEntries++;
-                
-                for (int i = 0; i < copyTypesContainer.length; i++) {
-                    switch (copyTypesContainer[i]) {
-                        case "Collision (After Effects)" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("Collision (After Effects)"));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
-
-                                bsaCollisionHashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[i][j]));
-                            }
+                            bsaCollisionHashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[i][j]));
                         }
-                        case "Expiration (After Effects)" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("Expiration (After Effects)"));
+                    }
+                    case "Collision Sound (After Effects)" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Collision Sound (After Effects)"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaExpirationHashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaExpirationEntry((BsaExpirationEntry) copyListContainer[i][j]));
-                            }
+                            bsaCollisionSoundHashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaCollisionSoundEntry((BsaCollisionSoundEntry) copyListContainer[i][j]));
                         }
-                        case "BSA Entry Passing" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("BSA Entry Passing"));
+                    }
+                    case "BSA Entry Passing" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("BSA Entry Passing"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType0HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType0Entry((BsaType0Entry) copyListContainer[i][j]));
-                            }
+                            bsaType0HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType0Entry((BsaType0Entry) copyListContainer[i][j]));
                         }
-                        case "Movement" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("Movement"));
+                    }
+                    case "Movement" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Movement"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType1HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType1Entry((BsaType1Entry) copyListContainer[i][j]));
-                            }
+                            bsaType1HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType1Entry((BsaType1Entry) copyListContainer[i][j]));
                         }
-                        case "BSA Type 2" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("BSA Type 2"));
+                    }
+                    case "Projectile Timeline Remap" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Projectile Timeline Remap"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType2HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType2Entry((BsaType2Entry) copyListContainer[i][j]));
-                            }
+                            bsaType2HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType2Entry((BsaType2Entry) copyListContainer[i][j]));
                         }
-                        case "Hitbox" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("Hitbox"));
+                    }
+                    case "Hitbox" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Hitbox"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType3HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType3Entry((BsaType3Entry) copyListContainer[i][j]));
-                            }
+                            bsaType3HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType3Entry((BsaType3Entry) copyListContainer[i][j]));
                         }
-                        case "Deflection" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("Deflection"));
+                    }
+                    case "Deflection" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Deflection"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType4HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType4Entry((BsaType4Entry) copyListContainer[i][j]));
-                            }
+                            bsaType4HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType4Entry((BsaType4Entry) copyListContainer[i][j]));
                         }
-                        case "Effect" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("Effect"));
+                    }
+                    case "Effect" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Effect"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType6HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType6Entry((BsaType6Entry) copyListContainer[i][j]));
-                            }
+                            bsaType6HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType6Entry((BsaType6Entry) copyListContainer[i][j]));
                         }
-                        case "Sound" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("Sound"));
+                    }
+                    case "Sound" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Sound"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType7HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType7Entry((BsaType7Entry) copyListContainer[i][j]));
-                            }
+                            bsaType7HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType7Entry((BsaType7Entry) copyListContainer[i][j]));
                         }
-                        case "Screen Effect" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("Screen Effect"));
+                    }
+                    case "Screen Effect" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Screen Effect"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType8HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType8Entry((BsaType8Entry) copyListContainer[i][j]));
-                            }
+                            bsaType8HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType8Entry((BsaType8Entry) copyListContainer[i][j]));
                         }
-                        case "BSA Type 10" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("BSA Type 10"));
+                    }
+                    case "BSA Type 10" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("BSA Type 10"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType10HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType10Entry((BsaType10Entry) copyListContainer[i][j]));
-                            }
+                            bsaType10HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType10Entry((BsaType10Entry) copyListContainer[i][j]));
                         }
-                        case "BSA Type 12" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("BSA Type 12"));
+                    }
+                    case "Send Projectile Signal" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Send Projectile Signal"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType12HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType12Entry((BsaType12Entry) copyListContainer[i][j]));
-                            }
+                            bsaType12HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType12Entry((BsaType12Entry) copyListContainer[i][j]));
                         }
-                        case "BSA Type 13" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("BSA Type 13"));
+                    }
+                    case "Projectile Protection" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Projectile Protection"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType13HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType13Entry((BsaType13Entry) copyListContainer[i][j]));
-                            }
+                            bsaType13HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType13Entry((BsaType13Entry) copyListContainer[i][j]));
                         }
-                        case "BSA Type 14" -> {
-                            newEntry.getChildren().add(i, new TreeItem<>("BSA Type 14"));
+                    }
+                    case "Effect Placement" -> {
+                        newEntry.getChildren().add(i, new TreeItem<>("Effect Placement"));
 
-                            for (int j = 0; j < copyListContainer[i].length; j++) {
-                                newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
+                        for (int j = 0; j < copyListContainer[i].length; j++) {
+                            newEntry.getChildren().get(i).getChildren().add(j, new TreeItem<>("Entry " +j));
 
-                                bsaType14HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType14Entry((BsaType14Entry) copyListContainer[i][j]));
-                            }
+                            bsaType14HashMap.put(newEntry.getChildren().get(i).getChildren().get(j), new BsaType14Entry((BsaType14Entry) copyListContainer[i][j]));
                         }
                     }
                 }
             }
-            case "Add Collision Copy  Ctrl+A" -> {
-                boolean hasCollision = false;
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Collision (After Effects)")) {
-                        hasCollision = true;
-                    }
-                }
-                if (hasCollision) {
-                    TreeItem<String> getParent = grandParentEntry.getChildren().get(0);
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                    getParent.getChildren().add(newChild);
-
-                    bsaCollisionHashMap.put(newChild, new BsaCollisionEntry((BsaCollisionEntry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Collision (After Effects)"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaCollisionHashMap.put(newChild, new BsaCollisionEntry((BsaCollisionEntry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
+        }
+        else if (addItemCopy.getText().contains("List")) {
+            if (addItemCopy.getText().contains("Collision Sound")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(1).getText());
+                    bsaCollisionSoundHashMap.put(newItem, new BsaCollisionSoundEntry((BsaCollisionSoundEntry) copyListContainer[0][i]));
                 }
             }
-            case "Add Collision List Copy  Ctrl+A" -> {
-                boolean hasCollision = false;
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Collision (After Effects)")) {
-                        hasCollision = true;
-                    }
-                }
-                if (hasCollision) {
-                    TreeItem<String> getParent = grandParentEntry.getChildren().get(0);
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                        getParent.getChildren().add(newChild);
-
-                        bsaCollisionHashMap.put(newChild, new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Collision (After Effects)"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaCollisionHashMap.put(newChild, new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[0][i]));
-                    }
+            else if (addItemCopy.getText().contains("Collision")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(0).getText());
+                    bsaCollisionHashMap.put(newItem, new BsaCollisionEntry((BsaCollisionEntry) copyListContainer[0][i]));
                 }
             }
-            case "Add Expiration Copy  Ctrl+A" -> {
-                boolean hasExpiration = false;
-                TreeItem<String> expirationIndex = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Expiration (After Effects)")) {
-                        hasExpiration = true;
-                        expirationIndex = child;
-                    }
-                }
-                if (hasExpiration) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + expirationIndex.getChildren().size());
-
-                    expirationIndex.getChildren().add(newChild);
-
-                    bsaExpirationHashMap.put(newChild, new BsaExpirationEntry((BsaExpirationEntry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Expiration (After Effects)"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaExpirationHashMap.put(newChild, new BsaExpirationEntry((BsaExpirationEntry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
+            else if (addItemCopy.getText().contains("Entry")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(2).getText());
+                    bsaType0HashMap.put(newItem, new BsaType0Entry((BsaType0Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add Expiration List Copy  Ctrl+A" -> {
-                boolean hasExpiration = false;
-                TreeItem<String> expirationIndex = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Expiration (After Effects)")) {
-                        hasExpiration = true;
-                        expirationIndex = child;
-                    }
-                }
-                if (hasExpiration) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + expirationIndex.getChildren().size());
-
-                        expirationIndex.getChildren().add(newChild);
-
-                        bsaExpirationHashMap.put(newChild, new BsaExpirationEntry((BsaExpirationEntry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Expiration (After Effects)"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaExpirationHashMap.put(newChild, new BsaExpirationEntry((BsaExpirationEntry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
+            else if (addItemCopy.getText().contains("Movement")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(3).getText());
+                    bsaType1HashMap.put(newItem, new BsaType1Entry((BsaType1Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add BSA Entry Passing Copy  Ctrl+A" -> {
-                boolean hasType0 = false;
-                TreeItem<String> type0Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Entry Passing")) {
-                        hasType0 = true;
-                        type0Index = child;
-                    }
-                }
-                if (hasType0) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type0Index.getChildren().size());
-
-                    type0Index.getChildren().add(newChild);
-
-                    bsaType0HashMap.put(newChild, new BsaType0Entry((BsaType0Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Entry Passing"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType0HashMap.put(newChild, (new BsaType0Entry((BsaType0Entry) copyContainer)));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
+            else if (addItemCopy.getText().contains("Timeline")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(4).getText());
+                    bsaType2HashMap.put(newItem, new BsaType2Entry((BsaType2Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add BSA Entry Passing List Copy  Ctrl+A" -> {
-                boolean hasType0 = false;
-                TreeItem<String> type0Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Entry Passing")) {
-                        hasType0 = true;
-                        type0Index = child;
-                    }
-                }
-                if (hasType0) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type0Index.getChildren().size());
-
-                        type0Index.getChildren().add(newChild);
-
-                        bsaType0HashMap.put(newChild, new BsaType0Entry((BsaType0Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Entry Passing"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType0HashMap.put(newChild, new BsaType0Entry((BsaType0Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
+            else if (addItemCopy.getText().contains("Hitbox")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(5).getText());
+                    bsaType3HashMap.put(newItem, new BsaType3Entry((BsaType3Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add Movement Copy  Ctrl+A" -> {
-                boolean hasType1 = false;
-                TreeItem<String> type1Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Movement")) {
-                        hasType1 = true;
-                        type1Index = child;
-                    }
-                }
-                if (hasType1) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type1Index.getChildren().size());
-
-                    type1Index.getChildren().add(newChild);
-
-                    bsaType1HashMap.put(newChild, new BsaType1Entry((BsaType1Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Movement"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType1HashMap.put(newChild, new BsaType1Entry((BsaType1Entry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
+            else if (addItemCopy.getText().contains("Deflection")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(6).getText());
+                    bsaType4HashMap.put(newItem, new BsaType4Entry((BsaType4Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add Movement List Copy  Ctrl+A" -> {
-                boolean hasType1 = false;
-                TreeItem<String> type1Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Movement")) {
-                        hasType1 = true;
-                        type1Index = child;
-                    }
-                }
-                if (hasType1) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type1Index.getChildren().size());
-
-                        type1Index.getChildren().add(newChild);
-
-                        bsaType1HashMap.put(newChild, new BsaType1Entry((BsaType1Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Movement"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType1HashMap.put(newChild, new BsaType1Entry((BsaType1Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
+            else if (addItemCopy.getText().contains("Effect Placement")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(13).getText());
+                    bsaType14HashMap.put(newItem, new BsaType14Entry((BsaType14Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add BSA Type 2 Copy  Ctrl+A" -> {
-                boolean hasType2 = false;
-                TreeItem<String> type2Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Type 2")) {
-                        hasType2 = true;
-                        type2Index = child;
-                    }
-                }
-                if (hasType2) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type2Index.getChildren().size());
-
-                    type2Index.getChildren().add(newChild);
-
-                    bsaType2HashMap.put(newChild, new BsaType2Entry((BsaType2Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                }
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 2"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType2HashMap.put(newChild, new BsaType2Entry((BsaType2Entry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
+            else if (addItemCopy.getText().contains("Screen Effect")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(9).getText());
+                    bsaType8HashMap.put(newItem, new BsaType8Entry((BsaType8Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add BSA Type 2 List Copy  Ctrl+A" -> {
-                boolean hasType2 = false;
-                TreeItem<String> type2Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Type 2")) {
-                        hasType2 = true;
-                        type2Index = child;
-                    }
-                }
-                if (hasType2) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type2Index.getChildren().size());
-
-                        type2Index.getChildren().add(newChild);
-
-                        bsaType2HashMap.put(newChild, new BsaType2Entry((BsaType2Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 2"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType2HashMap.put(newChild, new BsaType2Entry((BsaType2Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
+            else if (addItemCopy.getText().contains("Effect")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(7).getText());
+                    bsaType6HashMap.put(newItem, new BsaType6Entry((BsaType6Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add Hitbox Copy  Ctrl+A" -> {
-                boolean hasType3 = false;
-                TreeItem<String> type3Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Hitbox")) {
-                        hasType3 = true;
-                        type3Index = child;
-                    }
-                }
-                if (hasType3) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type3Index.getChildren().size());
-
-                    type3Index.getChildren().add(newChild);
-
-                    bsaType3HashMap.put(newChild, new BsaType3Entry((BsaType3Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Hitbox"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType3HashMap.put(newChild, new BsaType3Entry((BsaType3Entry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
+            else if (addItemCopy.getText().contains("Sound")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(8).getText());
+                    bsaType7HashMap.put(newItem, new BsaType7Entry((BsaType7Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add Hitbox List Copy  Ctrl+A" -> {
-                boolean hasType3 = false;
-                TreeItem<String> type3Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Hitbox")) {
-                        hasType3 = true;
-                        type3Index = child;
-                    }
-                }
-                if (hasType3) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type3Index.getChildren().size());
-
-                        type3Index.getChildren().add(newChild);
-
-                        bsaType3HashMap.put(newChild, new BsaType3Entry((BsaType3Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Hitbox"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType3HashMap.put(newChild, new BsaType3Entry((BsaType3Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
+            else if (addItemCopy.getText().contains("Type 10")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(10).getText());
+                    bsaType10HashMap.put(newItem, new BsaType10Entry((BsaType10Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add Deflection Copy  Ctrl+A" -> {
-                boolean hasType4 = false;
-                TreeItem<String> type4Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Deflection")) {
-                        hasType4 = true;
-                        type4Index = child;
-                    }
-                }
-                if (hasType4) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type4Index.getChildren().size());
-
-                    type4Index.getChildren().add(newChild);
-
-                    bsaType4HashMap.put(newChild, new BsaType4Entry((BsaType4Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Deflection"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType4HashMap.put(newChild, new BsaType4Entry((BsaType4Entry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
+            else if (addItemCopy.getText().contains("Signal")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(11).getText());
+                    bsaType12HashMap.put(newItem, new BsaType12Entry((BsaType12Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add Deflection List Copy  Ctrl+A" -> {
-                boolean hasType4 = false;
-                TreeItem<String> type4Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Deflection")) {
-                        hasType4 = true;
-                        type4Index = child;
-                    }
-                }
-                if (hasType4) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type4Index.getChildren().size());
-
-                        type4Index.getChildren().add(newChild);
-
-                        bsaType4HashMap.put(newChild, new BsaType4Entry((BsaType4Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Deflection"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType4HashMap.put(newChild, new BsaType4Entry((BsaType4Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
+            else if (addItemCopy.getText().contains("Protection")) {
+                for (int i = 0; i < copyListContainer[0].length; i++) {
+                    TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(12).getText());
+                    bsaType13HashMap.put(newItem, new BsaType13Entry((BsaType13Entry) copyListContainer[0][i]));
                 }
             }
-            case "Add Effect Copy  Ctrl+A" -> {
-                boolean hasType6 = false;
-                TreeItem<String> type6Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Effect")) {
-                        hasType6 = true;
-                        type6Index = child;
-                    }
-                }
-                if (hasType6) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type6Index.getChildren().size());
-
-                    type6Index.getChildren().add(newChild);
-
-                    bsaType6HashMap.put(newChild, new BsaType6Entry((BsaType6Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Effect"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType6HashMap.put(newChild, new BsaType6Entry((BsaType6Entry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
-                }
+        }
+        else {
+            if (addItemCopy.getText().contains("Collision Sound")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(1).getText());
+                bsaCollisionSoundHashMap.put(newItem, new BsaCollisionSoundEntry((BsaCollisionSoundEntry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add Effect List Copy  Ctrl+A" -> {
-                boolean hasType6 = false;
-                TreeItem<String> type6Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Effect")) {
-                        hasType6 = true;
-                        type6Index = child;
-                    }
-                }
-                if (hasType6) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type6Index.getChildren().size());
-
-                        type6Index.getChildren().add(newChild);
-
-                        bsaType6HashMap.put(newChild, new BsaType6Entry((BsaType6Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Effect"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType6HashMap.put(newChild, new BsaType6Entry((BsaType6Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
-                }
+            else if (addItemCopy.getText().contains("Collision")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(0).getText());
+                bsaCollisionHashMap.put(newItem, new BsaCollisionEntry((BsaCollisionEntry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add Sound Copy  Ctrl+A" -> {
-                boolean hasType7 = false;
-                TreeItem<String> type7Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Sound")) {
-                        hasType7 = true;
-                        type7Index = child;
-                    }
-                }
-                if (hasType7) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type7Index.getChildren().size());
-
-                    type7Index.getChildren().add(newChild);
-
-                    bsaType7HashMap.put(newChild, new BsaType7Entry((BsaType7Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Sound"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType7HashMap.put(newChild, new BsaType7Entry((BsaType7Entry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
-                }
+            else if (addItemCopy.getText().contains("Entry")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(2).getText());
+                bsaType0HashMap.put(newItem, new BsaType0Entry((BsaType0Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add Sound List Copy  Ctrl+A" -> {
-                boolean hasType7 = false;
-                TreeItem<String> type7Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Sound")) {
-                        hasType7 = true;
-                        type7Index = child;
-                    }
-                }
-                if (hasType7) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type7Index.getChildren().size());
-
-                        type7Index.getChildren().add(newChild);
-
-                        bsaType7HashMap.put(newChild, new BsaType7Entry((BsaType7Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Movement"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType7HashMap.put(newChild, new BsaType7Entry((BsaType7Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
-                }
+            else if (addItemCopy.getText().contains("Movement")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(3).getText());
+                bsaType1HashMap.put(newItem, new BsaType1Entry((BsaType1Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add Screen Effect Copy  Ctrl+A" -> {
-                boolean hasType8 = false;
-                TreeItem<String> type8Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Screen Effect")) {
-                        hasType8 = true;
-                        type8Index = child;
-                    }
-                }
-                if (hasType8) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type8Index.getChildren().size());
-
-                    type8Index.getChildren().add(newChild);
-
-                    bsaType8HashMap.put(newChild, new BsaType8Entry((BsaType8Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Screen Effect"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType8HashMap.put(newChild, new BsaType8Entry((BsaType8Entry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
-                }
+            else if (addItemCopy.getText().contains("Timeline")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(4).getText());
+                bsaType2HashMap.put(newItem, new BsaType2Entry((BsaType2Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add Screen Effect List Copy  Ctrl+A" -> {
-                boolean hasType8 = false;
-                TreeItem<String> type8Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("Screen Effect")) {
-                        hasType8 = true;
-                        type8Index = child;
-                    }
-                }
-                if (hasType8) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type8Index.getChildren().size());
-
-                        type8Index.getChildren().add(newChild);
-
-                        bsaType8HashMap.put(newChild, new BsaType8Entry((BsaType8Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("Screen Effect"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType8HashMap.put(newChild, new BsaType8Entry((BsaType8Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
-                }
+            else if (addItemCopy.getText().contains("Hitbox")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(5).getText());
+                bsaType3HashMap.put(newItem, new BsaType3Entry((BsaType3Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add BSA Type 10 Copy  Ctrl+A" -> {
-                boolean hasType10 = false;
-                TreeItem<String> type10Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Type 10")) {
-                        hasType10 = true;
-                        type10Index = child;
-                    }
-                }
-                if (hasType10) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type10Index.getChildren().size());
-
-                    type10Index.getChildren().add(newChild);
-
-                    bsaType10HashMap.put(newChild, new BsaType10Entry((BsaType10Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 10"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType10HashMap.put(newChild, new BsaType10Entry((BsaType10Entry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
-                }
+            else if (addItemCopy.getText().contains("Deflection")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(6).getText());
+                bsaType4HashMap.put(newItem, new BsaType4Entry((BsaType4Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add BSA Type 10 List Copy  Ctrl+A" -> {
-                boolean hasType10 = false;
-                TreeItem<String> type10Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Type 10")) {
-                        hasType10 = true;
-                        type10Index = child;
-                    }
-                }
-                if (hasType10) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type10Index.getChildren().size());
-
-                        type10Index.getChildren().add(newChild);
-
-                        bsaType10HashMap.put(newChild, new BsaType10Entry((BsaType10Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 10"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType10HashMap.put(newChild, new BsaType10Entry((BsaType10Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
-                }
+            else if (addItemCopy.getText().contains("Effect Placement")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(13).getText());
+                bsaType14HashMap.put(newItem, new BsaType14Entry((BsaType14Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add BSA Type 12 Copy  Ctrl+A" -> {
-                boolean hasType12 = false;
-                TreeItem<String> type12Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Type 12")) {
-                        hasType12 = true;
-                        type12Index = child;
-                    }
-                }
-                if (hasType12) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type12Index.getChildren().size());
-
-                    type12Index.getChildren().add(newChild);
-
-                    bsaType12HashMap.put(newChild, new BsaType12Entry((BsaType12Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 12"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType12HashMap.put(newChild, new BsaType12Entry((BsaType12Entry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
-                }
+            else if (addItemCopy.getText().contains("Screen Effect")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(9).getText());
+                bsaType8HashMap.put(newItem, new BsaType8Entry((BsaType8Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add BSA Type 12 List Copy  Ctrl+A" -> {
-                boolean hasType12 = false;
-                TreeItem<String> type12Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Type 12")) {
-                        hasType12 = true;
-                        type12Index = child;
-                    }
-                }
-                if (hasType12) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type12Index.getChildren().size());
-
-                        type12Index.getChildren().add(newChild);
-
-                        bsaType12HashMap.put(newChild, new BsaType12Entry((BsaType12Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 12"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType12HashMap.put(newChild, new BsaType12Entry((BsaType12Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
-                }
+            else if (addItemCopy.getText().contains("Effect")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(7).getText());
+                bsaType6HashMap.put(newItem, new BsaType6Entry((BsaType6Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add BSA Type 13 Copy  Ctrl+A" -> {
-                boolean hasType13 = false;
-                TreeItem<String> type13Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Type 13")) {
-                        hasType13 = true;
-                        type13Index = child;
-                    }
-                }
-                if (hasType13) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type13Index.getChildren().size());
-
-                    type13Index.getChildren().add(newChild);
-
-                    bsaType13HashMap.put(newChild, new BsaType13Entry((BsaType13Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 13"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType13HashMap.put(newChild, new BsaType13Entry((BsaType13Entry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
-                }
+            else if (addItemCopy.getText().contains("Sound")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(8).getText());
+                bsaType7HashMap.put(newItem, new BsaType7Entry((BsaType7Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add BSA Type 13 List Copy  Ctrl+A" -> {
-                boolean hasType13 = false;
-                TreeItem<String> type13Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Type 13")) {
-                        hasType13 = true;
-                        type13Index = child;
-                    }
-                }
-                if (hasType13) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type13Index.getChildren().size());
-
-                        type13Index.getChildren().add(newChild);
-
-                        bsaType13HashMap.put(newChild, new BsaType13Entry((BsaType13Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 13"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType13HashMap.put(newChild, new BsaType13Entry((BsaType13Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
-                }
+            else if (addItemCopy.getText().contains("Type 10")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(10).getText());
+                bsaType10HashMap.put(newItem, new BsaType10Entry((BsaType10Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add BSA Type 14 Copy  Ctrl+A" -> {
-                boolean hasType14 = false;
-                TreeItem<String> type14Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Type 14")) {
-                        hasType14 = true;
-                        type14Index = child;
-                    }
-                }
-                if (hasType14) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + type14Index.getChildren().size());
-
-                    type14Index.getChildren().add(newChild);
-
-                    bsaType14HashMap.put(newChild, new BsaType14Entry((BsaType14Entry) copyContainer));
-
-                    treeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 14"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                    bsaType14HashMap.put(newChild, new BsaType14Entry((BsaType14Entry) copyContainer));
-
-                    sortTreeItems(grandParentEntry);
-
-                    treeView.getSelectionModel().select(newChild);
-                }
+            else if (addItemCopy.getText().contains("Signal")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(11).getText());
+                bsaType12HashMap.put(newItem, new BsaType12Entry((BsaType12Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
-            case "Add BSA Type 14 List Copy  Ctrl+A" -> {
-                boolean hasType14 = false;
-                TreeItem<String> type14Index = new TreeItem<>();
-
-                for (TreeItem<String> child : grandParentEntry.getChildren()) {
-                    if (child.getValue().equals("BSA Type 14")) {
-                        hasType14 = true;
-                        type14Index = child;
-                    }
-                }
-                if (hasType14) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + type14Index.getChildren().size());
-
-                        type14Index.getChildren().add(newChild);
-
-                        bsaType14HashMap.put(newChild, new BsaType14Entry((BsaType14Entry) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    grandParentEntry.getChildren().add(0, new TreeItem<>("BSA Type 14"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        grandParentEntry.getChildren().get(0).getChildren().add(newChild);
-
-                        bsaType14HashMap.put(newChild, new BsaType14Entry((BsaType14Entry) copyListContainer[0][i]));
-                    }
-
-                    sortTreeItems(grandParentEntry);
-                }
+            else if (addItemCopy.getText().contains("Protection")) {
+                TreeItem<String> newItem = addSubEntryItem(addSubEntry.getItems().get(12).getText());
+                bsaType13HashMap.put(newItem, new BsaType13Entry((BsaType13Entry) copyContainer));
+                treeView.getSelectionModel().select(newItem);
             }
         }
     }
@@ -7295,9 +3353,9 @@ public class Bsa {
                             bsaCollisionHashMap.remove(child);
                         }
                     }
-                    case "Expiration (After Effects)" -> {
+                    case "Collision Sound (After Effects)" -> {
                         for (TreeItem<String> child : getParent.getChildren()) {
-                            bsaExpirationHashMap.remove(child);
+                            bsaCollisionSoundHashMap.remove(child);
                         }
                     }
                     case "BSA Entry Passing" -> {
@@ -7310,7 +3368,7 @@ public class Bsa {
                             bsaType1HashMap.remove(child);
                         }
                     }
-                    case "BSA Type 2" -> {
+                    case "Projectile Timeline Remap" -> {
                         for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType2HashMap.remove(child);
                         }
@@ -7345,17 +3403,17 @@ public class Bsa {
                             bsaType10HashMap.remove(child);
                         }
                     }
-                    case "BSA Type 12" -> {
+                    case "Send Projectile Signal" -> {
                         for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType12HashMap.remove(child);
                         }
                     }
-                    case "BSA Type 13" -> {
+                    case "Projectile Protection" -> {
                         for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType13HashMap.remove(child);
                         }
                     }
-                    case "BSA Type 14" -> {
+                    case "Effect Placement" -> {
                         for (TreeItem<String> child : getParent.getChildren()) {
                             bsaType14HashMap.remove(child);
                         }
@@ -7393,8 +3451,8 @@ public class Bsa {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
-                case "Expiration (After Effects)" -> {
-                    bsaExpirationHashMap.remove(currentEntry);
+                case "Collision Sound (After Effects)" -> {
+                    bsaCollisionSoundHashMap.remove(currentEntry);
 
                     getParent.getChildren().remove(currentEntry);
                     
@@ -7432,7 +3490,7 @@ public class Bsa {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
-                case "BSA Type 2" -> {
+                case "Projectile Timeline Remap" -> {
                     bsaType2HashMap.remove(currentEntry);
 
                     getParent.getChildren().remove(currentEntry);
@@ -7523,7 +3581,7 @@ public class Bsa {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
-                case "BSA Type 12" -> {
+                case "Send Projectile Signal" -> {
                     bsaType12HashMap.remove(currentEntry);
 
                     getParent.getChildren().remove(currentEntry);
@@ -7536,7 +3594,7 @@ public class Bsa {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     };
                 }
-                case "BSA Type 13" -> {
+                case "Projectile Protection" -> {
                     bsaType13HashMap.remove(currentEntry);
 
                     getParent.getChildren().remove(currentEntry);
@@ -7549,7 +3607,7 @@ public class Bsa {
                         treeView.getSelectionModel().select(getParent.getChildren().getFirst());
                     }
                 }
-                case "BSA Type 14" -> {
+                case "Effect Placement" -> {
                     bsaType14HashMap.remove(currentEntry);
 
                     getParent.getChildren().remove(currentEntry);
@@ -7575,9 +3633,9 @@ public class Bsa {
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
-                case "Expiration (After Effects)" -> {
+                case "Collision Sound (After Effects)" -> {
                     for (TreeItem<String> child : getParent.getChildren()) {
-                        bsaExpirationHashMap.remove(child);
+                        bsaCollisionSoundHashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
@@ -7596,7 +3654,7 @@ public class Bsa {
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
-                case "BSA Type 2" -> {
+                case "Projectile Timeline Remap" -> {
                     for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType2HashMap.remove(child);
                     }
@@ -7645,21 +3703,21 @@ public class Bsa {
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
-                case "BSA Type 12" -> {
+                case "Send Projectile Signal" -> {
                     for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType12HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
-                case "BSA Type 13" -> {
+                case "Projectile Protection" -> {
                     for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType13HashMap.remove(child);
                     }
                     getParent.getChildren().removeAll(getParent.getChildren());
                     getParent.getParent().getChildren().remove(getParent);
                 }
-                case "BSA Type 14" -> {
+                case "Effect Placement" -> {
                     for (TreeItem<String> child : getParent.getChildren()) {
                         bsaType14HashMap.remove(child);
                     }
@@ -7670,35 +3728,22 @@ public class Bsa {
         }
     }
 
-    private void AddComment() {
-        if (currentEntry == null) return;
-
-        TextInputDialog textInputDialog=new TextInputDialog();
-        textInputDialog.setTitle("Comment");
-        textInputDialog.getDialogPane().setContentText("New Comment: ");
-
-        textInputDialog.showAndWait().ifPresent(updatedText -> {
-            currentEntry.setValue(currentEntry.getValue()+" - "+ updatedText);
-        });
-    }
-
     private void sortTreeItems(TreeItem<String> treeItem) {
-
         List<String> bsaTypesList = Arrays.asList(
             "Collision (After Effects)",
-            "Expiration (After Effects)",
+            "Collision Sound (After Effects)",
             "BSA Entry Passing",
             "Movement",
-            "BSA Type 2",
+            "Projectile Timeline Remap",
             "Hitbox",
             "Deflection",
             "Effect",
             "Sound",
             "Screen Effect",
             "BSA Type 10",
-            "BSA Type 12",
-            "BSA Type 13",
-            "BSA Type 14"
+            "Send Projectile Signal",
+            "Projectile Protection",
+            "Effect Placement"
         );
 
         treeItem.getChildren().sort((item1, item2) -> {
@@ -7707,6 +3752,58 @@ public class Bsa {
             
             return Integer.compare(index1, index2);
         });
+    }
+
+    private void copyEntryItem(HashMap<TreeItem<String>, ?> hashMap, String text, int i) {
+        for (int j = 0; j < currentEntry.getChildren().get(i).getChildren().size(); j++ ) {
+            copyListContainer[i][j] = hashMap.get(currentEntry.getChildren().get(i).getChildren().get(j));
+        }
+        copyTypesContainer[i] = text;
+    }
+
+    private void copyListItem(HashMap<TreeItem<String>, ?> hashMap) {
+        for (TreeItem<String> child : currentEntry.getChildren()) {
+            copyListContainer[0][currentEntry.getChildren().indexOf(child)] = hashMap.get(child);
+        }
+    }
+
+    private void copyChildItem(HashMap<TreeItem<String>, ?> hashMap) {
+        copyContainer = hashMap.get(currentEntry);
+    }
+
+    private TreeItem<String> addSubEntryItem(String stringTarget) {
+        boolean hasItem = false;
+        TreeItem<String> itemIndex = new TreeItem<>();
+        TreeItem<String> newChild;
+        
+        for (TreeItem<String> child : grandParentEntry.getChildren()) {
+            if (child.getValue().equals(stringTarget)) {
+                hasItem = true;
+                itemIndex = child;
+            }
+        }
+
+        if (hasItem) {
+            newChild = new TreeItem<>("Entry " + itemIndex.getChildren().size());
+
+            itemIndex.getChildren().add(newChild);
+        } else {
+            grandParentEntry.getChildren().add(0, new TreeItem<>(stringTarget));
+
+            newChild = new TreeItem<>("Entry " + 0);
+
+            grandParentEntry.getChildren().get(0).getChildren().add(newChild);
+
+            sortTreeItems(grandParentEntry);
+        }
+
+        return newChild;
+    }
+
+    private void setContextMenuText(String text) {
+        copiedItem.setText("Copied " + text);
+        pasteItem.setText("Paste " + text + " Ctrl+V");
+        addItemCopy.setText("Add " + text + " Copy Ctrl+A");
     }
 
     public void bsaReader(Path path) {
@@ -7768,7 +3865,7 @@ public class Bsa {
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
-                    bsaMainEntry.i00 = intBuffer.getInt();
+                    bsaMainHashMap.get(treeView.getRoot().getChildren().get(mainIndex)).i00 = intBuffer.getInt();
 
                     channel.position(entryOffset + 4);
                     shortBuffer.clear();
@@ -7859,38 +3956,38 @@ public class Bsa {
                     expirationOffset += entryOffset;
 
                     if (expirationEntriesCount > 0) {
-                        treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Expiration (After Effects)"));
+                        treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Collision Sound (After Effects)"));
 
                         for (int j = 0; j < expirationEntriesCount; j++) {
-                            BsaExpirationEntry bsaExpirationEntry = new BsaExpirationEntry();
+                            BsaCollisionSoundEntry bsaCollisionSoundEntry = new BsaCollisionSoundEntry();
 
                             treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().add(new TreeItem<>("Entry " + j));
 
-                            bsaExpirationHashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j), bsaExpirationEntry);
+                            bsaCollisionSoundHashMap.put(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j), bsaCollisionSoundEntry);
                             
                             channel.position(expirationOffset + j * 8);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            bsaExpirationEntry.i00 = toUShort(shortBuffer.getShort());
+                            bsaCollisionSoundEntry.acbType = toUShort(shortBuffer.getShort());
 
                             channel.position(expirationOffset + j * 8 + 2);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            bsaExpirationEntry.i02 = toUShort(shortBuffer.getShort());
+                            bsaCollisionSoundEntry.i02 = toUShort(shortBuffer.getShort());
 
                             channel.position(expirationOffset + j * 8 + 4);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            bsaExpirationEntry.i04 = toUShort(shortBuffer.getShort());
+                            bsaCollisionSoundEntry.cueId = toUShort(shortBuffer.getShort());
 
                             channel.position(expirationOffset + j * 8 + 6);
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            bsaExpirationEntry.i06 = toUShort(shortBuffer.getShort());
+                            bsaCollisionSoundEntry.i06 = toUShort(shortBuffer.getShort());
                         }
 
                         index++;
@@ -8035,13 +4132,13 @@ public class Bsa {
                                     shortBuffer.clear();
                                     channel.read(shortBuffer);
                                     shortBuffer.flip();
-                                    bsaType0Entry.firstCondition = toUShort(shortBuffer.getShort());
+                                    bsaType0Entry.i00 = shortBuffer.getShort();
                                     
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 2);
                                     shortBuffer.clear();
                                     channel.read(shortBuffer);
                                     shortBuffer.flip();
-                                    bsaType0Entry.secondCondition = toUShort(shortBuffer.getShort());
+                                    bsaType0Entry.mainCondition = toUShort(shortBuffer.getShort());
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 4);
                                     shortBuffer.clear();
@@ -8168,7 +4265,7 @@ public class Bsa {
                                 index++;
                             }
                             case 2 -> {
-                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("BSA Type 2"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Projectile Timeline Remap"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType2Entry bsaType2Entry = new BsaType2Entry();
@@ -8199,13 +4296,13 @@ public class Bsa {
                                     shortBuffer.clear();
                                     channel.read(shortBuffer);
                                     shortBuffer.flip();
-                                    bsaType2Entry.i02 = shortBuffer.getShort();
+                                    bsaType2Entry.outputStartFrame = shortBuffer.getShort();
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
                                     shortBuffer.clear();
                                     channel.read(shortBuffer);
                                     shortBuffer.flip();
-                                    bsaType2Entry.i04 = shortBuffer.getShort();
+                                    bsaType2Entry.outputEndFrame = shortBuffer.getShort();
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 6);
                                     shortBuffer.clear();
@@ -8239,16 +4336,22 @@ public class Bsa {
                                     bsaType3Entry.duration = toUShort((short)(shortBuffer.getShort() - bsaType3Entry.startTime));
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 64);
-                                    intBuffer.clear();
-                                    channel.read(intBuffer);
-                                    intBuffer.flip();
-                                    bsaType3Entry.matrixFlag = (intBuffer.getInt() == 1);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.boundsType = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 2);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType3Entry.i02 = toUShort(shortBuffer.getShort());
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 4);
                                     shortBuffer.clear();
                                     channel.read(shortBuffer);
                                     shortBuffer.flip();
-                                    bsaType3Entry.i04 = toUShort(shortBuffer.getShort());
+                                    bsaType3Entry.growMaxBounds = toUShort(shortBuffer.getShort());
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 6);
                                     shortBuffer.clear();
@@ -8654,7 +4757,7 @@ public class Bsa {
                                     shortBuffer.clear();
                                     channel.read(shortBuffer);
                                     shortBuffer.flip();
-                                    bsaType8Entry.i02 = toUShort(shortBuffer.getShort());
+                                    bsaType8Entry.screenEffectFlags = toUShort(shortBuffer.getShort());
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 4);
                                     shortBuffer.clear();
@@ -8733,7 +4836,7 @@ public class Bsa {
                                 index++;
                             }
                             case 12 -> {
-                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("BSA Type 12"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Send Projectile Signal"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType12Entry bsaType12Entry = new BsaType12Entry();
@@ -8758,13 +4861,13 @@ public class Bsa {
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType12Entry.f00 = intBuffer.getInt();
+                                    bsaType12Entry.signalValue = intBuffer.getInt();
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 4);
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType12Entry.eepkType = intBuffer.getInt();
+                                    bsaType12Entry.skillType = intBuffer.getInt();
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 8);
                                     intBuffer.clear();
@@ -8776,19 +4879,19 @@ public class Bsa {
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType12Entry.i12 = intBuffer.getInt();
+                                    bsaType12Entry.deliveryMode = intBuffer.getInt();
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 20 +16);
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType12Entry.f16 = intBuffer.getInt();
+                                    bsaType12Entry.pauseRecipientTimeline = intBuffer.getInt();
                                 }
 
                                 index++;
                             }
                             case 13 -> {
-                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("BSA Type 13"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Projectile Protection"));
 
                                 for (int k = 0; k < typeCount; k++) {
                                     BsaType13Entry bsaType13Entry = new BsaType13Entry();
@@ -8813,7 +4916,7 @@ public class Bsa {
                                     shortBuffer.clear();
                                     channel.read(shortBuffer);
                                     shortBuffer.flip();
-                                    bsaType13Entry.i00 = toUShort(shortBuffer.getShort());
+                                    bsaType13Entry.protection = toUShort(shortBuffer.getShort());
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 2);
                                     shortBuffer.clear();
@@ -8825,31 +4928,31 @@ public class Bsa {
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType13Entry.f04 = intBuffer.getFloat();
+                                    bsaType13Entry.maxHitboxPower = intBuffer.getFloat();
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 8);
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType13Entry.f08 = intBuffer.getFloat();
+                                    bsaType13Entry.protectSelectors_0_3 = (intBuffer.getInt() == 1);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 12);
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType13Entry.i12 = intBuffer.getInt();
+                                    bsaType13Entry.protectAdditionalSelectors = intBuffer.getInt();
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 16);
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType13Entry.f16 = intBuffer.getFloat();
+                                    bsaType13Entry.entryPassingSignal = intBuffer.getFloat();
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 20);
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType13Entry.i20 = intBuffer.getInt();
+                                    bsaType13Entry.markProtectedHit = (intBuffer.getInt() == 1);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 24);
                                     intBuffer.clear();
@@ -8867,7 +4970,7 @@ public class Bsa {
                                 index++;
                             }
                             case 14 -> {
-                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("BSA Type 14"));
+                                treeView.getRoot().getChildren().get(mainIndex).getChildren().add(new TreeItem<>("Effect Placement"));
 
                                 for (int k = 0;k < typeCount; k++) {
                                     BsaType14Entry bsaType14Entry = new BsaType14Entry();
@@ -8892,7 +4995,7 @@ public class Bsa {
                                     shortBuffer.clear();
                                     channel.read(shortBuffer);
                                     shortBuffer.flip();
-                                    bsaType14Entry.i00 = toUShort(shortBuffer.getShort());
+                                    bsaType14Entry.placementMode = toUShort(shortBuffer.getShort());
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 2);
                                     shortBuffer.clear();
@@ -8904,7 +5007,7 @@ public class Bsa {
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType14Entry.f04 = intBuffer.getFloat();
+                                    bsaType14Entry.placementFlags = toUint32(intBuffer.getInt());
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 8);
                                     intBuffer.clear();
@@ -8970,19 +5073,25 @@ public class Bsa {
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType14Entry.i48 = toUint32(intBuffer.getInt());
+                                    bsaType14Entry.eepkType = toUint32(intBuffer.getInt());
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 52);
-                                    intBuffer.clear();
-                                    channel.read(intBuffer);
-                                    intBuffer.flip();
-                                    bsaType14Entry.f52 = intBuffer.getFloat();
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType14Entry.transform_BoneSelector = toUShort(shortBuffer.getShort());
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 54);
+                                    shortBuffer.clear();
+                                    channel.read(shortBuffer);
+                                    shortBuffer.flip();
+                                    bsaType14Entry.commonEepk = toUShort(shortBuffer.getShort());
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 56);
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType14Entry.i56 = toUint32(intBuffer.getInt());
+                                    bsaType14Entry.effectId = toUint32(intBuffer.getInt());
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 60);
                                     intBuffer.clear();
@@ -9024,7 +5133,7 @@ public class Bsa {
                                     intBuffer.clear();
                                     channel.read(intBuffer);
                                     intBuffer.flip();
-                                    bsaType14Entry.i84 = toUint32(intBuffer.getInt());
+                                    bsaType14Entry.effectPlacementFlags = toUint32(intBuffer.getInt());
                                 }
 
                                 index++;
@@ -9184,7 +5293,7 @@ public class Bsa {
                         index++;
                     } 
                     
-                    if (treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getValue().equals("Expiration (After Effects)")) {
+                    if (treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getValue().equals("Collision Sound (After Effects)")) {
                         expirationEntriesCount = treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().size();
                     }
                     else {
@@ -9207,29 +5316,29 @@ public class Bsa {
 
                     if (expirationEntriesCount > 0) {
                         for (int j = 0;j < expirationEntriesCount; j++) {
-                            BsaExpirationEntry bsaExpirationEntry = bsaExpirationHashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j));
+                            BsaCollisionSoundEntry bsaCollisionSoundEntry = bsaCollisionSoundHashMap.get(treeView.getRoot().getChildren().get(mainIndex).getChildren().get(index).getChildren().get(j));
                         
                             channel.position(expirationOffset + j * 8);
                             shortBuffer.clear();
-                            shortBuffer.putShort((short) bsaExpirationEntry.i00);
+                            shortBuffer.putShort((short) bsaCollisionSoundEntry.acbType);
                             shortBuffer.flip();
                             channel.write(shortBuffer);
 
                             channel.position(expirationOffset + j * 8 + 2);
                             shortBuffer.clear();
-                            shortBuffer.putShort((short) bsaExpirationEntry.i02);
+                            shortBuffer.putShort((short) bsaCollisionSoundEntry.i02);
                             shortBuffer.flip();
                             channel.write(shortBuffer);
 
                             channel.position(expirationOffset + j * 8 + 4);
                             shortBuffer.clear();
-                            shortBuffer.putShort((short) bsaExpirationEntry.i04);
+                            shortBuffer.putShort((short) bsaCollisionSoundEntry.cueId);
                             shortBuffer.flip();
                             channel.write(shortBuffer);
 
                             channel.position(expirationOffset + j * 8 + 6);
                             shortBuffer.clear();
-                            shortBuffer.putShort((short) bsaExpirationEntry.i06);
+                            shortBuffer.putShort((short) bsaCollisionSoundEntry.i06);
                             shortBuffer.flip();
                             channel.write(shortBuffer);
 
@@ -9295,7 +5404,7 @@ public class Bsa {
                     channel.write(shortBuffer);
                     
                     for (int j = 0; j < treeView.getRoot().getChildren().get(mainIndex).getChildren().size(); j++) {
-                        if (treeView.getRoot().getChildren().get(mainIndex).getChildren().get(j).getValue() != "Collision (After Effects)" && treeView.getRoot().getChildren().get(mainIndex).getChildren().get(j).getValue() != "Expiration (After Effects)") {
+                        if (!treeView.getRoot().getChildren().get(mainIndex).getChildren().get(j).getValue().equals("Collision (After Effects)") && !treeView.getRoot().getChildren().get(mainIndex).getChildren().get(j).getValue().equals("Collision Sound (After Effects)")) {
                             typesCount++;
                         }
                     }
@@ -9345,7 +5454,7 @@ public class Bsa {
                                 type = 1;
                                 typeSize = 52;
                             }        
-                            case "BSA Type 2" -> {
+                            case "Projectile Timeline Remap" -> {
                                 type = 2;
                                 typeSize = 12;
                             }      
@@ -9373,15 +5482,15 @@ public class Bsa {
                                 type = 10;
                                 typeSize = 12;
                             }      
-                            case "BSA Type 12" -> {
+                            case "Send Projectile Signal" -> {
                                 type = 12;
                                 typeSize = 24;
                             }       
-                            case "BSA Type 13" -> {
+                            case "Projectile Protection" -> {
                                 type = 13;
                                 typeSize = 36;
                             }       
-                            case "BSA Type 14" -> {
+                            case "Effect Placement" -> {
                                 type = 14;
                                 typeSize = 92;
                             }      
@@ -9428,13 +5537,13 @@ public class Bsa {
 
                                     channel.position(typesOffset  +dataOffset + j * 16 + k * 16);
                                     shortBuffer.clear();
-                                    shortBuffer.putShort((short) bsaType0Entry.firstCondition);
+                                    shortBuffer.putShort((short) bsaType0Entry.i00);
                                     shortBuffer.flip();
                                     channel.write(shortBuffer);
                                     
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 16 + 2);
                                     shortBuffer.clear();
-                                    shortBuffer.putShort((short) bsaType0Entry.secondCondition);
+                                    shortBuffer.putShort((short) bsaType0Entry.mainCondition);
                                     shortBuffer.flip();
                                     channel.write(shortBuffer);
 
@@ -9576,13 +5685,13 @@ public class Bsa {
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 8+ 2);
                                     shortBuffer.clear();
-                                    shortBuffer.putShort(bsaType2Entry.i02);
+                                    shortBuffer.putShort(bsaType2Entry.outputStartFrame);
                                     shortBuffer.flip();
                                     channel.write(shortBuffer);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 8 + 4);
                                     shortBuffer.clear();
-                                    shortBuffer.putShort(bsaType2Entry.i04);
+                                    shortBuffer.putShort(bsaType2Entry.outputEndFrame);
                                     shortBuffer.flip();
                                     channel.write(shortBuffer);
 
@@ -9610,14 +5719,20 @@ public class Bsa {
                                     channel.write(shortBuffer);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 64);
-                                    intBuffer.clear();
-                                    intBuffer.putInt(bsaType3Entry.matrixFlag ? 1 : 0);
-                                    intBuffer.flip();
-                                    channel.write(intBuffer);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.boundsType);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 2);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType3Entry.i02);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 64 + 4);
                                     shortBuffer.clear();
-                                    shortBuffer.putShort((short) bsaType3Entry.i04);
+                                    shortBuffer.putShort((short) bsaType3Entry.growMaxBounds);
                                     shortBuffer.flip();
                                     channel.write(shortBuffer);
 
@@ -9985,7 +6100,7 @@ public class Bsa {
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 24 + 2);
                                     shortBuffer.clear();
-                                    shortBuffer.putShort((short) bsaType8Entry.i02);
+                                    shortBuffer.putShort((short) bsaType8Entry.screenEffectFlags);
                                     shortBuffer.flip();
                                     channel.write(shortBuffer);
 
@@ -10073,13 +6188,13 @@ public class Bsa {
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 20);
                                     intBuffer.clear();
-                                    intBuffer.putFloat(bsaType12Entry.f00);
+                                    intBuffer.putFloat(bsaType12Entry.signalValue);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 4);
                                     intBuffer.clear();
-                                    intBuffer.putInt(bsaType12Entry.eepkType);
+                                    intBuffer.putInt(bsaType12Entry.skillType);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
@@ -10091,13 +6206,13 @@ public class Bsa {
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 20 + 12);
                                     intBuffer.clear();
-                                    intBuffer.putInt(bsaType12Entry.i12);
+                                    intBuffer.putInt(bsaType12Entry.deliveryMode);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 20 +16);
                                     intBuffer.clear();
-                                    intBuffer.putFloat(bsaType12Entry.f16);
+                                    intBuffer.putFloat(bsaType12Entry.pauseRecipientTimeline);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
@@ -10120,7 +6235,7 @@ public class Bsa {
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32);
                                     shortBuffer.clear();
-                                    shortBuffer.putShort((short) bsaType13Entry.i00);
+                                    shortBuffer.putShort((short) bsaType13Entry.protection);
                                     shortBuffer.flip();
                                     channel.write(shortBuffer);
 
@@ -10132,31 +6247,31 @@ public class Bsa {
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 4);
                                     intBuffer.clear();
-                                    intBuffer.putFloat(bsaType13Entry.f04);
+                                    intBuffer.putFloat(bsaType13Entry.maxHitboxPower);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 8);
                                     intBuffer.clear();
-                                    intBuffer.putFloat(bsaType13Entry.f08);
+                                    intBuffer.putInt(bsaType13Entry.protectSelectors_0_3 ? 1 : 0);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 12);
                                     intBuffer.clear();
-                                    intBuffer.putInt(bsaType13Entry.i12);
+                                    intBuffer.putInt(bsaType13Entry.protectAdditionalSelectors);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 16);
                                     intBuffer.clear();
-                                    intBuffer.putFloat(bsaType13Entry.f16);
+                                    intBuffer.putFloat(bsaType13Entry.entryPassingSignal);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 32 + 20);
                                     intBuffer.clear();
-                                    intBuffer.putInt(bsaType13Entry.i20);
+                                    intBuffer.putInt(bsaType13Entry.markProtectedHit ? 1 : 0);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
@@ -10191,7 +6306,7 @@ public class Bsa {
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 88);
                                     shortBuffer.clear();
-                                    shortBuffer.putShort((short) bsaType14Entry.i00);
+                                    shortBuffer.putShort((short) bsaType14Entry.placementMode);
                                     shortBuffer.flip();
                                     channel.write(shortBuffer);
 
@@ -10203,7 +6318,7 @@ public class Bsa {
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 4);
                                     intBuffer.clear();
-                                    intBuffer.putFloat(bsaType14Entry.f04);
+                                    intBuffer.putFloat((int) bsaType14Entry.placementFlags);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
@@ -10269,19 +6384,25 @@ public class Bsa {
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 48);
                                     intBuffer.clear();
-                                    intBuffer.putInt((int) bsaType14Entry.i48);
+                                    intBuffer.putInt((int) bsaType14Entry.eepkType);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 52);
-                                    intBuffer.clear();
-                                    intBuffer.putFloat(bsaType14Entry.f52);
-                                    intBuffer.flip();
-                                    channel.write(intBuffer);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType14Entry.transform_BoneSelector);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
+
+                                    channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 54);
+                                    shortBuffer.clear();
+                                    shortBuffer.putShort((short) bsaType14Entry.commonEepk);
+                                    shortBuffer.flip();
+                                    channel.write(shortBuffer);
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 56);
                                     intBuffer.clear();
-                                    intBuffer.putInt((int) bsaType14Entry.i56);
+                                    intBuffer.putInt((int) bsaType14Entry.effectId);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
@@ -10323,7 +6444,7 @@ public class Bsa {
 
                                     channel.position(typesOffset + dataOffset + j * 16 + k * 88 + 84);
                                     intBuffer.clear();
-                                    intBuffer.putInt((int) bsaType14Entry.i84);
+                                    intBuffer.putInt((int) bsaType14Entry.effectPlacementFlags);
                                     intBuffer.flip();
                                     channel.write(intBuffer);
 
@@ -10359,6 +6480,424 @@ public class Bsa {
             e.printStackTrace();
         }
     }
+
+    public static enum BsaMainValues {
+        I00,
+        I16_A,
+        I16_B,
+        I17,
+        I18,
+        Lifetime,
+        I24,
+        Expires,
+        ImpactProjectile,
+        ImpactEnemy,
+        ImpactGround,
+        I40,
+        I44,
+        I48
+    }
+
+    public static enum BsaCollisionValues {
+        EEPK_Type,
+        Skill_ID,
+        Effect_ID,
+        I06,
+        I08,
+        I12,
+        I16,
+        I20;
+
+        public static enum EEPK_Types {
+            Common(0),
+            StageBG(1),
+            CharacterEffect(2),
+            AwokenSkill(3),
+            SuperSkill(5),
+            UltimateSkill(6),
+            EvasiveSkill(7),
+            KiBlastSkill(9),
+            Stage(11);
+
+            final int index;
+
+            EEPK_Types(int index) {
+                this.index = index;
+            }
+        }
+    }
+
+    public static enum BsaCollisionSoundValues {
+        ACB_Type,
+        I02,
+        CUE_ID,
+        I06;
+
+        public static enum ACB_Types {
+            Common_SE(0),
+            Character_SE(1),
+            Character_VOX(2),
+            Skill_SE(3),
+            Skill_VOX(4);
+
+            final int index;
+
+            ACB_Types(int index) {
+                this.index = index;
+            }
+        }
+    }
+
+    public static enum BsaType0Values {
+        StartTime,
+        Duration,
+        I00,
+        MainConditon,
+        BsaEntryID,
+        I06,
+        BAC_Conditon,
+        F12;
+    }
+
+    public static enum BsaType1Values {
+        StartTime,
+        Duration,
+        MotionFlags,
+        SpeedX,
+        SpeedY,
+        SpeedZ,
+        F16,
+        AccelerationX,
+        AccelerationY,
+        AccelerationZ,
+        FalloffStrength,
+        SpreadDirectionX,
+        SpreadDirectionY,
+        SpreadDirectionZ
+    }
+
+    public static enum BsaType2Values {
+        StartTime,
+        Duration,
+        I00,
+        OutputStartFrame,
+        OutputEndFrame,
+        I06
+    }
+
+    public static enum BsaType3Values {
+        StartTime,
+        Duration,
+        BoundsType,
+        I02,
+        GrowMaxBounds,
+        I06_A,
+        I06_B,
+        I06_C,
+        I06_D,
+        PositionX,
+        PositionY,
+        PositionZ,
+        HitboxScale,
+        MaximumX,
+        MaximumY,
+        MaximumZ,
+        MinimumX,
+        MinimumY,
+        MinimumZ,
+        HitAmount,
+        HitboxLifetime,
+        I52,
+        I54,
+        I56,
+        FirstHit,
+        MultipleHits,
+        LastHit;
+
+        public static enum BoundsTypes {
+            Uniform(0),
+            MinMax(1),
+            Unknown2(2),
+            Unknown3(3),
+            Unknown4(4);
+
+            final int index;
+
+            BoundsTypes(int index) {
+                this.index = index;
+            }
+        }
+
+        public static enum GrowMaxBoundsFlags {
+            On(0),
+            Off(1);
+
+            final int index;
+
+            GrowMaxBoundsFlags(int index) {
+                this.index = index;
+            }
+        }
+    }
+
+    public static enum BsaType4Values {
+        StartTime,
+        Duration,
+        I00,
+        I04,
+        I08,
+        F12,
+        F16,
+        F20,
+        I24,
+        I28,
+        I32,
+        I36,
+        I40,
+        I44,
+        I48,
+        I50,
+        I52,
+        I54;
+    }
+
+    public static enum BsaType6Values {
+        StartTime,
+        Duration,
+        EEPK_Type,
+        Skill_ID,
+        Effect_ID,
+        I06,
+        EffectSwitch,
+        I10,
+        PositionX,
+        PositionY,
+        PositionZ;
+
+        public static enum EEPK_Types {
+            Common(0),
+            StageBG(1),
+            CharacterEffect(2),
+            AwokenSkill(3),
+            SuperSkill(5),
+            UltimateSkill(6),
+            EvasiveSkill(7),
+            KiBlastSkill(9),
+            Stage(11);
+
+            final int index;
+
+            EEPK_Types(int index) {
+                this.index = index;
+            }
+        }
+
+        public static enum EffectSwitchFlags {
+            On(0),
+            Off(1);
+
+            final int index;
+
+            EffectSwitchFlags(int index) {
+                this.index = index;
+            }
+        }
+    }
+
+    public static enum BsaType7Values {
+        StartTime,
+        Duration,
+        ACB_Type,
+        I02,
+        Cue_ID,
+        I06;
+        
+        public static enum ACB_Types {
+            Common_SE(0),
+            Character_SE(1),
+            Character_VOX(2),
+            Skill_SE(3),
+            Skill_VOX(4);
+
+            final int index;
+
+            ACB_Types(int index) {
+                this.index = index;
+            }
+        }
+    }
+
+    public static enum BsaType8Values {
+        StartTime,
+        Duration,
+        BPE_Effect_ID,
+        ScreenEffectFlags,
+        I04,
+        I08,
+        I12,
+        I16,
+        I20;
+    }
+
+    public static enum BsaType10Values {
+        StartTime,
+        Duration,
+        Skill_ID,
+        I04,
+        I06;
+    }
+
+    public static enum BsaType12Values {
+        StartTime,
+        Duration,
+        SignalValue,
+        SkillType,
+        Skill_ID,
+        DeliveryMode,
+        PauseRecipientTimeline;
+
+        public static enum SkillTypes {
+            Common(0),
+            StageBG(1),
+            CharacterEffect(2),
+            AwokenSkill(3),
+            SuperSkill(5),
+            UltimateSkill(6),
+            EvasiveSkill(7),
+            KiBlastSkill(9),
+            Stage(11);
+
+            final int index;
+
+            SkillTypes(int index) {
+                this.index = index;
+            }
+        }
+
+        public static enum DeliveryMode {
+            Broadcast(0),
+            Same_ContextHighestPriority(1);
+
+            final int index;
+
+            DeliveryMode(int index) {
+                this.index = index;
+            }
+        }
+    }
+
+    public static enum BsaType13Values {
+        StartTime,
+        Duration,
+        Protection,
+        I02,
+        MaxHitboxPower,
+        ProtectSelectors_0_3,
+        ProtectAdditionalSelectors,
+        EntryPassingSignal,
+        MarkProtectedHit,
+        I24,
+        I28;
+
+        public static enum ProtectionFlags {
+            On(0),
+            Off(1);
+
+            final int index;
+
+            ProtectionFlags(int index) {
+                this.index = index;
+            }
+        }
+
+        public static enum ProtectAdditionalSelectorsFlags {
+            None(0),
+            Selectors_4_And_5(1),
+            Selector6(2),
+            Selectors_4_5_And_6(3);
+
+            final int index;
+
+            ProtectAdditionalSelectorsFlags(int index) {
+                this.index = index;
+            }
+        }
+    }
+
+    public static enum BsaType14Values {
+        StartTime,
+        Duration,
+        PlacementMode,
+        I02,
+        PlacementFlags,
+        I08,
+        F12,
+        I16,
+        F20,
+        I24,
+        F28,
+        I32,
+        I36,
+        I40,
+        F44,
+        EEPK_Type,
+        Transform_BoneSelector,
+        CMN_EEPK_Type,
+        Effect_ID,
+        F60,
+        I64,  
+        F68,
+        I72,
+        I76,
+        I80,
+        EffectPlacementFlags;
+
+        public static enum PlacementModes {
+            DefaultPlacement(0),
+            Distance_BasedPlacement(1),
+            ExplicitVectorPlacement(2);
+
+            final int index;
+
+            PlacementModes(int index) {
+                this.index = index;
+            }
+        }
+
+        public static enum EEPK_Types {
+            Common(0),
+            StageBG(1),
+            CharacterEffect(2),
+            AwokenSkill(3),
+            SuperSkill(5),
+            UltimateSkill(6),
+            EvasiveSkill(7),
+            KiBlastSkill(9),
+            Stage(11);
+
+            final int index;
+
+            EEPK_Types(int index) {
+                this.index = index;
+            }
+        }
+
+        public static enum CMN_EEPK_Types {
+            BTL_CMN(0),
+            BTL_AURA(1),
+            BTL_KDN(2),
+            lby_cmn_LBY_CMN(3),
+            TTL_TTL(4),
+            ttl_lby_TTL_LBY(5),
+            BTL_CMN2(6);
+
+            final int index;
+
+            CMN_EEPK_Types(int index) {
+                this.index = index;
+            }
+        }
+    }
 }
 
 class BsaMainEntry {
@@ -10376,6 +6915,7 @@ class BsaMainEntry {
     public int i40;
     public int i44;
     public int i48;
+
     public BsaMainEntry() {}
     public BsaMainEntry(BsaMainEntry other) {
         this.i00 = other.i00;
@@ -10394,6 +6934,7 @@ class BsaMainEntry {
         this.i48 = other.i48;
     }
 }
+
 class BsaCollisionEntry {
     public int eepkType;
     public int skillId;
@@ -10417,17 +6958,17 @@ class BsaCollisionEntry {
     }
 }
 
-class BsaExpirationEntry {
-    public int i00;
+class BsaCollisionSoundEntry {
+    public int acbType;
     public int i02;
-    public int i04;
+    public int cueId;
     public int i06;
 
-    public BsaExpirationEntry() {}
-    public BsaExpirationEntry(BsaExpirationEntry other) {
-        this.i00 = other.i00;
+    public BsaCollisionSoundEntry() {}
+    public BsaCollisionSoundEntry(BsaCollisionSoundEntry other) {
+        this.acbType = other.acbType;
         this.i02 = other.i02;
-        this.i04 = other.i04;
+        this.cueId = other.cueId;
         this.i06 = other.i06;
     }
 }
@@ -10435,10 +6976,10 @@ class BsaExpirationEntry {
 class BsaType0Entry {
     public int startTime;
     public int duration;
-    public int firstCondition;
-    public int secondCondition;
+    public short i00;
+    public int mainCondition;
     public int bsaEntryId;
-    public int i06;
+    public short i06;
     public float bacCondition;
     public float f12;
 
@@ -10446,8 +6987,8 @@ class BsaType0Entry {
     public BsaType0Entry(BsaType0Entry other) {
         this.startTime = other.startTime;
         this.duration = other.duration;
-        this.firstCondition = other.firstCondition;
-        this.secondCondition = other.secondCondition;
+        this.i00 = other.i00;
+        this.mainCondition = other.mainCondition;
         this.bsaEntryId = other.bsaEntryId;
         this.i06 = other.i06;
         this.bacCondition = other.bacCondition;
@@ -10494,8 +7035,8 @@ class BsaType2Entry {
     public int startTime;
     public int duration;
     public short i00;
-    public short i02;
-    public short i04;
+    public short outputStartFrame;
+    public short outputEndFrame;
     public short i06;
     
     public BsaType2Entry () {}
@@ -10503,8 +7044,8 @@ class BsaType2Entry {
         this.startTime = other.startTime;
         this.duration = other.duration;
         this.i00 = other.i00;
-        this.i02 = other.i02;
-        this.i04 = other.i04;
+        this.outputStartFrame = other.outputStartFrame;
+        this.outputEndFrame = other.outputEndFrame;
         this.i06 = other.i06;
     }
 }
@@ -10512,8 +7053,9 @@ class BsaType2Entry {
 class BsaType3Entry {
     public int startTime;
     public int duration;
-    public boolean matrixFlag = false;
-    public int i04;
+    public int boundsType;
+    public int i02;
+    public int growMaxBounds;
     public byte i06_a;
     public byte i06_b;
     public byte i06_c;
@@ -10541,8 +7083,9 @@ class BsaType3Entry {
     public BsaType3Entry(BsaType3Entry other) {
         this.startTime = other.startTime;
         this.duration = other.duration;
-        this.matrixFlag = other.matrixFlag;
-        this.i04 = other.i04;
+        this.boundsType = other.boundsType;
+        this.i02 = other.i02;
+        this.growMaxBounds = other.growMaxBounds;
         this.i06_a = other.i06_a;
         this.i06_b = other.i06_b;
         this.i06_c = other.i06_c;
@@ -10606,7 +7149,8 @@ class BsaType4Entry {
         this.i44 = other.i44;
         this.i48 = other.i48;
         this.i50 = other.i50;
-        this.i52 = other.i54;
+        this.i52 = other.i52;
+        this.i54 = other.i54;
     }
 }
 
@@ -10635,7 +7179,7 @@ class BsaType6Entry {
         this.i10 = other.i10;
         this.positionX = other.positionX;
         this.positionY = other.positionY;
-        this.positionZ = other.positionY;
+        this.positionZ = other.positionZ;
     }
 }
 
@@ -10662,7 +7206,7 @@ class BsaType8Entry {
     int startTime;
     int duration;
     int bpeEffectId;
-    int i02;
+    int screenEffectFlags;
     int i04;
     int i08;
     int i12;
@@ -10674,7 +7218,7 @@ class BsaType8Entry {
         this.startTime = other.startTime;
         this.duration = other.duration;
         this.bpeEffectId = other.bpeEffectId;
-        this.i02 = other.i02;
+        this.screenEffectFlags = other.screenEffectFlags;
         this.i04 = other.i04;
         this.i08 = other.i08;
         this.i12 = other.i12;
@@ -10703,34 +7247,34 @@ class BsaType10Entry {
 class BsaType12Entry {
     int startTime;
     int duration;
-    float f00;
-    int eepkType;
+    float signalValue;
+    int skillType;
     int skillId;
-    int i12;
-    float f16;
+    int deliveryMode;
+    float pauseRecipientTimeline;
 
     BsaType12Entry() {}
     BsaType12Entry(BsaType12Entry other) {
         this.startTime = other.startTime;
         this.duration = other.duration;
-        this.f00 = other.f00;
-        this.eepkType = other.eepkType;
+        this.signalValue = other.signalValue;
+        this.skillType = other.skillType;
         this.skillId = other.skillId;
-        this.i12 = other.i12;
-        this.f16 = other.f16;
+        this.deliveryMode = other.deliveryMode;
+        this.pauseRecipientTimeline = other.pauseRecipientTimeline;
     }
 }
 
 class BsaType13Entry {
     int startTime;
     int duration;
-    int i00;
+    int protection;
     int i02;
-    float f04;
-    float f08;
-    int i12;
-    float f16;
-    int i20;
+    float maxHitboxPower;
+    boolean protectSelectors_0_3;
+    int protectAdditionalSelectors;
+    float entryPassingSignal;
+    boolean markProtectedHit;
     int i24;
     int i28;
 
@@ -10738,13 +7282,13 @@ class BsaType13Entry {
     BsaType13Entry(BsaType13Entry other) {
         this.startTime = other.startTime;
         this.duration = other.duration;
-        this.i00 = other.i00;
+        this.protection = other.protection;
         this.i02 = other.i02;
-        this.f04 = other.f04;
-        this.f08 = other.f08;
-        this.i12 = other.i12;
-        this.f16 = other.f16;
-        this.i20 = other.i20;
+        this.maxHitboxPower = other.maxHitboxPower;
+        this.protectSelectors_0_3 = other.protectSelectors_0_3;
+        this.protectAdditionalSelectors = other.protectAdditionalSelectors;
+        this.entryPassingSignal = other.entryPassingSignal;
+        this.markProtectedHit = other.markProtectedHit;
         this.i24 = other.i24;
         this.i28 = other.i28;
     }
@@ -10753,9 +7297,9 @@ class BsaType13Entry {
 class BsaType14Entry {
     int startTime;
     int duration;
-    int i00;
+    int placementMode;
     int i02;
-    float f04;
+    long placementFlags;
     long i08;
     float f12;
     long i16;
@@ -10766,25 +7310,26 @@ class BsaType14Entry {
     long i36;
     long i40;
     float f44;
-    long i48;
-    float f52;
-    long i56;
+    long eepkType;
+    int transform_BoneSelector;
+    int commonEepk;
+    long effectId;
     float f60;
     long i64;
     float f68;
     long i72;
     long i76;
     long i80;
-    long i84;
+    long effectPlacementFlags;
 
     BsaType14Entry() {}
 
     BsaType14Entry(BsaType14Entry other) {
         this.startTime = other.startTime;
         this.duration = other.duration;
-        this.i00 = other.i00;
+        this.placementMode = other.placementMode;
         this.i02 = other.i02;
-        this.f04 = other.f04;
+        this.placementFlags = other.placementFlags;
         this.i08 = other.i08;
         this.f12 = other.f12;
         this.i16 = other.i16;
@@ -10795,15 +7340,16 @@ class BsaType14Entry {
         this.i36 = other.i36;
         this.i40 = other.i40;
         this.f44 = other.f44;
-        this.i48 = other.i48;
-        this.f52 = other.f52;
-        this.i56 = other.i56;
+        this.eepkType = other.eepkType;
+        this.transform_BoneSelector = other.transform_BoneSelector;
+        this.commonEepk = other.commonEepk;
+        this.effectId = other.effectId;
         this.f60 = other.f60;
         this.i64 = other.i64;
         this.f68 = other.f68;
         this.i72 = other.i72;
         this.i76 = other.i76;
         this.i80 = other.i80;
-        this.i84 = other.i84;
+        this.effectPlacementFlags = other.effectPlacementFlags;
     }
 }

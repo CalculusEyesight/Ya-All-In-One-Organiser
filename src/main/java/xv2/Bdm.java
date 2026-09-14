@@ -3,7 +3,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import static xv2.BinaryUtilities.toUShort;
+import static xv2.Unsigned.toUShort;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -182,38 +182,38 @@ public class Bdm {
         };
 
         RadioButton[] damageTypeRadioButtonsList = new RadioButton[] {
-            createRadioButton("No Effect", damageTypeToggleGroup, subEntry.damageType, DamageTypes.NoEffect),
-            createRadioButton("Block", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Block),
-            createRadioButton("Guard Break", damageTypeToggleGroup, subEntry.damageType, DamageTypes.GuardBreak),
-            createRadioButton("Standard", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Standard),
-            createRadioButton("Heavy", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Heavy),
-            createRadioButton("Knockback", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback),
-            createRadioButton("Knockback 1", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback1),
-            createRadioButton("Knockback 2", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback2),
-            createRadioButton("Knockback 3", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback3),
-            createRadioButton("Knockback 4", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback4),
-            createRadioButton("Grab", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Grab),
-            createRadioButton("Hold Stomach", damageTypeToggleGroup, subEntry.damageType, DamageTypes.HoldStomach),
-            createRadioButton("Hold Eyes", damageTypeToggleGroup, subEntry.damageType, DamageTypes.HoldEyes),
-            createRadioButton("Knockback 5", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback5),
-            createRadioButton("Electric", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Electric),
-            createRadioButton("Dazed", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Dazed),
-            createRadioButton("Paralysis", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Paralysis),
-            createRadioButton("Freeze", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Freeze),
-            createRadioButton("Wild-Card", damageTypeToggleGroup, subEntry.damageType, DamageTypes.WildCard),
-            createRadioButton("Unused", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Unused),
-            createRadioButton("Heavy Stamina Break", damageTypeToggleGroup, subEntry.damageType, DamageTypes.HeavyStaminaBreak),
-            createRadioButton("Light Stamina Break", damageTypeToggleGroup, subEntry.damageType, DamageTypes.LightStaminaBreak),
-            createRadioButton("Gigantic Ki Blast Push", damageTypeToggleGroup, subEntry.damageType, DamageTypes.GiganticKiBlastPush),
-            createRadioButton("Brain Wash", damageTypeToggleGroup, subEntry.damageType, DamageTypes.BrainWash),
-            createRadioButton("Gigantic Ki Blast Return", damageTypeToggleGroup, subEntry.damageType, DamageTypes.GiganticKiBlastReturn),
-            createRadioButton("Knockback 6", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback6),
-            createRadioButton("Knockback 7", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback7),
-            createRadioButton("Knockback 8", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback8),
-            createRadioButton("Knockback 9", damageTypeToggleGroup, subEntry.damageType, DamageTypes.Knockback9),
-            createRadioButton("Slow Opponent", damageTypeToggleGroup, subEntry.damageType, DamageTypes.SlowOpponent),
-            createRadioButton("Brain Wash 2", damageTypeToggleGroup, subEntry.damageType, DamageTypes.BrainWash2),
-            createRadioButton("Time Stop", damageTypeToggleGroup, subEntry.damageType, DamageTypes.TimeStop),
+            createRadioButton("No Effect", damageTypeToggleGroup, DamageTypes.NoEffect),
+            createRadioButton("Block", damageTypeToggleGroup, DamageTypes.Block),
+            createRadioButton("Guard Break", damageTypeToggleGroup, DamageTypes.GuardBreak),
+            createRadioButton("Standard", damageTypeToggleGroup, DamageTypes.Standard),
+            createRadioButton("Heavy", damageTypeToggleGroup, DamageTypes.Heavy),
+            createRadioButton("Knockback", damageTypeToggleGroup, DamageTypes.Knockback),
+            createRadioButton("Knockback 1", damageTypeToggleGroup, DamageTypes.Knockback1),
+            createRadioButton("Knockback 2", damageTypeToggleGroup, DamageTypes.Knockback2),
+            createRadioButton("Knockback 3", damageTypeToggleGroup, DamageTypes.Knockback3),
+            createRadioButton("Knockback 4", damageTypeToggleGroup, DamageTypes.Knockback4),
+            createRadioButton("Grab", damageTypeToggleGroup, DamageTypes.Grab),
+            createRadioButton("Hold Stomach", damageTypeToggleGroup, DamageTypes.HoldStomach),
+            createRadioButton("Hold Eyes", damageTypeToggleGroup, DamageTypes.HoldEyes),
+            createRadioButton("Knockback 5", damageTypeToggleGroup, DamageTypes.Knockback5),
+            createRadioButton("Electric", damageTypeToggleGroup, DamageTypes.Electric),
+            createRadioButton("Dazed", damageTypeToggleGroup, DamageTypes.Dazed),
+            createRadioButton("Paralysis", damageTypeToggleGroup, DamageTypes.Paralysis),
+            createRadioButton("Freeze", damageTypeToggleGroup, DamageTypes.Freeze),
+            createRadioButton("Wild-Card", damageTypeToggleGroup, DamageTypes.WildCard),
+            createRadioButton("Unused", damageTypeToggleGroup, DamageTypes.Unused),
+            createRadioButton("Heavy Stamina Break", damageTypeToggleGroup, DamageTypes.HeavyStaminaBreak),
+            createRadioButton("Light Stamina Break", damageTypeToggleGroup, DamageTypes.LightStaminaBreak),
+            createRadioButton("Gigantic Ki Blast Push", damageTypeToggleGroup, DamageTypes.GiganticKiBlastPush),
+            createRadioButton("Brain Wash", damageTypeToggleGroup, DamageTypes.BrainWash),
+            createRadioButton("Gigantic Ki Blast Return", damageTypeToggleGroup, DamageTypes.GiganticKiBlastReturn),
+            createRadioButton("Knockback 6", damageTypeToggleGroup, DamageTypes.Knockback6),
+            createRadioButton("Knockback 7", damageTypeToggleGroup, DamageTypes.Knockback7),
+            createRadioButton("Knockback 8", damageTypeToggleGroup, DamageTypes.Knockback8),
+            createRadioButton("Knockback 9", damageTypeToggleGroup, DamageTypes.Knockback9),
+            createRadioButton("Slow Opponent", damageTypeToggleGroup, DamageTypes.SlowOpponent),
+            createRadioButton("Brain Wash 2", damageTypeToggleGroup, DamageTypes.BrainWash2),
+            createRadioButton("Time Stop", damageTypeToggleGroup, DamageTypes.TimeStop),
         };
 
         VBox mainVBox = new VBox(45,
@@ -232,9 +232,9 @@ public class Bdm {
     private VBox createAnimationVBox(BdmSubEntry subEntry) {
         VBox animationVBox = new VBox(30, 
             createHBox(0, createLabel("User Animation Time", 160), createSpinner(0, 65535, subEntry.userAnimationTime, BdmValues.UserAnimationTime)), 
-            createHBox(0, createLabel("User Animation Speed", 160), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.userAnimationSpeed, BdmValues.UserAnimationSpeed)),
+            createHBox(0, createLabel("User Animation Speed", 160), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, subEntry.userAnimationSpeed, BdmValues.UserAnimationSpeed)),
             createHBox(0, createLabel("Victim Animation Time", 160), createSpinner(0, 65535, subEntry.victimAnimationTime, BdmValues.VictimAnimationTime)), 
-            createHBox(0, createLabel("Victim Animation Speed", 160), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.victimAnimationSpeed, BdmValues.VictimAnimationSpeed))
+            createHBox(0, createLabel("Victim Animation Speed", 160), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, subEntry.victimAnimationSpeed, BdmValues.VictimAnimationSpeed))
         );
         animationVBox.setPadding(new Insets(20, 0, 0, 8));
 
@@ -244,16 +244,16 @@ public class Bdm {
     private VBox createSoundVBox(BdmSubEntry subEntry) {
         ToggleGroup acbTypeToggleGroup = new ToggleGroup();
 
-        RadioButton[] radioButtonsList = new RadioButton[] {
-            createRadioButton("Common", acbTypeToggleGroup, subEntry.acbType, ACBTypes.Common), 
-            createRadioButton("Character SE", acbTypeToggleGroup, subEntry.acbType, ACBTypes.CharacterSE),
-            createRadioButton("Character VOX", acbTypeToggleGroup, subEntry.acbType, ACBTypes.CharacterVOX),
-            createRadioButton("Skill SE", acbTypeToggleGroup, subEntry.acbType, ACBTypes.SkillSE),
-            createRadioButton("Skill VOX", acbTypeToggleGroup, subEntry.acbType, ACBTypes.SkillVOX)
+        RadioButton[] acbTypes = new RadioButton[] {
+            createRadioButton("Common", acbTypeToggleGroup, ACBTypes.Common), 
+            createRadioButton("Character SE", acbTypeToggleGroup, ACBTypes.Character_SE),
+            createRadioButton("Character VOX", acbTypeToggleGroup, ACBTypes.Character_VOX),
+            createRadioButton("Skill SE", acbTypeToggleGroup, ACBTypes.Skill_SE),
+            createRadioButton("Skill VOX", acbTypeToggleGroup, ACBTypes.Skill_VOX)
         };
 
         VBox soundVBox = new VBox(30, 
-            createHBox(0, createLabel("ACB Type", 100), createHBox(15, radioButtonsList, true)), 
+            createHBox(0, createLabel("ACB Type", 100), createHBox(15, acbTypes, true)), 
             createHBox(0, createLabel("Cue ID", 100), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.cueId, BdmValues.Cue_ID))
         );
         soundVBox.setPadding(new Insets(20, 0, 0, 8));
@@ -262,58 +262,58 @@ public class Bdm {
     }
 
     private ScrollPane createEffectsScrollPane(BdmSubEntry subEntry) {
-        ToggleGroup effect1EepkTypeToggleGroup = new ToggleGroup();
+        ToggleGroup effectEepkTypeToggleGroup1 = new ToggleGroup();
 
-        RadioButton[] effect1List = new RadioButton[] {
-            createRadioButton("Common", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.Common, 1),
-            createRadioButton("StageBG", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.StageBG, 1),
-            createRadioButton("Character", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.CharacterEffect, 1),
-            createRadioButton("Awoken Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.AwokenSkill, 1),
-            createRadioButton("Super Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.SuperSkill, 1),
-            createRadioButton("Ultimate Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.UltimateSkill, 1),
-            createRadioButton("Evasive Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.EvasiveSkill, 1),
-            createRadioButton("Ki Blast Skill", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.KiBlastSkill, 1),
-            createRadioButton("Stage", effect1EepkTypeToggleGroup, subEntry.effect1EepkType, Effect_EEPK_Types.StageEffect, 1),
+        RadioButton[] effectEepk1 = new RadioButton[] {
+            createRadioButton("Common", effectEepkTypeToggleGroup1, subEntry.effect1EepkType, Effect_EEPK_Types.Common, 1),
+            createRadioButton("StageBG", effectEepkTypeToggleGroup1, subEntry.effect1EepkType, Effect_EEPK_Types.StageBG, 1),
+            createRadioButton("Character", effectEepkTypeToggleGroup1, subEntry.effect1EepkType, Effect_EEPK_Types.CharacterEffect, 1),
+            createRadioButton("Awoken Skill", effectEepkTypeToggleGroup1, subEntry.effect1EepkType, Effect_EEPK_Types.AwokenSkill, 1),
+            createRadioButton("Super Skill", effectEepkTypeToggleGroup1, subEntry.effect1EepkType, Effect_EEPK_Types.SuperSkill, 1),
+            createRadioButton("Ultimate Skill", effectEepkTypeToggleGroup1, subEntry.effect1EepkType, Effect_EEPK_Types.UltimateSkill, 1),
+            createRadioButton("Evasive Skill", effectEepkTypeToggleGroup1, subEntry.effect1EepkType, Effect_EEPK_Types.EvasiveSkill, 1),
+            createRadioButton("Ki Blast Skill", effectEepkTypeToggleGroup1, subEntry.effect1EepkType, Effect_EEPK_Types.KiBlastSkill, 1),
+            createRadioButton("Stage", effectEepkTypeToggleGroup1, subEntry.effect1EepkType, Effect_EEPK_Types.StageEffect, 1),
         };
 
-        ToggleGroup effect2EepkTypeToggleGroup = new ToggleGroup();
+        ToggleGroup effectEepkTypeToggleGroup2 = new ToggleGroup();
 
-        RadioButton[] effect2List = new RadioButton[] {
-            createRadioButton("Common", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.Common, 2),
-            createRadioButton("StageBG", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.StageBG, 2),
-            createRadioButton("Character", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.CharacterEffect, 2),
-            createRadioButton("Awoken Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.AwokenSkill, 2),
-            createRadioButton("Super Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.SuperSkill, 2),
-            createRadioButton("Ultimate Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.UltimateSkill, 2),
-            createRadioButton("Evasive Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.EvasiveSkill, 2),
-            createRadioButton("Ki Blast Skill", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.KiBlastSkill, 2),
-            createRadioButton("Stage", effect2EepkTypeToggleGroup, subEntry.effect2EepkType, Effect_EEPK_Types.StageEffect, 2),
+        RadioButton[] effectEepk2 = new RadioButton[] {
+            createRadioButton("Common", effectEepkTypeToggleGroup2, subEntry.effect2EepkType, Effect_EEPK_Types.Common, 2),
+            createRadioButton("StageBG", effectEepkTypeToggleGroup2, subEntry.effect2EepkType, Effect_EEPK_Types.StageBG, 2),
+            createRadioButton("Character", effectEepkTypeToggleGroup2, subEntry.effect2EepkType, Effect_EEPK_Types.CharacterEffect, 2),
+            createRadioButton("Awoken Skill", effectEepkTypeToggleGroup2, subEntry.effect2EepkType, Effect_EEPK_Types.AwokenSkill, 2),
+            createRadioButton("Super Skill", effectEepkTypeToggleGroup2, subEntry.effect2EepkType, Effect_EEPK_Types.SuperSkill, 2),
+            createRadioButton("Ultimate Skill", effectEepkTypeToggleGroup2, subEntry.effect2EepkType, Effect_EEPK_Types.UltimateSkill, 2),
+            createRadioButton("Evasive Skill", effectEepkTypeToggleGroup2, subEntry.effect2EepkType, Effect_EEPK_Types.EvasiveSkill, 2),
+            createRadioButton("Ki Blast Skill", effectEepkTypeToggleGroup2, subEntry.effect2EepkType, Effect_EEPK_Types.KiBlastSkill, 2),
+            createRadioButton("Stage", effectEepkTypeToggleGroup2, subEntry.effect2EepkType, Effect_EEPK_Types.StageEffect, 2),
         };
 
-        ToggleGroup effect3EepkTypeToggleGroup = new ToggleGroup();
+        ToggleGroup effectEepkTypeToggleGroup3 = new ToggleGroup();
 
-        RadioButton[] effect3List = new RadioButton[] {
-            createRadioButton("Common", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.Common, 3),
-            createRadioButton("StageBG", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.StageBG, 3),
-            createRadioButton("Character", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.CharacterEffect, 3),
-            createRadioButton("Awoken Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.AwokenSkill, 3),
-            createRadioButton("Super Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.SuperSkill, 3),
-            createRadioButton("Ultimate Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.UltimateSkill, 3),
-            createRadioButton("Evasive Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.EvasiveSkill, 3),
-            createRadioButton("Ki Blast Skill", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.KiBlastSkill, 3),
-            createRadioButton("Stage", effect3EepkTypeToggleGroup, subEntry.effect3EepkType, Effect_EEPK_Types.StageEffect, 3),
+        RadioButton[] effectEepk3 = new RadioButton[] {
+            createRadioButton("Common", effectEepkTypeToggleGroup3, subEntry.effect3EepkType, Effect_EEPK_Types.Common, 3),
+            createRadioButton("StageBG", effectEepkTypeToggleGroup3, subEntry.effect3EepkType, Effect_EEPK_Types.StageBG, 3),
+            createRadioButton("Character", effectEepkTypeToggleGroup3, subEntry.effect3EepkType, Effect_EEPK_Types.CharacterEffect, 3),
+            createRadioButton("Awoken Skill", effectEepkTypeToggleGroup3, subEntry.effect3EepkType, Effect_EEPK_Types.AwokenSkill, 3),
+            createRadioButton("Super Skill", effectEepkTypeToggleGroup3, subEntry.effect3EepkType, Effect_EEPK_Types.SuperSkill, 3),
+            createRadioButton("Ultimate Skill", effectEepkTypeToggleGroup3, subEntry.effect3EepkType, Effect_EEPK_Types.UltimateSkill, 3),
+            createRadioButton("Evasive Skill", effectEepkTypeToggleGroup3, subEntry.effect3EepkType, Effect_EEPK_Types.EvasiveSkill, 3),
+            createRadioButton("Ki Blast Skill", effectEepkTypeToggleGroup3, subEntry.effect3EepkType, Effect_EEPK_Types.KiBlastSkill, 3),
+            createRadioButton("Stage", effectEepkTypeToggleGroup3, subEntry.effect3EepkType, Effect_EEPK_Types.StageEffect, 3),
         };
 
         VBox effectsVBox = new VBox(35, 
             createHBox(0, createLabel("Effect 1 ID", 160), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.effect1Id, BdmValues.Effect1_ID)), 
             createHBox(0, createLabel("Effect 1 Skill ID", 160), createSpinner(0, 65535, subEntry.effect1SkillId, BdmValues.Effect1_Skill_ID)),
-            createHBox(0, createLabel("Effect 1 EEPK Type", 160), createGridPane(3, 3, effect1List)),
+            createHBox(0, createLabel("Effect 1 EEPK Type", 160), createGridPane(3, 3, effectEepk1)),
             createHBox(0, createLabel("Effect 2 ID", 160), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.effect2Id, BdmValues.Effect2_ID)),
             createHBox(0, createLabel("Effect 2 Skill ID", 160), createSpinner(0, 65535, subEntry.effect2SkillId, BdmValues.Effect2_Skill_ID)), 
-            createHBox(0, createLabel("Effect 2 EEPK Type", 160), createGridPane(3, 3, effect2List)),
+            createHBox(0, createLabel("Effect 2 EEPK Type", 160), createGridPane(3, 3, effectEepk2)),
             createHBox(0, createLabel("Effect 3 ID", 160), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.effect3Id, BdmValues.Effect3_ID)),
             createHBox(0, createLabel("Effect 3 Skill ID", 160), createSpinner(0, 65535, subEntry.effect3SkillId, BdmValues.Effect3_Skill_ID)), 
-            createHBox(0, createLabel("Effect 3 EEPK Type", 160), createGridPane(3, 3, effect3List))
+            createHBox(0, createLabel("Effect 3 EEPK Type", 160), createGridPane(3, 3, effectEepk3))
         );
         effectsVBox.setPadding(new Insets(20, 0, 20, 8));
 
@@ -322,17 +322,17 @@ public class Bdm {
 
     private VBox createPushbackVBox(BdmSubEntry subEntry) {
         VBox pushBackVBox = new VBox(27, 
-            createHBox(0, createLabel("Pushback Strength", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.pushbackStrength, BdmValues.PushbackStrength)), 
-            createHBox(0, createLabel("Pushback Acceleration", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.pushbackAcceleration, BdmValues.PushbackAcceleration)),
+            createHBox(0, createLabel("Pushback Strength", 230), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, subEntry.pushbackStrength, BdmValues.PushbackStrength)), 
+            createHBox(0, createLabel("Pushback Acceleration", 230), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, subEntry.pushbackAcceleration, BdmValues.PushbackAcceleration)),
             createHBox(0, createLabel("User Stunt", 230), createSpinner(0, 65535, subEntry.userStunt, BdmValues.UserStunt)), 
             createHBox(0, createLabel("Victim Stunt", 230), createSpinner(0, 65535, subEntry.victimStunt, BdmValues.VictimStunt)),
             createHBox(0, createLabel("Knockback Duration", 230), createSpinner(0, 65535, subEntry.knockbackDuration, BdmValues.KnockbackDuration)),  
             createHBox(0, createLabel("Knockback Ground Impact Time", 230), createSpinner(0, 65535, subEntry.knockbackGroundImpactTime, BdmValues.KnockbackGroundImpactTime)),  
             createHBox(0, createLabel("Knockback Recovery After Impact Time", 230), createSpinner(0, 65535, subEntry.knockbackRecoveryAfterImpactTime, BdmValues.KnockbackRecoveryAfterImpactTime)),
-            createHBox(0, createLabel("Knockback Strength X", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackStrengthX, BdmValues.KnockbackStrengthX)), 
-            createHBox(0, createLabel("Knockback Strength Y", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackStrengthY, BdmValues.KnockbackStrengthY)),
-            createHBox(0, createLabel("Knockback Strength Z", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackStrengthZ, BdmValues.KnockbackStrengthZ)), 
-            createHBox(0, createLabel("Knockback Drag Y", 230), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double)subEntry.knockbackDragY, BdmValues.KnockbackDragY)),
+            createHBox(0, createLabel("Knockback Strength X", 230), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, subEntry.knockbackStrengthX, BdmValues.KnockbackStrengthX)), 
+            createHBox(0, createLabel("Knockback Strength Y", 230), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, subEntry.knockbackStrengthY, BdmValues.KnockbackStrengthY)),
+            createHBox(0, createLabel("Knockback Strength Z", 230), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, subEntry.knockbackStrengthZ, BdmValues.KnockbackStrengthZ)), 
+            createHBox(0, createLabel("Knockback Drag Y", 230), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, subEntry.knockbackDragY, BdmValues.KnockbackDragY)),
             createHBox(0, createLabel("Knockback Gravity Time", 230), createSpinner(0, 65535, subEntry.knockbackGravityTime, BdmValues.KnockbackGravityTime)), 
             createHBox(0, createLabel("Victim Invincibility Time", 230), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.victimInvincibilityTime, BdmValues.VictimInvincibilityTime))
         );
@@ -429,7 +429,7 @@ public class Bdm {
             new CheckBox("Unknown 16"),
         };
 
-        Node[] alimentTypes = new Node[] {
+        Node[] ailmentTypes = new Node[] {
             createCheckBoxGroup("Stumble Group 1", alimentGroup1, 1, BdmValues.AlimentType),
             createCheckBoxGroup("Properties #2", alimentGroup2, 16, BdmValues.AlimentType),
         };
@@ -443,7 +443,7 @@ public class Bdm {
         
         VBox miscVBox = new VBox(35, 
             createHBox(0, createLabel("Transformation Type", 200), createHBox(15, new Node[] {spinner, label}, false)), 
-            createHBox(0, createLabel("Aliment Type", 200), createHBox(5, alimentTypes, false)), 
+            createHBox(0, createLabel("Ailment Type", 200), createHBox(5, ailmentTypes, false)), 
             createHBox(0, createLabel("Stumble Type", 200), createHBox(5, stumbleTypes, false)), 
             createHBox(0, createLabel("Stamina Broken Override BDM ID", 200), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.staminaBrokenOverrideBdmId, BdmValues.StaminaBrokenOverride_BDM_ID)), 
             createHBox(0, createLabel("Z Vanish Enable Time", 200), createSpinner(0, 65535, subEntry.zVanishEnableTime, BdmValues.ZVanishEnableTime))
@@ -480,71 +480,34 @@ public class Bdm {
         return label;
     }
 
-    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, int value, DamageTypes damageType) {
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, DamageTypes damageType) {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setToggleGroup(toggleGroup);
 
-        if (value == damageType.index) radioButton.setSelected(true);
-
         BdmSubEntry bdmSubEntry = bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()];
+
+        if (bdmSubEntry.damageType == damageType.index) radioButton.setSelected(true);
+
         radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
-                switch (damageType) {
-                    case NoEffect -> bdmSubEntry.damageType = 0;
-                    case Block -> bdmSubEntry.damageType = 1;
-                    case GuardBreak -> bdmSubEntry.damageType = 2;
-                    case Standard -> bdmSubEntry.damageType = 3;
-                    case Heavy -> bdmSubEntry.damageType = 4;
-                    case Knockback -> bdmSubEntry.damageType = 5;
-                    case Knockback1 -> bdmSubEntry.damageType = 6;
-                    case Knockback2 -> bdmSubEntry.damageType = 7;
-                    case Knockback3 -> bdmSubEntry.damageType = 8;
-                    case Knockback4 -> bdmSubEntry.damageType = 9;
-                    case Grab -> bdmSubEntry.damageType = 10;
-                    case HoldStomach -> bdmSubEntry.damageType = 11;
-                    case HoldEyes -> bdmSubEntry.damageType = 12;
-                    case Knockback5 -> bdmSubEntry.damageType = 13;
-                    case Electric -> bdmSubEntry.damageType = 14;
-                    case Dazed -> bdmSubEntry.damageType = 15;
-                    case Paralysis -> bdmSubEntry.damageType = 16;
-                    case Freeze -> bdmSubEntry.damageType = 17;
-                    case WildCard -> bdmSubEntry.damageType = 18;
-                    case Unused -> bdmSubEntry.damageType = 19;
-                    case HeavyStaminaBreak -> bdmSubEntry.damageType = 20;
-                    case LightStaminaBreak -> bdmSubEntry.damageType = 21;
-                    case GiganticKiBlastPush -> bdmSubEntry.damageType = 22;
-                    case BrainWash -> bdmSubEntry.damageType = 23;
-                    case GiganticKiBlastReturn -> bdmSubEntry.damageType = 24;
-                    case Knockback6 -> bdmSubEntry.damageType = 25;
-                    case Knockback7 -> bdmSubEntry.damageType = 26;
-                    case Knockback8 -> bdmSubEntry.damageType = 27;
-                    case Knockback9 -> bdmSubEntry.damageType = 28;
-                    case SlowOpponent -> bdmSubEntry.damageType = 29;
-                    case BrainWash2 -> bdmSubEntry.damageType = 30;
-                    case TimeStop -> bdmSubEntry.damageType = 31;
-                }
+                bdmSubEntry.damageType = damageType.index;
             }
         });
 
         return radioButton;
     }
 
-    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, int value, ACBTypes ACBType) {
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, ACBTypes ACBType) {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setToggleGroup(toggleGroup);
 
-        if (value == ACBType.index) radioButton.setSelected(true);
-
         BdmSubEntry bdmSubEntry = bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()];
+
+        if (bdmSubEntry.acbType == ACBType.index) radioButton.setSelected(true);
+
         radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
-                switch (ACBType) {
-                    case Common -> bdmSubEntry.acbType = 0;
-                    case CharacterSE -> bdmSubEntry.acbType = 2;
-                    case CharacterVOX -> bdmSubEntry.acbType = 3;
-                    case SkillSE -> bdmSubEntry.acbType = 10;
-                    case SkillVOX -> bdmSubEntry.acbType = 11;
-                }
+                bdmSubEntry.acbType = ACBType.index;
             }
         });
 
@@ -562,47 +525,17 @@ public class Bdm {
             switch (type) {
                 case 1 -> {
                     if (newValue) {
-                        switch (effect_EEPK_Type) {
-                            case Common -> bdmSubEntry.effect1EepkType = 0;
-                            case StageBG -> bdmSubEntry.effect1EepkType = 1;
-                            case CharacterEffect -> bdmSubEntry.effect1EepkType = 2;
-                            case AwokenSkill -> bdmSubEntry.effect1EepkType = 3;
-                            case SuperSkill -> bdmSubEntry.effect1EepkType = 5;
-                            case UltimateSkill -> bdmSubEntry.effect1EepkType = 6;
-                            case EvasiveSkill -> bdmSubEntry.effect1EepkType = 7;
-                            case KiBlastSkill -> bdmSubEntry.effect1EepkType = 9;
-                            case StageEffect -> bdmSubEntry.effect1EepkType = 11;
-                        }
+                        bdmSubEntry.effect1EepkType = effect_EEPK_Type.index;
                     }
                 }
                 case 2 -> {
                     if (newValue) {
-                        switch (effect_EEPK_Type) {
-                            case Common -> bdmSubEntry.effect2EepkType = 0;
-                            case StageBG -> bdmSubEntry.effect2EepkType = 1;
-                            case CharacterEffect -> bdmSubEntry.effect2EepkType = 2;
-                            case AwokenSkill -> bdmSubEntry.effect2EepkType = 3;
-                            case SuperSkill -> bdmSubEntry.effect2EepkType = 5;
-                            case UltimateSkill -> bdmSubEntry.effect2EepkType = 6;
-                            case EvasiveSkill -> bdmSubEntry.effect2EepkType = 7;
-                            case KiBlastSkill -> bdmSubEntry.effect2EepkType = 9;
-                            case StageEffect -> bdmSubEntry.effect2EepkType = 11;
-                        }
+                        bdmSubEntry.effect2EepkType = effect_EEPK_Type.index;
                     }
                 }
                 case 3 -> {
                     if (newValue) {
-                        switch (effect_EEPK_Type) {
-                            case Common -> bdmSubEntry.effect3EepkType = 0;
-                            case StageBG -> bdmSubEntry.effect3EepkType = 1;
-                            case CharacterEffect -> bdmSubEntry.effect3EepkType = 2;
-                            case AwokenSkill -> bdmSubEntry.effect3EepkType = 3;
-                            case SuperSkill -> bdmSubEntry.effect3EepkType = 5;
-                            case UltimateSkill -> bdmSubEntry.effect3EepkType = 6;
-                            case EvasiveSkill -> bdmSubEntry.effect3EepkType = 7;
-                            case KiBlastSkill -> bdmSubEntry.effect3EepkType = 9;
-                            case StageEffect -> bdmSubEntry.effect3EepkType = 11;
-                        }
+                        bdmSubEntry.effect3EepkType = effect_EEPK_Type.index;
                     }
                 }
             }
@@ -614,9 +547,6 @@ public class Bdm {
     private TextField createTextField(Number value, BdmValues bdmValue) {
         TextField textField = new TextField(String.valueOf(value));
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            if (textField.getText().contains("-")) {
-                return;
-            }
             try {
                 switch (bdmValue) {
                     case I02 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].i02 = Integer.parseInt(newText);
@@ -634,7 +564,6 @@ public class Bdm {
                     default -> throw new IllegalArgumentException("Unexpected value: " + bdmValue);
                 }
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
         });
 
@@ -644,7 +573,7 @@ public class Bdm {
     private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BdmValues bdmValue) {
         Spinner<Number> spinner;
 
-        if (value instanceof Double) {
+        if (value instanceof Float) {
             spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
         }
         else {
@@ -890,13 +819,13 @@ public class Bdm {
     }
 
     private void Delete() {
-        if (listView.getSelectionModel().getSelectedIndex() == 0) return;
+        if (listView.getItems().size() == 1) return;
 
         bdmEntries.remove(listView.getSelectionModel().getSelectedIndex());
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
 
         for (int i = 0; i < listView.getItems().size(); i++) {
-            listView.getItems().set(i, "Entry: " + i);
+            listView.getItems().set(i, "Entry " + i);
         }
     }
 
@@ -909,13 +838,9 @@ public class Bdm {
 
     private void Insert() {
         if (listView.getSelectionModel().getSelectedIndex() > 0) {
-            bdmEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new BdmEntry());
-            listView.getItems().add("Entry " + listView.getItems().size());
-        } 
-        else if (listView.getSelectionModel().getSelectedIndex() == 0) {
             bdmEntries.add(listView.getSelectionModel().getSelectedIndex(), new BdmEntry());
             listView.getItems().add("Entry " + listView.getItems().size());
-        }
+        } 
     }
 
     public void bdmReader(Path path) {
@@ -1154,7 +1079,7 @@ public class Bdm {
                             shortBuffer.clear();
                             channel.read(shortBuffer);
                             shortBuffer.flip();
-                            bdmEntries.get(i).subEntries[j].transformationType = shortBuffer.getShort();
+                            bdmEntries.get(i).subEntries[j].transformationType = toUShort(shortBuffer.getShort());
 
                             channel.position(entryOffset + 90 + j * 128 + i * 1284);
                             shortBuffer.clear();
@@ -1762,10 +1687,10 @@ public class Bdm {
 
         public static enum ACBTypes {
             Common(0),
-            CharacterSE(2),
-            CharacterVOX(3),
-            SkillSE(10),
-            SkillVOX(11);
+            Character_SE(2),
+            Character_VOX(3),
+            Skill_SE(10),
+            Skill_VOX(11);
 
             final int index;
 

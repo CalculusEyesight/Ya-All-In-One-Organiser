@@ -82,18 +82,14 @@ class Agd {
     private TextField createTextField(int i, int value, AgdValues adgValue) {
         TextField textField = new TextField(String.valueOf(value));
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            if (textField.getText().contains("-")) {
-                return;
-            }
             try {
                 switch (adgValue) {
-                    case AgdValues.Level -> agdEntries.get(i).level = Integer.parseInt(newText);
-                    case AgdValues.XpToNextLevel -> agdEntries.get(i).xpToNextLevel = Integer.parseInt(newText);
-                    case AgdValues.XpToThisLevel -> agdEntries.get(i).xpToThisLevel = Integer.parseInt(newText);
-                    case AgdValues.AttributePointsGained -> agdEntries.get(i).attributePointsGained = Integer.parseInt(newText);
+                    case Level -> agdEntries.get(i).level = Integer.parseInt(newText);
+                    case XpToNextLevel -> agdEntries.get(i).xpToNextLevel = Integer.parseInt(newText);
+                    case XpToThisLevel -> agdEntries.get(i).xpToThisLevel = Integer.parseInt(newText);
+                    case AttributePointsGained -> agdEntries.get(i).attributePointsGained = Integer.parseInt(newText);
                 }
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
         });
 

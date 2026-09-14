@@ -1,7 +1,7 @@
 package xv2;
-import static xv2.BinaryUtilities.toUByte;
-import static xv2.BinaryUtilities.toUShort;
-import static xv2.BinaryUtilities.toUint32;
+import static xv2.Unsigned.toUByte;
+import static xv2.Unsigned.toUShort;
+import static xv2.Unsigned.toUint32;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -17,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
@@ -30,16 +31,12 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 public class Bcs {
@@ -51,12 +48,9 @@ public class Bcs {
     HashMap<TreeItem<String>, BcsColorSelector> bcsColorsSelectorHashMap = new HashMap<>();
     HashMap<TreeItem<String>, BcsPhysics> bcsPhysicsHashMap = new HashMap<>();
     HashMap<TreeItem<String>, BcsUnknown3> bcsUnknown3HashMap = new HashMap<>();
-
     HashMap<TreeItem<String>, BcsPartColor> bcsPartColorsHashMap = new HashMap<>();
     HashMap<TreeItem<String>, BcsColor> bcsColorsHashMap = new HashMap<>();
-
     HashMap<TreeItem<String>, BcsBoneScale> bcsBoneScalesHashMap = new HashMap<>();
-
     HashMap<TreeItem<String>, BcsSkeleton> bcsSkeletonsHashMap = new HashMap<>();
     HashMap<TreeItem<String>, BcsBone> bcsBonesHashMap = new HashMap<>();
 
@@ -183,765 +177,135 @@ public class Bcs {
         mainTabPane.getTabs().get(0).setContent(partSetsTreeView);
         VBox.setVgrow(mainTabPane, Priority.ALWAYS);
 
-        return new VBox(createHBox(bcsPartSet), mainTabPane);
+        return new VBox(createMainHBox(bcsPartSet), mainTabPane);
     }
 
-    private HBox createHBox(BcsPartSet bcsMainEntry) {
-        ComboBox<String> genderComboBox = new ComboBox<>();
-        genderComboBox.getItems().addAll("Male", "Female");
-        genderComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                bcsMainEntry.gender = newValue.intValue();
-            }
-        });
-        switch (bcsMainEntry.gender) {
-            case 1 -> {
-                genderComboBox.getSelectionModel().select(1);
-            }
-            default -> {
-                genderComboBox.getSelectionModel().select(0);
-            }
-        }
-
-        ComboBox<String> raceComboBox = new ComboBox<>();
-        raceComboBox.getItems().addAll("Human", "Saiyan", "Namekian", "Frieza Race", "Majin", "Other");
-        raceComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                bcsMainEntry.race = newValue.intValue();
-            }
-        });
-        switch (bcsMainEntry.race) {
-            case 1 -> {
-                raceComboBox.getSelectionModel().select(1);
-            }
-            case 2 -> {
-                raceComboBox.getSelectionModel().select(2);
-            }
-            case 3 -> {
-                raceComboBox.getSelectionModel().select(3);
-            }
-            case 4 -> {
-                raceComboBox.getSelectionModel().select(4);
-            }
-            case 5 -> {
-                raceComboBox.getSelectionModel().select(5);
-            }
-            default -> {
-                raceComboBox.getSelectionModel().select(0);
-            }
-        }
-
-        HBox hBox = new HBox(15, genderComboBox, raceComboBox);
+    private HBox createMainHBox(BcsPartSet bcsMainEntry) {
+        HBox hBox = new HBox(15, 
+            createComboBox(FXCollections.observableArrayList("Male", "Female"), BcsPartSetValues.Gender), 
+            createComboBox(FXCollections.observableArrayList("Human", "Saiyan", "Namekian", "Frieza Race", "Majin", "Other"), BcsPartSetValues.Race)
+        );
         hBox.setPadding(new Insets(10, 0, 10, 16));
         
         return hBox;
     }
 
     private void createPart(BcsPart entry) {
-        //model
-        Label modelLabel = new Label("Model");
-        modelLabel.setPrefWidth(100);
+        CheckBox[] dytOptions1 = new CheckBox[] {
+            new CheckBox("Unknown 1"),
+            new CheckBox("Use Texture DYT Path"),
+            new CheckBox("Use DYT Ramps From Texture EMB"),
+            new CheckBox("Green Scouter Overlay")
+        };
+
+        CheckBox[] dytOptions2 = new CheckBox[] {
+            new CheckBox("Red Scouter Overlay"),
+            new CheckBox("Blue Scouter Overlay"),
+            new CheckBox("Purple Scouter Overlay"),
+            new CheckBox("Unknown 8")
+        };
+
+        CheckBox[] dytOptions3 = new CheckBox[] {
+            new CheckBox("Unknown 9"),
+            new CheckBox("Orange Scouter Overlay")
+        };
+
+        CheckBox[] partHidingGroup1 = new CheckBox[] {
+            new CheckBox("Face Base"),
+            new CheckBox("Face Forehead"),
+            new CheckBox("Face Eye"),
+            new CheckBox("Face Nose")
+        };
+
+        CheckBox[] partHidingGroup2 = new CheckBox[] {
+            new CheckBox("Face Ear"),
+            new CheckBox("Hair"),
+            new CheckBox("Bust"),
+            new CheckBox("Pants")
+        };
+
+        CheckBox[] partHidingGroup3 = new CheckBox[] {
+            new CheckBox("Rist"),
+            new CheckBox("Boots")
+        };
+
+        CheckBox[] matHidingGroup1 = new CheckBox[] {
+            new CheckBox("Face Base"),
+            new CheckBox("Face Forehead"),
+            new CheckBox("Face Eye"),
+            new CheckBox("Face Nose")
+        };
+
+        CheckBox[] matHidingGroup2 = new CheckBox[] {
+            new CheckBox("Face Ear"),
+            new CheckBox("Hair"),
+            new CheckBox("Bust"),
+            new CheckBox("Pants")
+        };
+
+        CheckBox[] matHidingGroup3 = new CheckBox[] {
+            new CheckBox("Rist"),
+            new CheckBox("Boots")
+        };
+
+        Node[] dytOptons = new Node[] {
+            createCheckBoxGroup(dytOptions1, 1, BcsPartValues.Flags),
+            createCheckBoxGroup(dytOptions2, 16, BcsPartValues.Flags),
+            createCheckBoxGroup(dytOptions3, 256, BcsPartValues.Flags)
+        };
+
+        Node[] partHiding = new Node[] {
+            createCheckBoxGroup(partHidingGroup1, 1, BcsPartValues.HideFlags),
+            createCheckBoxGroup(partHidingGroup2, 16, BcsPartValues.HideFlags),
+            createCheckBoxGroup(partHidingGroup3, 256, BcsPartValues.HideFlags)
+        };
+
+        Node[] matHiding = new Node[] {
+            createCheckBoxGroup(matHidingGroup1, 1, BcsPartValues.HideMatFlags),
+            createCheckBoxGroup(matHidingGroup2, 16, BcsPartValues.HideMatFlags),
+            createCheckBoxGroup(matHidingGroup3, 256, BcsPartValues.HideMatFlags)
+        };
 
-        Spinner<Integer> modelSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.model);
-        modelSpinner.setEditable(true);
-        modelSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.model = newValue.byteValue();
-            }
-        });
-
-        HBox modelHBox = new HBox(5, modelLabel, modelSpinner);
-        modelLabel.setAlignment(Pos.CENTER_LEFT);
-        //model
-
-        //model2
-        Label model2Label = new Label("Model 2");
-        model2Label.setPrefWidth(100);
-
-        Spinner<Integer> model2Spinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.model2);
-        model2Spinner.setEditable(true);
-        model2Spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.model2 = newValue.byteValue();
-            }
-        });
-
-        HBox model2HBox = new HBox(5, model2Label, model2Spinner);
-        model2Label.setAlignment(Pos.CENTER_LEFT);
-        //model2
-
-        //texture
-        Label textureLabel = new Label("Texture");
-        textureLabel.setPrefWidth(100);
-
-        Spinner<Integer> textureSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.texture);
-        textureSpinner.setEditable(true);
-        textureSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.texture = newValue.byteValue();
-            }
-        });
-
-        HBox textureHBox = new HBox(5, textureLabel, textureSpinner);
-        textureLabel.setAlignment(Pos.CENTER_LEFT);
-        //texture
-
-        //shader
-        Label shaderLabel = new Label("Shader");
-        shaderLabel.setPrefWidth(100);
-
-        Spinner<Integer> shaderSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.shader);
-        shaderSpinner.setEditable(true);
-        shaderSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.shader = newValue.byteValue();
-            }
-        });
-
-        HBox shaderHBox = new HBox(5, shaderLabel, shaderSpinner);
-        shaderLabel.setAlignment(Pos.CENTER_LEFT);
-        //shader
-
-        //dytOptions
-        Label dytOptionsLabel = new Label("DYT Options");
-        dytOptionsLabel.setPrefWidth(100);
-
-        ToggleGroup dytOptionsToggleGroup = new ToggleGroup();
-
-        ToggleButton standard = new ToggleButton("Standard");
-        standard.setPrefWidth(150);
-        standard.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton seeminglyNothing = new ToggleButton("Seemingly Nothing");
-        seeminglyNothing.setPrefWidth(150);
-        seeminglyNothing.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton model2Dyt = new ToggleButton("Model 2 DYT");
-        model2Dyt.setPrefWidth(150);
-        model2Dyt.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton accessories = new ToggleButton("Accessories");
-        accessories.setPrefWidth(150);
-        accessories.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton greenScouterOverlay = new ToggleButton("Green Scouter Overlay");
-        greenScouterOverlay.setPrefWidth(150);
-        greenScouterOverlay.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton redScouterOverlay = new ToggleButton("Red Scouter Overlay");
-        redScouterOverlay.setPrefWidth(150);
-        redScouterOverlay.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton blueScouterOverlay = new ToggleButton("Blue Scouter Overlay");
-        blueScouterOverlay.setPrefWidth(150);
-        blueScouterOverlay.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton purpleScouterOverlay = new ToggleButton("Purple Scouter Overlay");
-        purpleScouterOverlay.setPrefWidth(150);
-        purpleScouterOverlay.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton unknown8 = new ToggleButton("Unknown 8");
-        unknown8.setPrefWidth(150);
-        unknown8.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton unknown9 = new ToggleButton("Unknown 9");
-        unknown9.setPrefWidth(150);
-        unknown9.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton orangeScouterOverlay = new ToggleButton("Orange Scouter Overlay");
-        orangeScouterOverlay.setPrefWidth(150);
-        orangeScouterOverlay.setToggleGroup(dytOptionsToggleGroup);
-
-        switch ((int) entry.flags) {
-            case 1 -> seeminglyNothing.setSelected(true);
-            case 2 -> model2Dyt.setSelected(true);
-            case 4 -> accessories.setSelected(true);
-            case 8 -> greenScouterOverlay.setSelected(true);
-            case 16 -> redScouterOverlay.setSelected(true);
-            case 32 -> blueScouterOverlay.setSelected(true);
-            case 64 -> purpleScouterOverlay.setSelected(true);
-            case 128 -> unknown8.setSelected(true);
-            case 256 -> unknown9.setSelected(true);
-            case 512 -> orangeScouterOverlay.setSelected(true);
-            default -> standard.setSelected(true);
-        }
-
-        dytOptionsToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.isSelected()) {
-                if ((ToggleButton) newValue == standard) { 
-                    entry.flags = 0;
-                }
-                else if ((ToggleButton) newValue == seeminglyNothing) { 
-                    entry.flags = 1;
-                }
-                else if ((ToggleButton) newValue == model2Dyt) { 
-                    entry.flags = 2;
-                }
-                else if ((ToggleButton) newValue == accessories) { 
-                    entry.flags = 4;
-                }
-                else if ((ToggleButton) newValue == greenScouterOverlay) { 
-                    entry.flags = 8;
-                }
-                else if ((ToggleButton) newValue == redScouterOverlay) { 
-                    entry.flags = 16;
-                }
-                else if ((ToggleButton) newValue == blueScouterOverlay) { 
-                    entry.flags = 32;
-                }
-                else if ((ToggleButton) newValue == purpleScouterOverlay) { 
-                    entry.flags = 64;
-                }
-                else if ((ToggleButton) newValue == unknown8) {
-                    entry.flags = 128;
-                }
-                else if ((ToggleButton) newValue == unknown9) {
-                    entry.flags = 256;
-                }
-                else if ((ToggleButton) newValue == orangeScouterOverlay) {
-                    entry.flags = 512;
-                }
-            }
-        });
-
-        GridPane dytOptionsGridPane = new GridPane(10, 10);
-        dytOptionsGridPane.getStyleClass().add("titled-address-box");
-        dytOptionsGridPane.add(standard, 0, 0);   
-        dytOptionsGridPane.add(seeminglyNothing, 1, 0);          
-        dytOptionsGridPane.add(model2Dyt, 2, 0);          
-        dytOptionsGridPane.add(accessories, 0, 1);          
-        dytOptionsGridPane.add(greenScouterOverlay, 1, 1);          
-        dytOptionsGridPane.add(redScouterOverlay, 2, 1);          
-        dytOptionsGridPane.add(blueScouterOverlay, 0, 2);          
-        dytOptionsGridPane.add(purpleScouterOverlay, 1, 2);          
-        dytOptionsGridPane.add(unknown8, 2, 2);  
-        dytOptionsGridPane.add(unknown9, 0, 3); 
-        dytOptionsGridPane.add(orangeScouterOverlay, 1, 3);        
-
-        HBox dytOptionsHBox=new HBox(5, dytOptionsLabel, dytOptionsGridPane);
-        dytOptionsHBox.setAlignment(Pos.CENTER_LEFT);
-        //dytOptions
-
-        //partHiding
-        Label partHidingLabel = new Label("Part Hiding");
-        partHidingLabel.setPrefWidth(100);
-
-        //box1
-        CheckBox faceBase = new CheckBox("Face Base");
-        CheckBox faceForehead = new CheckBox("Face Forehead");
-        CheckBox faceEye = new CheckBox("Face Eye");
-        CheckBox faceNose = new CheckBox("Face Nose");
-
-        faceBase.setSelected((entry.hideFlags & 1) != 0);       
-        faceForehead.setSelected((entry.hideFlags & 2) != 0);              
-        faceEye.setSelected((entry.hideFlags & 4) != 0);  
-        faceNose.setSelected((entry.hideFlags & 8) != 0);
-
-        faceBase.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 1;
-            } else {
-                entry.hideFlags &= ~1;
-            }
-        });
-        faceForehead.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 2;
-            } else {
-                entry.hideFlags &= ~2;
-            }
-        });
-        faceEye.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 4;
-            } else {
-                entry.hideFlags &= ~4;
-            }
-        });
-        faceNose.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 8;
-            } else {
-                entry.hideFlags &= ~8;
-            }
-        });
-
-        VBox box1 = new VBox(2, faceBase, faceForehead, faceEye, faceNose);
-
-        VBox borderContainerBox1 = new VBox(box1);
-        borderContainerBox1.getStyleClass().add("titled-address-box");
-        borderContainerBox1.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box1StackPane = new StackPane(borderContainerBox1);
-        //box1
-
-        //box2
-        CheckBox faceEar = new CheckBox("Face Ear");
-        CheckBox hair = new CheckBox("Hair");
-        CheckBox bust = new CheckBox("Bust");
-        CheckBox pants = new CheckBox("Pants");
-
-        faceEar.setSelected((entry.hideFlags & 16L) != 0);   
-        hair.setSelected((entry.hideFlags & 32L) != 0);      
-        bust.setSelected((entry.hideFlags & 64L) != 0);       
-        pants.setSelected((entry.hideFlags & 128L) != 0);
-
-        faceEar.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 16;
-            } else {
-                entry.hideFlags &= ~16;
-            }
-        });
-        hair.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 32;
-            } else {
-                entry.hideFlags &= ~32;
-            }
-        });
-        bust.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 64;
-            } else {
-                entry.hideFlags &= ~64;
-            }
-        });
-        pants.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 128;
-            } else {
-                entry.hideFlags &= ~128;
-            }
-        });
-
-        VBox box2 = new VBox(2, faceEar, hair, bust, pants);
-
-        VBox borderContainerBox2 = new VBox(box2);
-        borderContainerBox2.getStyleClass().add("titled-address-box");
-        borderContainerBox2.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box2StackPane = new StackPane(borderContainerBox2);
-        //box2
-
-        //box3
-        CheckBox rist = new CheckBox("Rist");
-        CheckBox boots = new CheckBox("Boots");
-
-        rist.setSelected((entry.hideFlags & 256L) != 0);   
-        boots.setSelected((entry.hideFlags & 512L) != 0); 
-
-        rist.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 256;
-            } else {
-                entry.hideFlags &= ~256;
-            }
-        });
-        boots.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 512;
-            } else {
-                entry.hideFlags &= 512;
-            }
-        });
-
-        VBox box3 = new VBox(2, rist, boots);
-
-        VBox borderContainerBox3 = new VBox(box3);
-        borderContainerBox3.getStyleClass().add("titled-address-box");
-        borderContainerBox3.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box3StackPane = new StackPane(borderContainerBox3);
-        //box3
-
-        HBox partHidingHBox = new HBox(5, partHidingLabel ,box1StackPane, box2StackPane, box3StackPane);
-        partHidingHBox.setAlignment(Pos.CENTER_LEFT);
-        //partHiding
-
-        //matHiding
-        Label matHidingLabel = new Label("Mat Hiding");
-        matHidingLabel.setPrefWidth(100);
-
-        //box1
-        CheckBox faceBaseMat = new CheckBox("Face Base");
-        CheckBox faceForeheadMat = new CheckBox("Face Forehead");
-        CheckBox faceEyeMat = new CheckBox("Face Eye");
-        CheckBox faceNoseMat = new CheckBox("Face Nose");
-
-        faceBaseMat.setSelected((entry.hideMatFlags & 1) != 0);       
-        faceForeheadMat.setSelected((entry.hideMatFlags & 2) != 0);              
-        faceEyeMat.setSelected((entry.hideMatFlags & 4) != 0);  
-        faceNoseMat.setSelected((entry.hideMatFlags & 8) != 0);
-
-        faceBaseMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 1;
-            } else {
-                entry.hideMatFlags &= ~1;
-            }
-        });
-        faceForeheadMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 2;
-            } else {
-                entry.hideMatFlags &= ~2;
-            }
-        });
-        faceEyeMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 4;
-            } else {
-                entry.hideMatFlags &= ~4;
-            }
-        });
-        faceNoseMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 8;
-            } else {
-                entry.hideMatFlags &= ~8;
-            }
-        });
-
-        VBox box1Mat = new VBox(2, faceBaseMat, faceForeheadMat, faceEyeMat, faceNoseMat);
-
-        VBox borderContainerBox1Mat = new VBox(box1Mat);
-        borderContainerBox1Mat.getStyleClass().add("titled-address-box");
-        borderContainerBox1Mat.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box1StackPaneMat = new StackPane(borderContainerBox1Mat);
-        //box1
-
-        //box2
-        CheckBox faceEarMat = new CheckBox("Face Ear");
-        CheckBox hairMat = new CheckBox("Hair");
-        CheckBox bustMat = new CheckBox("Bust");
-        CheckBox pantsMat = new CheckBox("Pants");
-
-        faceEarMat.setSelected((entry.hideMatFlags & 16L) != 0);   
-        hairMat.setSelected((entry.hideMatFlags & 32L) != 0);      
-        bustMat.setSelected((entry.hideMatFlags & 64L) != 0);       
-        pantsMat.setSelected((entry.hideMatFlags & 128L) != 0);
-
-        faceEarMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 16;
-            } else {
-                entry.hideMatFlags &= ~16;
-            }
-        });
-        hairMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 32;
-            } else {
-                entry.hideMatFlags &= ~32;
-            }
-        });
-        bustMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 64;
-            } else {
-                entry.hideMatFlags &= ~64;
-            }
-        });
-        pantsMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 128;
-            } else {
-                entry.hideMatFlags &= ~128;
-            }
-        });
-
-        VBox box2Mat = new VBox(2, faceEarMat, hairMat, bustMat, pantsMat);
-
-        VBox borderContainerBox2Mat = new VBox(box2Mat);
-        borderContainerBox2Mat.getStyleClass().add("titled-address-box");
-        borderContainerBox2Mat.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box2StackPaneMat = new StackPane(borderContainerBox2Mat);
-        //box2
-
-        //box3
-        CheckBox ristMat = new CheckBox("Rist");
-        CheckBox bootsMat = new CheckBox("Boots");
-
-        ristMat.setSelected((entry.hideMatFlags & 256L) != 0);   
-        bootsMat.setSelected((entry.hideMatFlags & 512L) != 0);
-
-        ristMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 256;
-            } else {
-                entry.hideMatFlags &= ~256;
-            }
-        });
-        bootsMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 512;
-            } else {
-                entry.hideMatFlags &= 512;
-            }
-        });
-
-        VBox box3Mat = new VBox(2, ristMat, bootsMat);
-
-        VBox borderContainerBox3Mat = new VBox(box3Mat);
-        borderContainerBox3Mat.getStyleClass().add("titled-address-box");
-        borderContainerBox3Mat.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box3StackPaneMat = new StackPane(borderContainerBox3Mat);
-        //box3
-
-        HBox matHidingHBox = new HBox(5, matHidingLabel ,box1StackPaneMat, box2StackPaneMat, box3StackPaneMat);
-        matHidingHBox.setAlignment(Pos.CENTER_LEFT);
-        //matHiding
-
-        //f36
-        Label f36Label = new Label("F_36");
-        f36Label.setPrefWidth(60);
-        
-        TextField f36TextField = new TextField(String.valueOf(entry.f36));
-        f36TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f36TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f36 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f36HBox = new HBox(f36Label, f36TextField);
-        f36HBox.setAlignment(Pos.CENTER_LEFT);
-        //f36
-
-        //f40
-        Label f40Label = new Label("F_40");
-        f40Label.setPrefWidth(60);
-        
-        TextField f40TextField = new TextField(String.valueOf(entry.f40));
-        f40TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f40TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f40 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f40HBox = new HBox(f40Label, f40TextField);
-        f40HBox.setAlignment(Pos.CENTER_LEFT);
-        //f40
-
-        //i44
-        Label i44Label = new Label("I_44");
-        i44Label.setPrefWidth(60);
-
-        TextField i44TextField = new TextField(String.valueOf(entry.i44));
-        i44TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i44TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i44 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i44HBox = new HBox(i44Label, i44TextField);
-        i44HBox.setAlignment(Pos.CENTER_LEFT);
-        //i44
-
-        //i48
-        Label i48Label = new Label("I_48");
-        i48Label.setPrefWidth(60);
-
-        TextField i48TextField = new TextField(String.valueOf(entry.i48));
-        i48TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i48TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i48 = Integer.parseInt(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i48HBox=new HBox(i48Label, i48TextField);
-        i48HBox.setAlignment(Pos.CENTER_LEFT);
-        //i48
-
-        //charaCode
-        Label charaCodeLabel = new Label("Chara Code");
-        charaCodeLabel.setPrefWidth(100);
-
-        TextField charaCodeTextField = new TextField(entry.charaCode);
-        charaCodeTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (charaCodeTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.charaCode = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox charaCodeHBox = new HBox(5, charaCodeLabel, charaCodeTextField);
-        charaCodeHBox.setAlignment(Pos.CENTER_LEFT);
-        //charaCode
-
-        //emdName
-        Label emdNameLabel = new Label("EMD Name");
-        emdNameLabel.setPrefWidth(100);
-
-        TextField emdNameTextField = new TextField(entry.emdName);
-        emdNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (emdNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.emdName = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox emdNameHBox = new HBox(5, emdNameLabel, emdNameTextField);
-        emdNameHBox.setAlignment(Pos.CENTER_LEFT);
-        //emdName
-
-        //emmName
-        Label emmNameLabel = new Label("EMM Name");
-        emmNameLabel.setPrefWidth(100);
-
-        TextField emmNameTextField = new TextField(entry.emmName);
-        emmNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (emmNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.emmName = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox emmNameHBox = new HBox(5, emmNameLabel, emmNameTextField);
-        emmNameHBox.setAlignment(Pos.CENTER_LEFT);
-        //emmName
-
-        //embName
-        Label embNameLabel = new Label("EMB Name");
-        embNameLabel.setPrefWidth(100);
-
-        TextField embNameTextField = new TextField(entry.embName);
-        embNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (embNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.embName = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox embNameHBox = new HBox(5, embNameLabel, embNameTextField);
-        embNameHBox.setAlignment(Pos.CENTER_LEFT);
-        //embName
-
-        //eanName
-        Label eanNameLabel = new Label("EAN Name");
-        eanNameLabel.setPrefWidth(100);
-
-        TextField eanNameTextField = new TextField(entry.eanName);
-        eanNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (eanNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.eanName = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox eanNameHBox = new HBox(5, eanNameLabel, eanNameTextField);
-        eanNameHBox.setAlignment(Pos.CENTER_LEFT);
-        //eanName
-
-        //part
         VBox partVBox = new VBox(25, 
-            charaCodeHBox, modelHBox,
-            model2HBox, textureHBox,
-            shaderHBox, emdNameHBox,
-            emmNameHBox, embNameHBox,
-            eanNameHBox, dytOptionsHBox,
-            partHidingHBox, matHidingHBox
+            createHBox(0, createLabel("Chara Code", 100), createTextField(entry.charaCode, BcsPartValues.CharaCode)),
+            createHBox(0, createLabel("Model", 100), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.model, BcsPartValues.Model)),
+            createHBox(0, createLabel("Model 2", 100), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.model2, BcsPartValues.Model2)), 
+            createHBox(0, createLabel("DYT Index", 100), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.texture, BcsPartValues.Texture)),
+            createHBox(0, createLabel("Shader", 100), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.shader, BcsPartValues.Shader)),
+            createHBox(0, createLabel("EMD Name", 100), createTextField(entry.emdName, BcsPartValues.EMD_Name)),
+            createHBox(0, createLabel("EMM Name", 100), createTextField(entry.emmName, BcsPartValues.EMM_Name)),
+            createHBox(0, createLabel("EMB Name", 100), createTextField(entry.embName, BcsPartValues.EMB_Name)),
+            createHBox(0, createLabel("EAN Name", 100), createTextField(entry.eanName, BcsPartValues.EAN_Name)), 
+            createHBox(0, createLabel("DYT Options", 100), createHBox(5, dytOptons, false)),
+            createHBox(0, createLabel("Part Hiding", 100), createHBox(5, partHiding, false)),
+            createHBox(0, createLabel("Mat Hiding", 100), createHBox(5, matHiding, false))
         );
         partVBox.setPadding(new Insets(20, 0, 20, 16));
 
-        Tab partTab = new Tab("Part", new ScrollPane(partVBox));
-        partTab.setClosable(false);
-        //part
-
-        //unknown
         VBox unknownVBox = new VBox(25, 
-            f36HBox, f40HBox,
-            i44HBox, i48HBox
+            createHBox(0, createLabel("F_36", 60), createTextField(entry.f36, BcsPartValues.F36)),
+            createHBox(0, createLabel("F_40", 60), createTextField(entry.f40, BcsPartValues.F40)),
+            createHBox(0, createLabel("I_44", 60), createTextField(entry.i44, BcsPartValues.I44)),
+            createHBox(0, createLabel("I_48", 60), createTextField(entry.i48, BcsPartValues.I48))
         );
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
+        Tab partTab = new Tab("Part", new ScrollPane(partVBox));
+        partTab.setClosable(false);
+
         Tab unknownTab = new Tab("Unknown", unknownVBox);
         unknownTab.setClosable(false);
-        //unknown
 
         dynamicTabPane.getTabs().addAll(partTab, unknownTab);
     }
 
     private void createColorSelector(BcsColorSelector entry) {
-        //color
-        Label colorLabel = new Label("Color");
-        colorLabel.setPrefWidth(80);
-
-        ComboBox<String> colorsComboBox = new ComboBox<>(colorsObservableList.get(entry.partColorGroup));
-        colorsComboBox.getSelectionModel().select(entry.colorIndex);
-        colorsComboBox.setPrefWidth(120);
-        colorsComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.colorIndex = newValue.intValue();
-            }
-        });
-
-        HBox colorsHBox = new HBox(colorLabel, colorsComboBox);
-        colorsHBox.setAlignment(Pos.CENTER_LEFT);
-        //color
-
-        //partColors
-        Label partColorsLabel = new Label("Part Colors");
-        partColorsLabel.setPrefWidth(80);
-
-        ComboBox<String> partColorsComboBox = new ComboBox<>(partColorsObservableList);
-        partColorsComboBox.getSelectionModel().select(entry.partColorGroup);
-        partColorsComboBox.setPrefWidth(120);
-        partColorsComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.partColorGroup = newValue.intValue();
-                colorsComboBox.setItems(colorsObservableList.get(entry.partColorGroup));
-            }
-        });
-
-        HBox partColorsHBox = new HBox(partColorsLabel, partColorsComboBox);
-        partColorsHBox.setAlignment(Pos.CENTER_LEFT);
-        //partColors
+        ComboBox<String> colorComboBox = createComboBox(120, colorsObservableList.get(entry.partColorGroup), BcsColorSelectorValues.ColorIndex, null);
         
-        VBox colorSelectorVBox = new VBox(25, partColorsHBox, colorsHBox);
+        VBox colorSelectorVBox = new VBox(25, 
+            createHBox(0, createLabel("Part Colors", 80), createComboBox(120, partColorsObservableList, BcsColorSelectorValues.PartColorGroup, colorComboBox)),
+            createHBox(0, createLabel("Color", 80), colorComboBox)
+        );
         colorSelectorVBox.setPadding(new Insets(20, 0, 0, 16));
 
         Tab colorSelectorTab = new Tab("Color Selector", colorSelectorVBox);
@@ -951,596 +315,95 @@ public class Bcs {
     }
 
     private void createPhysics(BcsPhysics entry) {
-        //model1
-        Label modelLabel = new Label("Model");
-        modelLabel.setPrefWidth(100);
-
-        Spinner<Integer> model1Spinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.model1);
-        model1Spinner.setEditable(true);
-        model1Spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.model1 = newValue.byteValue();
-            }
-        });
-
-        HBox model1HBox = new HBox(5, modelLabel, model1Spinner);
-        modelLabel.setAlignment(Pos.CENTER_LEFT);
-        //model1
-
-        //model2
-        Label model2Label = new Label("Model 2");
-        model2Label.setPrefWidth(100);
-
-        Spinner<Integer> model2Spinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.model2);
-        model2Spinner.setEditable(true);
-        model2Spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.model2 = newValue.byteValue();
-            }
-        });
-
-        HBox model2HBox = new HBox(5, model2Label, model2Spinner);
-        model2Label.setAlignment(Pos.CENTER_LEFT);
-        //model2
-
-        //texture
-        Label textureLabel = new Label("Texture");
-        textureLabel.setPrefWidth(100);
-
-        Spinner<Integer> textureSpinner = new Spinner<>(Short.MIN_VALUE, Short.MAX_VALUE, entry.texture);
-        textureSpinner.setEditable(true);
-        textureSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.texture = newValue.byteValue();
-            }
-        });
-
-        HBox textureHBox = new HBox(5, textureLabel, textureSpinner);
-        textureLabel.setAlignment(Pos.CENTER_LEFT);
-        //texture
-
-        //dytOptions
-        Label dytOptionsLabel = new Label("DYT Options");
-        dytOptionsLabel.setPrefWidth(100);
-
-        ToggleGroup dytOptionsToggleGroup = new ToggleGroup();
-
-        ToggleButton standard = new ToggleButton("Standard");
-        standard.setPrefWidth(150);
-        standard.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton partDyt = new ToggleButton("Part DYT");
-        partDyt.setPrefWidth(150);
-        partDyt.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton model2Dyt = new ToggleButton("Physics DYT");
-        model2Dyt.setPrefWidth(150);
-        model2Dyt.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton accessories = new ToggleButton("Accessories");
-        accessories.setPrefWidth(150);
-        accessories.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton greenScouterOverlay = new ToggleButton("Green Scouter Overlay");
-        greenScouterOverlay.setPrefWidth(150);
-        greenScouterOverlay.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton redScouterOverlay = new ToggleButton("Red Scouter Overlay");
-        redScouterOverlay.setPrefWidth(150);
-        redScouterOverlay.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton blueScouterOverlay = new ToggleButton("Blue Scouter Overlay");
-        blueScouterOverlay.setPrefWidth(150);
-        blueScouterOverlay.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton purpleScouterOverlay = new ToggleButton("Purple Scouter Overlay");
-        purpleScouterOverlay.setPrefWidth(150);
-        purpleScouterOverlay.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton unknown8 = new ToggleButton("Unknown 8");
-        unknown8.setPrefWidth(150);
-        unknown8.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton unknown9 = new ToggleButton("Unknown 9");
-        unknown9.setPrefWidth(150);
-        unknown9.setToggleGroup(dytOptionsToggleGroup);
-
-        ToggleButton orangeScouterOverlay = new ToggleButton("Orange Scouter Overlay");
-        orangeScouterOverlay.setPrefWidth(150);
-        orangeScouterOverlay.setToggleGroup(dytOptionsToggleGroup);
-
-        switch ((int) entry.flags) {
-            case 1 -> partDyt.setSelected(true);
-            case 2 -> model2Dyt.setSelected(true);
-            case 4 -> accessories.setSelected(true);
-            case 8 -> greenScouterOverlay.setSelected(true);
-            case 16 -> redScouterOverlay.setSelected(true);
-            case 32 -> blueScouterOverlay.setSelected(true);
-            case 64 -> purpleScouterOverlay.setSelected(true);
-            case 128 -> unknown8.setSelected(true);
-            case 256 -> unknown9.setSelected(true);
-            case 512 -> orangeScouterOverlay.setSelected(true);
-            default -> standard.setSelected(true);
-        }
-
-        dytOptionsToggleGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.isSelected()) {
-                if ((ToggleButton) newValue == standard) { 
-                    entry.flags = 0;
-                }
-                else if ((ToggleButton) newValue == partDyt) { 
-                    entry.flags = 1;
-                }
-                else if ((ToggleButton) newValue == model2Dyt) { 
-                    entry.flags = 2;
-                }
-                else if ((ToggleButton) newValue == accessories) { 
-                    entry.flags = 4;
-                }
-                else if ((ToggleButton) newValue == greenScouterOverlay) { 
-                    entry.flags = 8;
-                }
-                else if ((ToggleButton) newValue == redScouterOverlay) { 
-                    entry.flags = 16;
-                }
-                else if ((ToggleButton) newValue == blueScouterOverlay) { 
-                    entry.flags = 32;
-                }
-                else if ((ToggleButton) newValue == purpleScouterOverlay) { 
-                    entry.flags = 64;
-                }
-                else if ((ToggleButton) newValue == unknown8) {
-                    entry.flags = 128;
-                }
-                else if ((ToggleButton) newValue == unknown9) {
-                    entry.flags = 256;
-                }
-                else if ((ToggleButton) newValue == orangeScouterOverlay) {
-                    entry.flags = 512;
-                }
-            }
-        });
-
-        GridPane dytOptionsGridPane = new GridPane(10, 10);
-        dytOptionsGridPane.getStyleClass().add("titled-address-box");
-        dytOptionsGridPane.add(standard, 0, 0);   
-        dytOptionsGridPane.add(partDyt, 1, 0);          
-        dytOptionsGridPane.add(model2Dyt, 2, 0);          
-        dytOptionsGridPane.add(accessories, 0, 1);          
-        dytOptionsGridPane.add(greenScouterOverlay, 1, 1);          
-        dytOptionsGridPane.add(redScouterOverlay, 2, 1);          
-        dytOptionsGridPane.add(blueScouterOverlay, 0, 2);          
-        dytOptionsGridPane.add(purpleScouterOverlay, 1, 2);          
-        dytOptionsGridPane.add(unknown8, 2, 2);  
-        dytOptionsGridPane.add(unknown9, 0, 3); 
-        dytOptionsGridPane.add(orangeScouterOverlay, 1, 3);        
-
-        HBox dytOptionsHBox=new HBox(5, dytOptionsLabel, dytOptionsGridPane);
-        dytOptionsHBox.setAlignment(Pos.CENTER_LEFT);
-        //dytOptions
-
-        //partHiding
-        Label partHidingLabel = new Label("Part Hiding");
-        partHidingLabel.setPrefWidth(100);
-
-        //box1
-        CheckBox faceBase = new CheckBox("Face Base");
-        CheckBox faceForehead = new CheckBox("Face Forehead");
-        CheckBox faceEye = new CheckBox("Face Eye");
-        CheckBox faceNose = new CheckBox("Face Nose");
-
-        faceBase.setSelected((entry.hideFlags & 1) != 0);       
-        faceForehead.setSelected((entry.hideFlags & 2) != 0);              
-        faceEye.setSelected((entry.hideFlags & 4) != 0);  
-        faceNose.setSelected((entry.hideFlags & 8) != 0);
-
-        faceBase.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 1;
-            } else {
-                entry.hideFlags &= ~1;
-            }
-        });
-        faceForehead.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 2;
-            } else {
-                entry.hideFlags &= ~2;
-            }
-        });
-        faceEye.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 4;
-            } else {
-                entry.hideFlags &= ~4;
-            }
-        });
-        faceNose.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 8;
-            } else {
-                entry.hideFlags &= ~8;
-            }
-        });
-
-        VBox box1 = new VBox(2, faceBase, faceForehead, faceEye, faceNose);
-
-        VBox borderContainerBox1 = new VBox(box1);
-        borderContainerBox1.getStyleClass().add("titled-address-box");
-        borderContainerBox1.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box1StackPane = new StackPane(borderContainerBox1);
-        //box1
-
-        //box2
-        CheckBox faceEar = new CheckBox("Face Ear");
-        CheckBox hair = new CheckBox("Hair");
-        CheckBox bust = new CheckBox("Bust");
-        CheckBox pants = new CheckBox("Pants");
-
-        faceEar.setSelected((entry.hideFlags & 16L) != 0);   
-        hair.setSelected((entry.hideFlags & 32L) != 0);      
-        bust.setSelected((entry.hideFlags & 64L) != 0);       
-        pants.setSelected((entry.hideFlags & 128L) != 0);
-
-        faceEar.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 16;
-            } else {
-                entry.hideFlags &= ~16;
-            }
-        });
-        hair.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 32;
-            } else {
-                entry.hideFlags &= ~32;
-            }
-        });
-        bust.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 64;
-            } else {
-                entry.hideFlags &= ~64;
-            }
-        });
-        pants.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 128;
-            } else {
-                entry.hideFlags &= ~128;
-            }
-        });
-
-        VBox box2 = new VBox(2, faceEar, hair, bust, pants);
-
-        VBox borderContainerBox2 = new VBox(box2);
-        borderContainerBox2.getStyleClass().add("titled-address-box");
-        borderContainerBox2.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box2StackPane = new StackPane(borderContainerBox2);
-        //box2
-
-        //box3
-        CheckBox rist = new CheckBox("Rist");
-        CheckBox boots = new CheckBox("Boots");
-
-        rist.setSelected((entry.hideFlags & 256L) != 0);   
-        boots.setSelected((entry.hideFlags & 512L) != 0); 
-
-        rist.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 256;
-            } else {
-                entry.hideFlags &= ~256;
-            }
-        });
-        boots.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideFlags |= 512;
-            } else {
-                entry.hideFlags &= 512;
-            }
-        });
-
-        VBox box3 = new VBox(2, rist, boots);
-
-        VBox borderContainerBox3 = new VBox(box3);
-        borderContainerBox3.getStyleClass().add("titled-address-box");
-        borderContainerBox3.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box3StackPane = new StackPane(borderContainerBox3);
-        //box3
-
-        HBox partHidingHBox = new HBox(5, partHidingLabel ,box1StackPane, box2StackPane, box3StackPane);
-        partHidingHBox.setAlignment(Pos.CENTER_LEFT);
-        //partHiding
-
-        //matHiding
-        Label matHidingLabel = new Label("Mat Hiding");
-        matHidingLabel.setPrefWidth(100);
-
-        //box1
-        CheckBox faceBaseMat = new CheckBox("Face Base");
-        CheckBox faceForeheadMat = new CheckBox("Face Forehead");
-        CheckBox faceEyeMat = new CheckBox("Face Eye");
-        CheckBox faceNoseMat = new CheckBox("Face Nose");
-
-        faceBaseMat.setSelected((entry.hideMatFlags & 1) != 0);       
-        faceForeheadMat.setSelected((entry.hideMatFlags & 2) != 0);              
-        faceEyeMat.setSelected((entry.hideMatFlags & 4) != 0);  
-        faceNoseMat.setSelected((entry.hideMatFlags & 8) != 0);
-
-        faceBaseMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 1;
-            } else {
-                entry.hideMatFlags &= ~1;
-            }
-        });
-        faceForeheadMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 2;
-            } else {
-                entry.hideMatFlags &= ~2;
-            }
-        });
-        faceEyeMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 4;
-            } else {
-                entry.hideMatFlags &= ~4;
-            }
-        });
-        faceNoseMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 8;
-            } else {
-                entry.hideMatFlags &= ~8;
-            }
-        });
-
-        VBox box1Mat = new VBox(2, faceBaseMat, faceForeheadMat, faceEyeMat, faceNoseMat);
-
-        VBox borderContainerBox1Mat = new VBox(box1Mat);
-        borderContainerBox1Mat.getStyleClass().add("titled-address-box");
-        borderContainerBox1Mat.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box1StackPaneMat = new StackPane(borderContainerBox1Mat);
-        //box1
-
-        //box2
-        CheckBox faceEarMat = new CheckBox("Face Ear");
-        CheckBox hairMat = new CheckBox("Hair");
-        CheckBox bustMat = new CheckBox("Bust");
-        CheckBox pantsMat = new CheckBox("Pants");
-
-        faceEarMat.setSelected((entry.hideMatFlags & 16L) != 0);   
-        hairMat.setSelected((entry.hideMatFlags & 32L) != 0);      
-        bustMat.setSelected((entry.hideMatFlags & 64L) != 0);       
-        pantsMat.setSelected((entry.hideMatFlags & 128L) != 0);
-
-        faceEarMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 16;
-            } else {
-                entry.hideMatFlags &= ~16;
-            }
-        });
-        hairMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 32;
-            } else {
-                entry.hideMatFlags &= ~32;
-            }
-        });
-        bustMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 64;
-            } else {
-                entry.hideMatFlags &= ~64;
-            }
-        });
-        pantsMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 128;
-            } else {
-                entry.hideMatFlags &= ~128;
-            }
-        });
-
-        VBox box2Mat = new VBox(2, faceEarMat, hairMat, bustMat, pantsMat);
-
-        VBox borderContainerBox2Mat = new VBox(box2Mat);
-        borderContainerBox2Mat.getStyleClass().add("titled-address-box");
-        borderContainerBox2Mat.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box2StackPaneMat = new StackPane(borderContainerBox2Mat);
-        //box2
-
-        //box3
-        CheckBox ristMat = new CheckBox("Rist");
-        CheckBox bootsMat = new CheckBox("Boots");
-
-        ristMat.setSelected((entry.hideMatFlags & 256L) != 0);   
-        bootsMat.setSelected((entry.hideMatFlags & 512L) != 0);
-
-        ristMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 256;
-            } else {
-                entry.hideMatFlags &= ~256;
-            }
-        });
-        bootsMat.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue) {
-                entry.hideMatFlags |= 512;
-            } else {
-                entry.hideMatFlags &= 512;
-            }
-        });
-
-        VBox box3Mat = new VBox(2, ristMat, bootsMat);
-
-        VBox borderContainerBox3Mat = new VBox(box3Mat);
-        borderContainerBox3Mat.getStyleClass().add("titled-address-box");
-        borderContainerBox3Mat.setPadding(new Insets(12, 0, 0, 0));
-
-        StackPane box3StackPaneMat = new StackPane(borderContainerBox3Mat);
-        //box3
-
-        HBox matHidingHBox = new HBox(5, matHidingLabel ,box1StackPaneMat, box2StackPaneMat, box3StackPaneMat);
-        matHidingHBox.setAlignment(Pos.CENTER_LEFT);
-        //matHiding
-
-        //charaCode
-        Label charaCodeLabel = new Label("Chara Code");
-        charaCodeLabel.setPrefWidth(100);
-
-        TextField charaCodeTextField = new TextField(entry.charaCode);
-        charaCodeTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (charaCodeTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.charaCode = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox charaCodeHBox = new HBox(5, charaCodeLabel, charaCodeTextField);
-        charaCodeHBox.setAlignment(Pos.CENTER_LEFT);
-        //charaCode
-
-        //emdName
-        Label emdNameLabel = new Label("EMD Name");
-        emdNameLabel.setPrefWidth(100);
-
-        TextField emdNameTextField = new TextField(entry.emdName);
-        emdNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (emdNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.emdName = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox emdNameHBox = new HBox(5, emdNameLabel, emdNameTextField);
-        emdNameHBox.setAlignment(Pos.CENTER_LEFT);
-        //emdName
-
-        //emmName
-        Label emmNameLabel = new Label("EMM Name");
-        emmNameLabel.setPrefWidth(100);
-
-        TextField emmNameTextField = new TextField(entry.emmName);
-        emmNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (emmNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.emmName = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox emmNameHBox = new HBox(5, emmNameLabel, emmNameTextField);
-        emmNameHBox.setAlignment(Pos.CENTER_LEFT);
-        //emmName
-
-        //embName
-        Label embNameLabel = new Label("EMB Name");
-        embNameLabel.setPrefWidth(100);
-
-        TextField embNameTextField = new TextField(entry.embName);
-        embNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (embNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.embName = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox embNameHBox = new HBox(5, embNameLabel, embNameTextField);
-        embNameHBox.setAlignment(Pos.CENTER_LEFT);
-        //embName
-
-        //eskName
-        Label eskNameLabel = new Label("ESK Name");
-        eskNameLabel.setPrefWidth(100);
-
-        TextField eskNameTextField = new TextField(entry.eskName);
-        eskNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (eskNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.eskName = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox eskNameHBox = new HBox(5, eskNameLabel, eskNameTextField);
-        eskNameHBox.setAlignment(Pos.CENTER_LEFT);
-        //eskName
-
-        //boneName
-        Label boneNameLabel = new Label("Bone Name");
-        boneNameLabel.setPrefWidth(100);
-
-        TextField boneNameTextField = new TextField(entry.boneToAttach);
-        boneNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (boneNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.boneToAttach = newText;
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox boneNameHBox = new HBox(5, boneNameLabel, boneNameTextField);
-        boneNameHBox.setAlignment(Pos.CENTER_LEFT);
-        //boneName
-
-        //scdName
-        Label scdNameLabel = new Label("SCD Name");
-        scdNameLabel.setPrefWidth(100);
-
-        TextField scdNameTextField = new TextField(entry.scdName);
-        scdNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (scdNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.scdName = newText;
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox scdNameHBox = new HBox(5, scdNameLabel, scdNameTextField);
-        scdNameHBox.setAlignment(Pos.CENTER_LEFT);
-        //scdName
+        CheckBox[] dytOptions1 = new CheckBox[] {
+            new CheckBox("Unknown 1"),
+            new CheckBox("Use Texture DYT Path"),
+            new CheckBox("Use DYT Ramps From Texture EMB"),
+            new CheckBox("Green Scouter Overlay")
+        };
+
+        CheckBox[] dytOptions2 = new CheckBox[] {
+            new CheckBox("Red Scouter Overlay"),
+            new CheckBox("Blue Scouter Overlay"),
+            new CheckBox("Purple Scouter Overlay"),
+            new CheckBox("Unknown 8")
+        };
+
+        CheckBox[] dytOptions3 = new CheckBox[] {
+            new CheckBox("Unknown 9"),
+            new CheckBox("Orange Scouter Overlay")
+        };
+
+        CheckBox[] partHidingGroup1 = new CheckBox[] {
+            new CheckBox("Face Base"),
+            new CheckBox("Face Forehead"),
+            new CheckBox("Face Eye"),
+            new CheckBox("Face Nose")
+        };
+
+        CheckBox[] partHidingGroup2 = new CheckBox[] {
+            new CheckBox("Face Ear"),
+            new CheckBox("Hair"),
+            new CheckBox("Bust"),
+            new CheckBox("Pants")
+        };
+
+        CheckBox[] partHidingGroup3 = new CheckBox[] {
+            new CheckBox("Rist"),
+            new CheckBox("Boots")
+        };
+
+        CheckBox[] matHidingGroup1 = new CheckBox[] {
+            new CheckBox("Face Base"),
+            new CheckBox("Face Forehead"),
+            new CheckBox("Face Eye"),
+            new CheckBox("Face Nose")
+        };
+
+        CheckBox[] matHidingGroup2 = new CheckBox[] {
+            new CheckBox("Face Ear"),
+            new CheckBox("Hair"),
+            new CheckBox("Bust"),
+            new CheckBox("Pants")
+        };
+
+        CheckBox[] matHidingGroup3 = new CheckBox[] {
+            new CheckBox("Rist"),
+            new CheckBox("Boots")
+        };
+
+        Node[] dytOptons = new Node[] {
+            createCheckBoxGroup(dytOptions1, 1, BcsPhysicsValues.Flags),
+            createCheckBoxGroup(dytOptions2, 16, BcsPhysicsValues.Flags),
+            createCheckBoxGroup(dytOptions3, 256, BcsPhysicsValues.Flags)
+        };
+
+        Node[] partHiding = new Node[] {
+            createCheckBoxGroup(partHidingGroup1, 1, BcsPhysicsValues.HideFlags),
+            createCheckBoxGroup(partHidingGroup2, 16, BcsPhysicsValues.HideFlags),
+            createCheckBoxGroup(partHidingGroup3, 256, BcsPhysicsValues.HideFlags)
+        };
+
+        Node[] matHiding = new Node[] {
+            createCheckBoxGroup(matHidingGroup1, 1, BcsPhysicsValues.HideMatFlags),
+            createCheckBoxGroup(matHidingGroup2, 16, BcsPhysicsValues.HideMatFlags),
+            createCheckBoxGroup(matHidingGroup3, 256, BcsPhysicsValues.HideMatFlags)
+        };
 
         VBox physicsVBox = new VBox(25, 
-            charaCodeHBox, model1HBox,
-            model2HBox, textureHBox,
-            emdNameHBox, emmNameHBox,
-            embNameHBox, eskNameHBox,
-            boneNameHBox, scdNameHBox,
-            dytOptionsHBox, partHidingHBox,
-            matHidingHBox
+            createHBox(0, createLabel("Chara Code", 100), createTextField(entry.charaCode, BcsPhysicsValues.CharaCode)), 
+            createHBox(0, createLabel("Model", 100), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.model, BcsPhysicsValues.Model)),
+            createHBox(0, createLabel("Model 2", 100), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.model2, BcsPhysicsValues.Model2)), 
+            createHBox(0, createLabel("DTY Index", 100), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.texture, BcsPhysicsValues.Texture)),
+            createHBox(0, createLabel("EMD Name", 100), createTextField(entry.emdName, BcsPhysicsValues.EMD_Name)),
+            createHBox(0, createLabel("EMM Name", 100), createTextField(entry.emmName, BcsPhysicsValues.EMM_Name)),
+            createHBox(0, createLabel("EMB Name", 100), createTextField(entry.embName, BcsPhysicsValues.EMB_Name)),
+            createHBox(0, createLabel("ESK Name", 100), createTextField(entry.eskName, BcsPhysicsValues.ESK_Name)), 
+            createHBox(0, createLabel("Bone Name", 100), createTextField(entry.boneToAttach, BcsPhysicsValues.BoneToAttatch)), 
+            createHBox(0, createLabel("SCD Name", 100), createTextField(entry.scdName, BcsPhysicsValues.SCD_Name)),
+            createHBox(0, createLabel("DYT Options", 100), createHBox(5, dytOptons, false)),
+            createHBox(0, createLabel("Part Hiding", 100), createHBox(5, partHiding, false)),
+            createHBox(0, createLabel("Mat Hiding", 100), createHBox(5, matHiding, false))
         );
         physicsVBox.setPadding(new Insets(20, 0, 20, 16));
 
@@ -1551,130 +414,13 @@ public class Bcs {
     }
 
     private void createUnknown3(BcsUnknown3 entry) {
-        //i00
-        Label i00Label=new Label("I_00");
-        i00Label.setPrefWidth(60);
-
-        TextField i00TextField = new TextField(String.valueOf(entry.i00));
-        i00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i00TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i00 = Short.parseShort(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        
-        HBox i00HBox = new HBox(i00Label, i00TextField);
-        i00HBox.setAlignment(Pos.CENTER_LEFT);
-        //i00
-
-        //i02
-        Label i02Label = new Label("I_02");
-        i02Label.setPrefWidth(60);
-
-        TextField i02TextField = new TextField(String.valueOf(entry.i02));
-        i02TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i02TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i02 = Short.parseShort(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i02HBox = new HBox(i02Label, i02TextField);
-        i02HBox.setAlignment(Pos.CENTER_LEFT);
-        //i02
-
-        //i04
-        Label i04Label = new Label("I_04");
-        i04Label.setPrefWidth(60);
-
-        TextField i04TextField = new TextField(String.valueOf(entry.i04));
-        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i04 = Short.parseShort(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i04HBox = new HBox(i04Label, i04TextField);
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        //i04
-
-        //i06
-        Label i06Label = new Label("I_06");
-        i06Label.setPrefWidth(60);
-
-        TextField i06TextField = new TextField(String.valueOf(entry.i06));
-        i06TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i06TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i06 = Short.parseShort(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i06HBox = new HBox(i06Label, i06TextField);
-        i06HBox.setAlignment(Pos.CENTER_LEFT);
-        //i06
-
-        //i08
-        Label i08Label = new Label("I_08");
-        i08Label.setPrefWidth(60);
-
-        TextField i08TextField = new TextField(String.valueOf(entry.i08));
-        i08TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i08TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i08 = Short.parseShort(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i08HBox = new HBox(i08Label, i08TextField);
-        i08HBox.setAlignment(Pos.CENTER_LEFT);
-        //i08
-
-        //i10
-        Label i10Label = new Label("I_10");
-        i10Label.setPrefWidth(60);
-
-        TextField i10TextField = new TextField(String.valueOf(entry.i10));
-        i10TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i10TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i10 = Short.parseShort(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i10HBox = new HBox(i10Label, i10TextField);
-        i10HBox.setAlignment(Pos.CENTER_LEFT);
-        //i10
-
         VBox unknownVBox = new VBox(25,
-            i00HBox, i02HBox,
-            i04HBox, i06HBox,
-            i08HBox, i10HBox
+            createHBox(0, createLabel("I_00", 60), createTextField(entry.i00, BcsUnknown3Values.I00)), 
+            createHBox(0, createLabel("I_02", 60), createTextField(entry.i02, BcsUnknown3Values.I02)),
+            createHBox(0, createLabel("I_04", 60), createTextField(entry.i04, BcsUnknown3Values.I04)), 
+            createHBox(0, createLabel("I_06", 60), createTextField(entry.i06, BcsUnknown3Values.I06)),
+            createHBox(0, createLabel("I_08", 60), createTextField(entry.i08, BcsUnknown3Values.I08)), 
+            createHBox(0, createLabel("I_10", 60), createTextField(entry.i10, BcsUnknown3Values.I10))
         );
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
@@ -1685,27 +431,9 @@ public class Bcs {
     }
 
     public void createPartColor(BcsPartColor entry) {
-        //name
-        Label nameLabel = new Label("Name");
-        nameLabel.setPrefWidth(60);
-
-        TextField nameTextField = new TextField(entry.name);
-        nameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (nameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.name = newText; 
-                partColorsObservableList.set(Integer.parseInt(partColorGrandParentEntry.getValue().toString().replaceAll("\\D+", "")), newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox nameHBox = new HBox(nameLabel, nameTextField);
+        HBox nameHBox = createHBox(0, createLabel("Name", 60), createTextField(entry.name, BcsPartColorValues.Name));
         nameHBox.setAlignment(Pos.BASELINE_LEFT);
         nameHBox.setPadding(new Insets(20, 0, 0, 16));
-        //name
 
         Tab partColorTab = new Tab("Part Color", nameHBox);
         partColorTab.setClosable(false);
@@ -1714,61 +442,11 @@ public class Bcs {
     }
 
     public void createColor(BcsColor entry) {
-        //color1
-        Label color1Label = new Label("Color 1");
-        color1Label.setPrefWidth(60);
-
-        ColorPicker colorPicker1 = new ColorPicker(entry.color1);
-        colorPicker1.setOnAction(e -> {
-            entry.color1 = colorPicker1.getValue();
-        });
-
-        HBox color1HBox = new HBox(color1Label, colorPicker1);
-        color1HBox.setAlignment(Pos.CENTER_LEFT);
-        //color1
-
-        //color2
-        Label color2Label = new Label("Color 2");
-        color2Label.setPrefWidth(60);
-
-        ColorPicker colorPicker2 = new ColorPicker(entry.color2);
-        colorPicker2.setOnAction(e -> {
-            entry.color2 = colorPicker2.getValue();
-        });
-
-        HBox color2HBox = new HBox(color2Label, colorPicker2);
-        color2HBox.setAlignment(Pos.CENTER_LEFT);
-        //color2
-
-        //color3
-        Label color3Label = new Label("Color 3");
-        color3Label.setPrefWidth(60);
-
-        ColorPicker colorPicker3 = new ColorPicker(entry.color3);
-        colorPicker3.setOnAction(e -> {
-            entry.color3 = colorPicker3.getValue();
-        });
-
-        HBox color3HBox = new HBox(color3Label, colorPicker3);
-        color3HBox.setAlignment(Pos.CENTER_LEFT);
-        //color3
-
-        //color4
-        Label color4Label = new Label("Color 4");
-        color4Label.setPrefWidth(60);
-
-        ColorPicker colorPicker4 = new ColorPicker(entry.color4);
-        colorPicker4.setOnAction(e -> {
-            entry.color4 = colorPicker4.getValue();
-        });
-
-        HBox color4HBox = new HBox(color4Label, colorPicker4);
-        color4HBox.setAlignment(Pos.CENTER_LEFT);
-        //color4
-
         VBox colorVBox = new VBox(25,
-            color1HBox, color2HBox,
-            color3HBox, color4HBox
+            createHBox(0, createLabel("Color 1", 60), createColorPicker(entry.color1, BcsColorValues.Color1)), 
+            createHBox(0, createLabel("Color 2", 60), createColorPicker(entry.color2, BcsColorValues.Color2)), 
+            createHBox(0, createLabel("Color 3", 60), createColorPicker(entry.color3, BcsColorValues.Color3)),  
+            createHBox(0, createLabel("Color 4", 60), createColorPicker(entry.color4, BcsColorValues.Color4))
         );
         colorVBox.setPadding(new Insets(20, 0, 0, 16));
 
@@ -1779,77 +457,11 @@ public class Bcs {
     }
 
     public void createBoneScale(BcsBoneScale entry) {
-        //scaleX
-        Label speedXLabel = new Label("Scale X");
-        speedXLabel.setPrefWidth(80);
-        
-        Spinner <Double> scaleXSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.scaleX);
-        scaleXSpinner.setEditable(true);
-        scaleXSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.scaleX = newValue.floatValue();
-            }
-        });
-
-        HBox scaleXHBox = new HBox(speedXLabel, scaleXSpinner);
-        scaleXHBox.setAlignment(Pos.CENTER_LEFT);
-        //scaleX
-
-        //scaleY
-        Label speedYLabel = new Label("Scale Y");
-        speedYLabel.setPrefWidth(80);
-        
-        Spinner <Double> scaleYSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.scaleY);
-        scaleYSpinner.setEditable(true);
-        scaleYSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.scaleY = newValue.floatValue();
-            }
-        });
-
-        HBox scaleYHBox = new HBox(speedYLabel, scaleYSpinner);
-        scaleYHBox.setAlignment(Pos.CENTER_LEFT);
-        //scaleY
-
-        //scaleZ
-        Label speedZLabel = new Label("Scale Z");
-        speedZLabel.setPrefWidth(80);
-        
-        Spinner <Double> scaleZSpinner = new Spinner<>(Float.MIN_VALUE, Float.MAX_VALUE, entry.scaleZ);
-        scaleZSpinner.setEditable(true);
-        scaleZSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                entry.scaleZ = newValue.floatValue();
-            }
-        });
-
-        HBox scaleZHBox = new HBox(speedZLabel, scaleZSpinner);
-        scaleZHBox.setAlignment(Pos.CENTER_LEFT);
-        //scaleZ
-
-        //boneName
-        Label boneNameLabel = new Label("Bone Name");
-        boneNameLabel.setPrefWidth(80);
-
-        TextField boneNameTextField = new TextField(entry.boneName);
-        boneNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (boneNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.boneName = newText; 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox boneNameHBox = new HBox(boneNameLabel, boneNameTextField);
-        boneNameHBox.setAlignment(Pos.CENTER_LEFT);
-        //boneName
-
         VBox boneScaleVBox = new VBox(25, 
-            boneNameHBox, scaleXHBox,
-            scaleYHBox, scaleZHBox
+            createHBox(0, createLabel("Bone Name", 80), createTextField(entry.boneName, BcsBoneScaleValues.Bone_Name)), 
+            createHBox(0, createLabel("Scale X", 80), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.scaleX, BcsBoneScaleValues.ScaleX)),
+            createHBox(0, createLabel("Scale Y", 80), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.scaleY, BcsBoneScaleValues.ScaleY)), 
+            createHBox(0, createLabel("Scale Z", 80), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.scaleZ, BcsBoneScaleValues.ScaleZ))
         );
         boneScaleVBox.setPadding(new Insets(20, 0, 0, 16));
 
@@ -1860,26 +472,9 @@ public class Bcs {
     }
 
     private void createSkeleton(BcsSkeleton entry) {
-        //i00
-        Label i00Label=new Label("I_00");
-        i00Label.setPrefWidth(60);
-
-        TextField i00TextField = new TextField(String.valueOf(entry.i00));
-        i00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i00TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i00 = Short.parseShort(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        
-        HBox i00HBox = new HBox(i00Label, i00TextField);
+        HBox i00HBox = createHBox(0, createLabel("I_00", 60), createTextField(entry.i00, BcsSkeletonValues.I00));
         i00HBox.setPadding(new Insets(20, 0, 0, 16));
         i00HBox.setAlignment(Pos.BASELINE_LEFT);
-        //i00
 
         Tab skeletonTab = new Tab("Skeleton", i00HBox);
         skeletonTab.setClosable(false);
@@ -1888,461 +483,465 @@ public class Bcs {
     }
 
     public void createBone(BcsBone entry) {
-        //i00
-        Label i00Label=new Label("I_00");
-        i00Label.setPrefWidth(60);
-
-        TextField i00TextField = new TextField(String.valueOf(entry.i00));
-        i00TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i00TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i00 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-        
-        HBox i00HBox = new HBox(i00Label, i00TextField);
-        i00HBox.setAlignment(Pos.CENTER_LEFT);
-        //i00
-
-        //i04
-        Label i04Label = new Label("I_04");
-        i04Label.setPrefWidth(60);
-
-        TextField i04TextField = new TextField(String.valueOf(entry.i04));
-        i04TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i04TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i04 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i04HBox = new HBox(i04Label, i04TextField);
-        i04HBox.setAlignment(Pos.CENTER_LEFT);
-        //i04
-
-        //f12
-        Label f12Label = new Label("F_12");
-        f12Label.setPrefWidth(60);
-
-        TextField f12TextField = new TextField(String.valueOf(entry.f12));
-        f12TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f12TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f12 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f12HBox = new HBox(f12Label, f12TextField);
-        f12HBox.setAlignment(Pos.CENTER_LEFT);
-        //f12
-
-        //f16
-        Label f16Label = new Label("F_16");
-        f16Label.setPrefWidth(60);
-        
-        TextField f16TextField = new TextField(String.valueOf(entry.f16));
-        f16TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f16TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f16 = Float.parseFloat(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f16HBox = new HBox(f16Label, f16TextField);
-        f16HBox.setAlignment(Pos.CENTER_LEFT);
-        //f16
-
-        //f20
-        Label f20Label = new Label("F_20");
-        f20Label.setPrefWidth(60);
-
-        TextField f20TextField = new TextField(String.valueOf(entry.f20));
-        f20TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f20TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f20 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f20HBox = new HBox(f20Label ,f20TextField);
-        f20HBox.setAlignment(Pos.CENTER_LEFT);
-        //f20
-
-        //f24
-        Label f24Label = new Label("F_24");
-        f24Label.setPrefWidth(60);
-
-        TextField f24TextField = new TextField(String.valueOf(entry.f24));
-        f24TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f24TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f24 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f24HBox = new HBox(f24Label ,f24TextField);
-        f24HBox.setAlignment(Pos.CENTER_LEFT);
-        //f24
-
-        //f28
-        Label f28Label = new Label("F_28");
-        f28Label.setPrefWidth(60);
-        
-        TextField f28TextField = new TextField(String.valueOf(entry.f28));
-        f28TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f28TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f28 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f28HBox = new HBox(f28Label, f28TextField);
-        f28HBox.setAlignment(Pos.CENTER_LEFT);
-        //f28
-
-        //f32
-        Label f32Label = new Label("F_32");
-        f32Label.setPrefWidth(60);
-        
-        TextField f32TextField = new TextField(String.valueOf(entry.f32));
-        f32TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f32TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f32 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f32HBox = new HBox(f32Label, f32TextField);
-        f32HBox.setAlignment(Pos.CENTER_LEFT);
-        //f32
-
-        //f36
-        Label f36Label = new Label("F_36");
-        f36Label.setPrefWidth(60);
-        
-        TextField f36TextField = new TextField(String.valueOf(entry.f36));
-        f36TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f36TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f36 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f36HBox = new HBox(f36Label, f36TextField);
-        f36HBox.setAlignment(Pos.CENTER_LEFT);
-        //f36
-
-        //f40
-        Label f40Label = new Label("F_40");
-        f40Label.setPrefWidth(60);
-        
-        TextField f40TextField = new TextField(String.valueOf(entry.f40));
-        f40TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f40TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f40 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f40HBox = new HBox(f40Label, f40TextField);
-        f40HBox.setAlignment(Pos.CENTER_LEFT);
-        //f40
-
-        //f44
-        Label f44Label = new Label("F_44");
-        f44Label.setPrefWidth(60);
-        
-        TextField f44TextField = new TextField(String.valueOf(entry.f44));
-        f44TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f44TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f44 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f44HBox = new HBox(f44Label, f44TextField);
-        f44HBox.setAlignment(Pos.CENTER_LEFT);
-        //f44
-
-        //boneName
-        Label boneNameLabel = new Label("Bone Name");
-        boneNameLabel.setPrefWidth(80);
-
-        TextField boneNameTextField = new TextField(entry.boneName);
-        boneNameTextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (boneNameTextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.boneName = newText;
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox boneNameHBox = new HBox(boneNameLabel, boneNameTextField);
+        HBox boneNameHBox = createHBox(0, createLabel("Bone Name", 60), createTextField(entry.boneName, BcsBoneValues.BoneName));
         boneNameHBox.setPadding(new Insets(20, 0, 0, 16));
         boneNameHBox.setAlignment(Pos.BASELINE_LEFT);
-        //name
 
-        //bone
-        Tab boneTab = new Tab("Bone", boneNameHBox);
-        boneTab.setClosable(false);
-        //bone
-
-        //unknown
         VBox unknownVBox = new VBox(25, 
-            i00HBox, i04HBox,
-            f12HBox, f16HBox,
-            f20HBox, f24HBox,
-            f28HBox, f32HBox,
-            f36HBox, f40HBox,
-            f44HBox
+            createHBox(0, createLabel("I_00", 60), createTextField(entry.i00, BcsBoneValues.I00)), 
+            createHBox(0, createLabel("I_04", 60), createTextField(entry.i04, BcsBoneValues.I04)),
+            createHBox(0, createLabel("F_12", 60), createTextField(entry.f12, BcsBoneValues.F12)),
+            createHBox(0, createLabel("F_16", 60), createTextField(entry.f16, BcsBoneValues.F16)),
+            createHBox(0, createLabel("F_20", 60), createTextField(entry.f20, BcsBoneValues.F20)), 
+            createHBox(0, createLabel("F_24", 60), createTextField(entry.f24, BcsBoneValues.F24)),
+            createHBox(0, createLabel("F_28", 60), createTextField(entry.f28, BcsBoneValues.F28)), 
+            createHBox(0, createLabel("F_32", 60), createTextField(entry.f32, BcsBoneValues.F32)),
+            createHBox(0, createLabel("F_36", 60), createTextField(entry.f36, BcsBoneValues.F36)), 
+            createHBox(0, createLabel("F_40", 60), createTextField(entry.f40, BcsBoneValues.F40)),
+            createHBox(0, createLabel("F_44", 60), createTextField(entry.f44, BcsBoneValues.F44))
         );
         unknownVBox.setPadding(new Insets(20, 0, 0, 16));
 
+        Tab boneTab = new Tab("Bone", boneNameHBox);
+        boneTab.setClosable(false);
+
         Tab unknownTab = new Tab("Unknown", unknownVBox);
         unknownTab.setClosable(false);
-        //unknown
 
         dynamicTabPane.getTabs().addAll(boneTab, unknownTab);
     }
 
-    private VBox createUnknownVBox(BcsPartSet entry) {
-        //i46
-        Label i46Label = new Label("I_46");
-        i46Label.setPrefWidth(60);
-
-        TextField i46TextField = new TextField(String.valueOf(entry.i46));
-        i46TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i46TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i46 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i46HBox = new HBox(i46Label, i46TextField);
-        i46HBox.setAlignment(Pos.CENTER_LEFT);
-        //i46
-
-        //i47
-        Label i47Label = new Label("I_47");
-        i47Label.setPrefWidth(60);
-
-        TextField i47TextField = new TextField(String.valueOf(entry.i47));
-        i47TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i47TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.i47 = Integer.parseInt(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox i47HBox = new HBox(i47Label, i47TextField);
-        i47HBox.setAlignment(Pos.CENTER_LEFT);
-        //i47
-
-        //f48
-        Label f48Label = new Label("F_48");
-        f48Label.setPrefWidth(60);
-        
-        TextField f48TextField = new TextField(String.valueOf(entry.f48));
-        f48TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f48TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f48 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f48HBox = new HBox(f48Label, f48TextField);
-        f48HBox.setAlignment(Pos.CENTER_LEFT);
-        //f48
-
-        //f52
-        Label f52Label = new Label("F_52");
-        f52Label.setPrefWidth(60);
-        
-        TextField f52TextField = new TextField(String.valueOf(entry.f52));
-        f52TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f52TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f52 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f52HBox = new HBox(f52Label, f52TextField);
-        f52HBox.setAlignment(Pos.CENTER_LEFT);
-        //f52
-
-        //f56
-        Label f56Label = new Label("F_56");
-        f56Label.setPrefWidth(60);
-
-        TextField f56TextField = new TextField(String.valueOf(entry.f56));
-        f56TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f56TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f56 = Float.parseFloat(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f56HBox = new HBox(f56Label, f56TextField);
-        f56HBox.setAlignment(Pos.CENTER_LEFT);
-        //f56
-
-        //f60
-        Label f60Label = new Label("F_60");
-        f60Label.setPrefWidth(60);
-        
-        TextField f60TextField = new TextField(String.valueOf(entry.f60));
-        f60TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f60TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f60 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f60HBox = new HBox(f60Label, f60TextField);
-        f60HBox.setAlignment(Pos.CENTER_LEFT);
-        //f60
-
-        //f64
-        Label f64Label = new Label("F_64");
-        f64Label.setPrefWidth(60);
-
-        TextField i64TextField = new TextField(String.valueOf(entry.f64));
-        i64TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (i64TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f64 = Float.parseFloat(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f64HBox = new HBox(f64Label, i64TextField);
-        f64HBox.setAlignment(Pos.CENTER_LEFT);
-        //i64
-
-        //f68
-        Label f68Label = new Label("F_68");
-        f68Label.setPrefWidth(60);
-        
-        TextField f68TextField = new TextField(String.valueOf(entry.f68));
-        f68TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f68TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f68 = Float.parseFloat(newText); 
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f68HBox = new HBox(f68Label, f68TextField);
-        f68HBox.setAlignment(Pos.CENTER_LEFT);
-        //f68
-
-        //f72
-        Label f72Label = new Label("F_72");
-        f72Label.setPrefWidth(60);
-
-        TextField f72TextField = new TextField(String.valueOf(entry.f72));
-        f72TextField.textProperty().addListener((obs, oldText, newText) -> {
-            if (f72TextField.getText().contains("-")) {
-                return;
-            }
-            try {
-                entry.f72 = Float.parseFloat(newText);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        });
-
-        HBox f72HBox = new HBox(f72Label, f72TextField);
-        f72HBox.setAlignment(Pos.CENTER_LEFT);
-        //f72
-
-        VBox unknownVBox = new VBox(30, 
-            i46HBox, i47HBox, 
-            f48HBox, f52HBox,
-            f56HBox, f60HBox,
-            f64HBox, f68HBox,
-            f72HBox
+    private VBox createPropertiesVBox(BcsPartSet entry) {
+        VBox propertiesVBox = new VBox(30, 
+            createHBox(0, createLabel("I_46", 100), createTextField(entry.i46, BcsPartSetValues.I46)), 
+            createHBox(0, createLabel("I_47", 100), createTextField(entry.i47, BcsPartSetValues.I47)), 
+            createHBox(0, createLabel("Position Y (CMN)", 100), createTextField(entry.positionY, BcsPartSetValues.PositionY)), 
+            createHBox(0, createLabel("Camera Y", 100), createTextField(entry.cameraY, BcsPartSetValues.CameraY)),
+            createHBox(0, createLabel("Tracking Offset", 100), createTextField(entry.trackingOffset, BcsPartSetValues.TrackingOffset)), 
+            createHBox(0, createLabel("F_60", 100), createTextField(entry.f60, BcsPartSetValues.F60)),
+            createHBox(0, createLabel("Collision Scale", 100), createTextField(entry.collisionScale, BcsPartSetValues.CollisionScale)), 
+            createHBox(0, createLabel("F_68", 100), createTextField(entry.f68, BcsPartSetValues.F68)),
+            createHBox(0, createLabel("F_72", 100), createTextField(entry.f72, BcsPartSetValues.F72))
         );
-        unknownVBox.setPadding(new Insets(20, 0, 0, 16));
+        propertiesVBox.setPadding(new Insets(20, 0, 0, 16));
 
-        return unknownVBox;
+        return propertiesVBox;
+    }
+
+    private ComboBox<String> createComboBox(ObservableList<String> observableList, BcsPartSetValues bcsPartSetValue) {
+        ComboBox<String> comboBox = new ComboBox<>(observableList);
+
+        switch (bcsPartSetValue) {
+            case Gender -> {
+                comboBox.getSelectionModel().select(bcsPartSet.gender);
+
+                comboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        bcsPartSet.gender = newValue.intValue();
+                    }
+                });
+            }
+            case Race -> {
+                comboBox.getSelectionModel().select(bcsPartSet.race);
+
+                comboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        bcsPartSet.race = newValue.intValue();
+                    }
+                });
+            }
+            default -> throw new IllegalArgumentException("Unexpected value: " + bcsPartSetValue);
+        }
+
+        return  comboBox;
+    }
+
+    private ComboBox<String> createComboBox(int width, ObservableList<String> observableList, BcsColorSelectorValues bcsColorSelectorValue, ComboBox<String> colorsComboBox) {
+        ComboBox<String> comboBox = new ComboBox<>(observableList);
+        comboBox.setPrefWidth(width);
+
+        switch (bcsColorSelectorValue) {
+            case ColorIndex -> {
+                comboBox.getSelectionModel().select(bcsColorsSelectorHashMap.get(currentPartSetEntry).colorIndex);
+
+                comboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        bcsColorsSelectorHashMap.get(currentPartSetEntry).colorIndex = newValue.intValue();
+                    }
+                });
+            }
+            case PartColorGroup -> {
+                comboBox.getSelectionModel().select(bcsColorsSelectorHashMap.get(currentPartSetEntry).partColorGroup);
+
+                comboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        bcsColorsSelectorHashMap.get(currentPartSetEntry).partColorGroup = newValue.intValue();
+                        colorsComboBox.setItems(colorsObservableList.get(bcsColorsSelectorHashMap.get(currentPartSetEntry).partColorGroup));
+                    }
+                });
+            }
+            default -> throw new IllegalArgumentException("Unexpected value: " + bcsColorSelectorValue);
+        }
+
+        return  comboBox;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BcsPartValues bcsPartValues) {
+        Spinner<Number> spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bcsPartValues) {
+                    case Model -> bcsPartsHashMap.get(currentPartSetEntry).model = newValue.shortValue();
+                    case Model2 -> bcsPartsHashMap.get(currentPartSetEntry).model2 = newValue.shortValue();
+                    case Texture -> bcsPartsHashMap.get(currentPartSetEntry).texture = newValue.shortValue();
+                    case Shader -> bcsPartsHashMap.get(currentPartSetEntry).shader = newValue.shortValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bcsPartValues);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BcsPhysicsValues bcsPhysicsValues) {
+        Spinner<Number> spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bcsPhysicsValues) {
+                    case Model -> bcsPhysicsHashMap.get(currentPartSetEntry).model = newValue.shortValue();
+                    case Model2 -> bcsPhysicsHashMap.get(currentPartSetEntry).model2 = newValue.shortValue();
+                    case Texture -> bcsPhysicsHashMap.get(currentPartSetEntry).texture = newValue.shortValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bcsPhysicsValues);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BcsBoneScaleValues bcsBoneScaleValue) {
+        Spinner<Number> spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
+
+        spinner.setEditable(true);
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                switch (bcsBoneScaleValue) {
+                    case ScaleX -> bcsBoneScalesHashMap.get(currentBodyEntry).scaleX = newValue.floatValue();
+                    case ScaleY -> bcsBoneScalesHashMap.get(currentBodyEntry).scaleY = newValue.floatValue();
+                    case ScaleZ -> bcsBoneScalesHashMap.get(currentBodyEntry).scaleZ = newValue.floatValue();
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bcsBoneScaleValue);
+                }   
+            }
+        });
+
+        return spinner;
+    }
+
+    private TextField createTextField(Number value, BcsPartSetValues bcsPartSetValue) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            try {
+                switch (bcsPartSetValue) {
+                    case I46 -> bcsPartSet.i46 = Integer.parseInt(newText);
+                    case I47 -> bcsPartSet.i47 = Integer.parseInt(newText);
+                    case PositionY -> bcsPartSet.positionY = Float.parseFloat(newText);
+                    case CameraY -> bcsPartSet.cameraY = Float.parseFloat(newText);
+                    case TrackingOffset -> bcsPartSet.trackingOffset = Float.parseFloat(newText);
+                    case F60 -> bcsPartSet.f60 = Float.parseFloat(newText);
+                    case CollisionScale -> bcsPartSet.collisionScale = Float.parseFloat(newText);
+                    case F68 -> bcsPartSet.f68 = Float.parseFloat(newText);
+                    case F72 -> bcsPartSet.f72 = Float.parseFloat(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bcsPartSetValue);
+                }
+            } catch (NumberFormatException e) {
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Object value, BcsPartValues bcsPartValue) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            try {
+                switch (bcsPartValue) {
+                    case EMD_Name -> bcsPartsHashMap.get(currentPartSetEntry).emdName = newText;
+                    case EMM_Name -> bcsPartsHashMap.get(currentPartSetEntry).emmName = newText;
+                    case EMB_Name -> bcsPartsHashMap.get(currentPartSetEntry).embName = newText;
+                    case EAN_Name -> bcsPartsHashMap.get(currentPartSetEntry).eanName = newText;
+                    case CharaCode -> bcsPartsHashMap.get(currentPartSetEntry).charaCode = newText;
+                    case F36 -> bcsPartsHashMap.get(currentPartSetEntry).f36 = Float.parseFloat(newText);
+                    case F40 -> bcsPartsHashMap.get(currentPartSetEntry).f40 = Float.parseFloat(newText);
+                    case I44 -> bcsPartsHashMap.get(currentPartSetEntry).i44 = Integer.parseInt(newText);
+                    case I48 -> bcsPartsHashMap.get(currentPartSetEntry).i48 = Integer.parseInt(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bcsPartValue);
+                }
+            } catch (NumberFormatException e) {
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(String value, BcsPhysicsValues bcsPhysicsValue) {
+        TextField textField = new TextField(value);
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            try {
+                switch (bcsPhysicsValue) {
+                    case EMD_Name -> bcsPhysicsHashMap.get(currentPartSetEntry).emdName = newText;
+                    case EMM_Name -> bcsPhysicsHashMap.get(currentPartSetEntry).emmName = newText;
+                    case EMB_Name -> bcsPhysicsHashMap.get(currentPartSetEntry).embName = newText;
+                    case ESK_Name -> bcsPhysicsHashMap.get(currentPartSetEntry).eskName = newText;
+                    case CharaCode -> bcsPhysicsHashMap.get(currentPartSetEntry).charaCode = newText;
+                    case BoneToAttatch -> bcsPhysicsHashMap.get(currentPartSetEntry).boneToAttach = newText;
+                    case SCD_Name -> bcsPhysicsHashMap.get(currentPartSetEntry).scdName = newText;
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bcsPhysicsValue);
+                }
+            } catch (NumberFormatException e) {
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(short value, BcsUnknown3Values bcsUnknown3Value) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            try {
+                switch (bcsUnknown3Value) {
+                    case I00 -> bcsUnknown3HashMap.get(currentPartSetEntry).i00 = Short.parseShort(newText);
+                    case I02 -> bcsUnknown3HashMap.get(currentPartSetEntry).i02 = Short.parseShort(newText);
+                    case I04 -> bcsUnknown3HashMap.get(currentPartSetEntry).i04 = Short.parseShort(newText);
+                    case I06 -> bcsUnknown3HashMap.get(currentPartSetEntry).i06 = Short.parseShort(newText);
+                    case I08 -> bcsUnknown3HashMap.get(currentPartSetEntry).i08 = Short.parseShort(newText);
+                    case I10 -> bcsUnknown3HashMap.get(currentPartSetEntry).i10 = Short.parseShort(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bcsUnknown3Value);
+                }
+            } catch (NumberFormatException e) {
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(String value, BcsPartColorValues bcsPartColorValue) {
+        TextField textField = new TextField(value);
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            try {
+                bcsPartColorsHashMap.get(currentPartColorEntry).name = newText;
+                partColorsObservableList.set(Integer.parseInt(partColorGrandParentEntry.getValue().toString().replaceAll("\\D+", "")), newText);
+            } catch (NumberFormatException e) {
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(String value, BcsBoneScaleValues bcsBoneScaleValue) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            try {
+                bcsBoneScalesHashMap.get(currentBodyEntry).boneName = newText;
+            } catch (NumberFormatException e) {
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(short value, BcsSkeletonValues bcsSkeletonValues) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            try {
+                bcsSkeletonsHashMap.get(currentSkeletonEntry).i00 = Short.parseShort(newText);
+            } catch (NumberFormatException e) {
+            }
+        });
+
+        return textField;
+    }
+
+    private TextField createTextField(Object value, BcsBoneValues bcsBoneValue) {
+        TextField textField = new TextField(String.valueOf(value));
+        textField.textProperty().addListener((obs, oldText, newText) -> {
+            try {
+                switch (bcsBoneValue) {
+                    case I00 -> bcsBonesHashMap.get(currentSkeletonEntry).i00 = Integer.parseInt(newText);
+                    case I04 -> bcsBonesHashMap.get(currentSkeletonEntry).i04 = Integer.parseInt(newText);
+                    case BoneName -> bcsBonesHashMap.get(currentSkeletonEntry).boneName = newText;
+                    case F12 -> bcsBonesHashMap.get(currentSkeletonEntry).f12 = Float.parseFloat(newText);
+                    case F16 -> bcsBonesHashMap.get(currentSkeletonEntry).f16 = Float.parseFloat(newText);
+                    case F20 -> bcsBonesHashMap.get(currentSkeletonEntry).f20 = Float.parseFloat(newText);
+                    case F24 -> bcsBonesHashMap.get(currentSkeletonEntry).f24 = Float.parseFloat(newText);
+                    case F28 -> bcsBonesHashMap.get(currentSkeletonEntry).f28 = Float.parseFloat(newText);
+                    case F32 -> bcsBonesHashMap.get(currentSkeletonEntry).f32 = Float.parseFloat(newText);
+                    case F36 -> bcsBonesHashMap.get(currentSkeletonEntry).f36 = Float.parseFloat(newText);
+                    case F40 -> bcsBonesHashMap.get(currentSkeletonEntry).f40 = Float.parseFloat(newText);
+                    case F44 -> bcsBonesHashMap.get(currentSkeletonEntry).f44 = Float.parseFloat(newText);
+                    default -> throw new IllegalArgumentException("Unexpected value: " + bcsBoneValue);
+                }
+            } catch (NumberFormatException e) {
+            }
+        });
+
+        return textField;
+    }
+
+    private ColorPicker createColorPicker(Color color, BcsColorValues bcsColorValue) {
+        ColorPicker colorPicker = new ColorPicker(color);
+        colorPicker.setOnAction(e -> {
+            switch (bcsColorValue) {
+                case Color1 -> bcsColorsHashMap.get(currentPartColorEntry).color1 = colorPicker.getValue();
+                case Color2 -> bcsColorsHashMap.get(currentPartColorEntry).color2 = colorPicker.getValue();
+                case Color3 -> bcsColorsHashMap.get(currentPartColorEntry).color3 = colorPicker.getValue();
+                case Color4 -> bcsColorsHashMap.get(currentPartColorEntry).color4 = colorPicker.getValue();
+            }
+        });
+
+        return colorPicker;
+    }
+
+    private VBox createCheckBoxGroup(CheckBox[] checkBoxsList, int bitMask, BcsPartValues bcsPartValue) {
+        VBox vBox = new VBox(2);
+        vBox.getStyleClass().add("titled-address-box");
+        vBox.setPadding(new Insets(12, 0, 0, 0));
+        
+        for (int i = 0; i < checkBoxsList.length; i++) {
+            final int bitMaskLamda = bitMask;
+
+            switch(bcsPartValue) {
+                case Flags -> {
+                    checkBoxsList[i].setSelected((bcsPartsHashMap.get(currentPartSetEntry).flags & bitMask) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bcsPartsHashMap.get(currentPartSetEntry).flags |= bitMaskLamda;
+                        }
+                        else {
+                            bcsPartsHashMap.get(currentPartSetEntry).flags &= ~bitMaskLamda;
+                        }
+                    });
+                }
+                case HideFlags -> {
+                    checkBoxsList[i].setSelected((bcsPartsHashMap.get(currentPartSetEntry).hideFlags & bitMask) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bcsPartsHashMap.get(currentPartSetEntry).hideFlags |= bitMaskLamda;
+                        }
+                        else {
+                            bcsPartsHashMap.get(currentPartSetEntry).hideFlags &= ~bitMaskLamda;
+                        }
+                    });
+                }
+                case HideMatFlags -> {
+                    checkBoxsList[i].setSelected((bcsPartsHashMap.get(currentPartSetEntry).hideMatFlags & bitMask) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bcsPartsHashMap.get(currentPartSetEntry).hideMatFlags |= bitMaskLamda;
+                        }
+                        else {
+                            bcsPartsHashMap.get(currentPartSetEntry).hideMatFlags &= ~bitMaskLamda;
+                        }
+                    });
+                }
+                default -> throw new IllegalArgumentException("Unexpected value: " + bcsPartValue);
+            }
+
+            vBox.getChildren().add(checkBoxsList[i]);
+
+            bitMask <<= 1;
+        }
+
+        return vBox;
+    }
+
+    private VBox createCheckBoxGroup(CheckBox[] checkBoxsList, int bitMask, BcsPhysicsValues bcsPhysicsValue) {
+        VBox vBox = new VBox(2);
+        vBox.getStyleClass().add("titled-address-box");
+        vBox.setPadding(new Insets(12, 0, 0, 0));
+        
+        for (int i = 0; i < checkBoxsList.length; i++) {
+            final int bitMaskLamda = bitMask;
+
+            switch(bcsPhysicsValue) {
+                case Flags -> {
+                    checkBoxsList[i].setSelected((bcsPhysicsHashMap.get(currentPartSetEntry).flags & bitMask) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bcsPhysicsHashMap.get(currentPartSetEntry).flags |= bitMaskLamda;
+                        }
+                        else {
+                            bcsPhysicsHashMap.get(currentPartSetEntry).flags &= ~bitMaskLamda;
+                        }
+                    });
+                }
+                case HideFlags -> {
+                    checkBoxsList[i].setSelected((bcsPhysicsHashMap.get(currentPartSetEntry).hideFlags & bitMask) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bcsPhysicsHashMap.get(currentPartSetEntry).hideFlags |= bitMaskLamda;
+                        }
+                        else {
+                            bcsPhysicsHashMap.get(currentPartSetEntry).hideFlags &= ~bitMaskLamda;
+                        }
+                    });
+                }
+                case HideMatFlags -> {
+                    checkBoxsList[i].setSelected((bcsPhysicsHashMap.get(currentPartSetEntry).hideMatFlags & bitMask) != 0);
+
+                    checkBoxsList[i].selectedProperty().addListener((obs, oldValue, newValue) -> {
+                        if (newValue) {
+                            bcsPhysicsHashMap.get(currentPartSetEntry).hideMatFlags |= bitMaskLamda;
+                        }
+                        else {
+                            bcsPhysicsHashMap.get(currentPartSetEntry).hideMatFlags &= ~bitMaskLamda;
+                        }
+                    });
+                }
+                default -> throw new IllegalArgumentException("Unexpected value: " + bcsPhysicsValue);
+            }
+
+            vBox.getChildren().add(checkBoxsList[i]);
+
+            bitMask <<= 1;
+        }
+
+        return vBox;
+    }
+
+    private Label createLabel(String text, int width) {
+        Label label = new Label(text);
+        if (width != 0) label.setPrefWidth(width);
+
+        return label;
+    }
+
+    private HBox createHBox(int width, Label label, Node node) {
+        HBox hBox = new HBox(width, label, node);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        return hBox;
+    }
+
+    private HBox createHBox(int width, Node[] nodeList, boolean enableStyle) {
+        HBox hBox = new HBox(width);
+
+        if (enableStyle) hBox.getStyleClass().add("titled-address-box");
+
+        for (int i = 0; i < nodeList.length; i++) {
+            hBox.getChildren().add(nodeList[i]);
+        }
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        return hBox;
     }
 
     private void createTabs() {
@@ -2351,15 +950,15 @@ public class Bcs {
             Tab partColorsTab = new Tab("Part Colors");
             Tab bodiesTab = new Tab("Bodies");
             Tab skeletonsTab = new Tab("Skeletons");
-            Tab unknownTab = new Tab("Unknown");
+            Tab propertiesTab = new Tab("Properties");
 
             partSetsTab.setClosable(false);
             partColorsTab.setClosable(false);
             bodiesTab.setClosable(false);
             skeletonsTab.setClosable(false);
-            unknownTab.setClosable(false);
+            propertiesTab.setClosable(false);
 
-            mainTabPane.getTabs().addAll(partSetsTab, partColorsTab, bodiesTab, skeletonsTab, unknownTab);
+            mainTabPane.getTabs().addAll(partSetsTab, partColorsTab, bodiesTab, skeletonsTab, propertiesTab);
         }
     }
 
@@ -2427,7 +1026,7 @@ public class Bcs {
                     dynamicTabPane.getTabs().clear();
 
                     mainTabPane.getTabs().forEach(tab -> tab.setContent(null));
-                    mainTabPane.getTabs().get(4).setContent(createUnknownVBox(bcsPartSet));
+                    mainTabPane.getTabs().get(4).setContent(createPropertiesVBox(bcsPartSet));
                 }
             }
         });
@@ -2550,7 +1149,7 @@ public class Bcs {
 
                 addColorSelector.setDisable(false);
                 addPhysics.setDisable(false);
-                addUnknown3.setDisable(false);
+                if (version != 72) addUnknown3.setDisable(false);
 
                 if (pastePartSetItem.getText().contains(newValue.getValue())) pastePartSetItem.setDisable(false);
             }
@@ -2565,7 +1164,7 @@ public class Bcs {
 
                 addColorSelector.setDisable(false);
 
-                if (pastePartSetItem.getText().equals("Paste Color Selector  Ctrl+V")) pastePartSetItem.setDisable(false);
+                if (!pastePartSetItem.getText().contains("List") && pastePartSetItem.getText().contains("Paste Color Selector")) pastePartSetItem.setDisable(false);
             }
             else if (newValue.getParent().getValue().equals("Physics")) {
                 int index = dynamicTabPane.getSelectionModel().getSelectedIndex();
@@ -2578,7 +1177,7 @@ public class Bcs {
 
                 addPhysics.setDisable(false);
 
-                if (pastePartSetItem.getText().equals("Paste Physics  Ctrl+V")) pastePartSetItem.setDisable(false);
+                if (!pastePartSetItem.getText().contains("List") && pastePartSetItem.getText().contains("Paste Physics")) pastePartSetItem.setDisable(false);
             }
             else if (newValue.getParent().getValue().equals("Unknown 3")) {
                 int index = dynamicTabPane.getSelectionModel().getSelectedIndex();
@@ -2591,7 +1190,7 @@ public class Bcs {
 
                 addUnknown3.setDisable(false);
 
-                if (pastePartSetItem.getText().equals("Paste Unknown 3  Ctrl+V")) pastePartSetItem.setDisable(false);
+                if (!pastePartSetItem.getText().contains("List") && pastePartSetItem.getText().contains("Paste Unknown 3")) pastePartSetItem.setDisable(false);
             }
             else {
                 dynamicTabPane.getTabs().clear();
@@ -2607,42 +1206,31 @@ public class Bcs {
                         addUnknown3.setDisable(false);
                     }
                 }
+                
                 if (newValue.getValue().contains("Part Set")){
-                    if (pastePartSetItem.getText().equals("Paste Part Set  Ctrl+V")) pastePartSetItem.setDisable(false);
+                    if (pastePartSetItem.getText().contains("Paste Part Set")) pastePartSetItem.setDisable(false);
 
                     else if (addPartSetItemCopy.getText().contains("Color Selector") || addPartSetItemCopy.getText().contains("Physics") || addPartSetItemCopy.getText().contains("Unknown 3")) {
                         addPartSetItemCopy.setDisable(true);
                     }
                 }
+                else if (pastePartSetItem.getText().contains(newValue.getValue() + " List")) {
+                    pastePartSetItem.setDisable(false);
+                }
             }
         });
+
         partSetsTreeView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 partSetContextMenu.setOnAction(event -> {
-                    if (event.getTarget() == addPartSet) {
-                        AddPartSet();
-                    }
-                    if (event.getTarget() == copyPartSetItem) {
-                        CopyPartSetItem();
-                    }
-                    if (event.getTarget() == deletePartSetItem) {
-                        DeletePartSetItem();
-                    }
-                    if (event.getTarget() == addColorSelector) {
-                        AddColorSelector();
-                    }
-                    if (event.getTarget() == addPhysics) {
-                        AddPhysics();
-                    }
-                    if (event.getTarget() == addUnknown3) {
-                        AddUnknown3();
-                    }
-                    if (event.getTarget() == pastePartSetItem) {
-                        PastePartSetItem();
-                    }
-                    if (event.getTarget() == addPartSetItemCopy) {
-                        AddPartSetItemCopy();
-                    }
+                    if (event.getTarget() == addPartSet) AddPartSet();
+                    else if (event.getTarget() == copyPartSetItem) CopyPartSetItem();
+                    else if (event.getTarget() == deletePartSetItem) DeletePartSetItem();
+                    else if (event.getTarget() == addColorSelector) AddColorSelector();
+                    else if (event.getTarget() == addPhysics) AddPhysics();
+                    else if (event.getTarget() == addUnknown3) AddUnknown3();
+                    else if (event.getTarget() == pastePartSetItem) PastePartSetItem();
+                    else if (event.getTarget() == addPartSetItemCopy) AddPartSetItemCopy();
                 });
             }
             addPart.setOnAction(ev -> {
@@ -2764,18 +1352,10 @@ public class Bcs {
 
     private void partSetsKeysListener() {
         partSetsTreeView.setOnKeyPressed(e -> {
-            if (e.isControlDown() && e.getCode() == KeyCode.C) {
-                CopyPartSetItem();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.V) {
-                PastePartSetItem();
-            }
-            if (e.getCode() == KeyCode.DELETE) {
-                DeletePartSetItem();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.A) {
-                AddPartSetItemCopy();
-            }
+            if (e.isControlDown() && e.getCode() == KeyCode.C) CopyPartSetItem();
+            else if (e.isControlDown() && e.getCode() == KeyCode.V) PastePartSetItem();
+            else if (e.getCode() == KeyCode.DELETE) DeletePartSetItem();
+            else if (e.isControlDown() && e.getCode() == KeyCode.A) AddPartSetItemCopy();
         });
     }
 
@@ -2918,10 +1498,6 @@ public class Bcs {
     }
 
     private void CopyPartSetItem() {
-        copiedPartSetItem.setText("Copied %s");
-        pastePartSetItem.setText("Paste %s  Ctrl+V");
-        addPartSetItemCopy.setText("Add %s Copy  Ctrl+A");
-
         noCopiedPartSetItemFound.setVisible(false);
         copiedPartSetItem.setVisible(true);
         pastePartSetItem.setVisible(true);
@@ -2930,9 +1506,7 @@ public class Bcs {
         pastePartSetItem.setDisable(false);
 
         if (currentPartSetEntry.getParent() == partSetsTreeView.getRoot()) {
-            copiedPartSetItem.setText(String.format(copiedPartSetItem.getText(), "Part Set"));
-            pastePartSetItem.setText(String.format(pastePartSetItem.getText(), "Part Set"));
-            addPartSetItemCopy.setText(String.format(addPartSetItemCopy.getText(), "Part Set"));
+            setPartSetContextMenuText("Part Set");
 
             copyTypesContainer = new String[currentPartSetEntry.getChildren().size()][];
             copySubTypesContainer = new String[currentPartSetEntry.getChildren().size()];
@@ -3247,9 +1821,7 @@ public class Bcs {
             }
         }
         else if (currentPartSetEntry.getParent().getValue().contains("Part Set")) {
-            copiedPartSetItem.setText(String.format(copiedPartSetItem.getText(), currentPartSetEntry.getValue()));
-            pastePartSetItem.setText(String.format(pastePartSetItem.getText(), currentPartSetEntry.getValue()));
-            addPartSetItemCopy.setText(String.format(addPartSetItemCopy.getText(), currentPartSetEntry.getValue()));
+            setPartSetContextMenuText(currentPartSetEntry.getValue());
 
             copySubTypesContainer = new String[currentPartSetEntry.getChildren().size()];
             copyContainer = new BcsPart(bcsPartsHashMap.get(currentPartSetEntry));
@@ -3284,31 +1856,20 @@ public class Bcs {
             switch (currentPartSetEntry.getParent().getValue()) {
                 case "Color Selectors" -> {
                     copyContainer = new BcsColorSelector(bcsColorsSelectorHashMap.get(currentPartSetEntry));
-
-                    copiedPartSetItem.setText(String.format(copiedPartSetItem.getText(), "Color Selector"));
-                    pastePartSetItem.setText(String.format(pastePartSetItem.getText(), "Color Selector"));
-                    addPartSetItemCopy.setText(String.format(addPartSetItemCopy.getText(), "Color Selector"));
+                    setPartSetContextMenuText("Color Selector");
                 }
                 case "Physics" -> {
                     copyContainer = new BcsPhysics(bcsPhysicsHashMap.get(currentPartSetEntry));
-
-                    copiedPartSetItem.setText(String.format(copiedPartSetItem.getText(), "Physics"));
-                    pastePartSetItem.setText(String.format(pastePartSetItem.getText(), "Physics"));
-                    addPartSetItemCopy.setText(String.format(addPartSetItemCopy.getText(), "Physics"));
+                    setPartSetContextMenuText("Physics");
                 }
                 case "Unknown 3" -> {
                     copyContainer = new BcsUnknown3(bcsUnknown3HashMap.get(currentPartSetEntry));
-
-                    copiedPartSetItem.setText(String.format(copiedPartSetItem.getText(), "Unknown 3"));
-                    pastePartSetItem.setText(String.format(pastePartSetItem.getText(), "Unknown 3"));
-                    addPartSetItemCopy.setText(String.format(addPartSetItemCopy.getText(), "Unknown 3"));
+                    setPartSetContextMenuText("Unknown 3");
                 }
             }
         }
         else if (currentPartSetEntry.getChildren().isEmpty()) {
-            copiedPartSetItem.setText(String.format(copiedPartSetItem.getText(), "Null"));
-            pastePartSetItem.setText(String.format(pastePartSetItem.getText(), "Null"));
-            addPartSetItemCopy.setText(String.format(addPartSetItemCopy.getText(), "Null"));
+            setPartSetContextMenuText("Null");
         }
         else {
             copyListContainer = new Object[1][currentPartSetEntry.getChildren().size()];
@@ -3319,27 +1880,21 @@ public class Bcs {
                         copyListContainer[0][currentPartSetEntry.getChildren().indexOf(child)] = new BcsColorSelector(bcsColorsSelectorHashMap.get(child));
                     }
 
-                    copiedPartSetItem.setText(String.format(copiedPartSetItem.getText(), "Color Selector List"));
-                    pastePartSetItem.setText(String.format(pastePartSetItem.getText(), "Color Selector List"));
-                    addPartSetItemCopy.setText(String.format(addPartSetItemCopy.getText(), "Color Selector List"));
+                    setPartSetContextMenuText("Color Selector List");
                 }
                 case "Physics" -> {
                     for (TreeItem<String> child : currentPartSetEntry.getChildren()) {
                         copyListContainer[0][currentPartSetEntry.getChildren().indexOf(child)] = new BcsPhysics(bcsPhysicsHashMap.get(child));
                     }
 
-                    copiedPartSetItem.setText(String.format(copiedPartSetItem.getText(), "Physics List"));
-                    pastePartSetItem.setText(String.format(pastePartSetItem.getText(), "Physics List"));
-                    addPartSetItemCopy.setText(String.format(addPartSetItemCopy.getText(), "Physics List"));
+                    setPartSetContextMenuText("Physics List");
                 }
                 case "Unknown 3" -> {
                     for (TreeItem<String> child : currentPartSetEntry.getChildren()) {
                         copyListContainer[0][currentPartSetEntry.getChildren().indexOf(child)] = new BcsUnknown3(bcsUnknown3HashMap.get(child));
                     }
 
-                    copiedPartSetItem.setText(String.format(copiedPartSetItem.getText(), "Unknown 3 List"));
-                    pastePartSetItem.setText(String.format(pastePartSetItem.getText(), "Unknown 3 List"));
-                    addPartSetItemCopy.setText(String.format(addPartSetItemCopy.getText(), "Unknown 3 List"));
+                    setPartSetContextMenuText("Unknown 3 List");
                 }
             }
         }
@@ -4418,380 +2973,379 @@ public class Bcs {
         if (partSetsTreeView.getRoot().getChildren().isEmpty()) {
             allPartSetEntries = 0;
         } 
-        switch (addPartSetItemCopy.getText()) {
-            case "Add Part Set Copy  Ctrl+A" -> {
-                partSetsTreeView.getRoot().getChildren().add(new TreeItem<>("Part Set " + allPartSetEntries));
 
-                allPartSetEntries++;
+        if(addPartSetItemCopy.getText().contains("Part Set")) {
+            partSetsTreeView.getRoot().getChildren().add(new TreeItem<>("Part Set " + allPartSetEntries));
 
-                for (int i = 0; i < copySubTypesContainer.length; i++) {
-                    switch (copySubTypesContainer[i]) {
-                        case "Face Base" -> {
-                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Face Base"));
+            allPartSetEntries++;
 
-                            bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
+            for (int i = 0; i < copySubTypesContainer.length; i++) {
+                switch (copySubTypesContainer[i]) {
+                    case "Face Base" -> {
+                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Face Base"));
 
-                            for (int j = 0; j < copyTypesContainer[i].length; j++) {
-                                switch (copyTypesContainer[i][j]) {
-                                    case "Color Selectors" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
+                        bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                        for (int j = 0; j < copyTypesContainer[i].length; j++) {
+                            switch (copyTypesContainer[i][j]) {
+                                case "Color Selectors" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
 
-                                            bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
-                                        }
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+
+                                        bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Physics" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
+                                }
+                                case "Physics" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Unknown 3" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
+                                }
+                                case "Unknown 3" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
                                     }
                                 }
                             }
                         }
-                        case "Face Forehead" -> {
-                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Face Forehead"));
+                    }
+                    case "Face Forehead" -> {
+                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Face Forehead"));
 
-                            bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
+                        bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
 
-                            for (int j = 0; j < copyTypesContainer[i].length; j++) {
-                                switch (copyTypesContainer[i][j]) {
-                                    case "Color Selectors" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
+                        for (int j = 0; j < copyTypesContainer[i].length; j++) {
+                            switch (copyTypesContainer[i][j]) {
+                                case "Color Selectors" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Physics" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
+                                }
+                                case "Physics" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Unknown 3" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
+                                }
+                                case "Unknown 3" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
                                     }
                                 }
                             }
                         }
-                        case "Face Eye" -> {
-                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Face Eye"));
+                    }
+                    case "Face Eye" -> {
+                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Face Eye"));
 
-                            bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
+                        bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
 
-                            for (int j = 0; j < copyTypesContainer[i].length; j++) {
-                                switch (copyTypesContainer[i][j]) {
-                                    case "Color Selectors" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
+                        for (int j = 0; j < copyTypesContainer[i].length; j++) {
+                            switch (copyTypesContainer[i][j]) {
+                                case "Color Selectors" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Physics" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
+                                }
+                                case "Physics" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Unknown 3" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
+                                }
+                                case "Unknown 3" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
                                     }
                                 }
                             }
                         }
-                        case "Face Nose" -> {
-                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Face Nose"));
+                    }
+                    case "Face Nose" -> {
+                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Face Nose"));
 
-                            bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
+                        bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
 
-                            for (int j = 0; j < copyTypesContainer[i].length; j++) {
-                                switch (copyTypesContainer[i][j]) {
-                                    case "Color Selectors" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
+                        for (int j = 0; j < copyTypesContainer[i].length; j++) {
+                            switch (copyTypesContainer[i][j]) {
+                                case "Color Selectors" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Physics" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
+                                }
+                                case "Physics" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Unknown 3" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
+                                }
+                                case "Unknown 3" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
                                     }
                                 }
                             }
                         }
-                        case "Face Ear" -> {
-                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Face Ear"));
+                    }
+                    case "Face Ear" -> {
+                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Face Ear"));
 
-                            bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
+                        bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
 
-                            for (int j = 0; j < copyTypesContainer[i].length; j++) {
-                                switch (copyTypesContainer[i][j]) {
-                                    case "Color Selectors" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
+                        for (int j = 0; j < copyTypesContainer[i].length; j++) {
+                            switch (copyTypesContainer[i][j]) {
+                                case "Color Selectors" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Physics" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
+                                }
+                                case "Physics" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Unknown 3" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
+                                }
+                                case "Unknown 3" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
                                     }
                                 }
                             }
                         }
-                        case "Hair" -> {
-                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Hair"));
+                    }
+                    case "Hair" -> {
+                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Hair"));
 
-                            bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
+                        bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
 
-                            for (int j = 0; j < copyTypesContainer[i].length; j++) {
-                                switch (copyTypesContainer[i][j]) {
-                                    case "Color Selectors" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
+                        for (int j = 0; j < copyTypesContainer[i].length; j++) {
+                            switch (copyTypesContainer[i][j]) {
+                                case "Color Selectors" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Physics" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
+                                }
+                                case "Physics" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Unknown 3" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
+                                }
+                                case "Unknown 3" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
                                     }
                                 }
                             }
                         }
-                        case "Bust" -> {
-                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Bust"));
+                    }
+                    case "Bust" -> {
+                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Bust"));
 
-                            bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
+                        bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
 
-                            for (int j = 0; j < copyTypesContainer[i].length; j++) {
-                                switch (copyTypesContainer[i][j]) {
-                                    case "Color Selectors" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
+                        for (int j = 0; j < copyTypesContainer[i].length; j++) {
+                            switch (copyTypesContainer[i][j]) {
+                                case "Color Selectors" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Physics" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
+                                }
+                                case "Physics" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Unknown 3" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
+                                }
+                                case "Unknown 3" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
                                     }
                                 }
                             }
                         }
-                        case "Pants" -> {
-                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Pants"));
+                    }
+                    case "Pants" -> {
+                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Pants"));
 
-                            bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
+                        bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
 
-                            for (int j = 0; j < copyTypesContainer[i].length; j++) {
-                                switch (copyTypesContainer[i][j]) {
-                                    case "Color Selectors" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
+                        for (int j = 0; j < copyTypesContainer[i].length; j++) {
+                            switch (copyTypesContainer[i][j]) {
+                                case "Color Selectors" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Physics" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
+                                }
+                                case "Physics" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Unknown 3" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
+                                }
+                                case "Unknown 3" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
                                     }
                                 }
                             }
                         }
-                        case "Rist" -> {
-                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Rist"));
+                    }
+                    case "Rist" -> {
+                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Rist"));
 
-                            bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
+                        bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
 
-                            for (int j = 0; j < copyTypesContainer[i].length; j++) {
-                                switch (copyTypesContainer[i][j]) {
-                                    case "Color Selectors" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
+                        for (int j = 0; j < copyTypesContainer[i].length; j++) {
+                            switch (copyTypesContainer[i][j]) {
+                                case "Color Selectors" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Physics" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
+                                }
+                                case "Physics" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Unknown 3" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
+                                }
+                                case "Unknown 3" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
                                     }
                                 }
                             }
                         }
-                        case "Boots" -> {
-                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Boots"));
+                    }
+                    case "Boots" -> {
+                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().add(i, new TreeItem<>("Boots"));
 
-                            bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
+                        bcsPartsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i), (BcsPart) copyPartsContainer[i]);
 
-                            for (int j = 0; j < copyTypesContainer[i].length; j++) {
-                                switch (copyTypesContainer[i][j]) {
-                                    case "Color Selectors" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
+                        for (int j = 0; j < copyTypesContainer[i].length; j++) {
+                            switch (copyTypesContainer[i][j]) {
+                                case "Color Selectors" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Color Selectors"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsColorsSelectorHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsColorSelector((BcsColorSelector) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Physics" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
+                                }
+                                case "Physics" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Physics"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsPhysicsHashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsPhysics((BcsPhysics) copyPartSetContainer[i][j][k]));
                                     }
-                                    case "Unknown 3" -> {
-                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
+                                }
+                                case "Unknown 3" -> {
+                                    partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().add(j, new TreeItem<>("Unknown 3"));
 
-                                        for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
-                                            partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
+                                    for (int k = 0; k < copyPartSetContainer[i][j].length; k++) {
+                                        partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().add(new TreeItem<>("Entry " + k));
 
-                                            bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
-                                        }
+                                        bcsUnknown3HashMap.put(partSetsTreeView.getRoot().getChildren().getLast().getChildren().get(i).getChildren().get(j).getChildren().get(k), new BcsUnknown3((BcsUnknown3) copyPartSetContainer[i][j][k]));
                                     }
                                 }
                             }
@@ -4799,7 +3353,237 @@ public class Bcs {
                     }
                 }
             }
-            case "Add Face Base Copy  Ctrl+A" -> {
+        }
+        else if (addPartSetItemCopy.getText().contains("List")) {
+            if (addPartSetItemCopy.getText().contains("Color")) {
+                boolean hasColorSelector = false;
+                TreeItem<String> getGrandParent = currentPartSetEntry;
+                
+                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
+                    getGrandParent = getGrandParent.getParent();
+                }
+
+                for (TreeItem<String> child : getGrandParent.getChildren()) {
+                    if (child.getValue().equals("Color Selectors")) {
+                        hasColorSelector = true;
+                    }
+                }
+                if (hasColorSelector) {
+                    TreeItem<String> getParent = getGrandParent.getChildren().get(0);
+
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+
+                        getParent.getChildren().add(newChild);
+
+                        bcsColorsSelectorHashMap.put(newChild, new BcsColorSelector((BcsColorSelector) copyListContainer[0][i]));
+                    }
+                } 
+                else {
+                    getGrandParent.getChildren().add(0, new TreeItem<>("Color Selectors"));
+
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
+
+                        getGrandParent.getChildren().get(0).getChildren().add(newChild);
+
+                        bcsColorsSelectorHashMap.put(newChild, new BcsColorSelector((BcsColorSelector) copyListContainer[0][i]));
+                    }
+                }
+            }
+            else if (addPartSetItemCopy.getText().contains("Physics")) {
+                boolean hasPhysics = false;
+                TreeItem<String> physicsIndex = new TreeItem<>();
+                TreeItem<String> getGrandParent = currentPartSetEntry;
+                
+                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
+                    getGrandParent = getGrandParent.getParent();
+                }
+
+                for (TreeItem<String> child : getGrandParent.getChildren()) {
+                    if (child.getValue().equals("Physics")) {
+                        hasPhysics = true;
+                        physicsIndex = child;
+                    }
+                }
+
+                if (hasPhysics) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + physicsIndex.getChildren().size());
+
+                        physicsIndex.getChildren().add(newChild);
+
+                        bcsPhysicsHashMap.put(newChild, new BcsPhysics((BcsPhysics) copyListContainer[0][i]));
+                    }
+                } 
+                else {
+                    getGrandParent.getChildren().add(0, new TreeItem<>("Physics"));
+
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
+
+                        getGrandParent.getChildren().get(0).getChildren().add(newChild);
+
+                        bcsPhysicsHashMap.put(newChild, new BcsPhysics((BcsPhysics) copyListContainer[0][i]));
+                    }
+
+                    sortPartSetSubItems(getGrandParent);
+                }
+            }
+            else if (addPartSetItemCopy.getText().contains("Unknown")) {
+                boolean hasUnknown3 = false;
+                TreeItem<String> unknown3Index = new TreeItem<>();
+                TreeItem<String> getGrandParent = currentPartSetEntry;
+                
+                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
+                    getGrandParent = getGrandParent.getParent();
+                }
+
+                for (TreeItem<String> child : getGrandParent.getChildren()) {
+                    if (child.getValue().equals("Unknown 3")) {
+                        hasUnknown3 = true;
+                        unknown3Index = child;
+                    }
+                }
+                if (hasUnknown3) {
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + unknown3Index.getChildren().size());
+
+                        unknown3Index.getChildren().add(newChild);
+
+                        bcsUnknown3HashMap.put(newChild, new BcsUnknown3((BcsUnknown3) copyListContainer[0][i]));
+                    }
+                } 
+                else {
+                    getGrandParent.getChildren().add(0, new TreeItem<>("Unknown 3"));
+
+                    for (int i = 0; i < copyListContainer[0].length; i++) {
+                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
+
+                        getGrandParent.getChildren().get(0).getChildren().add(newChild);
+
+                        bcsUnknown3HashMap.put(newChild, new BcsUnknown3((BcsUnknown3) copyListContainer[0][i]));
+                    }
+
+                    sortPartSetSubItems(getGrandParent);
+                }
+            }
+        }
+        else if(addPartSetItemCopy.getText().contains("Color") || addPartSetItemCopy.getText().contains("Physics") || addPartSetItemCopy.getText().contains("Unknown 3")) {
+            if (addPartSetItemCopy.getText().contains("Color Selector")) {
+                boolean hasColorSelector = false;
+                TreeItem<String> getGrandParent = currentPartSetEntry;
+                
+                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
+                    getGrandParent = getGrandParent.getParent();
+                }
+
+                for (TreeItem<String> child : getGrandParent.getChildren()) {
+                    if (child.getValue().equals("Color Selectors")) {
+                        hasColorSelector = true;
+                    }
+                }
+                if (hasColorSelector) {
+                    TreeItem<String> getParent = getGrandParent.getChildren().get(0);
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
+
+                    getParent.getChildren().add(newChild);
+
+                    bcsColorsSelectorHashMap.put(newChild, new BcsColorSelector((BcsColorSelector) copyContainer));
+
+                    partSetsTreeView.getSelectionModel().select(newChild);
+                }
+                else {
+                    getGrandParent.getChildren().add(0, new TreeItem<>("Color Selectors"));
+
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
+
+                    getGrandParent.getChildren().get(0).getChildren().add(newChild);
+
+                    bcsColorsSelectorHashMap.put(newChild, new BcsColorSelector((BcsColorSelector) copyContainer));
+
+                    partSetsTreeView.getSelectionModel().select(newChild);
+                }
+            }
+            else if (addPartSetItemCopy.getText().contains("Physics")) {
+                boolean hasPhysics = false;
+                TreeItem<String> physicsIndex = new TreeItem<>();
+                TreeItem<String> getGrandParent = currentPartSetEntry;
+                
+                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
+                    getGrandParent = getGrandParent.getParent();
+                }
+
+                for (TreeItem<String> child : getGrandParent.getChildren()) {
+                    if (child.getValue().equals("Physics")) {
+                        hasPhysics = true;
+                        physicsIndex = child;
+                    }
+                }
+                if (hasPhysics) {
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + physicsIndex.getChildren().size());
+
+                    physicsIndex.getChildren().add(newChild);
+
+                    bcsPhysicsHashMap.put(newChild, new BcsPhysics((BcsPhysics) copyContainer));
+
+                    partSetsTreeView.getSelectionModel().select(newChild);
+                } 
+                else {
+                    getGrandParent.getChildren().add(0, new TreeItem<>("Physics"));
+
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
+
+                    getGrandParent.getChildren().get(0).getChildren().add(newChild);
+
+                    bcsPhysicsHashMap.put(newChild, new BcsPhysics((BcsPhysics) copyContainer));
+
+                    sortPartSetSubItems(getGrandParent);
+
+                    partSetsTreeView.getSelectionModel().select(newChild);
+                }
+            }
+            else {
+                boolean hasUnknown3 = false;
+                TreeItem<String> unknown3Index = new TreeItem<>();
+                TreeItem<String> getGrandParent = currentPartSetEntry;
+                
+                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
+                    getGrandParent = getGrandParent.getParent();
+                }
+
+                for (TreeItem<String> child : getGrandParent.getChildren()) {
+                    if (child.getValue().equals("Unknown 3")) {
+                        hasUnknown3 = true;
+                        unknown3Index = child;
+                    }
+                }
+                if (hasUnknown3) {
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + unknown3Index.getChildren().size());
+
+                    unknown3Index.getChildren().add(newChild);
+
+                    bcsUnknown3HashMap.put(newChild, new BcsUnknown3((BcsUnknown3) copyContainer));
+
+                    partSetsTreeView.getSelectionModel().select(newChild);
+                } 
+                else {
+                    getGrandParent.getChildren().add(0, new TreeItem<>("Unknown 3"));
+
+                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
+
+                    getGrandParent.getChildren().get(0).getChildren().add(newChild);
+
+                    bcsUnknown3HashMap.put(newChild, new BcsUnknown3((BcsUnknown3) copyContainer));
+
+                    sortPartSetSubItems(getGrandParent);
+
+                    partSetsTreeView.getSelectionModel().select(newChild);
+                }
+            }
+        }
+        else {
+            if (addPartSetItemCopy.getText().contains("Face Base")) {
                 partSetGrandParentEntry.getChildren().add(0, new TreeItem<>("Face Base"));
 
                 bcsPartsHashMap.put(partSetGrandParentEntry.getChildren().get(0), new BcsPart((BcsPart) copyContainer));
@@ -4836,7 +3620,7 @@ public class Bcs {
                     }
                 }
             }
-            case "Add Face Forehead Copy  Ctrl+A" -> {
+            else if (addPartSetItemCopy.getText().contains("Face Forehead")) {
                 partSetGrandParentEntry.getChildren().add(0, new TreeItem<>("Face Forehead"));
 
                 bcsPartsHashMap.put(partSetGrandParentEntry.getChildren().get(0), new BcsPart((BcsPart) copyContainer));
@@ -4875,8 +3659,8 @@ public class Bcs {
 
                 sortPartSetItems(partSetGrandParentEntry);
             }
-            case "Add Face Eye Copy  Ctrl+A" -> {
-                partSetGrandParentEntry.getChildren().add(0, new TreeItem<>("Face Eye"));
+            else if (addPartSetItemCopy.getText().contains("Face Eye")) {
+                 partSetGrandParentEntry.getChildren().add(0, new TreeItem<>("Face Eye"));
 
                 bcsPartsHashMap.put(partSetGrandParentEntry.getChildren().get(0), new BcsPart((BcsPart) copyContainer));
                 
@@ -4914,7 +3698,7 @@ public class Bcs {
 
                 sortPartSetItems(partSetGrandParentEntry);
             }
-            case "Add Face Nose Copy  Ctrl+A" -> {
+            else if (addPartSetItemCopy.getText().contains("Face Nose")) {
                 partSetGrandParentEntry.getChildren().add(0, new TreeItem<>("Face Nose"));
 
                 bcsPartsHashMap.put(partSetGrandParentEntry.getChildren().get(0), new BcsPart((BcsPart) copyContainer));
@@ -4953,7 +3737,7 @@ public class Bcs {
 
                 sortPartSetItems(partSetGrandParentEntry);
             }
-            case "Add Face Ear Copy  Ctrl+A" -> {
+            else if (addPartSetItemCopy.getText().contains("Face Ear")) {
                 partSetGrandParentEntry.getChildren().add(0, new TreeItem<>("Face Ear"));
 
                 bcsPartsHashMap.put(partSetGrandParentEntry.getChildren().get(0), new BcsPart((BcsPart) copyContainer));
@@ -4992,7 +3776,7 @@ public class Bcs {
 
                 sortPartSetItems(partSetGrandParentEntry);
             }
-            case "Add Hair Copy  Ctrl+A" -> {
+            else if (addPartSetItemCopy.getText().contains("Hair")) {
                 partSetGrandParentEntry.getChildren().add(0, new TreeItem<>("Hair"));
 
                 bcsPartsHashMap.put(partSetGrandParentEntry.getChildren().get(0), new BcsPart((BcsPart) copyContainer));
@@ -5031,7 +3815,7 @@ public class Bcs {
 
                 sortPartSetItems(partSetGrandParentEntry);
             }
-            case "Add Bust Copy  Ctrl+A" -> {
+            else if (addPartSetItemCopy.getText().contains("Bust")) {
                 partSetGrandParentEntry.getChildren().add(0, new TreeItem<>("Bust"));
 
                 bcsPartsHashMap.put(partSetGrandParentEntry.getChildren().get(0), new BcsPart((BcsPart) copyContainer));
@@ -5070,7 +3854,7 @@ public class Bcs {
 
                 sortPartSetItems(partSetGrandParentEntry);
             }
-            case "Add Pants Copy  Ctrl+A" -> {
+            else if (addPartSetItemCopy.getText().contains("Pants")) {
                 partSetGrandParentEntry.getChildren().add(0, new TreeItem<>("Pants"));
 
                 bcsPartsHashMap.put(partSetGrandParentEntry.getChildren().get(0), new BcsPart((BcsPart) copyContainer));
@@ -5109,7 +3893,7 @@ public class Bcs {
 
                 sortPartSetItems(partSetGrandParentEntry);
             }
-            case "Add Rist Copy  Ctrl+A" -> {
+            else if (addPartSetItemCopy.getText().contains("Rist")) {
                 partSetGrandParentEntry.getChildren().add(0, new TreeItem<>("Rist"));
 
                 bcsPartsHashMap.put(partSetGrandParentEntry.getChildren().get(0), new BcsPart((BcsPart) copyContainer));
@@ -5148,7 +3932,7 @@ public class Bcs {
 
                 sortPartSetItems(partSetGrandParentEntry);
             }
-            case "Add Boots Copy  Ctrl+A" -> {
+            else {
                 partSetGrandParentEntry.getChildren().add(0, new TreeItem<>("Boots"));
 
                 bcsPartsHashMap.put(partSetGrandParentEntry.getChildren().get(0), new BcsPart((BcsPart) copyContainer));
@@ -5187,229 +3971,7 @@ public class Bcs {
 
                 sortPartSetItems(partSetGrandParentEntry);
             }
-            case "Add Color Selector Copy  Ctrl+A" -> {
-                boolean hasColorSelector = false;
-                TreeItem<String> getGrandParent = currentPartSetEntry;
-                
-                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
-                    getGrandParent = getGrandParent.getParent();
-                }
-
-                for (TreeItem<String> child : getGrandParent.getChildren()) {
-                    if (child.getValue().equals("Color Selectors")) {
-                        hasColorSelector = true;
-                    }
-                }
-                if (hasColorSelector) {
-                    TreeItem<String> getParent = getGrandParent.getChildren().get(0);
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                    getParent.getChildren().add(newChild);
-
-                    bcsColorsSelectorHashMap.put(newChild, new BcsColorSelector((BcsColorSelector) copyContainer));
-
-                    partSetsTreeView.getSelectionModel().select(newChild);
-                } else {
-                    getGrandParent.getChildren().add(0, new TreeItem<>("Color Selectors"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    getGrandParent.getChildren().get(0).getChildren().add(newChild);
-
-                    bcsColorsSelectorHashMap.put(newChild, new BcsColorSelector((BcsColorSelector) copyContainer));
-
-                    partSetsTreeView.getSelectionModel().select(newChild);
-                }
-            }
-            case "Add Color Selector List Copy  Ctrl+A" -> {
-                boolean hasColorSelector = false;
-                TreeItem<String> getGrandParent = currentPartSetEntry;
-                
-                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
-                    getGrandParent = getGrandParent.getParent();
-                }
-
-                for (TreeItem<String> child : getGrandParent.getChildren()) {
-                    if (child.getValue().equals("Color Selectors")) {
-                        hasColorSelector = true;
-                    }
-                }
-                if (hasColorSelector) {
-                    TreeItem<String> getParent = getGrandParent.getChildren().get(0);
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + getParent.getChildren().size());
-
-                        getParent.getChildren().add(newChild);
-
-                        bcsColorsSelectorHashMap.put(newChild, new BcsColorSelector((BcsColorSelector) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    getGrandParent.getChildren().add(0, new TreeItem<>("Color Selectors"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        getGrandParent.getChildren().get(0).getChildren().add(newChild);
-
-                        bcsColorsSelectorHashMap.put(newChild, new BcsColorSelector((BcsColorSelector) copyListContainer[0][i]));
-                    }
-                }
-            }
-            case "Add Physics Copy  Ctrl+A" -> {
-                boolean hasPhysics = false;
-                TreeItem<String> physicsIndex = new TreeItem<>();
-                TreeItem<String> getGrandParent = currentPartSetEntry;
-                
-                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
-                    getGrandParent = getGrandParent.getParent();
-                }
-
-                for (TreeItem<String> child : getGrandParent.getChildren()) {
-                    if (child.getValue().equals("Physics")) {
-                        hasPhysics = true;
-                        physicsIndex = child;
-                    }
-                }
-                if (hasPhysics) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + physicsIndex.getChildren().size());
-
-                    physicsIndex.getChildren().add(newChild);
-
-                    bcsPhysicsHashMap.put(newChild, new BcsPhysics((BcsPhysics) copyContainer));
-
-                    partSetsTreeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    getGrandParent.getChildren().add(0, new TreeItem<>("Physics"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    getGrandParent.getChildren().get(0).getChildren().add(newChild);
-
-                    bcsPhysicsHashMap.put(newChild, new BcsPhysics((BcsPhysics) copyContainer));
-
-                    sortPartSetSubItems(getGrandParent);
-
-                    partSetsTreeView.getSelectionModel().select(newChild);
-                }
-            }
-            case "Add Physics List Copy  Ctrl+A" -> {
-                boolean hasPhysics = false;
-                TreeItem<String> physicsIndex = new TreeItem<>();
-                TreeItem<String> getGrandParent = currentPartSetEntry;
-                
-                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
-                    getGrandParent = getGrandParent.getParent();
-                }
-
-                for (TreeItem<String> child : getGrandParent.getChildren()) {
-                    if (child.getValue().equals("Physics")) {
-                        hasPhysics = true;
-                        physicsIndex = child;
-                    }
-                }
-                if (hasPhysics) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + physicsIndex.getChildren().size());
-
-                        physicsIndex.getChildren().add(newChild);
-
-                        bcsPhysicsHashMap.put(newChild, new BcsPhysics((BcsPhysics) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    getGrandParent.getChildren().add(0, new TreeItem<>("Physics"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        getGrandParent.getChildren().get(0).getChildren().add(newChild);
-
-                        bcsPhysicsHashMap.put(newChild, new BcsPhysics((BcsPhysics) copyListContainer[0][i]));
-                    }
-
-                    sortPartSetSubItems(getGrandParent);
-                }
-            }
-            case "Add Unknown 3 Copy  Ctrl+A" -> {
-                boolean hasUnknown3 = false;
-                TreeItem<String> unknown3Index = new TreeItem<>();
-                TreeItem<String> getGrandParent = currentPartSetEntry;
-                
-                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
-                    getGrandParent = getGrandParent.getParent();
-                }
-
-                for (TreeItem<String> child : getGrandParent.getChildren()) {
-                    if (child.getValue().equals("Unknown 3")) {
-                        hasUnknown3 = true;
-                        unknown3Index = child;
-                    }
-                }
-                if (hasUnknown3) {
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + unknown3Index.getChildren().size());
-
-                    unknown3Index.getChildren().add(newChild);
-
-                    bcsUnknown3HashMap.put(newChild, new BcsUnknown3((BcsUnknown3) copyContainer));
-
-                    partSetsTreeView.getSelectionModel().select(newChild);
-                } 
-                else {
-                    getGrandParent.getChildren().add(0, new TreeItem<>("Unknown 3"));
-
-                    TreeItem<String> newChild = new TreeItem<>("Entry " + 0);
-
-                    getGrandParent.getChildren().get(0).getChildren().add(newChild);
-
-                    bcsUnknown3HashMap.put(newChild, new BcsUnknown3((BcsUnknown3) copyContainer));
-
-                    sortPartSetSubItems(getGrandParent);
-
-                    partSetsTreeView.getSelectionModel().select(newChild);
-                }
-            }
-            case "Add Unknown 3 List Copy  Ctrl+A" -> {
-                boolean hasUnknown3 = false;
-                TreeItem<String> unknown3Index = new TreeItem<>();
-                TreeItem<String> getGrandParent = currentPartSetEntry;
-                
-                while (!getGrandParent.getParent().getValue().toString().contains("Part Set")) {
-                    getGrandParent = getGrandParent.getParent();
-                }
-
-                for (TreeItem<String> child : getGrandParent.getChildren()) {
-                    if (child.getValue().equals("Unknown 3")) {
-                        hasUnknown3 = true;
-                        unknown3Index = child;
-                    }
-                }
-                if (hasUnknown3) {
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + unknown3Index.getChildren().size());
-
-                        unknown3Index.getChildren().add(newChild);
-
-                        bcsUnknown3HashMap.put(newChild, new BcsUnknown3((BcsUnknown3) copyListContainer[0][i]));
-                    }
-                } 
-                else {
-                    getGrandParent.getChildren().add(0, new TreeItem<>("Unknown 3"));
-
-                    for (int i = 0; i < copyListContainer[0].length; i++) {
-                        TreeItem<String> newChild = new TreeItem<>("Entry " + i);
-
-                        getGrandParent.getChildren().get(0).getChildren().add(newChild);
-
-                        bcsUnknown3HashMap.put(newChild, new BcsUnknown3((BcsUnknown3) copyListContainer[0][i]));
-                    }
-
-                    sortPartSetSubItems(getGrandParent);
-                }
-            }
-        } 
+        }
     }
 
     private void partColorsActionListener() {
@@ -5452,7 +4014,7 @@ public class Bcs {
 
                 dynamicTabPane.getSelectionModel().select(index);
 
-                if (pastePartColorItem.getText().equals("Paste Part Color  Ctrl+V")) pastePartColorItem.setDisable(false);
+                if (pastePartColorItem.getText().contains("Paste Part Color")) pastePartColorItem.setDisable(false);
             }
             else if (newValue.getValue().contains("Color")) {
                 int index = dynamicTabPane.getSelectionModel().getSelectedIndex();
@@ -5463,7 +4025,7 @@ public class Bcs {
 
                 dynamicTabPane.getSelectionModel().select(index);
 
-                if (pastePartColorItem.getText().equals("Paste Color  Ctrl+V")) pastePartColorItem.setDisable(false);
+                if (pastePartColorItem.getText().contains("Paste Color")) pastePartColorItem.setDisable(false);
             }
             else {
                 dynamicTabPane.getTabs().clear();
@@ -5472,24 +4034,12 @@ public class Bcs {
         partColorsTreeView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 partColorContextMenu.setOnAction(event -> {
-                    if (event.getTarget() == addPartColor) {
-                        AddPartColor();
-                    }
-                    if (event.getTarget() == copyPartColorItem) {
-                        CopyPartColorItem();
-                    }
-                    if (event.getTarget() == deletePartColorItem) {
-                        DeletePartColorItem();
-                    }
-                    if (event.getTarget() == addColor) {
-                        AddColor();
-                    }
-                    if (event.getTarget() == pastePartColorItem) {
-                        PastePartColorItem();
-                    }
-                    if (event.getTarget() == addPartColorItemCopy) {
-                        AddPartColorItemCopy();
-                    }
+                    if (event.getTarget() == addPartColor) AddPartColor();
+                    else if (event.getTarget() == copyPartColorItem) CopyPartColorItem();
+                    else if (event.getTarget() == deletePartColorItem) DeletePartColorItem();
+                    else if (event.getTarget() == addColor) AddColor();
+                    else if (event.getTarget() == pastePartColorItem) PastePartColorItem();
+                    else if (event.getTarget() == addPartColorItemCopy) AddPartColorItemCopy();
                 });
             }
         });
@@ -5497,18 +4047,10 @@ public class Bcs {
 
     private void partColorsKeysListener() {
         partColorsTreeView.setOnKeyPressed(e -> {
-            if (e.isControlDown() && e.getCode() == KeyCode.C) {
-                CopyPartColorItem();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.V) {
-                PastePartColorItem();
-            }
-            if (e.getCode() == KeyCode.DELETE) {
-                DeletePartColorItem();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.A) {
-                AddPartColorItemCopy();
-            }
+            if (e.isControlDown() && e.getCode() == KeyCode.C) CopyPartColorItem();
+            else if (e.isControlDown() && e.getCode() == KeyCode.V) PastePartColorItem();
+            else if (e.getCode() == KeyCode.DELETE) DeletePartColorItem();
+            else if (e.isControlDown() && e.getCode() == KeyCode.A) AddPartColorItemCopy();
         });
     }
 
@@ -5549,10 +4091,6 @@ public class Bcs {
     }
 
     private void CopyPartColorItem() {
-        copiedPartColorItem.setText("Copied %s");
-        pastePartColorItem.setText("Paste %s  Ctrl+V");
-        addPartColorItemCopy.setText("Add %s Copy  Ctrl+A");
-
         noCopiedPartColorItemFound.setVisible(false);
         copiedPartColorItem.setVisible(true);
         pastePartColorItem.setVisible(true);
@@ -5569,16 +4107,12 @@ public class Bcs {
                 copyListContainer[0][i] = new BcsColor(bcsColorsHashMap.get(currentPartColorEntry.getChildren().get(i)));
             }
 
-            copiedPartColorItem.setText(String.format(copiedPartColorItem.getText(), "Part Color"));
-            pastePartColorItem.setText(String.format(pastePartColorItem.getText(), "Part Color"));
-            addPartColorItemCopy.setText(String.format(addPartColorItemCopy.getText(), "Part Color"));
+            setPartColorContextMenuText("Part Color");
         }
         else {
             copyContainer = new BcsColor(bcsColorsHashMap.get(currentPartColorEntry));
 
-            copiedPartColorItem.setText(String.format(copiedPartColorItem.getText(), "Color"));
-            pastePartColorItem.setText(String.format(pastePartColorItem.getText(), "Color"));
-            addPartColorItemCopy.setText(String.format(addPartColorItemCopy.getText(), "Color"));
+            setPartColorContextMenuText("Color");
         }
     }
 
@@ -5654,37 +4188,37 @@ public class Bcs {
         if (partColorsTreeView.getRoot().getChildren().isEmpty()) {
             allPartColorEntries = 0;
         } 
-        switch (addPartColorItemCopy.getText()) {
-            case "Add Part Color Copy  Ctrl+A" -> {
-                TreeItem<String> partColor = new TreeItem<>("Part Color " + allPartColorEntries);
 
-                partColorsTreeView.getRoot().getChildren().add(partColor);
+        if (addPartColorItemCopy.getText().contains("Part")) {
+            TreeItem<String> partColor = new TreeItem<>("Part Color " + allPartColorEntries);
 
-                BcsPartColor bcsPartColor = new BcsPartColor((BcsPartColor) copyContainer);
+            partColorsTreeView.getRoot().getChildren().add(partColor);
 
-                bcsPartColorsHashMap.put(partColor, bcsPartColor);
+            BcsPartColor bcsPartColor = new BcsPartColor((BcsPartColor) copyContainer);
 
-                partColorsObservableList.add(bcsPartColor.name);
+            bcsPartColorsHashMap.put(partColor, bcsPartColor);
 
-                for (int i = 0; i < copyListContainer[0].length; i++) {
-                    partColor.getChildren().add(i, new TreeItem<>("Color " + i));
+            partColorsObservableList.add(bcsPartColor.name);
 
-                    bcsColorsHashMap.put(partColor.getChildren().get(i), new BcsColor((BcsColor) copyListContainer[0][i]));
-                }
+            for (int i = 0; i < copyListContainer[0].length; i++) {
+                partColor.getChildren().add(i, new TreeItem<>("Color " + i));
 
-                allPartColorEntries++;
+                bcsColorsHashMap.put(partColor.getChildren().get(i), new BcsColor((BcsColor) copyListContainer[0][i]));
             }
-            case "Add Color Copy  Ctrl+A" -> {
-                TreeItem<String> color = new TreeItem<>("Color " + partColorGrandParentEntry.getChildren().size());
 
-                partColorGrandParentEntry.getChildren().add(color);
+            allPartColorEntries++;
 
-                bcsColorsHashMap.put(color, new BcsColor((BcsColor) copyContainer));
+        }
+        else {
+            TreeItem<String> color = new TreeItem<>("Color " + partColorGrandParentEntry.getChildren().size());
 
-                colorsObservableList.get(Integer.parseInt(partColorGrandParentEntry.getValue().toString().replaceAll("\\D+", ""))).add("Color " + (partColorGrandParentEntry.getChildren().size() - 1));
+            partColorGrandParentEntry.getChildren().add(color);
 
-                partColorsTreeView.getSelectionModel().select(color);
-            }
+            bcsColorsHashMap.put(color, new BcsColor((BcsColor) copyContainer));
+
+            colorsObservableList.get(Integer.parseInt(partColorGrandParentEntry.getValue().toString().replaceAll("\\D+", ""))).add("Color " + (partColorGrandParentEntry.getChildren().size() - 1));
+
+            partColorsTreeView.getSelectionModel().select(color);
         }
     }
 
@@ -5728,35 +4262,23 @@ public class Bcs {
 
                 dynamicTabPane.getSelectionModel().select(index);
 
-                if (pasteBodyItem.getText().equals("Paste Bone Scale  Ctrl+V")) pasteBodyItem.setDisable(false);
+                if (pasteBodyItem.getText().contains("Paste Bone Scale")) pasteBodyItem.setDisable(false);
             }
             else {
                 dynamicTabPane.getTabs().clear();
 
-                if (pasteBodyItem.getText().equals("Paste Body  Ctrl+V")) pasteBodyItem.setDisable(false);
+                if (pasteBodyItem.getText().contains("Paste Body")) pasteBodyItem.setDisable(false);
             }
         });
         bodiesTreeView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 bodyContextMenu.setOnAction(event -> {
-                    if (event.getTarget() == addBody) {
-                        AddBody();
-                    }
-                    if (event.getTarget() == copyBodyItem) {
-                        CopyBodyItem();
-                    }
-                    if (event.getTarget() == deleteBodyItem) {
-                        DeleteBodyItem();
-                    }
-                    if (event.getTarget() == addBoneScale) {
-                        AddBoneScale();
-                    }
-                    if (event.getTarget() == pasteBodyItem) {
-                        PasteBodyItem();
-                    }
-                    if (event.getTarget() == addBodyItemCopy) {
-                        AddBodyItemCopy();
-                    }
+                    if (event.getTarget() == addBody) AddBody();
+                    else if (event.getTarget() == copyBodyItem) CopyBodyItem();
+                    else if (event.getTarget() == deleteBodyItem) DeleteBodyItem();
+                    else if (event.getTarget() == addBoneScale) AddBoneScale();
+                    else if (event.getTarget() == pasteBodyItem) PasteBodyItem();
+                    else if (event.getTarget() == addBodyItemCopy) AddBodyItemCopy();
                 });
             }
         });
@@ -5764,18 +4286,10 @@ public class Bcs {
 
     private void bodiesKeysListener() {
         bodiesTreeView.setOnKeyPressed(e -> {
-            if (e.isControlDown() && e.getCode() == KeyCode.C) {
-                CopyBodyItem();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.V) {
-                PasteBodyItem();
-            }
-            if (e.getCode() == KeyCode.DELETE) {
-                DeleteBodyItem();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.A) {
-                AddBodyItemCopy();
-            }
+            if (e.isControlDown() && e.getCode() == KeyCode.C) CopyBodyItem();
+            else if (e.isControlDown() && e.getCode() == KeyCode.V) PasteBodyItem();
+            else if (e.getCode() == KeyCode.DELETE) DeleteBodyItem();
+            else if (e.isControlDown() && e.getCode() == KeyCode.A) AddBodyItemCopy();
         });
     }
 
@@ -5810,10 +4324,6 @@ public class Bcs {
     }
 
     private void CopyBodyItem() {
-        copiedBodyItem.setText("Copied %s");
-        pasteBodyItem.setText("Paste %s  Ctrl+V");
-        addBodyItemCopy.setText("Add %s Copy  Ctrl+A");
-
         noCopiedBodyItemFound.setVisible(false);
         copiedBodyItem.setVisible(true);
         pasteBodyItem.setVisible(true);
@@ -5829,16 +4339,12 @@ public class Bcs {
                 copyListContainer[0][i] = new BcsBoneScale(bcsBoneScalesHashMap.get(currentBodyEntry.getChildren().get(i)));
             }
 
-            copiedBodyItem.setText(String.format(copiedBodyItem.getText(), "Body"));
-            pasteBodyItem.setText(String.format(pasteBodyItem.getText(), "Body"));
-            addBodyItemCopy.setText(String.format(addBodyItemCopy.getText(), "Body"));
+            setBodyContextMenuText("Body");
         }
         else {
             copyContainer = new BcsBoneScale(bcsBoneScalesHashMap.get(currentBodyEntry));
 
-            copiedBodyItem.setText(String.format(copiedBodyItem.getText(), "Bone Scale"));
-            pasteBodyItem.setText(String.format(pasteBodyItem.getText(), "Bone Scale"));
-            addBodyItemCopy.setText(String.format(addBodyItemCopy.getText(), "Bone Scale"));
+            setBodyContextMenuText("Bone Scale");
         }
     }
 
@@ -5907,29 +4413,28 @@ public class Bcs {
         if (bodiesTreeView.getRoot().getChildren().isEmpty()) {
             allBodyEntries = 0;
         } 
-        switch (addBodyItemCopy.getText()) {
-            case "Add Body Copy  Ctrl+A" -> {
-                TreeItem<String> body = new TreeItem<>("Body " + allBodyEntries);
 
-                bodiesTreeView.getRoot().getChildren().add(body);
+        if (addBodyItemCopy.getText().contains("Body")) {
+            TreeItem<String> body = new TreeItem<>("Body " + allBodyEntries);
 
-                for (int i = 0; i < copyListContainer[0].length; i++) {
-                    body.getChildren().add(i, new TreeItem<>("Bone Scale " + i));
+            bodiesTreeView.getRoot().getChildren().add(body);
 
-                    bcsBoneScalesHashMap.put(body.getChildren().get(i), new BcsBoneScale((BcsBoneScale) copyListContainer[0][i]));
-                }
+            for (int i = 0; i < copyListContainer[0].length; i++) {
+                body.getChildren().add(i, new TreeItem<>("Bone Scale " + i));
 
-                allBodyEntries++;
+                bcsBoneScalesHashMap.put(body.getChildren().get(i), new BcsBoneScale((BcsBoneScale) copyListContainer[0][i]));
             }
-            case "Add Bone Scale Copy  Ctrl+A" -> {
-                TreeItem<String> boneScale = new TreeItem<>("Bone Scale " + bodyGrandParentEntry.getChildren().size());
 
-                bodyGrandParentEntry.getChildren().add(boneScale);
+            allBodyEntries++;
+        }
+        else if (addBodyItemCopy.getText().contains("Bone")) {
+            TreeItem<String> boneScale = new TreeItem<>("Bone Scale " + bodyGrandParentEntry.getChildren().size());
 
-                bcsBoneScalesHashMap.put(boneScale, new BcsBoneScale((BcsBoneScale) copyContainer));
+            bodyGrandParentEntry.getChildren().add(boneScale);
 
-                bodiesTreeView.getSelectionModel().select(boneScale);
-            }
+            bcsBoneScalesHashMap.put(boneScale, new BcsBoneScale((BcsBoneScale) copyContainer));
+
+            bodiesTreeView.getSelectionModel().select(boneScale);
         }
     }
 
@@ -5973,7 +4478,7 @@ public class Bcs {
 
                 dynamicTabPane.getSelectionModel().select(index);
 
-                if (pasteSkeletonItem.getText().equals("Paste Skeleton  Ctrl+V")) pasteSkeletonItem.setDisable(false);
+                if (pasteSkeletonItem.getText().contains("Paste Skeleton")) pasteSkeletonItem.setDisable(false);
             }
             else if (newValue.getValue().contains("Bone")) {
                 int index = dynamicTabPane.getSelectionModel().getSelectedIndex();
@@ -5984,7 +4489,7 @@ public class Bcs {
 
                 dynamicTabPane.getSelectionModel().select(index);
 
-                if (pasteSkeletonItem.getText().equals("Paste Bone  Ctrl+V")) pasteSkeletonItem.setDisable(false);
+                if (pasteSkeletonItem.getText().contains("Paste Bone")) pasteSkeletonItem.setDisable(false);
             }
             else {
                 dynamicTabPane.getTabs().clear();
@@ -5993,24 +4498,12 @@ public class Bcs {
         skeletonsTreeView.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 skeletonContextMenu.setOnAction(event -> {
-                    if (event.getTarget() == addSkeleton) {
-                        AddSkeleton();
-                    }
-                    if (event.getTarget() == copySkeletonItem) {
-                        CopySkeletonItem();
-                    }
-                    if (event.getTarget() == deleteSkeletonItem) {
-                        DeleteSkeletonItem();
-                    }
-                    if (event.getTarget() == addBone) {
-                        AddBone();
-                    }
-                    if (event.getTarget() == pasteSkeletonItem) {
-                        PasteSkeletonItem();
-                    }
-                    if (event.getTarget() == addSkeletonItemCopy) {
-                        AddSkeletonItemCopy();
-                    }
+                    if (event.getTarget() == addSkeleton) AddSkeleton();
+                    else if (event.getTarget() == copySkeletonItem) CopySkeletonItem();
+                    else if (event.getTarget() == deleteSkeletonItem) DeleteSkeletonItem();
+                    else if (event.getTarget() == addBone) AddBone();
+                    else if (event.getTarget() == pasteSkeletonItem) PasteSkeletonItem();
+                    else if (event.getTarget() == addSkeletonItemCopy) AddSkeletonItemCopy();
                 });
             }
         });
@@ -6018,18 +4511,10 @@ public class Bcs {
 
     private void skeletonsKeysListener() {
         skeletonsTreeView.setOnKeyPressed(e -> {
-            if (e.isControlDown() && e.getCode() == KeyCode.C) {
-                CopySkeletonItem();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.V) {
-                PasteSkeletonItem();
-            }
-            if (e.getCode() == KeyCode.DELETE) {
-                DeleteSkeletonItem();
-            }
-            if (e.isControlDown() && e.getCode() == KeyCode.A) {
-                AddSkeletonItemCopy();
-            }
+            if (e.isControlDown() && e.getCode() == KeyCode.C) CopySkeletonItem();
+            else if (e.isControlDown() && e.getCode() == KeyCode.V) PasteSkeletonItem();
+            else if (e.getCode() == KeyCode.DELETE) DeleteSkeletonItem();
+            else if (e.isControlDown() && e.getCode() == KeyCode.A) AddSkeletonItemCopy();
         });
     }
 
@@ -6070,10 +4555,6 @@ public class Bcs {
     }
 
     private void CopySkeletonItem() {
-        copiedSkeletonItem.setText("Copied %s");
-        pasteSkeletonItem.setText("Paste %s  Ctrl+V");
-        addSkeletonItemCopy.setText("Add %s Copy  Ctrl+A");
-
         noCopiedSkeletonItemFound.setVisible(false);
         copiedSkeletonItem.setVisible(true);
         pasteSkeletonItem.setVisible(true);
@@ -6094,18 +4575,14 @@ public class Bcs {
                 copyListContainer[0][i] = new BcsBone(bcsBonesHashMap.get(currentSkeletonEntry.getChildren().get(i)));
             }
 
-            copiedSkeletonItem.setText(String.format(copiedSkeletonItem.getText(), "Skeleton"));
-            pasteSkeletonItem.setText(String.format(pasteSkeletonItem.getText(), "Skeleton"));
-            addSkeletonItemCopy.setText(String.format(addSkeletonItemCopy.getText(), "Skeleton"));
+            setSkeletonContextMenuText("Skeleton");
         }
         else {
             addSkeletonItemCopy.setDisable(false);
 
             copyContainer = new BcsBone(bcsBonesHashMap.get(currentSkeletonEntry));
 
-            copiedSkeletonItem.setText(String.format(copiedSkeletonItem.getText(), "Bone"));
-            pasteSkeletonItem.setText(String.format(pasteSkeletonItem.getText(), "Bone"));
-            addSkeletonItemCopy.setText(String.format(addSkeletonItemCopy.getText(), "Bone"));
+            setSkeletonContextMenuText("Bone");
         }
     }
 
@@ -6170,30 +4647,29 @@ public class Bcs {
     }
 
     private void AddSkeletonItemCopy() {
-        switch (addSkeletonItemCopy.getText()) {
-            case "Add Skeleton Copy  Ctrl+A" -> {
-                TreeItem<String> skeleton = new TreeItem<>("Skeleton " + (skeletonsTreeView.getRoot().getChildren().size() + 1));
+        if (addSkeletonItemCopy.getText().contains("Skeleton")) {
+            TreeItem<String> skeleton = new TreeItem<>("Skeleton " + (skeletonsTreeView.getRoot().getChildren().size() + 1));
 
-                skeletonsTreeView.getRoot().getChildren().add(skeleton);
+            skeletonsTreeView.getRoot().getChildren().add(skeleton);
 
-                bcsSkeletonsHashMap.put(skeleton, new BcsSkeleton((BcsSkeleton) copyContainer));
+            bcsSkeletonsHashMap.put(skeleton, new BcsSkeleton((BcsSkeleton) copyContainer));
 
-                for (int i = 0; i < copyListContainer[0].length; i++) {
-                    skeleton.getChildren().add(i, new TreeItem<>("Bone " + i));
+            for (int i = 0; i < copyListContainer[0].length; i++) {
+                skeleton.getChildren().add(i, new TreeItem<>("Bone " + i));
 
-                    bcsBonesHashMap.put(skeleton.getChildren().get(i), new BcsBone((BcsBone) copyListContainer[0][i]));
-                }
-            }
-            case "Add Bone Copy  Ctrl+A" -> {
-                TreeItem<String> bone = new TreeItem<>("Bone " + skeletonGrandParentEntry.getChildren().size());
-
-                skeletonGrandParentEntry.getChildren().add(bone);
-
-                bcsBonesHashMap.put(bone, new BcsBone((BcsBone) copyContainer));
-
-                skeletonsTreeView.getSelectionModel().select(bone);
+                bcsBonesHashMap.put(skeleton.getChildren().get(i), new BcsBone((BcsBone) copyListContainer[0][i]));
             }
         }
+        else {
+            TreeItem<String> bone = new TreeItem<>("Bone " + skeletonGrandParentEntry.getChildren().size());
+
+            skeletonGrandParentEntry.getChildren().add(bone);
+
+            bcsBonesHashMap.put(bone, new BcsBone((BcsBone) copyContainer));
+
+            skeletonsTreeView.getSelectionModel().select(bone);
+        }
+
         if (skeletonsTreeView.getRoot().getChildren().size() == 2) {
             addSkeleton.setDisable(true);
             if (addSkeletonItemCopy.getText().contains("Skeleton")) {
@@ -6237,6 +4713,30 @@ public class Bcs {
             
             return Integer.compare(index1, index2);
         });
+    }
+
+    private void setPartSetContextMenuText(String text) {
+        copiedPartSetItem.setText("Copied " + text);
+        pastePartSetItem.setText("Paste " + text + " Ctrl+V");
+        addPartSetItemCopy.setText("Add " + text + " Copy Ctrl+A");
+    }
+
+    private void setPartColorContextMenuText(String text) {
+        copiedPartColorItem.setText("Copied " + text);
+        pastePartColorItem.setText("Paste " + text + " Ctrl+V");
+        addPartColorItemCopy.setText("Add " + text + " Copy Ctrl+A");
+    }
+
+    private void setBodyContextMenuText(String text) {
+        copiedBodyItem.setText("Copied " + text);
+        pasteBodyItem.setText("Paste " + text + " Ctrl+V");
+        addBodyItemCopy.setText("Add " + text + " Copy Ctrl+A");
+    }
+
+    private void setSkeletonContextMenuText(String text) {
+        copiedSkeletonItem.setText("Copied " + text);
+        pasteSkeletonItem.setText("Paste " + text + " Ctrl+V");
+        addSkeletonItemCopy.setText("Add " + text + " Copy Ctrl+A");
     }
 
     public void bcsReader(Path path) {
@@ -6335,19 +4835,19 @@ public class Bcs {
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
-                    bcsPartSet.f48 = intBuffer.getFloat();
+                    bcsPartSet.positionY = intBuffer.getFloat();
 
                     channel.position(40);
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
-                    bcsPartSet.f52 = intBuffer.getFloat();
+                    bcsPartSet.cameraY = intBuffer.getFloat();
 
                     channel.position(44);
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
-                    bcsPartSet.f56 = intBuffer.getFloat();
+                    bcsPartSet.trackingOffset = intBuffer.getFloat();
 
                     channel.position(48);
                     intBuffer.clear();
@@ -6359,7 +4859,7 @@ public class Bcs {
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
-                    bcsPartSet.f64 = intBuffer.getFloat();
+                    bcsPartSet.collisionScale = intBuffer.getFloat();
 
                     channel.position(56);
                     intBuffer.clear();
@@ -6432,19 +4932,19 @@ public class Bcs {
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
-                    bcsPartSet.f48 = intBuffer.getFloat();
+                    bcsPartSet.positionY = intBuffer.getFloat();
 
                     channel.position(52);
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
-                    bcsPartSet.f52 = intBuffer.getFloat();
+                    bcsPartSet.cameraY = intBuffer.getFloat();
 
                     channel.position(56);
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
-                    bcsPartSet.f56 = intBuffer.getFloat();
+                    bcsPartSet.trackingOffset = intBuffer.getFloat();
 
                     channel.position(60);
                     intBuffer.clear();
@@ -6456,7 +4956,7 @@ public class Bcs {
                     intBuffer.clear();
                     channel.read(intBuffer);
                     intBuffer.flip();
-                    bcsPartSet.f64 = intBuffer.getFloat();
+                    bcsPartSet.collisionScale = intBuffer.getFloat();
 
                     channel.position(68);
                     intBuffer.clear();
@@ -7181,7 +5681,7 @@ public class Bcs {
                     shortBuffer.clear();
                     channel.read(shortBuffer);
                     shortBuffer.flip();
-                    bcsPhysics.model1 = shortBuffer.getShort();
+                    bcsPhysics.model = shortBuffer.getShort();
 
                     channel.position(mainOffset + physicsOffset + j * 72 + 2);
                     shortBuffer.clear();
@@ -7844,19 +6344,19 @@ public class Bcs {
 
                     channel.position(36);
                     intBuffer.clear();
-                    intBuffer.putFloat(bcsPartSet.f48);
+                    intBuffer.putFloat(bcsPartSet.positionY);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(40);
                     intBuffer.clear();
-                    intBuffer.putFloat(bcsPartSet.f52);
+                    intBuffer.putFloat(bcsPartSet.cameraY);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(44);
                     intBuffer.clear();
-                    intBuffer.putFloat(bcsPartSet.f56);
+                    intBuffer.putFloat(bcsPartSet.trackingOffset);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
@@ -7868,7 +6368,7 @@ public class Bcs {
 
                     channel.position(52);
                     intBuffer.clear();
-                    intBuffer.putFloat(bcsPartSet.f64);
+                    intBuffer.putFloat(bcsPartSet.collisionScale);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
@@ -7970,19 +6470,19 @@ public class Bcs {
 
                     channel.position(48);
                     intBuffer.clear();
-                    intBuffer.putFloat(bcsPartSet.f48);
+                    intBuffer.putFloat(bcsPartSet.positionY);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(52);
                     intBuffer.clear();
-                    intBuffer.putFloat(bcsPartSet.f52);
+                    intBuffer.putFloat(bcsPartSet.cameraY);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
                     channel.position(56);
                     intBuffer.clear();
-                    intBuffer.putFloat(bcsPartSet.f56);
+                    intBuffer.putFloat(bcsPartSet.trackingOffset);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
@@ -7994,7 +6494,7 @@ public class Bcs {
 
                     channel.position(64);
                     intBuffer.clear();
-                    intBuffer.putFloat(bcsPartSet.f64);
+                    intBuffer.putFloat(bcsPartSet.collisionScale);
                     intBuffer.flip();
                     channel.write(intBuffer);
 
@@ -8990,7 +7490,7 @@ public class Bcs {
 
                     channel.position(mainOffset + physicsOffset + j * 72);
                     shortBuffer.clear();
-                    shortBuffer.putShort(bcsPhysics.model1);
+                    shortBuffer.putShort(bcsPhysics.model);
                     shortBuffer.flip();
                     channel.write(shortBuffer);
 
@@ -9207,6 +7707,106 @@ public class Bcs {
             e.printStackTrace();
         }
     }
+
+    public static enum BcsPartSetValues {
+        Race,
+        Gender,
+        I46,
+        I47,
+        PositionY,
+        CameraY,
+        TrackingOffset,
+        F60,
+        CollisionScale,
+        F68,
+        F72;
+    }
+
+    public static enum BcsPartValues {
+        Model,
+        Model2,
+        Texture,
+        Shader,
+        Flags,
+        HideFlags,
+        HideMatFlags,
+        F36,
+        F40,
+        I44,
+        I48,
+        CharaCode,
+        EMD_Name,
+        EMM_Name,
+        EMB_Name,
+        EAN_Name;
+    }
+
+    public static enum BcsColorSelectorValues {
+        PartColorGroup,
+        ColorIndex;
+    }
+
+    public static enum BcsPhysicsValues {
+        Model,
+        Model2,
+        Texture,
+        Flags,
+        HideFlags,
+        HideMatFlags,
+        CharaCode,
+        EMD_Name,
+        EMM_Name,
+        EMB_Name,
+        ESK_Name,
+        BoneToAttatch,
+        SCD_Name;
+    }
+
+    public static enum BcsUnknown3Values {
+        I00,
+        I02,
+        I04,
+        I06,
+        I08,
+        I10;
+    }
+
+    public static enum BcsPartColorValues {
+        Name;
+    }
+
+    public static enum BcsColorValues {
+        Color1,
+        Color2,
+        Color3,
+        Color4;
+    }
+
+    public static enum BcsBoneScaleValues {
+        ScaleX,
+        ScaleY,
+        ScaleZ,
+        Bone_Name;
+    }
+
+    public static enum BcsSkeletonValues {
+        I00;
+    }
+
+    public static enum BcsBoneValues {
+        I00,
+        I04,
+        BoneName,
+        F12,
+        F16,
+        F20,
+        F24,
+        F28,
+        F32,
+        F36,
+        F40,
+        F44;
+    }
 }
 
 class BcsPartSet {
@@ -9214,11 +7814,11 @@ class BcsPartSet {
     public int gender;
     public int i46;
     public int i47;
-    public float f48;
-    public float f52;
-    public float f56;
+    public float positionY;
+    public float cameraY;
+    public float trackingOffset;
     public float f60;
-    public float f64;
+    public float collisionScale;
     public float f68;
     public float f72;
 
@@ -9228,11 +7828,11 @@ class BcsPartSet {
         this.gender = other.gender;
         this.i46 = other.i46;
         this.i47 = other.i47;
-        this.f48 = other.f48;
-        this.f52 = other.f52;
-        this.f56 = other.f56;
+        this.positionY = other.positionY;
+        this.cameraY = other.cameraY;
+        this.trackingOffset = other.trackingOffset;
         this.f60 = other.f60;
-        this.f64 = other.f64;
+        this.collisionScale = other.collisionScale;
         this.f68 = other.f68;
         this.f72 = other.f72;
     }
@@ -9250,11 +7850,11 @@ class BcsPart {
     public float f40;
     public int i44;
     public int i48;
-    public String charaCode;
-    public String emdName;
-    public String emmName;
-    public String embName;
-    public String eanName;
+    public String charaCode = "";
+    public String emdName = "";
+    public String emmName = "";
+    public String embName = "";
+    public String eanName = "";
 
     public BcsPart() {}
     public BcsPart(BcsPart other) {
@@ -9270,6 +7870,10 @@ class BcsPart {
         this.i44 = other.i44;
         this.i48 = other.i48;
         this.charaCode = other.charaCode;
+        this.emdName = other.emdName;
+        this.emmName = other.emmName;
+        this.embName = other.embName;
+        this.eanName = other.eanName;
     }
 }
 
@@ -9285,23 +7889,23 @@ class BcsColorSelector {
 }
 
 class BcsPhysics {
-    short model1;
+    short model;
     short model2;
     short texture;
     long flags;
     int hideFlags;
     int hideMatFlags;
-    String charaCode;
-    String emdName;
-    String emmName;
-    String embName;
-    String eskName;
-    String boneToAttach;
-    String scdName;
+    String charaCode = "";
+    String emdName = "";
+    String emmName = "";
+    String embName = "";
+    String eskName = "";
+    String boneToAttach = "";
+    String scdName = "";
 
     public BcsPhysics() {}
     public BcsPhysics(BcsPhysics other) {
-        this.model1 = other.model1;
+        this.model = other.model;
         this.model2 = other.model2;
         this.texture = other.texture;
         this.flags = other.flags;
@@ -9337,7 +7941,7 @@ class BcsUnknown3 {
 }
 
 class BcsPartColor {
-    String name;
+    String name = "";
 
     BcsPartColor() {}
     BcsPartColor(BcsPartColor other) {

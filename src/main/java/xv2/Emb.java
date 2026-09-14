@@ -429,9 +429,11 @@ public class Emb {
 
                     if (i < 10) { 
                         dataString = "DATA00"; 
-                    } else if (i < 100) { 
+                    } 
+                    else if (i < 100) { 
                         dataString = "DATA0"; 
-                    } else { 
+                    } 
+                    else { 
                         dataString = "DATA"; 
                     }
 
@@ -545,9 +547,11 @@ public class Emb {
 
                     if ((initialEntries + i) < 10) { 
                         dataString = "DATA00"; 
-                    } else if ((initialEntries + i) < 100) { 
+                    } 
+                    else if ((initialEntries + i) < 100) { 
                         dataString = "DATA0"; 
-                    } else { 
+                    } 
+                    else { 
                         dataString = "DATA"; 
                     }
 

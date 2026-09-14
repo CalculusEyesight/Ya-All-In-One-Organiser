@@ -1,5 +1,5 @@
 package xv2;
-import static xv2.BinaryUtilities.*;
+import static xv2.Unsigned.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -229,11 +229,11 @@ public class Bcm {
         };
 
         Node[] holdDownConditions = new Node[] {
-            createRadioButtonGroup("Behaviour", behaviorToggleGroup, holdDownConditonsGroup1, 1L, new float[] {2, 2}, BcmValues.HoldDownConditions),
-            createRadioButtonGroup("Option 2", option2ToggleGroup, holdDownConditonsGroup2, 16L, new float[] {2, 1.5f}, BcmValues.HoldDownConditions),
-            createRadioButtonGroup("Option 3", option3ToggleGroup, holdDownConditonsGroup3, 256L, new float[] {2, 1.5f}, BcmValues.HoldDownConditions),
-            createRadioButtonGroup("Option 4", option4ToggleGroup, holdDownConditonsGroup4, 4096L, new float[] {2, 1.5f}, BcmValues.HoldDownConditions),
-            createRadioButtonGroup("Charge Type", chargeTypeToggleGroup, holdDownConditonsGroup5, 65536L, new float[] {2, 1.5f}, BcmValues.HoldDownConditions)
+            createRadioButtonGroup("Behaviour", behaviorToggleGroup, holdDownConditonsGroup1, 1L, new float[] {2, 2}),
+            createRadioButtonGroup("Option 2", option2ToggleGroup, holdDownConditonsGroup2, 16L, new float[] {2, 1.5f}),
+            createRadioButtonGroup("Option 3", option3ToggleGroup, holdDownConditonsGroup3, 256L, new float[] {2, 1.5f}),
+            createRadioButtonGroup("Option 4", option4ToggleGroup, holdDownConditonsGroup4, 4096L, new float[] {2, 1.5f}),
+            createRadioButtonGroup("Charge Type", chargeTypeToggleGroup, holdDownConditonsGroup5, 65536L, new float[] {2, 1.5f})
         };
 
         VBox inputsVBox = new VBox(100, 
@@ -263,12 +263,12 @@ public class Bcm {
         );
 
         RadioButton[] skillConditions = new RadioButton[] {
-            createRadioButton("None", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.None),
-            createRadioButton("Use Skill Upgrades", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.UseSkillUpgrades),
-            createRadioButton("Unknown 2", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.Unknown2),
-            createRadioButton("Unknown 3", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.Unknown3),
-            createRadioButton("Unknown 4", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.Unknown4),
-            createRadioButton("Opponent Reached Ground", skillConditionsToggleGroup, entry.skillConditions, SkillConditions.OpponentRachedGround),
+            createRadioButton("None", skillConditionsToggleGroup, SkillConditions.None),
+            createRadioButton("Use Skill Upgrades", skillConditionsToggleGroup, SkillConditions.UseSkillUpgrades),
+            createRadioButton("Unknown 2", skillConditionsToggleGroup, SkillConditions.Unknown2),
+            createRadioButton("Unknown 3", skillConditionsToggleGroup, SkillConditions.Unknown3),
+            createRadioButton("Unknown 4", skillConditionsToggleGroup, SkillConditions.Unknown4),
+            createRadioButton("Opponent Reached Ground", skillConditionsToggleGroup, SkillConditions.OpponentReachedGround),
         };
 
         CheckBox[] primaryConditionsGroup1 = new CheckBox[] {
@@ -366,8 +366,8 @@ public class Bcm {
         VBox activatorVBox = new VBox(35, 
             createHBox(0, createLabel("Opponent Size", 120), createHBox(15, opponentSizeConditions, false)),
             createHBox(0, createLabel("Skill Conditions", 120), createGridPane(1, 6, skillConditions, true)),
-            createHBox(0, createLabel("Minimum Loop\nDuration", 120), createSpinner(0, 65535, entry.maximumLoopDuration, BcmValues.MaximumLoopDuration)),
-            createHBox(0, createLabel("Maximum Loop\nDuration", 120), createSpinner(0, 65535, entry.minimumLoopDuration, BcmValues.MinimumLoopDuration)), 
+            createHBox(0, createLabel("Minimum Loop\nDuration", 120), createSpinner(0, 65535, entry.minimumLoopDuration, BcmValues.MaximumLoopDuration)),
+            createHBox(0, createLabel("Maximum Loop\nDuration", 120), createSpinner(0, 65535, entry.maximumLoopDuration, BcmValues.MinimumLoopDuration)), 
             createHBox(0, createLabel("Primary Activator\nConditions", 120), createGridPane(4, 2, primaryActivatorConditions, false)), 
             createHBox(0, createLabel("Activator State", 120), createHBox(5, activatorState, false))
         );
@@ -384,12 +384,12 @@ public class Bcm {
         ToggleGroup randomFlagToggleGroup = new ToggleGroup();
 
         RadioButton[] randomFlagsList = new RadioButton[] {
-            createRadioButton("None/Default", randomFlagToggleGroup, entry.characterCondition, RandomFlags.None),
-            createRadioButton("Random BAC Entry", randomFlagToggleGroup, entry.characterCondition, RandomFlags.Random_BAC_Entry),
-            createRadioButton("No Target Correction", randomFlagToggleGroup, entry.characterCondition, RandomFlags.NoTargetCorrection),
-            createRadioButton("3 Instance Setup", randomFlagToggleGroup, entry.characterCondition, RandomFlags.ThreeInstanceSetup),
-            createRadioButton("Unknown 4", randomFlagToggleGroup, entry.characterCondition, RandomFlags.Unknown4),
-            createRadioButton("Unknown 6", randomFlagToggleGroup, entry.characterCondition, RandomFlags.Unknown6),
+            createRadioButton("None/Default", randomFlagToggleGroup, RandomFlags.None),
+            createRadioButton("Random BAC Entry", randomFlagToggleGroup, RandomFlags.Random_BAC_Entry),
+            createRadioButton("No Target Correction", randomFlagToggleGroup, RandomFlags.NoTargetCorrection),
+            createRadioButton("3 Instance Setup", randomFlagToggleGroup, RandomFlags.ThreeInstanceSetup),
+            createRadioButton("Unknown 4", randomFlagToggleGroup, RandomFlags.Unknown4),
+            createRadioButton("Unknown 6", randomFlagToggleGroup, RandomFlags.Unknown6),
         };
 
         VBox BACVBox = new VBox(30, 
@@ -422,24 +422,24 @@ public class Bcm {
         );
 
         RadioButton[] characterConditonsList = new RadioButton[] {
-            createRadioButton("None/Default", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.None),
-            createRadioButton("Custom Character (CAC)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.CustomCharacter),
-            createRadioButton("Human Male (HUM)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.HumanMale),
-            createRadioButton("Human Female (HUF)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.HumanFemale),
-            createRadioButton("Saiyan Male (SYM)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.SaiyanMale),
-            createRadioButton("Saiyan Female (SYF)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.SaiyanFemale),
-            createRadioButton("Namekian (NMC)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.Namekian),
-            createRadioButton("Frieza Race (FRI)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.FriezaRace),
-            createRadioButton("Majin Male (MAM)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.MajinMale),
-            createRadioButton("Majin Female (MAF)", characterConditonToggleGroup, entry.characterCondition, CharacterConditions.MajinFemale),
+            createRadioButton("None/Default", characterConditonToggleGroup, CharacterConditions.None),
+            createRadioButton("Custom Character (CAC)", characterConditonToggleGroup, CharacterConditions.CustomCharacter),
+            createRadioButton("Human Male (HUM)", characterConditonToggleGroup, CharacterConditions.HumanMale),
+            createRadioButton("Human Female (HUF)", characterConditonToggleGroup, CharacterConditions.HumanFemale),
+            createRadioButton("Saiyan Male (SYM)", characterConditonToggleGroup, CharacterConditions.SaiyanMale),
+            createRadioButton("Saiyan Female (SYF)", characterConditonToggleGroup, CharacterConditions.SaiyanFemale),
+            createRadioButton("Namekian (NMC)", characterConditonToggleGroup, CharacterConditions.Namekian),
+            createRadioButton("Frieza Race (FRI)", characterConditonToggleGroup, CharacterConditions.FriezaRace),
+            createRadioButton("Majin Male (MAM)", characterConditonToggleGroup, CharacterConditions.MajinMale),
+            createRadioButton("Majin Female (MAF)", characterConditonToggleGroup, CharacterConditions.MajinFemale),
         };
         
         VBox miscVBox = new VBox(30, 
-            createHBox(0, createLabel("Ki Cost", 180), createSpinner(0, 4294967295.0, (double) entry.kiCost, BcmValues.KiCost)), 
-            createHBox(0, createLabel("Receiver Link ID", 180), createComboBox(receiverLinkIds, BcmValues.ReceiverLinkID)),
-            createHBox(0, createLabel("Stamina Cost", 180), createSpinner(0, 4294967295.0, (double) entry.staminaCost, BcmValues.StaminaCost)), 
-            createHBox(0, createLabel("Ki Required", 180), createSpinner(0, 4294967295.0, (double) entry.kiRequired, BcmValues.KiRequired)),
-            createHBox(0, createLabel("Health Required", 180), createSpinner(Float.MIN_VALUE, Float.MAX_VALUE, (double) entry.healthRequired, BcmValues.HealthRequired)),
+            createHBox(0, createLabel("Ki Cost", 180), createSpinner(0, 4294967295L, entry.kiCost, BcmValues.KiCost)), 
+            createHBox(0, createLabel("Receiver Link ID", 180), createComboBox(receiverLinkIds, BcmValues.ReceiverLink_ID)),
+            createHBox(0, createLabel("Stamina Cost", 180), createSpinner(0, 4294967295L, entry.staminaCost, BcmValues.StaminaCost)), 
+            createHBox(0, createLabel("Ki Required", 180), createSpinner(0, 4294967295L, entry.kiRequired, BcmValues.KiRequired)),
+            createHBox(0, createLabel("Health Required", 180), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.healthRequired, BcmValues.HealthRequired)),
             createHBox(0, createLabel("Transformation Stage", 180), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.transformationStage, BcmValues.TransformationStage)),
             createHBox(0, createLabel("CUS Aura", 180), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, entry.cusAura, BcmValues.CUS_Aura)), 
             createHBox(0, createLabel("Character Condition", 180), createGridPane(2, 5, characterConditonsList, true))
@@ -473,9 +473,6 @@ public class Bcm {
     private TextField createTextField(Number value, BcmValues bcmValue) {
         TextField textField = new TextField(String.valueOf(value));
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            if (textField.getText().contains("-")) {
-                return;
-            }
             try {
                 switch (bcmValue) {
                     case I36 -> bcmHashMap.get(currentEntry).i36 = Short.parseShort(newText);
@@ -487,7 +484,6 @@ public class Bcm {
                     default -> throw new IllegalArgumentException("Unexpected value: " + bcmValue);
                 }
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
         });
 
@@ -515,7 +511,7 @@ public class Bcm {
                     bcmHashMap.get(currentEntry).opponentSizeConditions = upgradeLevel + OpponentSizeConditions.values()[newValue.intValue()].index;
                 });
             }
-            case ReceiverLinkID -> {
+            case ReceiverLink_ID -> {
                 if (bcmHashMap.get(currentEntry).receiverLinkId != 0) {
                     comboBox.getSelectionModel().select((int) (Math.log(bcmHashMap.get(currentEntry).receiverLinkId) / Math.log(2)) + 1);
                 }
@@ -536,7 +532,7 @@ public class Bcm {
     private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BcmValues bcmValue) {
         Spinner<Number> spinner;
 
-        if (value instanceof Double) {
+        if (value instanceof Long || value instanceof Float) {
             spinner = new Spinner<>(MIN_VALUE.doubleValue(), MAX_VALUE.doubleValue(), value.doubleValue());
         }
         else {
@@ -573,70 +569,45 @@ public class Bcm {
         return spinner;
     }
 
-    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, long value, SkillConditions skillConditions) {
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, SkillConditions skillConditions) {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setToggleGroup(toggleGroup);
 
-        if (value == skillConditions.index) radioButton.setSelected(true);
+        if (bcmHashMap.get(currentEntry).skillConditions == skillConditions.index) radioButton.setSelected(true);
 
         radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
-                switch (skillConditions) {
-                    case None -> bcmHashMap.get(currentEntry).skillConditions = 0;
-                    case UseSkillUpgrades -> bcmHashMap.get(currentEntry).skillConditions = 1;
-                    case Unknown2 -> bcmHashMap.get(currentEntry).skillConditions = 2;
-                    case Unknown3 -> bcmHashMap.get(currentEntry).skillConditions = 4;
-                    case Unknown4 -> bcmHashMap.get(currentEntry).skillConditions = 8;
-                    case OpponentRachedGround -> bcmHashMap.get(currentEntry).skillConditions = 6;
-                }
+                bcmHashMap.get(currentEntry).skillConditions = skillConditions.index;
             }
         });
 
         return radioButton;
     }
 
-    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, long value, RandomFlags randomFlag) {
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, RandomFlags randomFlag) {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setToggleGroup(toggleGroup);
 
-        if (value == randomFlag.index) radioButton.setSelected(true);
+        if (bcmHashMap.get(currentEntry).bacRandomFlags == randomFlag.index) radioButton.setSelected(true);
 
         radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
-                switch (randomFlag) {
-                    case None -> bcmHashMap.get(currentEntry).bacRandomFlags = 0;
-                    case Random_BAC_Entry -> bcmHashMap.get(currentEntry).bacRandomFlags = 1;
-                    case NoTargetCorrection -> bcmHashMap.get(currentEntry).bacRandomFlags = 2;
-                    case ThreeInstanceSetup -> bcmHashMap.get(currentEntry).bacRandomFlags = 3;
-                    case Unknown4 -> bcmHashMap.get(currentEntry).bacRandomFlags = 4;
-                    case Unknown6 -> bcmHashMap.get(currentEntry).bacRandomFlags = 6;
-                }
+                bcmHashMap.get(currentEntry).bacRandomFlags = randomFlag.index;
             }
         });
 
         return radioButton;
     }
 
-    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, long value, CharacterConditions characterCondition) {
+    private RadioButton createRadioButton(String text, ToggleGroup toggleGroup, CharacterConditions characterCondition) {
         RadioButton radioButton = new RadioButton(text);
         radioButton.setToggleGroup(toggleGroup);
 
-        if (value == characterCondition.index) radioButton.setSelected(true);
+        if (bcmHashMap.get(currentEntry).characterCondition == characterCondition.index) radioButton.setSelected(true);
 
         radioButton.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
-                switch (characterCondition) {
-                    case None -> bcmHashMap.get(currentEntry).characterCondition = 0;
-                    case CustomCharacter -> bcmHashMap.get(currentEntry).characterCondition = 1;
-                    case HumanMale -> bcmHashMap.get(currentEntry).characterCondition = 2;
-                    case HumanFemale -> bcmHashMap.get(currentEntry).characterCondition = 3;
-                    case SaiyanMale -> bcmHashMap.get(currentEntry).characterCondition = 4;
-                    case SaiyanFemale -> bcmHashMap.get(currentEntry).characterCondition = 5;
-                    case Namekian -> bcmHashMap.get(currentEntry).characterCondition = 6;
-                    case FriezaRace -> bcmHashMap.get(currentEntry).characterCondition = 7;
-                    case MajinMale -> bcmHashMap.get(currentEntry).characterCondition = 8;
-                    case MajinFemale -> bcmHashMap.get(currentEntry).characterCondition = 9;
-                }
+                bcmHashMap.get(currentEntry).characterCondition = characterCondition.index;
             }
         });
 
@@ -719,7 +690,7 @@ public class Bcm {
         return stackPane;
     }
 
-    private StackPane createRadioButtonGroup(String text, ToggleGroup toggleGroup, RadioButton[] radioButtonsList, double bitMask, float[] increment, BcmValues bcmValue) {
+    private StackPane createRadioButtonGroup(String text, ToggleGroup toggleGroup, RadioButton[] radioButtonsList, double bitMask, float[] increment) {
         Label label = new Label(text);
         label.getStyleClass().add("titled-address-label");
         label.setTranslateY(-8); 
@@ -735,13 +706,8 @@ public class Bcm {
         double currentBitMask = bitMask;
 
         for (int i = 1; i < radioButtonsList.length; i++) {
-            switch(bcmValue) {
-                case HoldDownConditions -> {
-                    radioButtonsList[i].setToggleGroup(toggleGroup);
-                    radioButtonsList[i].setSelected((bcmHashMap.get(currentEntry).holdDownConditions & (long) currentBitMask) == (long) currentBitMask); 
-                }
-                default -> throw new IllegalArgumentException("Unexpected value: " + bcmValue);
-            }
+            radioButtonsList[i].setToggleGroup(toggleGroup);
+            radioButtonsList[i].setSelected((bcmHashMap.get(currentEntry).holdDownConditions & (long) currentBitMask) == (long) currentBitMask); 
 
             vBox.getChildren().add(radioButtonsList[i]);
 
@@ -1515,7 +1481,7 @@ public class Bcm {
         KiCost,
         I68,
         I72,
-        ReceiverLinkID,
+        ReceiverLink_ID,
         I80,
         StaminaCost,
         I88,
@@ -1584,7 +1550,7 @@ public class Bcm {
             Unknown2(2),
             Unknown3(4),
             Unknown4(8),
-            OpponentRachedGround(16);
+            OpponentReachedGround(16);
 
             final int index;
 
