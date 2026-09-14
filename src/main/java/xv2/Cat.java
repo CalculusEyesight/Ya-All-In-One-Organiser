@@ -1,6 +1,6 @@
 package xv2;
-import static xv2.BinaryUtilities.toUByte;
-import static xv2.BinaryUtilities.toUShort;
+import static xv2.Unsigned.toUByte;
+import static xv2.Unsigned.toUShort;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -44,7 +44,9 @@ public class Cat {
 
     int findIndex = 0;
     String findText = null;
-    Object [] indexList = new Object[] {findIndex, findText};
+    String replaceText = null;
+    Object [] indexList = new Object[] {findIndex, findText, replaceText};
+    boolean found = false;
 
     public Cat() {
         entriesActionListener();
@@ -84,21 +86,18 @@ public class Cat {
     private TextField createTextField(int i, Object value, CatValues catValue) {
         TextField textField = new TextField(String.valueOf(value));
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            if (textField.getText().contains("-")) {
-                return;
-            }
             try {
                 switch (catValue) {
-                    case CatValues.CharaID -> catEntries.get(i).charaId = Integer.parseInt(newText);
-                    case CatValues.Costume -> catEntries.get(i).costume = Integer.parseInt(newText);
-                    case CatValues.I04 -> catEntries.get(i).i04 = Integer.parseInt(newText);
-                    case CatValues.SkillID2 -> catEntries.get(i).skillId2 = Integer.parseInt(newText);
-                    case CatValues.CharaCode -> catEntries.get(i).charaCode = newText;
-                    case CatValues.I12 -> catEntries.get(i).i12 = Integer.parseInt(newText);
-                    case CatValues.I16 -> catEntries.get(i).i16 = Integer.parseInt(newText);
-                    case CatValues.I20 -> catEntries.get(i).i20 = Integer.parseInt(newText);
-                    case CatValues.TransformationEntry -> catEntries.get(i).transformationEntry = Integer.parseInt(newText);
-                    case CatValues.I22 -> catEntries.get(i).i22 = Integer.parseInt(newText);
+                    case CharaID -> catEntries.get(i).charaId = Integer.parseInt(newText);
+                    case Costume -> catEntries.get(i).costume = Integer.parseInt(newText);
+                    case I04 -> catEntries.get(i).i04 = Integer.parseInt(newText);
+                    case SkillID2 -> catEntries.get(i).skillId2 = Integer.parseInt(newText);
+                    case CharaCode -> catEntries.get(i).charaCode = newText;
+                    case I12 -> catEntries.get(i).i12 = Integer.parseInt(newText);
+                    case I16 -> catEntries.get(i).i16 = Integer.parseInt(newText);
+                    case I20 -> catEntries.get(i).i20 = Integer.parseInt(newText);
+                    case TransformationEntry -> catEntries.get(i).transformationEntry = Integer.parseInt(newText);
+                    case I22 -> catEntries.get(i).i22 = Integer.parseInt(newText);
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
@@ -118,7 +117,7 @@ public class Cat {
     private void entriesActionListener() {
         paste.setDisable(true);
 
-        contextMenu.getItems().addAll(copy,paste,delete,append,insert);
+        contextMenu.getItems().addAll(copy, paste, delete, append, insert);
 
         listView.setContextMenu(contextMenu);
 
@@ -193,31 +192,100 @@ public class Cat {
                         event.consume();
                     }
                 });
+
+                dialog.showAndWait();
+            }
+            else if (e.isControlDown() && e.getCode() == KeyCode.R) {
+                ButtonType replaceNextButtonType = new ButtonType("Replace Next", ButtonData.NEXT_FORWARD);
+                ButtonType replaceAllButtonType = new ButtonType("Replace All");
+                ButtonType cancelButtonType = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+                Dialog<String> dialog = new Dialog<>();
+                dialog.setTitle("Repplace");
+                dialog.getDialogPane().getButtonTypes().addAll(replaceNextButtonType, replaceAllButtonType, cancelButtonType);
+                dialog.getDialogPane().setContent(Popups.createReplaceDialog("Aura Entry: ", indexList, 
+                    FXCollections.observableArrayList(
+                        "Chara ID", 
+                        "Costume", 
+                        "I_04", 
+                        "Skill ID 2", 
+                        "Chara Code", 
+                        "I_12", 
+                        "I_16", 
+                        "I_20",
+                        "Transformation Entry",
+                        "I22"
+                    ))
+                );
+
+                final Button replacebt = (Button) dialog.getDialogPane().lookupButton(replaceNextButtonType);
+                final Button replaceAllbt = (Button) dialog.getDialogPane().lookupButton(replaceAllButtonType);
+
+                replacebt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!replacebt.isPressed()) {
+                        found = false;
+
+                        switch ((int) indexList[0]) {
+                            case 0 -> listViewReplace(CatValues.CharaID, false);
+                            case 1 -> listViewReplace(CatValues.Costume, false);
+                            case 2 -> listViewReplace(CatValues.I04, false);
+                            case 3 -> listViewReplace(CatValues.SkillID2, false);
+                            case 4 -> listViewReplace(CatValues.CharaCode, false);
+                            case 5 -> listViewReplace(CatValues.I12, false);
+                            case 6 -> listViewReplace(CatValues.I16, false);
+                            case 7 -> listViewReplace(CatValues.I20, false);
+                            case 8 -> listViewReplace(CatValues.TransformationEntry, false);
+                            case 9 -> listViewReplace(CatValues.I22, false);
+                        }
+
+                        event.consume();
+                    }
+                });
+
+                replaceAllbt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!replaceAllbt.isPressed()) {
+                        found = false;
+
+                        switch ((int) indexList[0]) {
+                            case 0 -> listViewReplace(CatValues.CharaID, true);
+                            case 1 -> listViewReplace(CatValues.Costume, true);
+                            case 2 -> listViewReplace(CatValues.I04, true);
+                            case 3 -> listViewReplace(CatValues.SkillID2, true);
+                            case 4 -> listViewReplace(CatValues.CharaCode, true);
+                            case 5 -> listViewReplace(CatValues.I12, true);
+                            case 6 -> listViewReplace(CatValues.I16, true);
+                            case 7 -> listViewReplace(CatValues.I20, true);
+                            case 8 -> listViewReplace(CatValues.TransformationEntry, true);
+                            case 9 -> listViewReplace(CatValues.I22, true);
+                        }
+
+                        event.consume();
+                    }
+                });
+
                 dialog.showAndWait();
             }
         });
     }
 
-    private void listViewSearch(CatValues catValue) {
+    private int listViewSearch(CatValues catValue) {
         int counter = 0;
         String value = null;
         int listIndex = listView.getSelectionModel().getSelectedIndex();
         int textFieldIndex = catValue.index;
-        boolean found = false;
 
         do {
-
             switch (catValue) {
-                case CatValues.CharaID -> value = String.valueOf(catEntries.get(listIndex).charaId);
-                case CatValues.Costume -> value = String.valueOf(catEntries.get(listIndex).costume);
-                case CatValues.I04 -> value = String.valueOf(catEntries.get(listIndex).i04);
-                case CatValues.SkillID2 -> value = String.valueOf(catEntries.get(listIndex).skillId2);
-                case CatValues.CharaCode -> value = catEntries.get(listIndex).charaCode;
-                case CatValues.I12 -> value = String.valueOf(catEntries.get(listIndex).i12);
-                case CatValues.I16 -> value = String.valueOf(catEntries.get(listIndex).i16);
-                case CatValues.I20 -> value = String.valueOf(catEntries.get(listIndex).i20);
-                case CatValues.TransformationEntry -> value = String.valueOf(catEntries.get(listIndex).transformationEntry);
-                case CatValues.I22 -> value = String.valueOf(catEntries.get(listIndex).i22);
+                case CharaID -> value = String.valueOf(catEntries.get(listIndex).charaId);
+                case Costume -> value = String.valueOf(catEntries.get(listIndex).costume);
+                case I04 -> value = String.valueOf(catEntries.get(listIndex).i04);
+                case SkillID2 -> value = String.valueOf(catEntries.get(listIndex).skillId2);
+                case CharaCode -> value = catEntries.get(listIndex).charaCode;
+                case I12 -> value = String.valueOf(catEntries.get(listIndex).i12);
+                case I16 -> value = String.valueOf(catEntries.get(listIndex).i16);
+                case I20 -> value = String.valueOf(catEntries.get(listIndex).i20);
+                case TransformationEntry -> value = String.valueOf(catEntries.get(listIndex).transformationEntry);
+                case I22 -> value = String.valueOf(catEntries.get(listIndex).i22);
             }
 
             if (indexList[1] != null && value.equals(indexList[1]) && listView.getSelectionModel().getSelectedIndex() != listIndex) {
@@ -225,7 +293,8 @@ public class Cat {
                 ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(textFieldIndex)).getChildren().get(1)).requestFocus();
                 ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(textFieldIndex)).getChildren().get(1)).selectAll();
                 found = true;
-                break;
+                
+                return listIndex;
             }
 
             listIndex++;
@@ -237,6 +306,37 @@ public class Cat {
         if (!found) {
             Popups.ItemNotFound();
         }
+        else {
+            Popups.ItemsReplaced();
+        }
+
+        return - 1;
+    }
+
+    private void listViewReplace(CatValues catValue, boolean continueLooping) {
+        int searchedItemIndex = - 1;
+
+        do {
+            searchedItemIndex = listViewSearch(catValue);
+
+            if (searchedItemIndex != -1) {
+                switch (catValue) {
+                    case CharaID -> catEntries.get(searchedItemIndex).charaId = Integer.parseInt((String) indexList[2]);
+                    case Costume -> catEntries.get(searchedItemIndex).costume = Integer.parseInt((String) indexList[2]);
+                    case I04 -> catEntries.get(searchedItemIndex).i04 = Integer.parseInt((String) indexList[2]);
+                    case SkillID2 -> catEntries.get(searchedItemIndex).skillId2 = Integer.parseInt((String) indexList[2]);
+                    case CharaCode -> catEntries.get(searchedItemIndex).charaCode = (String) indexList[2];
+                    case I12 -> catEntries.get(searchedItemIndex).i12 = Integer.parseInt((String) indexList[2]);
+                    case I16 -> catEntries.get(searchedItemIndex).i16 = Integer.parseInt((String) indexList[2]);
+                    case I20 -> catEntries.get(searchedItemIndex).i20 = Integer.parseInt((String) indexList[2]);
+                    case TransformationEntry -> catEntries.get(searchedItemIndex).transformationEntry = Integer.parseInt((String) indexList[2]);
+                    case I22 -> catEntries.get(searchedItemIndex).i22 = Integer.parseInt((String) indexList[2]);
+                }
+
+                hBox.getChildren().remove(1);
+                hBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
+            } 
+        } while (continueLooping && searchedItemIndex != -1);
     }
 
     private void Copy() {
@@ -247,7 +347,6 @@ public class Cat {
         if (copyContainer == null) return;
         
         catEntries.set(listView.getSelectionModel().getSelectedIndex(), new CatEntry(copyContainer));
-
         hBox.getChildren().remove(1);
         hBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
     }
@@ -256,7 +355,6 @@ public class Cat {
         if (listView.getSelectionModel().getSelectedIndex() == 0) return;
 
         catEntries.remove(listView.getSelectionModel().getSelectedIndex());
-
         for (int i = 0; i < listView.getItems().size(); i++) {
             listView.getItems().set(i, "Entry " + i);
         }
@@ -269,12 +367,10 @@ public class Cat {
 
     private void Insert() {
         if (listView.getSelectionModel().getSelectedIndex() > 0) {
-            catEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new CatEntry());
+            catEntries.add(listView.getSelectionModel().getSelectedIndex() , new CatEntry());
             listView.getItems().add("Entry " + listView.getItems().size());
-        }
-        else if (listView.getSelectionModel().getSelectedIndex() == 0) {
-            catEntries.add(listView.getSelectionModel().getSelectedIndex(), new CatEntry());
-            listView.getItems().add("Entry " + listView.getItems().size());
+            hBox.getChildren().remove(1);
+            hBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
         }
     }
 
@@ -483,7 +579,7 @@ class CatEntry{
     public int costume;
     public int i04;
     public int skillId2;
-    public String charaCode;
+    public String charaCode = "";
     public int i12;
     public int i16;
     public int i20;
@@ -491,7 +587,6 @@ class CatEntry{
     public int i22;
 
     public CatEntry() {}
-
     public CatEntry(CatEntry other) {
         this.charaId = other.charaId;
         this.costume = other.costume;

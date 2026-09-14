@@ -49,7 +49,9 @@ public class Aur {
 
     int findIndex = 0;
     String findText = null;
-    Object [] indexList = new Object[] {findIndex, findText};
+    String replaceText = null;
+    Object[] indexList = new Object[] {findIndex, findText, replaceText};
+    boolean found = false;
 
     public Aur() {
         vBox.setPadding(new Insets(5, 5, 5, 5));
@@ -106,22 +108,18 @@ public class Aur {
     private TextField createAuraTextField(int value, AuraValues auraValue) {
         TextField textField = new TextField(String.valueOf(value));
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            if (textField.getText().contains("-")) {
-                return;
-            }
             try {
                 switch (auraValue) {
-                    case AuraValues.I04 -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).i04 = Integer.parseInt(newText);
-                    case AuraValues.BoostStart -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostStart = Integer.parseInt(newText);
-                    case AuraValues.BoostLoop -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostLoop = Integer.parseInt(newText);
-                    case AuraValues.BoostEnd -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostEnd = Integer.parseInt(newText);
-                    case AuraValues.KiaiCharge -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiaiCharge = Integer.parseInt(newText);
-                    case AuraValues.KiryokuMax -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiryokuMax = Integer.parseInt(newText);
-                    case AuraValues.HenshinStart -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinStart = Integer.parseInt(newText);
-                    case AuraValues.HenshinEnd -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinEnd = Integer.parseInt(newText);
+                    case I04 -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).i04 = Integer.parseInt(newText);
+                    case BoostStart -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostStart = Integer.parseInt(newText);
+                    case BoostLoop -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostLoop = Integer.parseInt(newText);
+                    case BoostEnd -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).boostEnd = Integer.parseInt(newText);
+                    case KiaiCharge -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiaiCharge = Integer.parseInt(newText);
+                    case KiryokuMax -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).kiryokuMax = Integer.parseInt(newText);
+                    case HenshinStart -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinStart = Integer.parseInt(newText);
+                    case HenshinEnd -> auraEntries.get(listView.getSelectionModel().getSelectedIndex()).henshinEnd = Integer.parseInt(newText);
                 }
             } catch (NumberFormatException e) {
-                e.printStackTrace();
             }
         });
 
@@ -136,9 +134,9 @@ public class Aur {
             }
             try {
                 switch (charaValue) {
-                    case CharaValues.CharaID -> charaEntries.get(i).charaId = Integer.parseInt(newText);
-                    case CharaValues.Costume -> charaEntries.get(i).costume = Integer.parseInt(newText);
-                    case CharaValues.AuraID -> charaEntries.get(i).auraId = Integer.parseInt(newText);
+                    case CharaID -> charaEntries.get(i).charaId = Integer.parseInt(newText);
+                    case Costume -> charaEntries.get(i).costume = Integer.parseInt(newText);
+                    case AuraID -> charaEntries.get(i).auraId = Integer.parseInt(newText);
                     default -> throw new IllegalArgumentException("Unexpected value: " + charaValue);
                 }
             } catch (NumberFormatException e) {
@@ -149,12 +147,12 @@ public class Aur {
         return textField;
     }
 
-    private CheckBox createCharaChekcBox(int i, boolean value, CharaValues charaValue) {
+    private CheckBox createCharaCheckBox(int i, CharaValues charaValue) {
         CheckBox checkBox = new CheckBox("Glare");
-        checkBox.setSelected(value);
+        checkBox.setSelected(charaEntries.get(i).glare);
         checkBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
             switch (charaValue) {
-                case CharaValues.Glare -> charaEntries.get(i).glare = newValue;
+                case Glare -> charaEntries.get(i).glare = newValue;
                 default -> throw new IllegalArgumentException("Unexpected value: " + charaValue);
             } 
         });
@@ -205,7 +203,7 @@ public class Aur {
             createLabel("Chara ID", 0), createCharaTextField(charaEntries.indexOf(entry), entry.charaId, CharaValues.CharaID),
             createLabel("Costume", 0), createCharaTextField(charaEntries.indexOf(entry), entry.costume, CharaValues.Costume),
             createLabel("Aura ID", 0), createCharaTextField(charaEntries.indexOf(entry), entry.auraId, CharaValues.AuraID) ,
-                                                    createCharaChekcBox(charaEntries.indexOf(entry), entry.glare, CharaValues.Glare)
+                                                    createCharaCheckBox(charaEntries.indexOf(entry), CharaValues.Glare)
         );
         hBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -245,24 +243,22 @@ public class Aur {
         vBox.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {});
     }
 
-    private void listViewSearch(AuraValues auraValue) {
+    private int listViewSearch(AuraValues auraValue) {
         int counter = 0;
         int value = 0;
         int listIndex = listView.getSelectionModel().getSelectedIndex();
         int textFieldIndex = auraValue.index;
-        boolean found = false;
 
         do {
-
             switch (auraValue) {
-                case AuraValues.I04 -> value = auraEntries.get(listIndex).i04;
-                case AuraValues.BoostStart -> value = auraEntries.get(listIndex).boostStart;
-                case AuraValues.BoostLoop -> value = auraEntries.get(listIndex).boostLoop;
-                case AuraValues.BoostEnd -> value = auraEntries.get(listIndex).boostEnd;
-                case AuraValues.KiaiCharge -> value = auraEntries.get(listIndex).kiaiCharge;
-                case AuraValues.KiryokuMax -> value = auraEntries.get(listIndex).kiryokuMax;
-                case AuraValues.HenshinStart -> value = auraEntries.get(listIndex).henshinStart;
-                case AuraValues.HenshinEnd -> value = auraEntries.get(listIndex).henshinEnd;
+                case I04 -> value = auraEntries.get(listIndex).i04;
+                case BoostStart -> value = auraEntries.get(listIndex).boostStart;
+                case BoostLoop -> value = auraEntries.get(listIndex).boostLoop;
+                case BoostEnd -> value = auraEntries.get(listIndex).boostEnd;
+                case KiaiCharge -> value = auraEntries.get(listIndex).kiaiCharge;
+                case KiryokuMax -> value = auraEntries.get(listIndex).kiryokuMax;
+                case HenshinStart -> value = auraEntries.get(listIndex).henshinStart;
+                case HenshinEnd -> value = auraEntries.get(listIndex).henshinEnd;
             }
 
             if (indexList[1] != null && value == Integer.parseInt((String) indexList[1]) && listView.getSelectionModel().getSelectedIndex() != listIndex) {
@@ -270,7 +266,7 @@ public class Aur {
                 ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(textFieldIndex)).getChildren().get(1)).requestFocus();
                 ((TextField) ((HBox) ((VBox) hBox.getChildren().get(1)).getChildren().get(textFieldIndex)).getChildren().get(1)).selectAll();
                 found = true;
-                break;
+                return listIndex;
             }
 
             listIndex++;
@@ -282,6 +278,35 @@ public class Aur {
         if (!found) {
             Popups.ItemNotFound();
         }
+        else {
+            Popups.ItemsReplaced();
+        }
+
+        return - 1;
+    }
+
+    private void listViewReplace(AuraValues auraValue, boolean continueLooping) {
+        int searchedItemIndex = - 1;
+
+        do {
+            searchedItemIndex = listViewSearch(auraValue);
+
+            if (searchedItemIndex != -1) {
+                switch (auraValue) {
+                    case I04 -> auraEntries.get(searchedItemIndex).i04 = Integer.parseInt((String) indexList[2]);
+                    case BoostStart -> auraEntries.get(searchedItemIndex).boostStart = Integer.parseInt((String) indexList[2]);
+                    case BoostLoop -> auraEntries.get(searchedItemIndex).boostLoop = Integer.parseInt((String) indexList[2]);
+                    case BoostEnd -> auraEntries.get(searchedItemIndex).boostEnd = Integer.parseInt((String) indexList[2]);
+                    case KiaiCharge -> auraEntries.get(searchedItemIndex).kiaiCharge = Integer.parseInt((String) indexList[2]);
+                    case KiryokuMax -> auraEntries.get(searchedItemIndex).kiryokuMax = Integer.parseInt((String) indexList[2]);
+                    case HenshinStart -> auraEntries.get(searchedItemIndex).henshinStart = Integer.parseInt((String) indexList[2]);
+                    case HenshinEnd -> auraEntries.get(searchedItemIndex).henshinEnd = Integer.parseInt((String) indexList[2]);
+                }
+
+                hBox.getChildren().remove(1);
+                hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
+            } 
+        } while (continueLooping && searchedItemIndex != -1);
     }
 
     private void entriesKeysListener() {
@@ -314,6 +339,8 @@ public class Aur {
                 final Button findbt = (Button) dialog.getDialogPane().lookupButton(findNextButtonType);
                 findbt.addEventFilter(ActionEvent.ACTION, event -> {
                     if (!findbt.isPressed()) {
+                        found = false;
+
                         switch ((int) indexList[0]) {
                             case 0 -> listViewSearch(AuraValues.I04);
                             case 1 -> listViewSearch(AuraValues.BoostStart);
@@ -328,6 +355,71 @@ public class Aur {
                         event.consume();
                     }
                 });
+
+                dialog.showAndWait();
+            }
+            else if (e.isControlDown() && e.getCode() == KeyCode.R) {
+                ButtonType replaceNextButtonType = new ButtonType("Replace Next", ButtonData.NEXT_FORWARD);
+                ButtonType replaceAllButtonType = new ButtonType("Replace All");
+                ButtonType cancelButtonType = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+                Dialog<String> dialog = new Dialog<>();
+                dialog.setTitle("Repplace");
+                dialog.getDialogPane().getButtonTypes().addAll(replaceNextButtonType, replaceAllButtonType, cancelButtonType);
+                dialog.getDialogPane().setContent(Popups.createReplaceDialog("Aura Entry: ", indexList, 
+                    FXCollections.observableArrayList(
+                        "I_04", 
+                        "BoostStart", 
+                        "BoostLoop", 
+                        "BoostEnd", 
+                        "KiaiCharge", 
+                        "KiryokuMax", 
+                        "HenshinStart", 
+                        "HenshinEnd"
+                    ))
+                );
+
+                final Button replacebt = (Button) dialog.getDialogPane().lookupButton(replaceNextButtonType);
+                final Button replaceAllbt = (Button) dialog.getDialogPane().lookupButton(replaceAllButtonType);
+
+                replacebt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!replacebt.isPressed()) {
+                        found = false;
+
+                        switch ((int) indexList[0]) {
+                            case 0 -> listViewReplace(AuraValues.I04, false);
+                            case 1 -> listViewReplace(AuraValues.BoostStart, false);
+                            case 2 -> listViewReplace(AuraValues.BoostLoop, false);
+                            case 3 -> listViewReplace(AuraValues.BoostEnd, false);
+                            case 4 -> listViewReplace(AuraValues.KiaiCharge, false);
+                            case 5 -> listViewReplace(AuraValues.KiryokuMax, false);
+                            case 6 -> listViewReplace(AuraValues.HenshinStart, false);
+                            case 7 -> listViewReplace(AuraValues.HenshinEnd, false);
+                        }
+
+                        event.consume();
+                    }
+                });
+
+                replaceAllbt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!replaceAllbt.isPressed()) {
+                        found = false;
+
+                        switch ((int) indexList[0]) {
+                            case 0 -> listViewReplace(AuraValues.I04, true);
+                            case 1 -> listViewReplace(AuraValues.BoostStart, true);
+                            case 2 -> listViewReplace(AuraValues.BoostLoop, true);
+                            case 3 -> listViewReplace(AuraValues.BoostEnd, true);
+                            case 4 -> listViewReplace(AuraValues.KiaiCharge, true);
+                            case 5 -> listViewReplace(AuraValues.KiryokuMax, true);
+                            case 6 -> listViewReplace(AuraValues.HenshinStart, true);
+                            case 7 -> listViewReplace(AuraValues.HenshinEnd, true);
+                        }
+
+                        event.consume();
+                    }
+                });
+
                 dialog.showAndWait();
             }
         });
@@ -359,20 +451,15 @@ public class Aur {
 
     private void Append() {
         auraEntries.add(listView.getSelectionModel().getSelectedIndex() + 1, new AuraEntry());
-
         listView.getItems().add("Aura ID " + listView.getItems().size());
     }
 
     private void Insert() {
         if (listView.getSelectionModel().getSelectedIndex() > 0) {
-            auraEntries.add(listView.getSelectionModel().getSelectedIndex() - 1, new AuraEntry());
-
-            listView.getItems().add("Aura ID " + listView.getItems().size());
-        }
-        else if (listView.getSelectionModel().getSelectedIndex() == 0) {
             auraEntries.add(listView.getSelectionModel().getSelectedIndex(), new AuraEntry());
-
             listView.getItems().add("Aura ID " + listView.getItems().size());
+            hBox.getChildren().remove(1);
+            hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
         }
     }
 
