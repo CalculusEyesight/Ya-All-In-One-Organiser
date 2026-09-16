@@ -332,11 +332,11 @@ public class Cat {
                     case TransformationEntry -> catEntries.get(searchedItemIndex).transformationEntry = Integer.parseInt((String) indexList[2]);
                     case I22 -> catEntries.get(searchedItemIndex).i22 = Integer.parseInt((String) indexList[2]);
                 }
-
-                hBox.getChildren().remove(1);
-                hBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
             } 
         } while (continueLooping && searchedItemIndex != -1);
+
+        hBox.getChildren().remove(1);
+        hBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
     }
 
     private void Copy() {

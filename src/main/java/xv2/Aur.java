@@ -302,11 +302,11 @@ public class Aur {
                     case HenshinStart -> auraEntries.get(searchedItemIndex).henshinStart = Integer.parseInt((String) indexList[2]);
                     case HenshinEnd -> auraEntries.get(searchedItemIndex).henshinEnd = Integer.parseInt((String) indexList[2]);
                 }
-
-                hBox.getChildren().remove(1);
-                hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
             } 
         } while (continueLooping && searchedItemIndex != -1);
+
+        hBox.getChildren().remove(1);
+        hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
     }
 
     private void entriesKeysListener() {
