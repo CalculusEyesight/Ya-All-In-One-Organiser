@@ -1,7 +1,11 @@
 package xv2;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import static xv2.Unsigned.toUShort;
 import java.io.IOException;
@@ -13,6 +17,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListView;
@@ -50,6 +56,12 @@ public class Bdm {
     MenuItem delete = new MenuItem("Delete Del");
     MenuItem append = new MenuItem("Append Ctrl+A");
     MenuItem insert = new MenuItem("Insert Ctrl+I");
+
+    int findIndex = 0;
+    String findText = null;
+    String replaceIndex = null;
+    Object[] indexList = new Object[] {findIndex, findText, replaceIndex};
+    boolean found = false;
 
     public Bdm() {
         entriesActionListener();
@@ -254,7 +266,7 @@ public class Bdm {
 
         VBox soundVBox = new VBox(30, 
             createHBox(0, createLabel("ACB Type", 100), createHBox(15, acbTypes, true)), 
-            createHBox(0, createLabel("Cue ID", 100), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.cueId, BdmValues.Cue_ID))
+            createHBox(0, createLabel("Cue ID", 100), createSpinner(Short.MIN_VALUE, Short.MAX_VALUE, subEntry.cueId, BdmValues.CUE_ID))
         );
         soundVBox.setPadding(new Insets(20, 0, 0, 8));
 
@@ -588,7 +600,7 @@ public class Bdm {
                     case DamageSpecial -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].damageSpecial = newValue.intValue();
                     case DamageSpecial2 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].damageSpecial2 = newValue.intValue();
                     case DamageSpecial3 -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].damageSpecial3 = newValue.intValue();
-                    case Cue_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].cueId = newValue.shortValue();
+                    case CUE_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].cueId = newValue.shortValue();
                     case Effect1_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].effect1Id = newValue.shortValue();
                     case Effect1_Skill_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].effect1SkillId = newValue.intValue();
                     case Effect2_ID -> bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()].effect2Id = newValue.shortValue();
@@ -791,9 +803,523 @@ public class Bdm {
             else if (e.isControlDown() && e.getCode() == KeyCode.A) Append();
             else if (e.isControlDown() && e.getCode() == KeyCode.I) Insert();
             else if (e.isControlDown() && e.getCode() == KeyCode.F) {
-                
+                ButtonType findNextButtonType = new ButtonType("Find Next", ButtonData.NEXT_FORWARD);
+                ButtonType cancelButtonType = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+                Dialog<String> dialog = new Dialog<>();
+                dialog.setTitle("Find");
+                dialog.getDialogPane().getButtonTypes().addAll(findNextButtonType, cancelButtonType);
+                dialog.getDialogPane().setContent(Popups.createFindDialog("Aura Entry: ", indexList, 
+                    FXCollections.observableArrayList(
+                        "Damage Type", 
+                        "I_02",
+                        "Damage Amount",
+                        "I_06",
+                        "F_08",
+                        "ACB Type",
+                        "CUE ID",
+                        "Effect 1 ID",
+                        "Effect 1 Skill ID",
+                        "Effect 1 EEPK Type",
+                        "I_22",
+                        "Effect 2 ID",
+                        "Effect 2 Skill ID",
+                        "Effect 2 EEPK Type",
+                        "I_30",
+                        "Effect 3 ID",
+                        "Effect 3 Skill ID",
+                        "Effect 3 EEPK Type",
+                        "I_38",
+                        "Pushback Strength",
+                        "Pushback Acceleration",
+                        "User Stunt",
+                        "Knockback Duration",
+                        "Knockback Recovery After Impact Time",
+                        "Knockback Ground Impact Time",
+                        "I_58",
+                        "Victim Stunt",
+                        "Knockback Strenght X",
+                        "Knockback Strenght Y",
+                        "Knockback Strenght Z",
+                        "Knockback Drag Y",
+                        "I_76",
+                        "Knockback Gravity Time",
+                        "Victim Invincibility Time",
+                        "I_82",
+                        "Transformation Type",
+                        "Aliment Type",
+                        "I_88",
+                        "I_90",
+                        "I_92",
+                        "Damage Special",
+                        "Damage Special 2",
+                        "Damage Special 3",
+                        "Stumble Type",
+                        "Secondary Type",
+                        "Camera Shake Type",
+                        "Camera Shake Time",
+                        "User BPE ID",
+                        "Victim BPE ID",
+                        "Stamina Broken Override BDM ID",
+                        "Z Vanish Enable Time",
+                        "User Animation Time",
+                        "Victim Animation Time",
+                        "User Animaiton Speed",
+                        "Victim Animation Speed"
+                    ))
+                );
+
+                final Button findbt = (Button) dialog.getDialogPane().lookupButton(findNextButtonType);
+                findbt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!findbt.isPressed()) {
+                        found = false;
+
+                        switch ((int) indexList[0]) {
+                            case 0 -> listViewSearch(BdmValues.DamageType);
+                            case 1 -> listViewSearch(BdmValues.I02);
+                            case 2 -> listViewSearch(BdmValues.DamageAmount);
+                            case 3 -> listViewSearch(BdmValues.I06);
+                            case 4 -> listViewSearch(BdmValues.F08);
+                            case 5 -> listViewSearch(BdmValues.ACB_Type);
+                            case 6 -> listViewSearch(BdmValues.CUE_ID);
+                            case 7 -> listViewSearch(BdmValues.Effect1_ID);
+                            case 8 -> listViewSearch(BdmValues.Effect1_Skill_ID);
+                            case 9 -> listViewSearch(BdmValues.Effect1_EEPK_Type);
+                            case 10 -> listViewSearch(BdmValues.I22);
+                            case 11 -> listViewSearch(BdmValues.Effect2_ID);
+                            case 12 -> listViewSearch(BdmValues.Effect2_Skill_ID);
+                            case 13 -> listViewSearch(BdmValues.Effect2_EEPK_Type);
+                            case 14 -> listViewSearch(BdmValues.I30);
+                            case 15 -> listViewSearch(BdmValues.Effect3_ID);
+                            case 16 -> listViewSearch(BdmValues.Effect3_Skill_ID);
+                            case 17 -> listViewSearch(BdmValues.Effect3_EEPK_Type);
+                            case 18 -> listViewSearch(BdmValues.I38);
+                            case 19 -> listViewSearch(BdmValues.PushbackStrength);
+                            case 20 -> listViewSearch(BdmValues.PushbackAcceleration);
+                            case 21 -> listViewSearch(BdmValues.UserStunt);
+                            case 22 -> listViewSearch(BdmValues.KnockbackDuration);
+                            case 23 -> listViewSearch(BdmValues.KnockbackRecoveryAfterImpactTime);
+                            case 24 -> listViewSearch(BdmValues.KnockbackGroundImpactTime);
+                            case 25 -> listViewSearch(BdmValues.I58);
+                            case 26 -> listViewSearch(BdmValues.VictimStunt);
+                            case 27 -> listViewSearch(BdmValues.KnockbackStrengthX);
+                            case 28 -> listViewSearch(BdmValues.KnockbackStrengthY);
+                            case 29 -> listViewSearch(BdmValues.KnockbackStrengthZ);
+                            case 30 -> listViewSearch(BdmValues.KnockbackDragY);
+                            case 31 -> listViewSearch(BdmValues.I76);
+                            case 32 -> listViewSearch(BdmValues.KnockbackGravityTime);
+                            case 33 -> listViewSearch(BdmValues.VictimInvincibilityTime);
+                            case 34 -> listViewSearch(BdmValues.I82);
+                            case 35 -> listViewSearch(BdmValues.TransformationType);
+                            case 36 -> listViewSearch(BdmValues.AlimentType);
+                            case 37 -> listViewSearch(BdmValues.I88);
+                            case 38 -> listViewSearch(BdmValues.I90);
+                            case 39 -> listViewSearch(BdmValues.I92);
+                            case 40 -> listViewSearch(BdmValues.DamageSpecial);
+                            case 41 -> listViewSearch(BdmValues.DamageSpecial2);
+                            case 42 -> listViewSearch(BdmValues.DamageSpecial3);
+                            case 43 -> listViewSearch(BdmValues.StumbleType);
+                            case 44 -> listViewSearch(BdmValues.SecondaryType);
+                            case 45 -> listViewSearch(BdmValues.CameraShakeType);
+                            case 46 -> listViewSearch(BdmValues.CameraShakeTime);
+                            case 47 -> listViewSearch(BdmValues.User_BPE_ID);
+                            case 48 -> listViewSearch(BdmValues.Victim_BPE_ID);
+                            case 49 -> listViewSearch(BdmValues.StaminaBrokenOverride_BDM_ID);
+                            case 50 -> listViewSearch(BdmValues.ZVanishEnableTime);
+                            case 51 -> listViewSearch(BdmValues.UserAnimationTime);
+                            case 52 -> listViewSearch(BdmValues.VictimAnimationTime);
+                            case 53 -> listViewSearch(BdmValues.UserAnimationSpeed);
+                            case 54 -> listViewSearch(BdmValues.VictimAnimationSpeed);
+                        }
+                        
+                        event.consume();
+                    }
+                });
+
+                dialog.showAndWait();
+            }
+            else if (e.isControlDown() && e.getCode() == KeyCode.R) {
+                ButtonType replaceNextButtonType = new ButtonType("Replace Next", ButtonData.NEXT_FORWARD);
+                ButtonType replaceAllButtonType = new ButtonType("Replace All");
+                ButtonType cancelButtonType = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+                Dialog<String> dialog = new Dialog<>();
+                dialog.setTitle("Repplace");
+                dialog.getDialogPane().getButtonTypes().addAll(replaceNextButtonType, replaceAllButtonType, cancelButtonType);
+                dialog.getDialogPane().setContent(Popups.createReplaceDialog("Aura Entry: ", indexList, 
+                    FXCollections.observableArrayList(
+                        "Damage Type", 
+                        "I_02",
+                        "Damage Amount",
+                        "I_06",
+                        "F_08",
+                        "ACB Type",
+                        "CUE ID",
+                        "Effect 1 ID",
+                        "Effect 1 Skill ID",
+                        "Effect 1 EEPK Type",
+                        "I_22",
+                        "Effect 2 ID",
+                        "Effect 2 Skill ID",
+                        "Effect 2 EEPK Type",
+                        "I_30",
+                        "Effect 3 ID",
+                        "Effect 3 Skill ID",
+                        "Effect 3 EEPK Type",
+                        "I_38",
+                        "Pushback Strength",
+                        "Pushback Acceleration",
+                        "User Stunt",
+                        "Knockback Duration",
+                        "Knockback Recovery After Impact Time",
+                        "Knockback Ground Impact Time",
+                        "I_58",
+                        "Victim Stunt",
+                        "Knockback Strenght X",
+                        "Knockback Strenght Y",
+                        "Knockback Strenght Z",
+                        "Knockback Drag Y",
+                        "I_76",
+                        "Knockback Gravity Time",
+                        "Victim Invincibility Time",
+                        "I_82",
+                        "Transformation Type",
+                        "Aliment Type",
+                        "I_88",
+                        "I_90",
+                        "I_92",
+                        "Damage Special",
+                        "Damage Special 2",
+                        "Damage Special 3",
+                        "Stumble Type",
+                        "Secondary Type",
+                        "Camera Shake Type",
+                        "Camera Shake Time",
+                        "User BPE ID",
+                        "Victim BPE ID",
+                        "Stamina Broken Override BDM ID",
+                        "Z Vanish Enable Time",
+                        "User Animation Time",
+                        "Victim Animation Time",
+                        "User Animaiton Speed",
+                        "Victim Animation Speed"
+                    ))
+                );
+
+                final Button replacebt = (Button) dialog.getDialogPane().lookupButton(replaceNextButtonType);
+                final Button replaceAllbt = (Button) dialog.getDialogPane().lookupButton(replaceAllButtonType);
+
+                replacebt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!replacebt.isPressed()) {
+                        found = false;
+
+                        switch ((int) indexList[0]) {
+                            case 0 -> listViewReplace(BdmValues.DamageType, false);
+                            case 1 -> listViewReplace(BdmValues.I02, false);
+                            case 2 -> listViewReplace(BdmValues.DamageAmount, false);
+                            case 3 -> listViewReplace(BdmValues.I06, false);
+                            case 4 -> listViewReplace(BdmValues.F08, false);
+                            case 5 -> listViewReplace(BdmValues.ACB_Type, false);
+                            case 6 -> listViewReplace(BdmValues.CUE_ID, false);
+                            case 7 -> listViewReplace(BdmValues.Effect1_ID, false);
+                            case 8 -> listViewReplace(BdmValues.Effect1_Skill_ID, false);
+                            case 9 -> listViewReplace(BdmValues.Effect1_EEPK_Type, false);
+                            case 10 -> listViewReplace(BdmValues.I22, false);
+                            case 11 -> listViewReplace(BdmValues.Effect2_ID, false);
+                            case 12 -> listViewReplace(BdmValues.Effect2_Skill_ID, false);
+                            case 13 -> listViewReplace(BdmValues.Effect2_EEPK_Type, false);
+                            case 14 -> listViewReplace(BdmValues.I30, false);
+                            case 15 -> listViewReplace(BdmValues.Effect3_ID, false);
+                            case 16 -> listViewReplace(BdmValues.Effect3_Skill_ID, false);
+                            case 17 -> listViewReplace(BdmValues.Effect3_EEPK_Type, false);
+                            case 18 -> listViewReplace(BdmValues.I38, false);
+                            case 19 -> listViewReplace(BdmValues.PushbackStrength, false);
+                            case 20 -> listViewReplace(BdmValues.PushbackAcceleration, false);
+                            case 21 -> listViewReplace(BdmValues.UserStunt, false);
+                            case 22 -> listViewReplace(BdmValues.KnockbackDuration, false);
+                            case 23 -> listViewReplace(BdmValues.KnockbackRecoveryAfterImpactTime, false);
+                            case 24 -> listViewReplace(BdmValues.KnockbackGroundImpactTime, false);
+                            case 25 -> listViewReplace(BdmValues.I58, false);
+                            case 26 -> listViewReplace(BdmValues.VictimStunt, false);
+                            case 27 -> listViewReplace(BdmValues.KnockbackStrengthX, false);
+                            case 28 -> listViewReplace(BdmValues.KnockbackStrengthY, false);
+                            case 29 -> listViewReplace(BdmValues.KnockbackStrengthZ, false);
+                            case 30 -> listViewReplace(BdmValues.KnockbackDragY, false);
+                            case 31 -> listViewReplace(BdmValues.I76, false);
+                            case 32 -> listViewReplace(BdmValues.KnockbackGravityTime, false);
+                            case 33 -> listViewReplace(BdmValues.VictimInvincibilityTime, false);
+                            case 34 -> listViewReplace(BdmValues.I82, false);
+                            case 35 -> listViewReplace(BdmValues.TransformationType, false);
+                            case 36 -> listViewReplace(BdmValues.AlimentType, false);
+                            case 37 -> listViewReplace(BdmValues.I88, false);
+                            case 38 -> listViewReplace(BdmValues.I90, false);
+                            case 39 -> listViewReplace(BdmValues.I92, false);
+                            case 40 -> listViewReplace(BdmValues.DamageSpecial, false);
+                            case 41 -> listViewReplace(BdmValues.DamageSpecial2, false);
+                            case 42 -> listViewReplace(BdmValues.DamageSpecial3, false);
+                            case 43 -> listViewReplace(BdmValues.StumbleType, false);
+                            case 44 -> listViewReplace(BdmValues.SecondaryType, false);
+                            case 45 -> listViewReplace(BdmValues.CameraShakeType, false);
+                            case 46 -> listViewReplace(BdmValues.CameraShakeTime, false);
+                            case 47 -> listViewReplace(BdmValues.User_BPE_ID, false);
+                            case 48 -> listViewReplace(BdmValues.Victim_BPE_ID, false);
+                            case 49 -> listViewReplace(BdmValues.StaminaBrokenOverride_BDM_ID, false);
+                            case 50 -> listViewReplace(BdmValues.ZVanishEnableTime, false);
+                            case 51 -> listViewReplace(BdmValues.UserAnimationTime, false);
+                            case 52 -> listViewReplace(BdmValues.VictimAnimationTime, false);
+                            case 53 -> listViewReplace(BdmValues.UserAnimationSpeed, false);
+                            case 54 -> listViewReplace(BdmValues.VictimAnimationSpeed, false);
+                        }
+
+                        event.consume();
+                    }
+                });
+
+                replaceAllbt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!replaceAllbt.isPressed()) {
+                        found = false;
+
+                        switch ((int) indexList[0]) {
+                            case 0 -> listViewReplace(BdmValues.DamageType, true);
+                            case 1 -> listViewReplace(BdmValues.I02, true);
+                            case 2 -> listViewReplace(BdmValues.DamageAmount, true);
+                            case 3 -> listViewReplace(BdmValues.I06, true);
+                            case 4 -> listViewReplace(BdmValues.F08, true);
+                            case 5 -> listViewReplace(BdmValues.ACB_Type, true);
+                            case 6 -> listViewReplace(BdmValues.CUE_ID, true);
+                            case 7 -> listViewReplace(BdmValues.Effect1_ID, true);
+                            case 8 -> listViewReplace(BdmValues.Effect1_Skill_ID, true);
+                            case 9 -> listViewReplace(BdmValues.Effect1_EEPK_Type, true);
+                            case 10 -> listViewReplace(BdmValues.I22, true);
+                            case 11 -> listViewReplace(BdmValues.Effect2_ID, true);
+                            case 12 -> listViewReplace(BdmValues.Effect2_Skill_ID, true);
+                            case 13 -> listViewReplace(BdmValues.Effect2_EEPK_Type, true);
+                            case 14 -> listViewReplace(BdmValues.I30, true);
+                            case 15 -> listViewReplace(BdmValues.Effect3_ID, true);
+                            case 16 -> listViewReplace(BdmValues.Effect3_Skill_ID, true);
+                            case 17 -> listViewReplace(BdmValues.Effect3_EEPK_Type, true);
+                            case 18 -> listViewReplace(BdmValues.I38, true);
+                            case 19 -> listViewReplace(BdmValues.PushbackStrength, true);
+                            case 20 -> listViewReplace(BdmValues.PushbackAcceleration, true);
+                            case 21 -> listViewReplace(BdmValues.UserStunt, true);
+                            case 22 -> listViewReplace(BdmValues.KnockbackDuration, true);
+                            case 23 -> listViewReplace(BdmValues.KnockbackRecoveryAfterImpactTime, true);
+                            case 24 -> listViewReplace(BdmValues.KnockbackGroundImpactTime, true);
+                            case 25 -> listViewReplace(BdmValues.I58, true);
+                            case 26 -> listViewReplace(BdmValues.VictimStunt, true);
+                            case 27 -> listViewReplace(BdmValues.KnockbackStrengthX, true);
+                            case 28 -> listViewReplace(BdmValues.KnockbackStrengthY, true);
+                            case 29 -> listViewReplace(BdmValues.KnockbackStrengthZ, true);
+                            case 30 -> listViewReplace(BdmValues.KnockbackDragY, true);
+                            case 31 -> listViewReplace(BdmValues.I76, true);
+                            case 32 -> listViewReplace(BdmValues.KnockbackGravityTime, true);
+                            case 33 -> listViewReplace(BdmValues.VictimInvincibilityTime, true);
+                            case 34 -> listViewReplace(BdmValues.I82, true);
+                            case 35 -> listViewReplace(BdmValues.TransformationType, true);
+                            case 36 -> listViewReplace(BdmValues.AlimentType, true);
+                            case 37 -> listViewReplace(BdmValues.I88, true);
+                            case 38 -> listViewReplace(BdmValues.I90, true);
+                            case 39 -> listViewReplace(BdmValues.I92, true);
+                            case 40 -> listViewReplace(BdmValues.DamageSpecial, true);
+                            case 41 -> listViewReplace(BdmValues.DamageSpecial2, true);
+                            case 42 -> listViewReplace(BdmValues.DamageSpecial3, true);
+                            case 43 -> listViewReplace(BdmValues.StumbleType, true);
+                            case 44 -> listViewReplace(BdmValues.SecondaryType, true);
+                            case 45 -> listViewReplace(BdmValues.CameraShakeType, true);
+                            case 46 -> listViewReplace(BdmValues.CameraShakeTime, true);
+                            case 47 -> listViewReplace(BdmValues.User_BPE_ID, true);
+                            case 48 -> listViewReplace(BdmValues.Victim_BPE_ID, true);
+                            case 49 -> listViewReplace(BdmValues.StaminaBrokenOverride_BDM_ID, true);
+                            case 50 -> listViewReplace(BdmValues.ZVanishEnableTime, true);
+                            case 51 -> listViewReplace(BdmValues.UserAnimationTime, true);
+                            case 52 -> listViewReplace(BdmValues.VictimAnimationTime, true);
+                            case 53 -> listViewReplace(BdmValues.UserAnimationSpeed, true);
+                            case 54 -> listViewReplace(BdmValues.VictimAnimationSpeed, true);
+                        }
+
+                        event.consume();
+                    }
+                });
+
+                dialog.showAndWait();
             }
         });
+    }
+
+    private int[] listViewSearch(BdmValues bdmValue) {
+        int counterList = 0;
+        int counterTab = 0;
+        double value = 0;
+        int listIndex = listView.getSelectionModel().getSelectedIndex();
+        int tabIndex = mainTabPane.getSelectionModel().getSelectedIndex();
+
+        do {
+            counterTab = 0;
+
+            do {
+                switch (bdmValue) {
+                    case DamageType -> value = bdmEntries.get(listIndex).subEntries[tabIndex].damageType;
+                    case I02 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].i02;
+                    case DamageAmount -> value = bdmEntries.get(listIndex).subEntries[tabIndex].damageAmount;
+                    case I06 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].i06;
+                    case F08 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].f08;
+                    case ACB_Type -> value = bdmEntries.get(listIndex).subEntries[tabIndex].acbType;
+                    case CUE_ID -> value = bdmEntries.get(listIndex).subEntries[tabIndex].cueId;
+                    case Effect1_ID -> value = bdmEntries.get(listIndex).subEntries[tabIndex].effect1Id;
+                    case Effect1_Skill_ID -> value = bdmEntries.get(listIndex).subEntries[tabIndex].effect1SkillId;
+                    case Effect1_EEPK_Type -> value = bdmEntries.get(listIndex).subEntries[tabIndex].effect1EepkType;
+                    case I22 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].i22;
+                    case Effect2_ID -> value = bdmEntries.get(listIndex).subEntries[tabIndex].effect2Id;
+                    case Effect2_Skill_ID -> value = bdmEntries.get(listIndex).subEntries[tabIndex].effect2SkillId;
+                    case Effect2_EEPK_Type -> value = bdmEntries.get(listIndex).subEntries[tabIndex].effect2EepkType;
+                    case I30 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].i30;
+                    case Effect3_ID -> value = bdmEntries.get(listIndex).subEntries[tabIndex].effect3Id;
+                    case Effect3_Skill_ID -> value = bdmEntries.get(listIndex).subEntries[tabIndex].effect3SkillId;
+                    case Effect3_EEPK_Type -> value = bdmEntries.get(listIndex).subEntries[tabIndex].effect3EepkType;
+                    case I38 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].i38;
+                    case PushbackStrength -> value = bdmEntries.get(listIndex).subEntries[tabIndex].pushbackStrength;
+                    case PushbackAcceleration -> value = bdmEntries.get(listIndex).subEntries[tabIndex].pushbackAcceleration;
+                    case UserStunt -> value = bdmEntries.get(listIndex).subEntries[tabIndex].userStunt;
+                    case KnockbackDuration -> value = bdmEntries.get(listIndex).subEntries[tabIndex].knockbackDuration;
+                    case KnockbackRecoveryAfterImpactTime -> value = bdmEntries.get(listIndex).subEntries[tabIndex].knockbackRecoveryAfterImpactTime;
+                    case KnockbackGroundImpactTime -> value = bdmEntries.get(listIndex).subEntries[tabIndex].knockbackGroundImpactTime;
+                    case I58 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].i58;
+                    case StaminaBrokenOverride_BDM_ID -> value = bdmEntries.get(listIndex).subEntries[tabIndex].staminaBrokenOverrideBdmId;
+                    case KnockbackGravityTime -> value = bdmEntries.get(listIndex).subEntries[tabIndex].knockbackGravityTime; 
+                    case I88 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].i88; 
+                    case VictimAnimationSpeed -> value = bdmEntries.get(listIndex).subEntries[tabIndex].victimAnimationSpeed;    
+                    case I82 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].i82;  
+                    case AlimentType -> value = bdmEntries.get(listIndex).subEntries[tabIndex].alimentType;     
+                    case VictimInvincibilityTime -> value = bdmEntries.get(listIndex).subEntries[tabIndex].victimInvincibilityTime; 
+                    case I76 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].i76;  
+                    case I92 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].i92;   
+                    case Victim_BPE_ID -> value = bdmEntries.get(listIndex).subEntries[tabIndex].victimBpeID;
+                    case UserAnimationSpeed -> value = bdmEntries.get(listIndex).subEntries[tabIndex].userAnimationSpeed;
+                    case KnockbackDragY -> value = bdmEntries.get(listIndex).subEntries[tabIndex].knockbackDragY;
+                    case I90 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].i90;
+                    case CameraShakeTime -> value = bdmEntries.get(listIndex).subEntries[tabIndex].cameraShakeTime;
+                    case CameraShakeType -> value = bdmEntries.get(listIndex).subEntries[tabIndex].cameraShakeType;
+                    case User_BPE_ID -> value = bdmEntries.get(listIndex).subEntries[tabIndex].userBpeID;
+                    case DamageSpecial -> value = bdmEntries.get(listIndex).subEntries[tabIndex].damageSpecial;
+                    case DamageSpecial2 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].damageSpecial2;
+                    case DamageSpecial3 -> value = bdmEntries.get(listIndex).subEntries[tabIndex].damageSpecial3;
+                    case KnockbackStrengthX -> value = bdmEntries.get(listIndex).subEntries[tabIndex].knockbackStrengthX;
+                    case KnockbackStrengthY -> value = bdmEntries.get(listIndex).subEntries[tabIndex].knockbackStrengthY;
+                    case KnockbackStrengthZ -> value = bdmEntries.get(listIndex).subEntries[tabIndex].knockbackStrengthZ;
+                    case SecondaryType -> value = bdmEntries.get(listIndex).subEntries[tabIndex].secondaryType;
+                    case UserAnimationTime -> value = bdmEntries.get(listIndex).subEntries[tabIndex].userAnimationTime;
+                    case VictimAnimationTime -> value = bdmEntries.get(listIndex).subEntries[tabIndex].victimAnimationTime;
+                    case ZVanishEnableTime -> value = bdmEntries.get(listIndex).subEntries[tabIndex].zVanishEnableTime;
+                    case TransformationType -> value = bdmEntries.get(listIndex).subEntries[tabIndex].transformationType;
+                    case StumbleType -> value = bdmEntries.get(listIndex).subEntries[tabIndex].stumbleType;
+                    case VictimStunt -> value = bdmEntries.get(listIndex).subEntries[tabIndex].victimStunt;
+                }
+
+                if (indexList[1] != null && value == Double.parseDouble((String) indexList[1]) && (listView.getSelectionModel().getSelectedIndex() != listIndex || mainTabPane.getSelectionModel().getSelectedIndex() != tabIndex)) {
+                    listView.getSelectionModel().select(listIndex);
+                    mainTabPane.getSelectionModel().select(tabIndex);
+
+                    found = true;
+                    return new int[] {listIndex, tabIndex};
+                }
+
+                tabIndex++;
+                counterTab++;
+
+                if (tabIndex == mainTabPane.getTabs().size()) tabIndex = 0;
+            } while (counterTab != mainTabPane.getTabs().size());
+            
+            listIndex++;
+            counterList++;
+
+            if (listIndex == listView.getItems().size()) listIndex = 0;
+        } while (counterList != listView.getItems().size());
+
+        if (!found) {
+            Popups.ItemNotFound();
+        }
+        else {
+            Popups.ItemsReplaced();
+        }
+
+        return new int[] {-1, -1};
+    }
+
+    private void listViewReplace(BdmValues bdmValue, boolean continueLooping) {
+        int[] searchedItemIndex = {-1, -1};
+
+        do {
+            searchedItemIndex = listViewSearch(bdmValue);
+
+            if (searchedItemIndex[0] != -1) {
+                switch (bdmValue) {
+                    case DamageType -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].damageType = Integer.parseInt((String) indexList[2]);
+                    case I02 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].i02 = Integer.parseInt((String) indexList[2]);
+                    case DamageAmount -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].damageAmount = Integer.parseInt((String) indexList[2]);
+                    case I06 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].i06 = Integer.parseInt((String) indexList[2]);
+                    case F08 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].f08 = Float.parseFloat((String) indexList[2]);
+                    case ACB_Type -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].acbType = Integer.parseInt((String) indexList[2]);
+                    case CUE_ID -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].cueId = Short.parseShort((String) indexList[2]);
+                    case Effect1_ID -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].effect1Id = Short.parseShort((String) indexList[2]);
+                    case Effect1_Skill_ID -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].effect1SkillId = Integer.parseInt((String) indexList[2]);
+                    case Effect1_EEPK_Type -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].effect1EepkType = Integer.parseInt((String) indexList[2]);
+                    case I22 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].i22 = Integer.parseInt((String) indexList[2]);
+                    case Effect2_ID -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].effect2Id = Short.parseShort((String) indexList[2]);
+                    case Effect2_Skill_ID -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].effect2SkillId = Integer.parseInt((String) indexList[2]);
+                    case Effect2_EEPK_Type -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].effect2EepkType = Integer.parseInt((String) indexList[2]);
+                    case I30 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].i30 = Integer.parseInt((String) indexList[2]);
+                    case Effect3_ID -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].effect3Id = Short.parseShort((String) indexList[2]);
+                    case Effect3_Skill_ID -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].effect3SkillId = Integer.parseInt((String) indexList[2]);
+                    case Effect3_EEPK_Type -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].effect3EepkType = Integer.parseInt((String) indexList[2]);
+                    case I38 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].i38 = Integer.parseInt((String) indexList[2]);
+                    case PushbackStrength -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].pushbackStrength = Float.parseFloat((String) indexList[2]);
+                    case PushbackAcceleration -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].pushbackAcceleration = Float.parseFloat((String) indexList[2]);
+                    case UserStunt -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].userStunt = Integer.parseInt((String) indexList[2]);
+                    case KnockbackDuration -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].knockbackDuration = Integer.parseInt((String) indexList[2]);
+                    case KnockbackRecoveryAfterImpactTime -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].knockbackRecoveryAfterImpactTime = Integer.parseInt((String) indexList[2]);
+                    case KnockbackGroundImpactTime -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].knockbackGroundImpactTime = Integer.parseInt((String) indexList[2]);
+                    case I58 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].i58 = Integer.parseInt((String) indexList[2]);
+                    case StaminaBrokenOverride_BDM_ID -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].staminaBrokenOverrideBdmId = Short.parseShort((String) indexList[2]);
+                    case KnockbackGravityTime -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].knockbackGravityTime = Integer.parseInt((String) indexList[2]);
+                    case I88 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].i88 = Integer.parseInt((String) indexList[2]);
+                    case VictimAnimationSpeed -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].victimAnimationSpeed = Float.parseFloat((String) indexList[2]);   
+                    case I82 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].i82 = Integer.parseInt((String) indexList[2]);  
+                    case AlimentType -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].alimentType = Short.parseShort((String) indexList[2]);    
+                    case VictimInvincibilityTime -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].victimInvincibilityTime = Short.parseShort((String) indexList[2]); 
+                    case I76 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].i76 = Integer.parseInt((String) indexList[2]);  
+                    case I92 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].i92 = Integer.parseInt((String) indexList[2]);   
+                    case Victim_BPE_ID -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].victimBpeID = Short.parseShort((String) indexList[2]);
+                    case UserAnimationSpeed -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].userAnimationSpeed = Float.parseFloat((String) indexList[2]);
+                    case KnockbackDragY -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].knockbackDragY = Float.parseFloat((String) indexList[2]);
+                    case I90 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].i90 = Integer.parseInt((String) indexList[2]);
+                    case CameraShakeTime -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].cameraShakeTime = Integer.parseInt((String) indexList[2]);
+                    case CameraShakeType -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].cameraShakeType = Short.parseShort((String) indexList[2]);
+                    case User_BPE_ID -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].userBpeID = Short.parseShort((String) indexList[2]);
+                    case DamageSpecial -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].damageSpecial = Integer.parseInt((String) indexList[2]);
+                    case DamageSpecial2 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].damageSpecial2 = Integer.parseInt((String) indexList[2]);
+                    case DamageSpecial3 -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].damageSpecial3 = Integer.parseInt((String) indexList[2]);
+                    case KnockbackStrengthX -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].knockbackStrengthX = Float.parseFloat((String) indexList[2]);
+                    case KnockbackStrengthY -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].knockbackStrengthY = Float.parseFloat((String) indexList[2]);
+                    case KnockbackStrengthZ -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].knockbackStrengthZ = Float.parseFloat((String) indexList[2]);
+                    case SecondaryType -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].secondaryType = Integer.parseInt((String) indexList[2]);
+                    case UserAnimationTime -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].userAnimationTime = Integer.parseInt((String) indexList[2]);
+                    case VictimAnimationTime -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].victimAnimationTime = Integer.parseInt((String) indexList[2]);
+                    case ZVanishEnableTime -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].zVanishEnableTime = Integer.parseInt((String) indexList[2]);
+                    case TransformationType -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].transformationType = Integer.parseInt((String) indexList[2]);
+                    case StumbleType -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].stumbleType = Integer.parseInt((String) indexList[2]);
+                    case VictimStunt -> bdmEntries.get(searchedItemIndex[0]).subEntries[searchedItemIndex[1]].victimStunt = Integer.parseInt((String) indexList[2]);
+                }
+            } 
+        } while (continueLooping && searchedItemIndex[0] != -1);
+
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(0).setContent(createMainVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(1).setContent(createAnimationVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(2).setContent(createSoundVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(3).setContent(createEffectsScrollPane(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(4).setContent(createPushbackVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(5).setContent(createCameraVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(6).setContent(createMiscVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(7).setContent(createUnknownVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
     }
 
     private void Copy() {
@@ -1582,67 +2108,61 @@ public class Bdm {
     }
 
     public static enum BdmValues {
-        DamageType(0),
-        I02(1),
-        DamageAmount(2),
-        I06(3),
-        F08(4),
-        ACB_Type(5),
-        Cue_ID(6),
-        Effect1_ID(7),
-        Effect1_Skill_ID(8),
-        Effect1_EEPK_Type(9),
-        I22(10),
-        Effect2_ID(11),
-        Effect2_Skill_ID(12),
-        Effect2_EEPK_Type(13),
-        I30(14),
-        Effect3_ID(15),
-        Effect3_Skill_ID(16),
-        Effect3_EEPK_Type(17),
-        I38(18),
-        PushbackStrength(19),
-        PushbackAcceleration(20),
-        UserStunt(21),
-        KnockbackDuration(22),
-        KnockbackRecoveryAfterImpactTime(23),
-        KnockbackGroundImpactTime(24),
-        I58(25),
-        VictimStunt(26),
-        KnockbackStrengthX(27),
-        KnockbackStrengthY(28),
-        KnockbackStrengthZ(29),
-        KnockbackDragY(30),
-        I76(31),
-        KnockbackGravityTime(32),
-        VictimInvincibilityTime(33),
-        I82(34),
-        TransformationType(35),
-        AlimentType(36),
-        I88(37),
-        I90(38),
-        I92(39),
-        DamageSpecial(40),
-        DamageSpecial2(41),
-        DamageSpecial3(42),
-        StumbleType(43),
-        SecondaryType(44),
-        CameraShakeType(45),
-        CameraShakeTime(46),
-        User_BPE_ID(47),
-        Victim_BPE_ID(48),
-        StaminaBrokenOverride_BDM_ID(49),
-        ZVanishEnableTime(50), 
-        UserAnimationTime(51),     
-        VictimAnimationTime(52),    
-        UserAnimationSpeed(53),         
-        VictimAnimationSpeed(54);
-
-        final int index;
-
-        BdmValues(int index) {
-            this.index = index;
-        }
+        DamageType,
+        I02,
+        DamageAmount,
+        I06,
+        F08,
+        ACB_Type,
+        CUE_ID,
+        Effect1_ID,
+        Effect1_Skill_ID,
+        Effect1_EEPK_Type,
+        I22,
+        Effect2_ID,
+        Effect2_Skill_ID,
+        Effect2_EEPK_Type,
+        I30,
+        Effect3_ID,
+        Effect3_Skill_ID,
+        Effect3_EEPK_Type,
+        I38,
+        PushbackStrength,
+        PushbackAcceleration,
+        UserStunt,
+        KnockbackDuration,
+        KnockbackRecoveryAfterImpactTime,
+        KnockbackGroundImpactTime,
+        I58,
+        VictimStunt,
+        KnockbackStrengthX,
+        KnockbackStrengthY,
+        KnockbackStrengthZ,
+        KnockbackDragY,
+        I76,
+        KnockbackGravityTime,
+        VictimInvincibilityTime,
+        I82,
+        TransformationType,
+        AlimentType,
+        I88,
+        I90,
+        I92,
+        DamageSpecial,
+        DamageSpecial2,
+        DamageSpecial3,
+        StumbleType,
+        SecondaryType,
+        CameraShakeType,
+        CameraShakeTime,
+        User_BPE_ID,
+        Victim_BPE_ID,
+        StaminaBrokenOverride_BDM_ID,
+        ZVanishEnableTime, 
+        UserAnimationTime,     
+        VictimAnimationTime,    
+        UserAnimationSpeed,         
+        VictimAnimationSpeed;
 
         public static enum DamageTypes {
             NoEffect(0),

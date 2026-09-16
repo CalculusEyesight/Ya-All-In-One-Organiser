@@ -65,7 +65,9 @@ public class Bcm {
 
     int findIndex = 0;
     String findText = null;
-    Object[] indexList = new Object[] {findIndex, findText};
+    String replaceIndex = null;
+    Object[] indexList = new Object[] {findIndex, findText, replaceIndex};
+    boolean found = false;
   
     public Bcm() {
         entriesActionListener();
@@ -833,24 +835,321 @@ public class Bcm {
                         "Directional Input", 
                         "Button Input", 
                         "Hold Down Conditions", 
-                        "BoostEnd", 
-                        "KiaiCharge", 
-                        "KiryokuMax", 
-                        "HenshinStart", 
-                        "HenshinEnd"
+                        "Opponent Size", 
+                        "Skill Conditions", 
+                        "Minimum Loop Duration", 
+                        "Maximum Loop Duration", 
+                        "Primary Activator Conditions",
+                        "Activator State",
+                        "BAC Entry Primary",
+                        "BAC Entry Charge",
+                        "BAC Entry User Connect",
+                        "BAC Entry Victim Connect",
+                        "BAC Entry Airborne",
+                        "BAC Entry Targeting Override",
+                        "Random Flag",
+                        "Ki Cost ",
+                        "Receiver Link ID",
+                        "Stamina Cost",
+                        "Ki Required",
+                        "Health Required",
+                        "Transformation Stage",
+                        "CUS Aura",
+                        "Character Condition",
+                        "I_36",
+                        "I_68",
+                        "I_72",
+                        "I_80",
+                        "I_88",
+                        "Skill Upgrade Value"
                     )));
 
                 final Button findbt = (Button) dialog.getDialogPane().lookupButton(findNextButtonType);
                 findbt.addEventFilter(ActionEvent.ACTION, event -> {
                     if (!findbt.isPressed()) {
+                        found = false;
 
-            
+                        switch ((int) indexList[0]) {
+                            case 0 -> treeViewSearch(BcmValues.DirectionalInput);
+                            case 1 -> treeViewSearch(BcmValues.ButtonInput);
+                            case 2 -> treeViewSearch(BcmValues.HoldDownConditions);
+                            case 3 -> treeViewSearch(BcmValues.OpponentSizeConditions);
+                            case 4 -> treeViewSearch(BcmValues.SkillConditions);
+                            case 5 -> treeViewSearch(BcmValues.MinimumLoopDuration);
+                            case 6 -> treeViewSearch(BcmValues.MaximumLoopDuration);
+                            case 7 -> treeViewSearch(BcmValues.PrimaryActivatorConditions);
+                            case 8 -> treeViewSearch(BcmValues.ActivatorState);
+                            case 9 -> treeViewSearch(BcmValues.BAC_EntryPrimary);
+                            case 10 -> treeViewSearch(BcmValues.BAC_EntryCharge);
+                            case 11 -> treeViewSearch(BcmValues.BAC_EntryUserConnect);
+                            case 12 -> treeViewSearch(BcmValues.BAC_EntryVictimConnect);
+                            case 13 -> treeViewSearch(BcmValues.BAC_EntryAirborne);
+                            case 14 -> treeViewSearch(BcmValues.BAC_EntryTargetingOverride);
+                            case 15 -> treeViewSearch(BcmValues.BAC_RandomFlags);
+                            case 16 -> treeViewSearch(BcmValues.KiCost);
+                            case 17 -> treeViewSearch(BcmValues.ReceiverLink_ID);
+                            case 18 -> treeViewSearch(BcmValues.StaminaCost);
+                            case 19 -> treeViewSearch(BcmValues.KiRequired);
+                            case 20 -> treeViewSearch(BcmValues.HealthRequired);
+                            case 21 -> treeViewSearch(BcmValues.TransformationStage); 
+                            case 22 -> treeViewSearch(BcmValues.CUS_Aura);
+                            case 23 -> treeViewSearch(BcmValues.CharacterCondition);
+                            case 24 -> treeViewSearch(BcmValues.I36);
+                            case 25 -> treeViewSearch(BcmValues.I68);
+                            case 26 -> treeViewSearch(BcmValues.I72);
+                            case 27 -> treeViewSearch(BcmValues.I80);
+                            case 28 -> treeViewSearch(BcmValues.I88);
+                            case 29 -> treeViewSearch(BcmValues.I104);
+                        }
+
                         event.consume();
                     }
                 });
+
+                dialog.showAndWait();
+            }
+            else if (e.isControlDown() && e.getCode() == KeyCode.R) {
+                ButtonType replaceNextButtonType = new ButtonType("Replace Next", ButtonData.NEXT_FORWARD);
+                ButtonType replaceAllButtonType = new ButtonType("Replace All");
+                ButtonType cancelButtonType = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+                Dialog<String> dialog = new Dialog<>();
+                dialog.setTitle("Repplace");
+                dialog.getDialogPane().getButtonTypes().addAll(replaceNextButtonType, replaceAllButtonType, cancelButtonType);
+                dialog.getDialogPane().setContent(Popups.createReplaceDialog("Aura Entry: ", indexList, 
+                    FXCollections.observableArrayList(
+                        "Directional Input", 
+                        "Button Input", 
+                        "Hold Down Conditions", 
+                        "Opponent Size", 
+                        "Skill Conditions", 
+                        "Minimum Loop Duration", 
+                        "Maximum Loop Duration", 
+                        "Primary Activator Conditions",
+                        "Activator State",
+                        "BAC Entry Primary",
+                        "BAC Entry Charge",
+                        "BAC Entry User Connect",
+                        "BAC Entry Victim Connect",
+                        "BAC Entry Airborne",
+                        "BAC Entry Targeting Override",
+                        "Random Flag",
+                        "Ki Cost ",
+                        "Receiver Link ID",
+                        "Stamina Cost",
+                        "Ki Required",
+                        "Health Required",
+                        "Transformation Stage",
+                        "CUS Aura",
+                        "Character Condition",
+                        "I_36",
+                        "I_68",
+                        "I_72",
+                        "I_80",
+                        "I_88",
+                        "Skill Upgrade Value"
+                    ))
+                );
+
+                final Button replacebt = (Button) dialog.getDialogPane().lookupButton(replaceNextButtonType);
+                final Button replaceAllbt = (Button) dialog.getDialogPane().lookupButton(replaceAllButtonType);
+
+                replacebt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!replacebt.isPressed()) {
+                        found = false;
+
+                        switch ((int) indexList[0]) {
+                            case 0 -> treeViewReplace(BcmValues.DirectionalInput, false);
+                            case 1 -> treeViewReplace(BcmValues.ButtonInput, false);
+                            case 2 -> treeViewReplace(BcmValues.HoldDownConditions, false);
+                            case 3 -> treeViewReplace(BcmValues.OpponentSizeConditions,false);
+                            case 4 -> treeViewReplace(BcmValues.SkillConditions, false);
+                            case 5 -> treeViewReplace(BcmValues.MinimumLoopDuration, false);
+                            case 6 -> treeViewReplace(BcmValues.MaximumLoopDuration, false);
+                            case 7 -> treeViewReplace(BcmValues.PrimaryActivatorConditions, false);
+                            case 8 -> treeViewReplace(BcmValues.ActivatorState, false);
+                            case 9 -> treeViewReplace(BcmValues.BAC_EntryPrimary, false);
+                            case 10 -> treeViewReplace(BcmValues.BAC_EntryCharge, false);
+                            case 11 -> treeViewReplace(BcmValues.BAC_EntryUserConnect, false);
+                            case 12 -> treeViewReplace(BcmValues.BAC_EntryVictimConnect, false);
+                            case 13 -> treeViewReplace(BcmValues.BAC_EntryAirborne, false);
+                            case 14 -> treeViewReplace(BcmValues.BAC_EntryTargetingOverride, false);
+                            case 15 -> treeViewReplace(BcmValues.BAC_RandomFlags, false);
+                            case 16 -> treeViewReplace(BcmValues.KiCost, false);
+                            case 17 -> treeViewReplace(BcmValues.ReceiverLink_ID, false);
+                            case 18 -> treeViewReplace(BcmValues.StaminaCost, false);
+                            case 19 -> treeViewReplace(BcmValues.KiRequired, false);
+                            case 20 -> treeViewReplace(BcmValues.HealthRequired, false);
+                            case 21 -> treeViewReplace(BcmValues.TransformationStage, false); 
+                            case 22 -> treeViewReplace(BcmValues.CUS_Aura, false);
+                            case 23 -> treeViewReplace(BcmValues.CharacterCondition, false);
+                            case 24 -> treeViewReplace(BcmValues.I36, false);
+                            case 25 -> treeViewReplace(BcmValues.I68, false);
+                            case 26 -> treeViewReplace(BcmValues.I72, false);
+                            case 27 -> treeViewReplace(BcmValues.I80, false);
+                            case 28 -> treeViewReplace(BcmValues.I88, false);
+                            case 29 -> treeViewReplace(BcmValues.I104, false);
+                        }
+
+                        event.consume();
+                    }
+                });
+
+                replaceAllbt.addEventFilter(ActionEvent.ACTION, event -> {
+                    if (!replaceAllbt.isPressed()) {
+                        found = false;
+
+                        switch ((int) indexList[0]) {
+                            case 0 -> treeViewReplace(BcmValues.DirectionalInput, true);
+                            case 1 -> treeViewReplace(BcmValues.ButtonInput, true);
+                            case 2 -> treeViewReplace(BcmValues.HoldDownConditions, true);
+                            case 3 -> treeViewReplace(BcmValues.OpponentSizeConditions,true);
+                            case 4 -> treeViewReplace(BcmValues.SkillConditions, true);
+                            case 5 -> treeViewReplace(BcmValues.MinimumLoopDuration, true);
+                            case 6 -> treeViewReplace(BcmValues.MaximumLoopDuration, true);
+                            case 7 -> treeViewReplace(BcmValues.PrimaryActivatorConditions, true);
+                            case 8 -> treeViewReplace(BcmValues.ActivatorState, true);
+                            case 9 -> treeViewReplace(BcmValues.BAC_EntryPrimary, true);
+                            case 10 -> treeViewReplace(BcmValues.BAC_EntryCharge, true);
+                            case 11 -> treeViewReplace(BcmValues.BAC_EntryUserConnect, true);
+                            case 12 -> treeViewReplace(BcmValues.BAC_EntryVictimConnect, true);
+                            case 13 -> treeViewReplace(BcmValues.BAC_EntryAirborne, true);
+                            case 14 -> treeViewReplace(BcmValues.BAC_EntryTargetingOverride, true);
+                            case 15 -> treeViewReplace(BcmValues.BAC_RandomFlags, true);
+                            case 16 -> treeViewReplace(BcmValues.KiCost, true);
+                            case 17 -> treeViewReplace(BcmValues.ReceiverLink_ID, true);
+                            case 18 -> treeViewReplace(BcmValues.StaminaCost, true);
+                            case 19 -> treeViewReplace(BcmValues.KiRequired, true);
+                            case 20 -> treeViewReplace(BcmValues.HealthRequired, true);
+                            case 21 -> treeViewReplace(BcmValues.TransformationStage, true); 
+                            case 22 -> treeViewReplace(BcmValues.CUS_Aura, true);
+                            case 23 -> treeViewReplace(BcmValues.CharacterCondition, true);
+                            case 24 -> treeViewReplace(BcmValues.I36, true);
+                            case 25 -> treeViewReplace(BcmValues.I68, true);
+                            case 26 -> treeViewReplace(BcmValues.I72, true);
+                            case 27 -> treeViewReplace(BcmValues.I80, true);
+                            case 28 -> treeViewReplace(BcmValues.I88, true);
+                            case 29 -> treeViewReplace(BcmValues.I104, true);
+                        }
+
+                        event.consume();
+                    }
+                });
+
                 dialog.showAndWait();
             }
         });
+    }
+
+    private TreeItem<String> treeViewSearch(BcmValues bcmValue) {
+        double value = 0;
+        int counter = 0;
+        int entryIndex = Integer.parseInt(currentEntry.getValue().toString().replaceAll("\\D+", ""));
+
+        while (counter != allEntries.size()) {
+            switch (bcmValue) {
+                case DirectionalInput -> value = bcmHashMap.get(allEntries.get(entryIndex)).directionalInputs; 
+                case ButtonInput -> value = bcmHashMap.get(allEntries.get(entryIndex)).buttonInputs;  
+                case HoldDownConditions -> value = bcmHashMap.get(allEntries.get(entryIndex)).holdDownConditions; 
+                case OpponentSizeConditions -> value = bcmHashMap.get(allEntries.get(entryIndex)).opponentSizeConditions;
+                case SkillConditions -> value = bcmHashMap.get(allEntries.get(entryIndex)).skillConditions;
+                case MinimumLoopDuration -> value = bcmHashMap.get(allEntries.get(entryIndex)).minimumLoopDuration;
+                case MaximumLoopDuration -> value = bcmHashMap.get(allEntries.get(entryIndex)).maximumLoopDuration;
+                case PrimaryActivatorConditions -> value = bcmHashMap.get(allEntries.get(entryIndex)).primaryActivatorConditions;
+                case ActivatorState -> value = bcmHashMap.get(allEntries.get(entryIndex)).activatorState;
+                case BAC_EntryPrimary -> value = bcmHashMap.get(allEntries.get(entryIndex)).bacEntryPrimary;
+                case BAC_EntryCharge -> value = bcmHashMap.get(allEntries.get(entryIndex)).bacEntryCharge;
+                case BAC_EntryUserConnect -> value = bcmHashMap.get(allEntries.get(entryIndex)).bacEntryUserConnect;
+                case BAC_EntryVictimConnect -> value = bcmHashMap.get(allEntries.get(entryIndex)).bacEntryVictimConnect;
+                case BAC_EntryAirborne -> value = bcmHashMap.get(allEntries.get(entryIndex)).bacEntryAirborne;
+                case BAC_EntryTargetingOverride -> value = bcmHashMap.get(allEntries.get(entryIndex)).bacEntryTargetingOverride;
+                case BAC_RandomFlags -> value = bcmHashMap.get(allEntries.get(entryIndex)).bacRandomFlags;
+                case KiCost -> value = bcmHashMap.get(allEntries.get(entryIndex)).kiCost;
+                case ReceiverLink_ID -> value = bcmHashMap.get(allEntries.get(entryIndex)).receiverLinkId;
+                case StaminaCost -> value = bcmHashMap.get(allEntries.get(entryIndex)).staminaCost;
+                case KiRequired -> value = bcmHashMap.get(allEntries.get(entryIndex)).kiRequired;
+                case HealthRequired -> value = bcmHashMap.get(allEntries.get(entryIndex)).healthRequired;
+                case TransformationStage -> value = bcmHashMap.get(allEntries.get(entryIndex)).transformationStage;
+                case CUS_Aura -> value = bcmHashMap.get(allEntries.get(entryIndex)).cusAura;
+                case CharacterCondition -> value = bcmHashMap.get(allEntries.get(entryIndex)).characterCondition;
+                case I36 -> value = bcmHashMap.get(allEntries.get(entryIndex)).i36;
+                case I68 -> value = bcmHashMap.get(allEntries.get(entryIndex)).i68;
+                case I72 -> value = bcmHashMap.get(allEntries.get(entryIndex)).i72;
+                case I80 -> value = bcmHashMap.get(allEntries.get(entryIndex)).i80;
+                case I88 -> value = bcmHashMap.get(allEntries.get(entryIndex)).i88;
+                case I104 -> value = bcmHashMap.get(allEntries.get(entryIndex)).i104;
+            }
+
+            if (indexList[1] != null && value == Double.parseDouble((String) indexList[1]) && !allEntries.get(entryIndex).equals(currentEntry)) {
+                treeView.getSelectionModel().select(allEntries.get(entryIndex));
+                found = true;
+                
+                return allEntries.get(entryIndex);
+            }
+
+            entryIndex++;
+            counter++;
+
+            if(entryIndex == allEntries.size()) entryIndex = 0;
+        }
+
+        if (!found) {
+            Popups.ItemNotFound();
+        }
+        else {
+            Popups.ItemsReplaced();
+        }
+
+        return null;
+    }
+
+    private void treeViewReplace(BcmValues bcmValue, boolean continueLooping) {
+        TreeItem<String> searchedItemIndex = null;
+
+        do {
+            searchedItemIndex = treeViewSearch(bcmValue);
+
+            if (searchedItemIndex != null) {
+                switch (bcmValue) {
+                    case DirectionalInput -> bcmHashMap.get(searchedItemIndex).directionalInputs = Long.parseLong((String) indexList[2]);
+                    case ButtonInput -> bcmHashMap.get(searchedItemIndex).buttonInputs = Long.parseLong((String) indexList[2]);
+                    case HoldDownConditions -> bcmHashMap.get(searchedItemIndex).holdDownConditions = Long.parseLong((String) indexList[2]);
+                    case OpponentSizeConditions -> bcmHashMap.get(searchedItemIndex).opponentSizeConditions = Long.parseLong((String) indexList[2]);
+                    case SkillConditions -> bcmHashMap.get(searchedItemIndex).skillConditions = Long.parseLong((String) indexList[2]);
+                    case MinimumLoopDuration -> bcmHashMap.get(searchedItemIndex).minimumLoopDuration = Integer.parseInt((String) indexList[2]);
+                    case MaximumLoopDuration -> bcmHashMap.get(searchedItemIndex).maximumLoopDuration = Integer.parseInt((String) indexList[2]);
+                    case PrimaryActivatorConditions -> bcmHashMap.get(searchedItemIndex).primaryActivatorConditions = Long.parseLong((String) indexList[2]);
+                    case ActivatorState -> bcmHashMap.get(searchedItemIndex).activatorState = Long.parseLong((String) indexList[2]);
+                    case BAC_EntryPrimary -> bcmHashMap.get(searchedItemIndex).bacEntryPrimary = Short.parseShort((String) indexList[2]);
+                    case BAC_EntryCharge -> bcmHashMap.get(searchedItemIndex).bacEntryCharge = Short.parseShort((String) indexList[2]);
+                    case BAC_EntryUserConnect -> bcmHashMap.get(searchedItemIndex).bacEntryUserConnect = Short.parseShort((String) indexList[2]);
+                    case BAC_EntryVictimConnect -> bcmHashMap.get(searchedItemIndex).bacEntryVictimConnect = Short.parseShort((String) indexList[2]);
+                    case BAC_EntryAirborne -> bcmHashMap.get(searchedItemIndex).bacEntryAirborne = Short.parseShort((String) indexList[2]);
+                    case BAC_EntryTargetingOverride -> bcmHashMap.get(searchedItemIndex).bacEntryTargetingOverride = Integer.parseInt((String) indexList[2]);
+                    case BAC_RandomFlags -> bcmHashMap.get(searchedItemIndex).bacRandomFlags = Integer.parseInt((String) indexList[2]);
+                    case KiCost -> bcmHashMap.get(searchedItemIndex).kiCost = Long.parseLong((String) indexList[2]);
+                    case ReceiverLink_ID -> bcmHashMap.get(searchedItemIndex).receiverLinkId = Long.parseLong((String) indexList[2]);
+                    case StaminaCost -> bcmHashMap.get(searchedItemIndex).staminaCost = Long.parseLong((String) indexList[2]);
+                    case KiRequired -> bcmHashMap.get(searchedItemIndex).kiRequired = Long.parseLong((String) indexList[2]);
+                    case HealthRequired -> bcmHashMap.get(searchedItemIndex).healthRequired = Float.parseFloat((String) indexList[2]);
+                    case TransformationStage -> bcmHashMap.get(searchedItemIndex).transformationStage = Short.parseShort((String) indexList[2]);
+                    case CUS_Aura -> bcmHashMap.get(searchedItemIndex).cusAura = Short.parseShort((String) indexList[2]);
+                    case CharacterCondition -> bcmHashMap.get(searchedItemIndex).characterCondition = Long.parseLong((String) indexList[2]);
+                    case I36 -> bcmHashMap.get(searchedItemIndex).i36 = Short.parseShort((String) indexList[2]);
+                    case I68 -> bcmHashMap.get(searchedItemIndex).i68 = Long.parseLong((String) indexList[2]);
+                    case I72 -> bcmHashMap.get(searchedItemIndex).i72 = Long.parseLong((String) indexList[2]);
+                    case I80 -> bcmHashMap.get(searchedItemIndex).i80 = Long.parseLong((String) indexList[2]);
+                    case I88 -> bcmHashMap.get(searchedItemIndex).i88 = Long.parseLong((String) indexList[2]);
+                    case I104 -> bcmHashMap.get(searchedItemIndex).i104 = Long.parseLong((String) indexList[2]);
+                }
+            } 
+        } while (continueLooping && searchedItemIndex != null);
+
+        tabPane.getTabs().get(0).setContent(createInputsVBox(bcmHashMap.get(currentEntry)));
+        tabPane.getTabs().get(1).setContent(createActivatorScrollPane(bcmHashMap.get(currentEntry)));
+        tabPane.getTabs().get(2).setContent(createBACVBox(bcmHashMap.get(currentEntry)));
+        tabPane.getTabs().get(3).setContent(createMiscVBox(bcmHashMap.get(currentEntry)));
+        tabPane.getTabs().get(4).setContent(createUnknownVBox(bcmHashMap.get(currentEntry)));
     }
 
     private void Copy() {
@@ -1461,7 +1760,7 @@ public class Bcm {
     }
 
     public static enum BcmValues {
-        Mode,
+        SkillConditions,
         DirectionalInput,
         ButtonInput,
         HoldDownConditions,
