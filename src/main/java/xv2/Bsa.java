@@ -1561,7 +1561,6 @@ public class Bsa {
 
     private Spinner<Number> createSpinner(Number MIN_VALUE, Number MAX_VALUE, Number value, BsaCollisionSoundValues bsaCollisionSoundValue) {
         Spinner<Number> spinner = new Spinner<>(MIN_VALUE.intValue(), MAX_VALUE.intValue(), value.intValue());
-        System.out.println(value);
 
         spinner.setEditable(true);
         spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
@@ -1570,7 +1569,6 @@ public class Bsa {
                     case CUE_ID -> bsaCollisionSoundHashMap.get(currentEntry).cueId = newValue.intValue(); 
                     default -> throw new IllegalArgumentException("Unexpected value: " + bsaCollisionSoundValue);
                 } 
-                System.out.println(bsaCollisionSoundHashMap.get(currentEntry).cueId);  
             }
         });
 
