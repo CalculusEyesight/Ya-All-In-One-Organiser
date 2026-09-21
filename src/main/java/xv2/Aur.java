@@ -147,14 +147,11 @@ public class Aur {
         return textField;
     }
 
-    private CheckBox createCharaCheckBox(int i, CharaValues charaValue) {
+    private CheckBox createCharaCheckBox(int i) {
         CheckBox checkBox = new CheckBox("Glare");
         checkBox.setSelected(charaEntries.get(i).glare);
         checkBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            switch (charaValue) {
-                case Glare -> charaEntries.get(i).glare = newValue;
-                default -> throw new IllegalArgumentException("Unexpected value: " + charaValue);
-            } 
+            charaEntries.get(i).glare = newValue;
         });
 
         return checkBox;
@@ -203,7 +200,7 @@ public class Aur {
             createLabel("Chara ID", 0), createCharaTextField(charaEntries.indexOf(entry), entry.charaId, CharaValues.CharaID),
             createLabel("Costume", 0), createCharaTextField(charaEntries.indexOf(entry), entry.costume, CharaValues.Costume),
             createLabel("Aura ID", 0), createCharaTextField(charaEntries.indexOf(entry), entry.auraId, CharaValues.AuraID) ,
-                                                    createCharaCheckBox(charaEntries.indexOf(entry), CharaValues.Glare)
+                                                    createCharaCheckBox(charaEntries.indexOf(entry))
         );
         hBox.setAlignment(Pos.CENTER_LEFT);
 
