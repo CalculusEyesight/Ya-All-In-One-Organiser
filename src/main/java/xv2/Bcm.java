@@ -1386,13 +1386,8 @@ public class Bcm {
                 int siblingPointer = intBuffer.getInt();
 
                 if (siblingPointer != 0) {
-                    TreeItem<String> newSiblingEntry = allEntries.get(i).getParent();
-
-                    if (newSiblingEntry != null) {
-                        int siblingEntry = (siblingPointer - 16) / 112;
-
-                        allEntries.get(i).getParent().getChildren().add(allEntries.get(siblingEntry));
-                    }
+                    int siblingEntry = (siblingPointer - 16) / 112;
+                    allEntries.get(i).getParent().getChildren().add(allEntries.get(siblingEntry));
                 }
                    
                 channel.position(childOffset);
