@@ -165,8 +165,7 @@ public class Bcs {
     }
 
     public SplitPane createSplitPane() {
-        createTabs();
-        SplitPane splitPane = new SplitPane(createVBox(),dynamicTabPane);
+        SplitPane splitPane = new SplitPane(createVBox(), dynamicTabPane);
         splitPane.setDividerPositions(0.3);
         splitPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm()); 
 
@@ -511,17 +510,17 @@ public class Bcs {
         dynamicTabPane.getTabs().addAll(boneTab, unknownTab);
     }
 
-    private VBox createPropertiesVBox(BcsPartSet entry) {
+    private VBox createPropertiesVBox() {
         VBox propertiesVBox = new VBox(30, 
-            createHBox(0, createLabel("I_46", 100), createTextField(entry.i46, BcsPartSetValues.I46)), 
-            createHBox(0, createLabel("I_47", 100), createTextField(entry.i47, BcsPartSetValues.I47)), 
-            createHBox(0, createLabel("Position Y (CMN)", 100), createTextField(entry.positionY, BcsPartSetValues.PositionY)), 
-            createHBox(0, createLabel("Camera Y", 100), createTextField(entry.cameraY, BcsPartSetValues.CameraY)),
-            createHBox(0, createLabel("Tracking Offset", 100), createTextField(entry.trackingOffset, BcsPartSetValues.TrackingOffset)), 
-            createHBox(0, createLabel("F_60", 100), createTextField(entry.f60, BcsPartSetValues.F60)),
-            createHBox(0, createLabel("Collision Scale", 100), createTextField(entry.collisionScale, BcsPartSetValues.CollisionScale)), 
-            createHBox(0, createLabel("F_68", 100), createTextField(entry.f68, BcsPartSetValues.F68)),
-            createHBox(0, createLabel("F_72", 100), createTextField(entry.f72, BcsPartSetValues.F72))
+            createHBox(0, createLabel("I_46", 100), createTextField(bcsPartSet.i46, BcsPartSetValues.I46)), 
+            createHBox(0, createLabel("I_47", 100), createTextField(bcsPartSet.i47, BcsPartSetValues.I47)), 
+            createHBox(0, createLabel("Position Y (CMN)", 100), createTextField(bcsPartSet.positionY, BcsPartSetValues.PositionY)), 
+            createHBox(0, createLabel("Camera Y", 100), createTextField(bcsPartSet.cameraY, BcsPartSetValues.CameraY)),
+            createHBox(0, createLabel("Tracking Offset", 100), createTextField(bcsPartSet.trackingOffset, BcsPartSetValues.TrackingOffset)), 
+            createHBox(0, createLabel("F_60", 100), createTextField(bcsPartSet.f60, BcsPartSetValues.F60)),
+            createHBox(0, createLabel("Collision Scale", 100), createTextField(bcsPartSet.collisionScale, BcsPartSetValues.CollisionScale)), 
+            createHBox(0, createLabel("F_68", 100), createTextField(bcsPartSet.f68, BcsPartSetValues.F68)),
+            createHBox(0, createLabel("F_72", 100), createTextField(bcsPartSet.f72, BcsPartSetValues.F72))
         );
         propertiesVBox.setPadding(new Insets(20, 0, 0, 16));
 
@@ -1026,7 +1025,7 @@ public class Bcs {
                     dynamicTabPane.getTabs().clear();
 
                     mainTabPane.getTabs().forEach(tab -> tab.setContent(null));
-                    mainTabPane.getTabs().get(4).setContent(createPropertiesVBox(bcsPartSet));
+                    mainTabPane.getTabs().get(4).setContent(createPropertiesVBox());
                 }
             }
         });
