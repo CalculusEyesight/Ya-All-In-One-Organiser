@@ -588,7 +588,7 @@ public class Aur {
             int effectCount = 7;
             int auraOffset = 32;
             int auraTypeOffset = 32 + listView.getItems().size() * 72;
-            int charaOffset = 32 + listView.getItems().size() * 72 + 120;
+            int charaOffset;
             String auraTypes =  
             "BoostStart\0" + 
             "BoostLoop\0" + 
@@ -625,6 +625,12 @@ public class Aur {
             intBuffer.putInt(effectCount);
             intBuffer.flip();
             channel.write(intBuffer);
+
+            if ((auraTypeOffset + 104) % 16 != 0) {
+                auraTypeOffset += (16 - (auraTypeOffset + 104) % 16);
+            }
+
+            charaOffset = auraTypeOffset + 104;
 
             channel.position(20);
             intBuffer.clear();
