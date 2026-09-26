@@ -8,6 +8,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import static xv2.Unsigned.toUShort;
+import static xv2.Unsigned.toUint32;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -1388,8 +1390,14 @@ public class Bdm {
                     for (int i = 0; i < bdmEntriesCount; i++) {
                         bdmEntries.add(new BdmEntry());
 
-                        listView.getItems().add("Entry " + i);
+                        channel.position(entryOffset + i * 1284);
+                        intBuffer.clear();
+                        channel.read(intBuffer);
+                        intBuffer.flip();
+                        long index = toUint32(intBuffer.getInt());
 
+                        listView.getItems().add("Entry " + index);
+                        
                         for (int j = 0; j < 10; j++) {
                             channel.position(entryOffset + 4 + j * 128 + i * 1284);
                             shortBuffer.clear();
@@ -1763,7 +1771,7 @@ public class Bdm {
 
                 channel.position(entryOffset + i * 1284);
                 intBuffer.clear();
-                intBuffer.putInt(i);
+                intBuffer.putInt(Integer.parseInt(listView.getItems().get(i).replaceAll("\\D+", "")));
                 intBuffer.flip();
                 channel.write(intBuffer);
 
