@@ -452,12 +452,10 @@ public class Aur {
     }
 
     private void Insert() {
-        if (listView.getSelectionModel().getSelectedIndex() > 0) {
-            auraEntries.add(listView.getSelectionModel().getSelectedIndex(), new AuraEntry());
-            listView.getItems().add("Aura ID " + listView.getItems().size());
-            hBox.getChildren().remove(1);
-            hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
-        }
+        auraEntries.add(listView.getSelectionModel().getSelectedIndex(), new AuraEntry());
+        listView.getItems().add("Aura ID " + listView.getItems().size());
+        hBox.getChildren().remove(1);
+        hBox.getChildren().add(1, createAuraIdVBox(auraEntries.get(listView.getSelectionModel().getSelectedIndex())));
     }
 
     public void aurReader(Path path) {

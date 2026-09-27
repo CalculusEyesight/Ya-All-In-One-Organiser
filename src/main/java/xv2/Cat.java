@@ -366,12 +366,10 @@ public class Cat {
     }
 
     private void Insert() {
-        if (listView.getSelectionModel().getSelectedIndex() > 0) {
-            catEntries.add(listView.getSelectionModel().getSelectedIndex() , new CatEntry());
-            listView.getItems().add("Entry " + listView.getItems().size());
-            hBox.getChildren().remove(1);
-            hBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
-        }
+        catEntries.add(listView.getSelectionModel().getSelectedIndex() , new CatEntry());
+        listView.getItems().add("Entry " + listView.getItems().size());
+        hBox.getChildren().remove(1);
+        hBox.getChildren().add(1, createCatVBox(catEntries.get(listView.getSelectionModel().getSelectedIndex())));
     }
 
     public void catReader(Path path) {

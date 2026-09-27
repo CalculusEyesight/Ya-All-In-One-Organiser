@@ -1371,15 +1371,22 @@ public class Bdm {
     }
 
     private void Insert() {
-        if (listView.getSelectionModel().getSelectedIndex() > 0) {
-            int entryIndex = Integer.parseInt(listView.getItems().get(listView.getSelectionModel().getSelectedIndex()).toString().replaceAll("\\D+", ""));
-            bdmEntries.add(listView.getSelectionModel().getSelectedIndex(), new BdmEntry());
-            listView.getItems().add(listView.getSelectionModel().getSelectedIndex(), "Entry " + entryIndex);
-            for (int i = listView.getSelectionModel().getSelectedIndex() + 1; i < listView.getItems().size(); i++) {
-                entryIndex = Integer.parseInt(listView.getItems().get(i).toString().replaceAll("\\D+", ""));
-                listView.getItems().set(i, "Entry " + (entryIndex + 1));
-            }
-        } 
+        int entryIndex = Integer.parseInt(listView.getItems().get(listView.getSelectionModel().getSelectedIndex()).toString().replaceAll("\\D+", ""));
+        bdmEntries.add(listView.getSelectionModel().getSelectedIndex(), new BdmEntry());
+        listView.getItems().add(listView.getSelectionModel().getSelectedIndex(), "Entry " + entryIndex);
+        for (int i = listView.getSelectionModel().getSelectedIndex() + 1; i < listView.getItems().size(); i++) {
+            entryIndex = Integer.parseInt(listView.getItems().get(i).toString().replaceAll("\\D+", ""));
+            listView.getItems().set(i, "Entry " + (entryIndex + 1));
+        }
+
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(0).setContent(createMainVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(1).setContent(createAnimationVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(2).setContent(createSoundVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(3).setContent(createEffectsScrollPane(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(4).setContent(createPushbackVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(5).setContent(createCameraVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(6).setContent(createMiscVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
+        ((TabPane) mainTabPane.getTabs().get(mainTabPane.getSelectionModel().getSelectedIndex()).getContent()).getTabs().get(7).setContent(createUnknownVBox(bdmEntries.get(listView.getSelectionModel().getSelectedIndex()).subEntries[mainTabPane.getSelectionModel().getSelectedIndex()]));
     }
 
     public void bdmReader(Path path) {
