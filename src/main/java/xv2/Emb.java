@@ -397,7 +397,6 @@ public class Emb {
                     dynamicStringBuffer = ByteBuffer.allocate(counter).order(ByteOrder.LITTLE_ENDIAN);
 
                     channel.position(fileNamesOffset);
-                    dynamicStringBuffer.clear();
                     channel.read(dynamicStringBuffer);
                     dynamicStringBuffer.flip();
 
@@ -515,7 +514,6 @@ public class Emb {
                     dynamicStringBuffer = ByteBuffer.allocate(counter).order(ByteOrder.LITTLE_ENDIAN);
 
                     channel.position(fileNamesOffset);
-                    dynamicStringBuffer.clear();
                     channel.read(dynamicStringBuffer);
                     dynamicStringBuffer.flip();
 
@@ -649,7 +647,6 @@ public class Emb {
                     dynamicStringBuffer = ByteBuffer.allocate(listView.getItems().get(i).length());
 
                     channel.position(fileNamesOffset);
-                    dynamicStringBuffer.clear();
                     dynamicStringBuffer = ByteBuffer.wrap(listView.getItems().get(i).getBytes());
                     channel.write(dynamicStringBuffer);
 

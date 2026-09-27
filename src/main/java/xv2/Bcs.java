@@ -5152,7 +5152,6 @@ public class Bcs {
                             dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                             channel.position(thisPartColorOffset + partColorNameOffset);
-                            dynamicStringBuffer.clear();
                             channel.read(dynamicStringBuffer);
                             dynamicStringBuffer.flip();
                             bcsPartColor.name = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -5367,7 +5366,6 @@ public class Bcs {
                                     dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                                     channel.position(thisBodyScaleOffset + boneScaleOffset + boneNameOffset + j * 16);
-                                    dynamicStringBuffer.clear();
                                     channel.read(dynamicStringBuffer);
                                     dynamicStringBuffer.flip();
                                     bcsBoneScale.boneName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -5570,7 +5568,6 @@ public class Bcs {
                 dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                 channel.position(mainOffset + emdNameOffset);
-                dynamicStringBuffer.clear();
                 channel.read(dynamicStringBuffer);
                 dynamicStringBuffer.flip();
                 bcsPart.emdName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -5596,7 +5593,6 @@ public class Bcs {
                 dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                 channel.position(mainOffset + emmNameOffset);
-                dynamicStringBuffer.clear();
                 channel.read(dynamicStringBuffer);
                 dynamicStringBuffer.flip();
                 bcsPart.emmName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -5622,7 +5618,6 @@ public class Bcs {
                 dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                 channel.position(mainOffset + embNameOffset);
-                dynamicStringBuffer.clear();
                 channel.read(dynamicStringBuffer);
                 dynamicStringBuffer.flip();
                 bcsPart.embName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -5648,7 +5643,6 @@ public class Bcs {
                 dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                 channel.position(mainOffset + eanNameOffset);
-                dynamicStringBuffer.clear();
                 channel.read(dynamicStringBuffer);
                 dynamicStringBuffer.flip();
                 bcsPart.eanName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -5738,7 +5732,6 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                         channel.position(mainOffset + physicsOffset + emdNameOffsetPhysics + j * 72);
-                        dynamicStringBuffer.clear();
                         channel.read(dynamicStringBuffer);
                         dynamicStringBuffer.flip();
                         bcsPhysics.emdName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -5764,7 +5757,6 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                         channel.position(mainOffset + physicsOffset + emmNameOffsetPhysics + j * 72);
-                        dynamicStringBuffer.clear();
                         channel.read(dynamicStringBuffer);
                         dynamicStringBuffer.flip();
                         bcsPhysics.emmName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -5790,7 +5782,6 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                         channel.position(mainOffset + physicsOffset + embNameOffsetPhysics + j * 72);
-                        dynamicStringBuffer.clear();
                         channel.read(dynamicStringBuffer);
                         dynamicStringBuffer.flip();
                         bcsPhysics.embName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -5816,7 +5807,6 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                         channel.position(mainOffset + physicsOffset + eskNameOffsetPhysics + j * 72);
-                        dynamicStringBuffer.clear();
                         channel.read(dynamicStringBuffer);
                         dynamicStringBuffer.flip();
                         bcsPhysics.eskName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -5842,7 +5832,6 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                         channel.position(mainOffset + physicsOffset + boneToAttatchOffset + j * 72);
-                        dynamicStringBuffer.clear();
                         channel.read(dynamicStringBuffer);
                         dynamicStringBuffer.flip();
                         bcsPhysics.boneToAttach = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -5868,7 +5857,6 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                         channel.position(mainOffset + physicsOffset + scdNameOffset + j * 72);
-                        dynamicStringBuffer.clear();
                         channel.read(dynamicStringBuffer);
                         dynamicStringBuffer.flip();
                         bcsPhysics.scdName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -6027,7 +6015,6 @@ public class Bcs {
                                 dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                                 channel.position(boneOffset + relativeOffset + boneNameOffset + j * 52);
-                                dynamicStringBuffer.clear();
                                 channel.read(dynamicStringBuffer);
                                 dynamicStringBuffer.flip();
                                 bcsBone.boneName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -6174,7 +6161,6 @@ public class Bcs {
                                 dynamicStringBuffer = ByteBuffer.allocate(counter);
 
                                 channel.position(boneOffset + relativeOffset + boneNameOffset + j * 52);
-                                dynamicStringBuffer.clear();
                                 channel.read(dynamicStringBuffer);
                                 dynamicStringBuffer.flip();
                                 bcsBone.boneName = new String(dynamicStringBuffer.array(), StandardCharsets.ISO_8859_1);
@@ -6725,7 +6711,6 @@ public class Bcs {
                             dynamicStringBuffer = ByteBuffer.allocate(bcsPartColor.name.getBytes().length);
 
                             channel.position(typesSum);
-                            dynamicStringBuffer.clear();
                             dynamicStringBuffer = ByteBuffer.wrap(bcsPartColor.name.getBytes());
                             channel.write(dynamicStringBuffer);
                             typesSum += bcsPartColor.name.getBytes().length;
@@ -6919,7 +6904,6 @@ public class Bcs {
                                         dynamicStringBuffer = ByteBuffer.allocate(bcsBoneScale.boneName.getBytes().length);
 
                                         channel.position(typesSum);
-                                        dynamicStringBuffer.clear();
                                         dynamicStringBuffer = ByteBuffer.wrap(bcsBoneScale.boneName.getBytes());
                                         channel.write(dynamicStringBuffer);
                                         typesSum += bcsBoneScale.boneName.getBytes().length;
@@ -7002,7 +6986,6 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(bcsBone.boneName.getBytes().length);
 
                         channel.position(typesSum);
-                        dynamicStringBuffer.clear();
                         dynamicStringBuffer = ByteBuffer.wrap(bcsBone.boneName.getBytes());
                         channel.write(dynamicStringBuffer);
 
@@ -7138,7 +7121,6 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(bcsBone.boneName.getBytes().length);
 
                         channel.position(typesSum);
-                        dynamicStringBuffer.clear();
                         dynamicStringBuffer = ByteBuffer.wrap(bcsBone.boneName.getBytes());
                         channel.write(dynamicStringBuffer);
 
@@ -7257,7 +7239,6 @@ public class Bcs {
                     dynamicStringBuffer = ByteBuffer.allocate(bcsBone.boneName.getBytes().length);
 
                     channel.position(typesSum);
-                    dynamicStringBuffer.clear();
                     dynamicStringBuffer = ByteBuffer.wrap(bcsBone.boneName.getBytes());
                     channel.write(dynamicStringBuffer);
 
@@ -7397,7 +7378,8 @@ public class Bcs {
             intBuffer.flip();
             channel.write(intBuffer);
 
-            if (bcsPart.emdName != null) {
+            if (bcsPart.emdName != null && !bcsPart.emdName.equals("")) {
+                IO.println("name " + bcsPart.emdName);
                 channel.position(mainOffset + 56);
                 intBuffer.clear();
                 intBuffer.putInt(typesSum - mainOffset);
@@ -7407,14 +7389,13 @@ public class Bcs {
                 dynamicStringBuffer = ByteBuffer.allocate(bcsPart.emdName.getBytes().length);
 
                 channel.position(typesSum);
-                dynamicStringBuffer.clear();
                 dynamicStringBuffer = ByteBuffer.wrap(bcsPart.emdName.getBytes());
                 channel.write(dynamicStringBuffer);
 
                 typesSum += bcsPart.emdName.getBytes().length;
             }
 
-            if (bcsPart.emmName != null) {
+            if (bcsPart.emmName != null && !bcsPart.emmName.equals("")) {
                 channel.position(mainOffset + 60);
                 intBuffer.clear();
                 intBuffer.putInt(typesSum - mainOffset);
@@ -7424,14 +7405,13 @@ public class Bcs {
                 dynamicStringBuffer = ByteBuffer.allocate(bcsPart.emmName.getBytes().length);
 
                 channel.position(typesSum);
-                dynamicStringBuffer.clear();
                 dynamicStringBuffer = ByteBuffer.wrap(bcsPart.emmName.getBytes());
                 channel.write(dynamicStringBuffer);
 
                 typesSum += bcsPart.emmName.getBytes().length;
             }
 
-            if (bcsPart.embName != null) {
+            if (bcsPart.embName != null && !bcsPart.embName.equals("")) {
                 channel.position(mainOffset + 64);
                 intBuffer.clear();
                 intBuffer.putInt(typesSum - mainOffset);
@@ -7441,14 +7421,13 @@ public class Bcs {
                 dynamicStringBuffer = ByteBuffer.allocate(bcsPart.embName.getBytes().length);
 
                 channel.position(typesSum);
-                dynamicStringBuffer.clear();
                 dynamicStringBuffer = ByteBuffer.wrap(bcsPart.embName.getBytes());
                 channel.write(dynamicStringBuffer);
 
                 typesSum += bcsPart.embName.getBytes().length;
             }
 
-            if (bcsPart.eanName != null) {
+            if (bcsPart.eanName != null && !bcsPart.eanName.equals("")) {
                 channel.position(mainOffset + 68);
                 intBuffer.clear();
                 intBuffer.putInt(typesSum - mainOffset);
@@ -7458,7 +7437,6 @@ public class Bcs {
                 dynamicStringBuffer = ByteBuffer.allocate(bcsPart.eanName.getBytes().length);
 
                 channel.position(typesSum);
-                dynamicStringBuffer.clear();
                 dynamicStringBuffer = ByteBuffer.wrap(bcsPart.eanName.getBytes());
                 channel.write(dynamicStringBuffer);
 
@@ -7529,7 +7507,7 @@ public class Bcs {
                     intBuffer.flip();
                     channel.write(intBuffer);
 
-                    if (bcsPhysics.emdName != null) {
+                    if (bcsPhysics.emdName != null && !bcsPhysics.emdName.equals("")) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 40);
                         intBuffer.clear();
                         intBuffer.putInt(typesSum - mainOffset - physicsOffset - j * 72);
@@ -7539,14 +7517,13 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(bcsPhysics.emdName.getBytes().length);
 
                         channel.position(typesSum);
-                        dynamicStringBuffer.clear();
                         dynamicStringBuffer = ByteBuffer.wrap(bcsPhysics.emdName.getBytes());
                         channel.write(dynamicStringBuffer);
 
                         typesSum += bcsPhysics.emdName.getBytes().length;
                     }
 
-                    if (bcsPhysics.emmName != null) {
+                    if (bcsPhysics.emmName != null && !bcsPhysics.emmName.equals("")) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 44);
                         intBuffer.clear();
                         intBuffer.putInt(typesSum - mainOffset - physicsOffset - j * 72);
@@ -7556,14 +7533,13 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(bcsPhysics.emmName.getBytes().length);
 
                         channel.position(typesSum);
-                        dynamicStringBuffer.clear();
                         dynamicStringBuffer = ByteBuffer.wrap(bcsPhysics.emmName.getBytes());
                         channel.write(dynamicStringBuffer);
 
                         typesSum += bcsPhysics.emmName.getBytes().length;
                     }
 
-                    if (bcsPhysics.embName != null) {
+                    if (bcsPhysics.embName != null && !bcsPhysics.embName.equals("")) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 48);
                         intBuffer.clear();
                         intBuffer.putInt(typesSum - mainOffset - physicsOffset - j * 72);
@@ -7573,14 +7549,13 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(bcsPhysics.embName.getBytes().length);
 
                         channel.position(typesSum);
-                        dynamicStringBuffer.clear();
                         dynamicStringBuffer = ByteBuffer.wrap(bcsPhysics.embName.getBytes());
                         channel.write(dynamicStringBuffer);
 
                         typesSum += bcsPhysics.embName.getBytes().length;
                     }
 
-                    if (bcsPhysics.eskName != null) {
+                    if (bcsPhysics.eskName != null && !bcsPhysics.eskName.equals("")) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 52);
                         intBuffer.clear();
                         intBuffer.putInt(typesSum - mainOffset - physicsOffset - j * 72);
@@ -7590,14 +7565,13 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(bcsPhysics.eskName.getBytes().length);
 
                         channel.position(typesSum);
-                        dynamicStringBuffer.clear();
                         dynamicStringBuffer = ByteBuffer.wrap(bcsPhysics.eskName.getBytes());
                         channel.write(dynamicStringBuffer);
 
                         typesSum += bcsPhysics.eskName.getBytes().length;
                     }
 
-                    if (bcsPhysics.boneToAttach != null) {
+                    if (bcsPhysics.boneToAttach != null && !bcsPhysics.boneToAttach.equals("")) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 56);
                         intBuffer.clear();
                         intBuffer.putInt(typesSum - mainOffset  - physicsOffset - j * 72);
@@ -7607,14 +7581,13 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(bcsPhysics.boneToAttach.getBytes().length);
 
                         channel.position(typesSum);
-                        dynamicStringBuffer.clear();
                         dynamicStringBuffer = ByteBuffer.wrap(bcsPhysics.boneToAttach.getBytes());
                         channel.write(dynamicStringBuffer);
 
                         typesSum += bcsPhysics.boneToAttach.getBytes().length;
                     }
 
-                    if (bcsPhysics.scdName != null) {
+                    if (bcsPhysics.scdName != null && !bcsPhysics.scdName.equals("")) {
                         channel.position(mainOffset + physicsOffset + j * 72 + 60);
                         intBuffer.clear();
                         intBuffer.putInt(typesSum - mainOffset - physicsOffset - j * 72);
@@ -7624,7 +7597,6 @@ public class Bcs {
                         dynamicStringBuffer = ByteBuffer.allocate(bcsPhysics.scdName.getBytes().length);
 
                         channel.position(typesSum);
-                        dynamicStringBuffer.clear();
                         dynamicStringBuffer = ByteBuffer.wrap(bcsPhysics.scdName.getBytes());
                         channel.write(dynamicStringBuffer);
 
