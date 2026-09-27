@@ -9,7 +9,6 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import static xv2.Unsigned.toUShort;
 import static xv2.Unsigned.toUint32;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -1351,23 +1350,35 @@ public class Bdm {
 
         bdmEntries.remove(listView.getSelectionModel().getSelectedIndex());
         listView.getItems().remove(listView.getSelectionModel().getSelectedIndex());
-
-        for (int i = 0; i < listView.getItems().size(); i++) {
-            listView.getItems().set(i, "Entry " + i);
+        
+        int startIndex = listView.getSelectionModel().getSelectedIndex() == 0 ? listView.getSelectionModel().getSelectedIndex() : listView.getSelectionModel().getSelectedIndex() + 1;
+        for (int i = startIndex; i < listView.getItems().size(); i++) {
+            int entryIndex = Integer.parseInt(listView.getItems().get(i).toString().replaceAll("\\D+", ""));
+            listView.getItems().set(i, "Entry " + (entryIndex - 1));
         }
     }
 
    private void Append() {
         if (listView.getSelectionModel().getSelectedIndex() < 0) return;
         
+        int entryIndex = Integer.parseInt(listView.getItems().get(listView.getSelectionModel().getSelectedIndex()).toString().replaceAll("\\D+", ""));
         bdmEntries.add(listView.getSelectionModel().getSelectedIndex() + 1, new BdmEntry());
-        listView.getItems().add("Entry " + listView.getItems().size());
+        listView.getItems().add(listView.getSelectionModel().getSelectedIndex() + 1, "Entry " + (entryIndex + 1));
+        for (int i = listView.getSelectionModel().getSelectedIndex() + 2; i < listView.getItems().size(); i++) {
+            entryIndex = Integer.parseInt(listView.getItems().get(i).toString().replaceAll("\\D+", ""));
+            listView.getItems().set(i, "Entry " + (entryIndex + 1));
+        }
     }
 
     private void Insert() {
         if (listView.getSelectionModel().getSelectedIndex() > 0) {
+            int entryIndex = Integer.parseInt(listView.getItems().get(listView.getSelectionModel().getSelectedIndex()).toString().replaceAll("\\D+", ""));
             bdmEntries.add(listView.getSelectionModel().getSelectedIndex(), new BdmEntry());
-            listView.getItems().add("Entry " + listView.getItems().size());
+            listView.getItems().add(listView.getSelectionModel().getSelectedIndex(), "Entry " + entryIndex);
+            for (int i = listView.getSelectionModel().getSelectedIndex() + 1; i < listView.getItems().size(); i++) {
+                entryIndex = Integer.parseInt(listView.getItems().get(i).toString().replaceAll("\\D+", ""));
+                listView.getItems().set(i, "Entry " + (entryIndex + 1));
+            }
         } 
     }
 
