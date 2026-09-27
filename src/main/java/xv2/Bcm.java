@@ -1518,8 +1518,41 @@ public class Bcm {
                 int entryStartOffset = 16 + (112 * i);
                 int siblingOffset = entryStartOffset + 48;
                 int childOffset = entryStartOffset + 52;
-                int rootParentOffset = entryStartOffset + 56;
-                int parentOffset = entryStartOffset + 60;
+                int parentOffset = entryStartOffset + 56;
+                int rootParentOffset = entryStartOffset + 60;
+                int siblingIndex;
+                int childIndex;
+                int parentIndex;
+                int rootParentIndex;
+
+                if (allEntries.get(i).nextSibling() != null) {
+                    siblingIndex = allEntries.indexOf(allEntries.get(i).nextSibling()) * 112 + 16;
+                }
+                else {
+                    siblingIndex = 0;
+                }
+
+                if (!allEntries.get(i).getChildren().isEmpty()) {
+                    childIndex = allEntries.indexOf(allEntries.get(i).getChildren().get(0)) * 112 + 16;
+                }
+                else {
+                    childIndex = 0;
+                }
+
+                if (allEntries.get(i).getParent() != null) {
+                    parentIndex = allEntries.indexOf(allEntries.get(i).getParent()) * 112 + 16;
+                    if (allEntries.get(i).getParent() == treeView.getRoot()) parentIndex = 0;
+                    
+                    TreeItem<String> thisEntry = allEntries.get(i);
+                    while (thisEntry.getParent() != treeView.getRoot()) {
+                        thisEntry = thisEntry.getParent();
+                    }
+                    rootParentIndex = allEntries.indexOf(thisEntry) * 112 + 16;
+                }
+                else {
+                    parentIndex = 0;
+                    rootParentIndex = 0;
+                }
                 
                 channel.position(entryStartOffset);
                 intBuffer.clear();
@@ -1625,51 +1658,28 @@ public class Bcm {
 
                 channel.position(siblingOffset);
                 intBuffer.clear();
-                if (allEntries.get(i).nextSibling() != null) {
-                    intBuffer.putInt(allEntries.indexOf(allEntries.get(i).nextSibling()) * 112 + 16);
-                }
-                else {
-                    intBuffer.putInt(0);
-                }
+                intBuffer.putInt(siblingIndex);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(childOffset);
                 intBuffer.clear();
-                if (!allEntries.get(i).getChildren().isEmpty()) {
-                    intBuffer.putInt((allEntries.indexOf(allEntries.get(i).getChildren().get(0))) * 112 + 16);
-                }
-                else {
-                    intBuffer.putInt(0);
-                }
+                intBuffer.putInt(childIndex);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(parentOffset);
                 intBuffer.clear();
-                if (allEntries.indexOf(allEntries.get(i).getParent()) == 0 && i != 0) {
-                    intBuffer.putInt(allEntries.indexOf(allEntries.get(i)) * 112 + 16);
-                    currentParent = allEntries.indexOf(allEntries.get(i))* 112 + 16;
-                    intBuffer.flip();
-                    channel.write(intBuffer);
-                }
-                else if (allEntries.indexOf(allEntries.get(i).getParent()) != 0 && i != 0) {
-                    intBuffer.putInt(allEntries.indexOf(allEntries.get(i).getParent()) * 112 + 16);
-                    intBuffer.flip();
-                    channel.write(intBuffer);
+                intBuffer.putInt(parentIndex);
+                intBuffer.flip();
+                channel.write(intBuffer);
 
-                    channel.position(rootParentOffset);
-                    intBuffer.clear();
-                    intBuffer.putInt(currentParent);
-                    intBuffer.flip();
-                    channel.write(intBuffer);
-                }
-                else {
-                    intBuffer.putInt(0);
-                    intBuffer.flip();
-                    channel.write(intBuffer);
-                }
-             
+                channel.position(rootParentOffset);
+                intBuffer.clear();
+                intBuffer.putInt(rootParentIndex);
+                intBuffer.flip();
+                channel.write(intBuffer);
+
                 channel.position(entryStartOffset + 64);
                 intBuffer.clear();
                 intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).kiCost);
