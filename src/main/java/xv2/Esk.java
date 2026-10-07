@@ -908,7 +908,7 @@ public class Esk {
 
     }
 
-    protected void eskBoneWriter(FileChannel channel, int skeletonOffset) {
+    protected int eskBoneWriter(FileChannel channel, int skeletonOffset) {
         try {
             ByteBuffer byteBuffer = ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
             ByteBuffer shortBuffer = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
@@ -922,8 +922,8 @@ public class Esk {
             int nameTableOffset = 8 * allBones.size() + boneIndexOffset;
             int boneNameOffset = 4 * allBones.size() + nameTableOffset;
             int skinningMatrixOffset = 4 * allBones.size() + allBones.stream().mapToInt(arr -> arr.getValue().length()).sum() + nameTableOffset;
-            int transformMatrixOffset = eskTabPane.getTabs().size() == 4 ? 48 * allBones.size() + skinningMatrixOffset : 0;
-            int ikOffset = 64 * allBones.size() + transformMatrixOffset;
+            int transformMatrixOffset = hasAbsoluteTransform ? 48 * allBones.size() + skinningMatrixOffset : 0;
+            int ikOffset = transformMatrixOffset != 0 ? 64 * allBones.size() + transformMatrixOffset : 48 * allBones.size() + skinningMatrixOffset;
             
             if ((skinningMatrixOffset + skeletonOffset) % 16 != 0) {
                 skinningMatrixOffset += (16 - (skinningMatrixOffset + skeletonOffset) % 16);
@@ -1303,9 +1303,13 @@ public class Esk {
                     }
                 }
             }
+
+            return boneExtraInfoOffset;
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return 0;
     }
 
     private static enum EskMainValues {
