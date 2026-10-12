@@ -811,10 +811,12 @@ public class Esk {
                     int type = toUShort(shortBuffer.getShort());
 
                     if (type != 1) {
+                        int currentType = type;
                         Platform.runLater(() -> {
-                            Popups.UnknownIK(type);
+                            Popups.UnknownIK(currentType);
                         });
-                        System.exit(0);
+                        
+                        type = 1;
                     }
 
                     channel.position(ikOffset + i * 18 + 4);
@@ -923,21 +925,32 @@ public class Esk {
             int boneNameOffset = 4 * allBones.size() + nameTableOffset;
             int skinningMatrixOffset = 4 * allBones.size() + allBones.stream().mapToInt(arr -> arr.getValue().length()).sum() + nameTableOffset;
             int transformMatrixOffset = hasAbsoluteTransform ? 48 * allBones.size() + skinningMatrixOffset : 0;
-            int ikOffset = transformMatrixOffset != 0 ? 64 * allBones.size() + transformMatrixOffset : 48 * allBones.size() + skinningMatrixOffset;
-            
+            int ikOffset;
+
             if ((skinningMatrixOffset + skeletonOffset) % 16 != 0) {
                 skinningMatrixOffset += (16 - (skinningMatrixOffset + skeletonOffset) % 16);
             }
 
+            int offsetSum = allBones.size() * 48 + skinningMatrixOffset;
+
             if((transformMatrixOffset + skeletonOffset) % 16 != 0) {
                 transformMatrixOffset += (16 - (transformMatrixOffset + skeletonOffset) % 16);
+            }
+
+            if (ikHashMap == null) {
+                ikOffset = 0;
+            } else if (transformMatrixOffset != 0) {
+                ikOffset = 64 * allBones.size() + transformMatrixOffset;
+            } else {
+                ikOffset = 48 * allBones.size() + skinningMatrixOffset;
             }
 
             if((ikOffset + skeletonOffset) % 16 != 0) {
                 ikOffset += (16 - (ikOffset + skeletonOffset) % 16);
             }
 
-            int boneExtraInfoOffset = 4 + 6 * ikHashMap.size() + 6 * ikBoneHashMap.size() + ikOffset;
+            int boneExtraInfoOffset = ikHashMap != null ? 4 + 6 * ikHashMap.size() + 6 * ikBoneHashMap.size() + ikOffset : 0;
+            if (boneExtraInfoOffset != 0) offsetSum = 8 * allBones.size() + boneExtraInfoOffset;
 
             channel.position(skeletonOffset);
             shortBuffer.putShort((short) allBones.size());
@@ -1226,32 +1239,34 @@ public class Esk {
                     channel.write(intBuffer);
                 }
                 
-                channel.position(boneExtraInfoOffset + skeletonOffset + i * 8);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) bonesHashMap.get(allBones.get(i)).extraValue1);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
+                if (boneExtraInfoOffset != 0) {
+                    channel.position(boneExtraInfoOffset + skeletonOffset + i * 8);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) bonesHashMap.get(allBones.get(i)).extraValue1);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
 
-                channel.position(boneExtraInfoOffset + skeletonOffset + i * 8 + 2);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) bonesHashMap.get(allBones.get(i)).extraValue2);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
+                    channel.position(boneExtraInfoOffset + skeletonOffset + i * 8 + 2);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) bonesHashMap.get(allBones.get(i)).extraValue2);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
 
-                channel.position(boneExtraInfoOffset + skeletonOffset + i * 8 + 4);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) bonesHashMap.get(allBones.get(i)).extraValue3);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
+                    channel.position(boneExtraInfoOffset + skeletonOffset + i * 8 + 4);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) bonesHashMap.get(allBones.get(i)).extraValue3);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
 
-                channel.position(boneExtraInfoOffset + skeletonOffset + i * 8 + 6);
-                shortBuffer.clear();
-                shortBuffer.putShort((short) bonesHashMap.get(allBones.get(i)).extraValue4);
-                shortBuffer.flip();
-                channel.write(shortBuffer);
+                    channel.position(boneExtraInfoOffset + skeletonOffset + i * 8 + 6);
+                    shortBuffer.clear();
+                    shortBuffer.putShort((short) bonesHashMap.get(allBones.get(i)).extraValue4);
+                    shortBuffer.flip();
+                    channel.write(shortBuffer);
+                }
             }  
             
-            if (!ikHashMap.isEmpty()) {
+            if (ikOffset != 0) {
                 channel.position(ikOffset + skeletonOffset);
                 intBuffer.clear();
                 intBuffer.putInt(ikTreeView.getRoot().getChildren().size());
@@ -1304,7 +1319,7 @@ public class Esk {
                 }
             }
 
-            return boneExtraInfoOffset;
+            return offsetSum + skeletonOffset;
         } catch (IOException e) {
             e.printStackTrace();
         }
