@@ -79,6 +79,20 @@ public class Popups {
         alert.showAndWait();
     }
 
+    public static void UnknownIK(int type) {
+        Toolkit.getDefaultToolkit().beep();
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setContentText("Unsupported Type " + type);
+        alert.showAndWait();
+    }
+
+    public static void IndicesNotMatched() {
+        Toolkit.getDefaultToolkit().beep();
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setContentText("Selected number of copy items must match selected number of paste items");
+        alert.showAndWait();
+    }
+
     public static void AddComment(TreeItem<String> currentEntry) {
         if (currentEntry == null) return;
 
