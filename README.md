@@ -18,8 +18,9 @@ A big thank you to the people who have worked and have been updating the [Xv2Cor
 |.bdm| ✅ |
 |.bsa| ✅ |
 |.cat| ✅ |
-|.ean| ❌ |
+|.ean| ✅ |
 |.emb| ✅ |
+|.esk| ✅ |
 
 ## Packaging 
 jpackage --type app-image -i inputDir  -n "All-In-One Organiser" --main-class xv2.Launcher  --main-jar exportedJar.jar --icon iconPath  
