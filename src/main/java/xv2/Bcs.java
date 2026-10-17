@@ -7379,7 +7379,6 @@ public class Bcs {
             channel.write(intBuffer);
 
             if (bcsPart.emdName != null && !bcsPart.emdName.equals("")) {
-                IO.println("name " + bcsPart.emdName);
                 channel.position(mainOffset + 56);
                 intBuffer.clear();
                 intBuffer.putInt(typesSum - mainOffset);
