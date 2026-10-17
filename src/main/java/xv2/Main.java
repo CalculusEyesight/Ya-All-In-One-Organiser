@@ -570,6 +570,28 @@ public class Main extends Application {
                                 }
                             });
                         }
+                        case "ean" -> {
+                            Tab tabEan = new Tab(xv2File.getName());
+                            tabEan.setClosable(false);
+
+                            tabPane.getTabs().add(tabEan); 
+
+                            Ean ean = new Ean();
+                            fileTypesContainer.put(xv2File.getAbsolutePath(), ean);
+
+                            executorService.submit(() -> {
+                                try {
+                                    ean.eanReader(xv2File.toPath()); 
+                                    
+                                    Platform.runLater(() -> {
+                                        tabEan.setContent(ean.createSplitPane());
+                                    });
+
+                                } catch (Exception er) {
+                                    er.printStackTrace();
+                                }
+                            });
+                        }
                         case "emb","EMB" -> {
                             autoGroup.setDisable(false);
                             
@@ -592,6 +614,26 @@ public class Main extends Application {
                                 }
                             });
                         }
+                        case "esk" -> {
+                            Tab tabEsk = new Tab(xv2File.getName());
+                            tabEsk.setClosable(false);
+
+                            tabPane.getTabs().add(tabEsk);
+
+                            Esk esk = new Esk();
+                            fileTypesContainer.put(xv2File.getAbsolutePath(), esk);
+
+                            executorService.submit(() -> {
+                                try {
+                                    esk.eskReader(xv2File.toPath());
+                                    Platform.runLater(() -> {
+                                        tabEsk.setContent(esk.createSplitPane());
+                                    });
+                                } catch (Exception er) {
+                                    er.printStackTrace();
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -606,7 +648,7 @@ public class Main extends Application {
         boolean hasSaved = false;
         
         for (String originalPath : fileTypesContainer.keySet()) {
-        File originalFile = new File(originalPath);
+            File originalFile = new File(originalPath);
             switch (getFileExtension(originalFile.getName())) {
                 case "agd" -> {
                     Agd agd = (Agd) fileTypesContainer.get(originalPath);
@@ -671,6 +713,15 @@ public class Main extends Application {
 
                     hasSaved = true;
                 }
+                case "ean" -> {
+                    Ean ean = (Ean) fileTypesContainer.get(originalPath);
+
+                    executorService.submit(() -> {
+                        ean.eanWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                    });
+
+                    hasSaved = true;
+                }
                 case "emb","EMB" -> {
                     Emb emb = (Emb) fileTypesContainer.get(originalPath);
 
@@ -680,10 +731,15 @@ public class Main extends Application {
 
                     hasSaved = true;
                 }
-                default -> {
-                    hasSaved=false;
-                    break;
-                }     
+                case "esk" -> {
+                    Esk esk = (Esk) fileTypesContainer.get(originalPath);
+
+                    executorService.submit(() -> {
+                        esk.eskWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                    });
+
+                    hasSaved = true;
+                }
             }
         }
         if (hasSaved && selectedDirectory != null) {
