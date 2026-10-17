@@ -41,7 +41,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.Tab;
 import xv2.Bcm.BcmValues.RandomFlags;
 import xv2.Bcm.BcmValues.SkillConditions;
-import xv2.Bcm.BcmValues.OpponentSizeConditions;
 import xv2.Bcm.BcmValues.CharacterConditions;
 
 public class Bcm {
@@ -362,10 +361,11 @@ public class Bcm {
         Node[] opponentSizeConditions = new Node[] {
             createComboBox(opponentSizes, BcmValues.OpponentSizeConditions),
             createLabel("Upgrade Level", 0),
-            createSpinner(0, 255, entry.opponentSizeConditions / 16777216, BcmValues.OpponentSizeConditions)
+            createSpinner(0, 255, entry.upgradeLevel, BcmValues.UpgradeLevel)
         };
 
         VBox activatorVBox = new VBox(35, 
+            createHBox(0, createLabel("Priority Layer", 120), createSpinner(0, 65535, entry.priorityLayer, BcmValues.PriorityLayer)),
             createHBox(0, createLabel("Opponent Size", 120), createHBox(15, opponentSizeConditions, false)),
             createHBox(0, createLabel("Skill Conditions", 120), createGridPane(1, 6, skillConditions, true)),
             createHBox(0, createLabel("Minimum Loop\nDuration", 120), createSpinner(0, 65535, entry.minimumLoopDuration, BcmValues.MaximumLoopDuration)),
@@ -411,7 +411,7 @@ public class Bcm {
     private VBox createMiscVBox(BcmEntry entry) {
         ToggleGroup characterConditonToggleGroup = new ToggleGroup();
 
-        ObservableList<String> receiverLinkIds = FXCollections.observableArrayList(
+        ObservableList<String> moveCategories = FXCollections.observableArrayList(
             "None",
             "Combos",
             "Supers",
@@ -438,7 +438,7 @@ public class Bcm {
         
         VBox miscVBox = new VBox(30, 
             createHBox(0, createLabel("Ki Cost", 180), createSpinner(0, 4294967295L, entry.kiCost, BcmValues.KiCost)), 
-            createHBox(0, createLabel("Receiver Link ID", 180), createComboBox(receiverLinkIds, BcmValues.ReceiverLink_ID)),
+            createHBox(0, createLabel("Moves Category", 180), createComboBox(moveCategories, BcmValues.MoveCategory)),
             createHBox(0, createLabel("Stamina Cost", 180), createSpinner(0, 4294967295L, entry.staminaCost, BcmValues.StaminaCost)), 
             createHBox(0, createLabel("Ki Required", 180), createSpinner(0, 4294967295L, entry.kiRequired, BcmValues.KiRequired)),
             createHBox(0, createLabel("Health Required", 180), createSpinner(-Float.MAX_VALUE, Float.MAX_VALUE, entry.healthRequired, BcmValues.HealthRequired)),
@@ -497,32 +497,25 @@ public class Bcm {
 
         switch (bcmValue) {
             case OpponentSizeConditions -> {
-                outerLoop:
-                for (int i = 1; i < observableList.size(); i++) {
-                    if (bcmHashMap.get(currentEntry).opponentSizeConditions != 0 && (bcmHashMap.get(currentEntry).opponentSizeConditions & OpponentSizeConditions.values()[i].index) == (bcmHashMap.get(currentEntry).opponentSizeConditions % 16777216)) {
-                        comboBox.getSelectionModel().select(i);
-                        break outerLoop;
-                    }
-                    else {
-                        comboBox.getSelectionModel().select(0);
-                    }
-                }
+                comboBox.getSelectionModel().select(bcmHashMap.get(currentEntry).opponentSizeConditions);
 
                 comboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
-                    final long upgradeLevel = bcmHashMap.get(currentEntry).opponentSizeConditions - bcmHashMap.get(currentEntry).opponentSizeConditions % 16777216;
-                    bcmHashMap.get(currentEntry).opponentSizeConditions = upgradeLevel + OpponentSizeConditions.values()[newValue.intValue()].index;
+                    if (newValue != null) {
+                        bcmHashMap.get(currentEntry).opponentSizeConditions = newValue.intValue();
+                        IO.println(bcmHashMap.get(currentEntry).opponentSizeConditions);
+                    }
                 });
             }
-            case ReceiverLink_ID -> {
-                if (bcmHashMap.get(currentEntry).receiverLinkId != 0) {
-                    comboBox.getSelectionModel().select((int) (Math.log(bcmHashMap.get(currentEntry).receiverLinkId) / Math.log(2)) + 1);
+            case MoveCategory -> {
+                if (bcmHashMap.get(currentEntry).moveCategory != 0) {
+                    comboBox.getSelectionModel().select((int) (Math.log(bcmHashMap.get(currentEntry).moveCategory) / Math.log(2)) + 1);
                 }
                 else {
                     comboBox.getSelectionModel().select(0);
                 }
 
                 comboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
-                    bcmHashMap.get(currentEntry).receiverLinkId = newValue.intValue() != 0 ? 1 << (newValue.intValue() - 1) : 0;
+                    bcmHashMap.get(currentEntry).moveCategory = newValue.intValue() != 0 ? 1 << (newValue.intValue() - 1) : 0;
                 });
             }
             default -> throw new IllegalArgumentException("Unexpected value: " + bcmValue);
@@ -545,10 +538,7 @@ public class Bcm {
         spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue != null) {
                 switch (bcmValue) {
-                    case OpponentSizeConditions -> {
-                        final long remainingBits = ((bcmHashMap.get(currentEntry).opponentSizeConditions + bcmHashMap.get(currentEntry).opponentSizeConditions * 16777216) % 16777216);
-                        bcmHashMap.get(currentEntry).opponentSizeConditions = remainingBits +  newValue.longValue()  * 16777216;
-                    }
+                    case UpgradeLevel -> bcmHashMap.get(currentEntry).upgradeLevel = newValue.intValue();
                     case MinimumLoopDuration -> bcmHashMap.get(currentEntry).minimumLoopDuration = newValue.intValue();
                     case MaximumLoopDuration -> bcmHashMap.get(currentEntry).maximumLoopDuration = newValue.intValue();
                     case BAC_EntryPrimary -> bcmHashMap.get(currentEntry).bacEntryPrimary = newValue.shortValue();
@@ -563,6 +553,7 @@ public class Bcm {
                     case HealthRequired -> bcmHashMap.get(currentEntry).healthRequired = newValue.floatValue();
                     case TransformationStage -> bcmHashMap.get(currentEntry).transformationStage = newValue.shortValue();
                     case CUS_Aura -> bcmHashMap.get(currentEntry).cusAura = newValue.shortValue();
+                    case PriorityLayer -> bcmHashMap.get(currentEntry).priorityLayer = newValue.intValue();
                     default -> throw new IllegalArgumentException("Unexpected value: " + bcmValue);
                 }   
             }
@@ -849,7 +840,7 @@ public class Bcm {
                         "BAC Entry Targeting Override",
                         "Random Flag",
                         "Ki Cost ",
-                        "Receiver Link ID",
+                        "Moves Category",
                         "Stamina Cost",
                         "Ki Required",
                         "Health Required",
@@ -861,7 +852,9 @@ public class Bcm {
                         "I_72",
                         "I_80",
                         "I_88",
-                        "Skill Upgrade Value"
+                        "Skill Upgrade Value",
+                        "Priority Layer",
+                        "Upgrade Level"
                     )));
 
                 final Button findbt = (Button) dialog.getDialogPane().lookupButton(findNextButtonType);
@@ -887,7 +880,7 @@ public class Bcm {
                             case 14 -> treeViewSearch(BcmValues.BAC_EntryTargetingOverride);
                             case 15 -> treeViewSearch(BcmValues.BAC_RandomFlags);
                             case 16 -> treeViewSearch(BcmValues.KiCost);
-                            case 17 -> treeViewSearch(BcmValues.ReceiverLink_ID);
+                            case 17 -> treeViewSearch(BcmValues.MoveCategory);
                             case 18 -> treeViewSearch(BcmValues.StaminaCost);
                             case 19 -> treeViewSearch(BcmValues.KiRequired);
                             case 20 -> treeViewSearch(BcmValues.HealthRequired);
@@ -900,6 +893,8 @@ public class Bcm {
                             case 27 -> treeViewSearch(BcmValues.I80);
                             case 28 -> treeViewSearch(BcmValues.I88);
                             case 29 -> treeViewSearch(BcmValues.I104);
+                            case 30 -> treeViewSearch(BcmValues.PriorityLayer);
+                            case 31 -> treeViewSearch(BcmValues.UpgradeLevel);
                         }
 
                         event.consume();
@@ -935,7 +930,7 @@ public class Bcm {
                         "BAC Entry Targeting Override",
                         "Random Flag",
                         "Ki Cost ",
-                        "Receiver Link ID",
+                        "Moves Category",
                         "Stamina Cost",
                         "Ki Required",
                         "Health Required",
@@ -947,7 +942,9 @@ public class Bcm {
                         "I_72",
                         "I_80",
                         "I_88",
-                        "Skill Upgrade Value"
+                        "Skill Upgrade Value",
+                        "Priority Layer",
+                        "Upgrade Level"
                     ))
                 );
 
@@ -976,7 +973,7 @@ public class Bcm {
                             case 14 -> treeViewReplace(BcmValues.BAC_EntryTargetingOverride, false);
                             case 15 -> treeViewReplace(BcmValues.BAC_RandomFlags, false);
                             case 16 -> treeViewReplace(BcmValues.KiCost, false);
-                            case 17 -> treeViewReplace(BcmValues.ReceiverLink_ID, false);
+                            case 17 -> treeViewReplace(BcmValues.MoveCategory, false);
                             case 18 -> treeViewReplace(BcmValues.StaminaCost, false);
                             case 19 -> treeViewReplace(BcmValues.KiRequired, false);
                             case 20 -> treeViewReplace(BcmValues.HealthRequired, false);
@@ -989,6 +986,8 @@ public class Bcm {
                             case 27 -> treeViewReplace(BcmValues.I80, false);
                             case 28 -> treeViewReplace(BcmValues.I88, false);
                             case 29 -> treeViewReplace(BcmValues.I104, false);
+                            case 30 -> treeViewReplace(BcmValues.PriorityLayer, false);
+                            case 31 -> treeViewReplace(BcmValues.UpgradeLevel, false);
                         }
 
                         event.consume();
@@ -1017,7 +1016,7 @@ public class Bcm {
                             case 14 -> treeViewReplace(BcmValues.BAC_EntryTargetingOverride, true);
                             case 15 -> treeViewReplace(BcmValues.BAC_RandomFlags, true);
                             case 16 -> treeViewReplace(BcmValues.KiCost, true);
-                            case 17 -> treeViewReplace(BcmValues.ReceiverLink_ID, true);
+                            case 17 -> treeViewReplace(BcmValues.MoveCategory, true);
                             case 18 -> treeViewReplace(BcmValues.StaminaCost, true);
                             case 19 -> treeViewReplace(BcmValues.KiRequired, true);
                             case 20 -> treeViewReplace(BcmValues.HealthRequired, true);
@@ -1030,6 +1029,8 @@ public class Bcm {
                             case 27 -> treeViewReplace(BcmValues.I80, true);
                             case 28 -> treeViewReplace(BcmValues.I88, true);
                             case 29 -> treeViewReplace(BcmValues.I104, true);
+                            case 30 -> treeViewReplace(BcmValues.PriorityLayer, true);
+                            case 31 -> treeViewReplace(BcmValues.UpgradeLevel, true);
                         }
 
                         event.consume();
@@ -1065,7 +1066,7 @@ public class Bcm {
                 case BAC_EntryTargetingOverride -> value = bcmHashMap.get(allEntries.get(entryIndex)).bacEntryTargetingOverride;
                 case BAC_RandomFlags -> value = bcmHashMap.get(allEntries.get(entryIndex)).bacRandomFlags;
                 case KiCost -> value = bcmHashMap.get(allEntries.get(entryIndex)).kiCost;
-                case ReceiverLink_ID -> value = bcmHashMap.get(allEntries.get(entryIndex)).receiverLinkId;
+                case MoveCategory -> value = bcmHashMap.get(allEntries.get(entryIndex)).moveCategory;
                 case StaminaCost -> value = bcmHashMap.get(allEntries.get(entryIndex)).staminaCost;
                 case KiRequired -> value = bcmHashMap.get(allEntries.get(entryIndex)).kiRequired;
                 case HealthRequired -> value = bcmHashMap.get(allEntries.get(entryIndex)).healthRequired;
@@ -1078,6 +1079,8 @@ public class Bcm {
                 case I80 -> value = bcmHashMap.get(allEntries.get(entryIndex)).i80;
                 case I88 -> value = bcmHashMap.get(allEntries.get(entryIndex)).i88;
                 case I104 -> value = bcmHashMap.get(allEntries.get(entryIndex)).i104;
+                case PriorityLayer -> value = bcmHashMap.get(allEntries.get(entryIndex)).priorityLayer;
+                case UpgradeLevel -> value = bcmHashMap.get(allEntries.get(entryIndex)).upgradeLevel;
             }
 
             if (indexList[1] != null && value == Double.parseDouble((String) indexList[1]) && !allEntries.get(entryIndex).equals(currentEntry)) {
@@ -1114,7 +1117,7 @@ public class Bcm {
                     case DirectionalInput -> bcmHashMap.get(searchedItemIndex).directionalInputs = Long.parseLong((String) indexList[2]);
                     case ButtonInput -> bcmHashMap.get(searchedItemIndex).buttonInputs = Long.parseLong((String) indexList[2]);
                     case HoldDownConditions -> bcmHashMap.get(searchedItemIndex).holdDownConditions = Long.parseLong((String) indexList[2]);
-                    case OpponentSizeConditions -> bcmHashMap.get(searchedItemIndex).opponentSizeConditions = Long.parseLong((String) indexList[2]);
+                    case OpponentSizeConditions -> bcmHashMap.get(searchedItemIndex).opponentSizeConditions = Integer.parseInt((String) indexList[2]);
                     case SkillConditions -> bcmHashMap.get(searchedItemIndex).skillConditions = Long.parseLong((String) indexList[2]);
                     case MinimumLoopDuration -> bcmHashMap.get(searchedItemIndex).minimumLoopDuration = Integer.parseInt((String) indexList[2]);
                     case MaximumLoopDuration -> bcmHashMap.get(searchedItemIndex).maximumLoopDuration = Integer.parseInt((String) indexList[2]);
@@ -1128,7 +1131,7 @@ public class Bcm {
                     case BAC_EntryTargetingOverride -> bcmHashMap.get(searchedItemIndex).bacEntryTargetingOverride = Integer.parseInt((String) indexList[2]);
                     case BAC_RandomFlags -> bcmHashMap.get(searchedItemIndex).bacRandomFlags = Integer.parseInt((String) indexList[2]);
                     case KiCost -> bcmHashMap.get(searchedItemIndex).kiCost = Long.parseLong((String) indexList[2]);
-                    case ReceiverLink_ID -> bcmHashMap.get(searchedItemIndex).receiverLinkId = Long.parseLong((String) indexList[2]);
+                    case MoveCategory -> bcmHashMap.get(searchedItemIndex).moveCategory = Long.parseLong((String) indexList[2]);
                     case StaminaCost -> bcmHashMap.get(searchedItemIndex).staminaCost = Long.parseLong((String) indexList[2]);
                     case KiRequired -> bcmHashMap.get(searchedItemIndex).kiRequired = Long.parseLong((String) indexList[2]);
                     case HealthRequired -> bcmHashMap.get(searchedItemIndex).healthRequired = Float.parseFloat((String) indexList[2]);
@@ -1141,6 +1144,8 @@ public class Bcm {
                     case I80 -> bcmHashMap.get(searchedItemIndex).i80 = Long.parseLong((String) indexList[2]);
                     case I88 -> bcmHashMap.get(searchedItemIndex).i88 = Long.parseLong((String) indexList[2]);
                     case I104 -> bcmHashMap.get(searchedItemIndex).i104 = Long.parseLong((String) indexList[2]);
+                    case PriorityLayer -> bcmHashMap.get((searchedItemIndex)).priorityLayer = Integer.parseInt((String) indexList[2]);
+                    case UpgradeLevel -> bcmHashMap.get((searchedItemIndex)).upgradeLevel = Integer.parseInt((String) indexList[2]);
                 }
             } 
         } while (continueLooping && searchedItemIndex != null);
@@ -1251,6 +1256,7 @@ public class Bcm {
         try(FileChannel channel = FileChannel.open(path, StandardOpenOption.READ)) {
             int bcmEntryCount;
 
+            ByteBuffer byteBuffer = ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
             ByteBuffer shortBuffer = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
             ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
 
@@ -1302,10 +1308,22 @@ public class Bcm {
                 bcmHashMap.get(allEntries.get(i)).holdDownConditions = toUint32(intBuffer.getInt());
                 
                 channel.position(entryStartOffset + 16);
-                intBuffer.clear();
-                channel.read(intBuffer);
-                intBuffer.flip();
-                bcmHashMap.get(allEntries.get(i)).opponentSizeConditions = toUint32(intBuffer.getInt());
+                shortBuffer.clear();
+                channel.read(shortBuffer);
+                shortBuffer.flip();
+                bcmHashMap.get(allEntries.get(i)).priorityLayer = toUShort(shortBuffer.getShort());
+
+                channel.position(entryStartOffset + 18);
+                byteBuffer.clear();
+                channel.read(byteBuffer);
+                byteBuffer.flip();
+                bcmHashMap.get(allEntries.get(i)).opponentSizeConditions = toUByte(byteBuffer.get());
+
+                channel.position(entryStartOffset + 19);
+                byteBuffer.clear();
+                channel.read(byteBuffer);
+                byteBuffer.flip();
+                bcmHashMap.get(allEntries.get(i)).upgradeLevel = toUByte(byteBuffer.get());
                 
                 channel.position(entryStartOffset + 20);
                 shortBuffer.clear();
@@ -1423,7 +1441,7 @@ public class Bcm {
                 intBuffer.clear();
                 channel.read(intBuffer);
                 intBuffer.flip();
-                bcmHashMap.get(allEntries.get(i)).receiverLinkId = toUint32(intBuffer.getInt());
+                bcmHashMap.get(allEntries.get(i)).moveCategory = toUint32(intBuffer.getInt());
 
                 channel.position(entryStartOffset + 80);
                 intBuffer.clear();
@@ -1488,8 +1506,8 @@ public class Bcm {
     public void bcmWriter(Path path) {
         try(FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             int zeroEntryOffset = 16;
-            int currentParent = 0;
 
+            ByteBuffer byteBuffer = ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN);
             ByteBuffer shortBuffer = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
             ByteBuffer intBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
         
@@ -1579,32 +1597,44 @@ public class Bcm {
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 16);
-                intBuffer.clear();
-                intBuffer.putInt((int)bcmHashMap.get(allEntries.get(i)).opponentSizeConditions);
-                intBuffer.flip();
-                channel.write(intBuffer);
+                shortBuffer.clear();
+                shortBuffer.putInt((short) bcmHashMap.get(allEntries.get(i)).priorityLayer);
+                shortBuffer.flip();
+                channel.write(shortBuffer);
 
+                channel.position(entryStartOffset + 18);
+                byteBuffer.clear();
+                byteBuffer.put((byte) bcmHashMap.get(allEntries.get(i)).opponentSizeConditions);
+                byteBuffer.flip();
+                channel.write(byteBuffer);
+
+                channel.position(entryStartOffset + 19);
+                byteBuffer.clear();
+                byteBuffer.put((byte) bcmHashMap.get(allEntries.get(i)).upgradeLevel);
+                byteBuffer.flip();
+                channel.write(byteBuffer);
+                
                 channel.position(entryStartOffset + 20);
                 shortBuffer.clear();
-                shortBuffer.putShort((short)bcmHashMap.get(allEntries.get(i)).minimumLoopDuration);
+                shortBuffer.putShort((short) bcmHashMap.get(allEntries.get(i)).minimumLoopDuration);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
                 channel.position(entryStartOffset + 22);
                 shortBuffer.clear();
-                shortBuffer.putShort((short)bcmHashMap.get(allEntries.get(i)).maximumLoopDuration);
+                shortBuffer.putShort((short) bcmHashMap.get(allEntries.get(i)).maximumLoopDuration);
                 shortBuffer.flip();
                 channel.write(shortBuffer);
 
                 channel.position(entryStartOffset + 24);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmHashMap.get(allEntries.get(i)).primaryActivatorConditions);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).primaryActivatorConditions);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
                 channel.position(entryStartOffset + 28);
                 intBuffer.clear();
-                intBuffer.putInt((int)bcmHashMap.get(allEntries.get(i)).activatorState);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).activatorState);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
@@ -1700,7 +1730,7 @@ public class Bcm {
 
                 channel.position(entryStartOffset + 76);
                 intBuffer.clear();
-                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).receiverLinkId);
+                intBuffer.putInt((int) bcmHashMap.get(allEntries.get(i)).moveCategory);
                 intBuffer.flip();
                 channel.write(intBuffer);
 
@@ -1769,7 +1799,9 @@ public class Bcm {
         DirectionalInput,
         ButtonInput,
         HoldDownConditions,
+        PriorityLayer,
         OpponentSizeConditions,
+        UpgradeLevel,
         MinimumLoopDuration,
         MaximumLoopDuration,
         PrimaryActivatorConditions,
@@ -1785,7 +1817,7 @@ public class Bcm {
         KiCost,
         I68,
         I72,
-        ReceiverLink_ID,
+        MoveCategory,
         I80,
         StaminaCost,
         I88,
@@ -1833,17 +1865,17 @@ public class Bcm {
         public static enum OpponentSizeConditions {
             AllSizes(0),
             Unknown1(1),
+            SmallCharacters(2),
             Unknown2(3),
-            SmallCharacters(131072),
-            DefaultSize(262144),
-            Medium(327680),
-            MeduimLarge(393216),
-            Large(458752),
-            GreatApe(524288);
+            DefaultSize(4),
+            Medium(5),
+            MeduimLarge(6),
+            Large(7),
+            GreatApe(8);
 
-            final long index;
+            final int index;
 
-            OpponentSizeConditions(long index) {
+            OpponentSizeConditions(int index) {
                 this.index = index;
             }
         }
@@ -1870,7 +1902,9 @@ class BcmEntry {
     public long directionalInputs;
     public long buttonInputs;
     public long holdDownConditions;
-    public long opponentSizeConditions;
+    public int priorityLayer;
+    public int opponentSizeConditions;
+    public int upgradeLevel;
     public int minimumLoopDuration;
     public int maximumLoopDuration;
     public long primaryActivatorConditions;
@@ -1886,7 +1920,7 @@ class BcmEntry {
     public long kiCost;
     public long i68;
     public long i72;
-    public long receiverLinkId;
+    public long moveCategory;
     public long i80;
     public long staminaCost;
     public long i88;
@@ -1904,7 +1938,9 @@ class BcmEntry {
         this.directionalInputs = other.directionalInputs;
         this.buttonInputs = other.buttonInputs;
         this.holdDownConditions = other.holdDownConditions;
+        this.priorityLayer = other.priorityLayer;
         this.opponentSizeConditions = other.opponentSizeConditions;
+        this.upgradeLevel = other.upgradeLevel;
         this.minimumLoopDuration = other.minimumLoopDuration;
         this.maximumLoopDuration = other.maximumLoopDuration;
         this.primaryActivatorConditions = other.primaryActivatorConditions;
@@ -1920,7 +1956,7 @@ class BcmEntry {
         this.kiCost = other.kiCost;
         this.i68 = other.i68;
         this.i72 = other.i72;
-        this.receiverLinkId = other.receiverLinkId;
+        this.moveCategory = other.moveCategory;
         this.i80 = other.i80;
         this.staminaCost = other.staminaCost;
         this.i88 = other.i88;
