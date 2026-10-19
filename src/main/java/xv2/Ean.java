@@ -19,6 +19,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 
@@ -48,6 +49,7 @@ public class Ean extends Esk {
         bonesActionListener();
         tabsActionListener();
         nodesActionListener();
+        entriesKeysListener();
         nodesTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
@@ -198,7 +200,6 @@ public class Ean extends Esk {
                 nodesTreeView.getContextMenu().setOnAction(event -> {
                     if (event.getTarget() == nodesTreeView.getContextMenu().getItems().get(0)) {
                         Copy();
-                        SharedContextMenu.getContextMenu().getItems().get(1).setDisable(false);
                     } else if (event.getTarget() == nodesTreeView.getContextMenu().getItems().get(1)) {
                         Paste();
                     } else if (event.getTarget() == nodesTreeView.getContextMenu().getItems().get(2)) {
@@ -261,8 +262,22 @@ public class Ean extends Esk {
             }
         });
     }
+    
+    private void entriesKeysListener() {
+        nodesTreeView.setOnKeyPressed(e -> {
+            if (e.isControlDown() && e.getCode() == KeyCode.C)  Copy();
+            else if (e.isControlDown() && e.getCode() == KeyCode.V) Paste();
+            else if (e.getCode() == KeyCode.DELETE) Delete();
+            else if (e.isControlDown() && e.getCode() == KeyCode.A) Append();
+            else if (e.isControlDown() && e.getCode() == KeyCode.I) Insert();
+        });
+    }
 
     private void Copy() {
+        SharedContextMenu.getContextMenu().getItems().get(1).setDisable(false);
+        SharedContextMenu.getContextMenu().getItems().get(3).setDisable(false);
+        SharedContextMenu.getContextMenu().getItems().get(4).setDisable(false);
+
         copyAnimationsValue = new String[nodesTreeView.getSelectionModel().getSelectedItems().size()];
         copyNodesValue = new String[nodesTreeView.getSelectionModel().getSelectedItems().size()][];
         copyKeyframeTypesValue = new String[nodesTreeView.getSelectionModel().getSelectedItems().size()][][];
