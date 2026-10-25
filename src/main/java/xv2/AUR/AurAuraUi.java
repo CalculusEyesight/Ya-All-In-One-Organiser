@@ -55,14 +55,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
             if (newValue.intValue() == -1) return;
 
             currentEntry = newValue.intValue();
-            i04TF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getI04()));
-            boostStartTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getBoostStart()));
-            boostLoopTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getBoostLoop()));
-            boostEndTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getBoostEnd()));
-            kiaiChargeTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getKiaiCharge()));
-            kiryokuMaxTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getKiryokuMax()));
-            henshinStartTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getHenshinStart()));
-            henshinEndTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getHenshinEnd()));
+            updateItems();
         });
 
         return listView;
@@ -179,5 +172,16 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
         int thisEntry = index;
         listView.getSelectionModel().clearSelection();
         listView.getSelectionModel().select(thisEntry);
+    }
+
+    private void updateItems() {
+        i04TF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getI04()));
+        boostStartTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getBoostStart()));
+        boostLoopTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getBoostLoop()));
+        boostEndTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getBoostEnd()));
+        kiaiChargeTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getKiaiCharge()));
+        kiryokuMaxTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getKiryokuMax()));
+        henshinStartTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getHenshinStart()));
+        henshinEndTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getHenshinEnd()));
     }
 }
