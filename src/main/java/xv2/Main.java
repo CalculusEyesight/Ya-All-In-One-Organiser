@@ -1,5 +1,9 @@
 package xv2;
+import xv2.AGD.*;
+import xv2.AUR.AurAuraUi;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
@@ -39,16 +43,11 @@ public class Main extends Application {
     ExecutorService executorService = Executors.newFixedThreadPool(4);
     
     BorderPane borderPane = new BorderPane();
-
     TabPane tabPane = new TabPane();
-        
     Scene scene = new Scene(borderPane, 1280, 800);
-
     ToggleGroup performanceGroup = new ToggleGroup();
-
     ComboBox<String> embComboBox = new ComboBox<>();
     ComboBox<String> embDytComboBox = new ComboBox<>();
-
     MenuBar menuBar = new MenuBar();
 
     final Menu File = new Menu("File");
@@ -68,9 +67,7 @@ public class Main extends Application {
     MenuItem skillMovesetManual = new MenuItem("Skill/Movset Manual");
     
     CheckMenuItem autoGroup = new CheckMenuItem("Auto Group EMBs");
-
-    int embTabIndex = -1;
-    int embDytTabIndex = -1;
+    CheckMenuItem toggleDarkMode = new CheckMenuItem("Dark Mode");
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -83,234 +80,100 @@ public class Main extends Application {
         defaultMode.setSelected(true);
 
         File.getItems().addAll(loadFolder, saveFolder);
-
-        Options.getItems().addAll(Performance, autoGroup);
-
+        Options.getItems().addAll(Performance, autoGroup, toggleDarkMode);
         Performance.getItems().addAll(efficiencyMode, defaultMode, performanceMode);
-
         Help.getItems().addAll(idList, commonBdmIdList, skillMovesetManual);
-       
         menuBar.getMenus().addAll(File, Options, Help);
 
         autoGroup.setDisable(true);
-
         autoGroup.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
-                executorService.submit(() -> {
-                    Platform.runLater(() -> {
-                        int compareTabIndex = 0;
-                        int saveTabGroupIndex = 0;
+                boolean hasEmb = true;
+                
+                while (hasEmb) {
+                    String compareEmbDytText = null;
+                    String compareEmbText = null;
 
-                        groupedEmbTabs.add(new ArrayList<>());
-                        
-                        boolean hasdotFound = false;
-                        boolean hasUnderscoreFound = false;
-
-                        outerLoop:
-                        while (compareTabIndex < tabPane.getTabs().size()) {
-                            String tabText = tabPane.getTabs().get(compareTabIndex).getText();
-                            while (!tabText.substring(Math.max(0, tabText.length() - 3)).equals("emb") || tabText.contains("dyt.emb")) {
-                                try {
-                                    compareTabIndex++;
-                                    tabText = tabPane.getTabs().get(compareTabIndex).getText();
-                                } catch (IndexOutOfBoundsException e) {
-                                    break outerLoop;
-                                }
-                            }
-                            int count = tabText.length() - tabText.replace("_", "").length();
-                            
-                            for (int i = compareTabIndex + 1; i < tabPane.getTabs().size(); i++) {
-
-                                String compareTabString = tabPane.getTabs().get(i).getText();
-
-                                if (count > 0 && !compareTabString.contains("dyt.emb")) {
-                                    if (tabText.substring(0, Math.min(tabText.length(), 7)).equals(compareTabString.substring(0, Math.min(compareTabString.length(), 7)))) {
-                                        groupedEmbTabs.get(saveTabGroupIndex).add(tabPane.getTabs().get(i));
-
-                                        tabPane.getTabs().remove(i);
-                                        i -= 1;
-
-                                        hasUnderscoreFound = true;
-                                    }
-                                }
-                                else if (compareTabString.contains("dyt.emb")) {
-                                    if (tabText.substring(0, tabText.indexOf(".")).equals(compareTabString.substring(0, compareTabString.indexOf("."))) ) {
-
-                                        groupedEmbTabs.get(saveTabGroupIndex).add(tabPane.getTabs().get(i));
-                                        
-                                        tabPane.getTabs().remove(i);
-                                        i -= 1;
-
-                                        hasdotFound = true;
-                                    }
-                                }
-                            }
-                            if (hasdotFound) {
-                                groupedEmbTabs.get(saveTabGroupIndex).add(0, tabPane.getTabs().get(compareTabIndex));
-
-                                tabPane.getTabs().remove(compareTabIndex);
-
-                                embComboBox.getItems().add(tabText.substring(0, tabText.indexOf(".")));
-
-                                groupedEmbTabs.add(new ArrayList<>());
-
-                                saveTabGroupIndex++;
-                                hasdotFound = false;
-                                compareTabIndex --;
-                            }
-                            else if (hasUnderscoreFound) {
-                                groupedEmbTabs.get(saveTabGroupIndex).add(0, tabPane.getTabs().get(compareTabIndex));
-
-                                tabPane.getTabs().remove(compareTabIndex);
-
-                                embComboBox.getItems().add(tabText.substring(0, tabText.lastIndexOf("_")));
-
-                                groupedEmbTabs.add(new ArrayList<>());
-
-                                saveTabGroupIndex++;
-                                hasUnderscoreFound= false;
-                                compareTabIndex--;
-                            }
-                            compareTabIndex++;
+                    outerLoop:
+                    for (Tab tab : tabPane.getTabs()) {
+                        if (tab.getText().endsWith("dyt.emb")) {
+                            compareEmbDytText = tab.getText().substring(0, Math.min(tab.getText().length(), 7)); 
+                            embDytComboBox.getItems().add(compareEmbDytText);
+                            groupedEmbDytTabs.add(new ArrayList<>());
+                            hasEmb = true;
+                            break outerLoop;
+                        } else if (tab.getText().endsWith("emb")) {
+                            compareEmbText = tab.getText().substring(0, Math.min(tab.getText().length(), 7)); 
+                            embComboBox.getItems().add(compareEmbText);
+                            groupedEmbTabs.add(new ArrayList<>());
+                            hasEmb = true;
+                            break outerLoop;
+                        } else {
+                            hasEmb = false;
                         }
-                        if (!embComboBox.getItems().isEmpty()) {
-                            embTabIndex = 0;
-
-                            tabPane.getTabs().add(0, new Tab());
-                            tabPane.getTabs().getFirst().setClosable(false);
-                            tabPane.getTabs().getFirst().setGraphic(embComboBox);
-                            tabPane.getTabs().getFirst().setText(".emb " + "Group" );
-                            tabPane.getSelectionModel().select(0);
+                    }
+                    
+                    if (hasEmb) {
+                        for (Tab tab : tabPane.getTabs()) {
+                            if (tab.getText().endsWith("dyt.emb") && compareEmbDytText != null && tab.getText().contains(compareEmbDytText)) {
+                                groupedEmbDytTabs.getLast().add(tab);
+                            } else if (tab.getText().endsWith("emb") && compareEmbText != null && tab.getText().contains(compareEmbText)) {
+                                groupedEmbTabs.getLast().add(tab);
+                            } 
                         }
-                    });
-                });
-                executorService.submit(() -> {
-                    Platform.runLater(() -> {
-                        int compareTabIndex = 0;
-                        int saveTabGroupIndex = 0;
 
-                        groupedEmbDytTabs.add(new ArrayList<>());
-                        
-                        boolean hasdotFound = false;
-                        boolean hasUnderscoreFound = false;
+                        if (compareEmbDytText != null) tabPane.getTabs().removeAll(groupedEmbDytTabs.getLast());
+                        else if (compareEmbText != null) tabPane.getTabs().removeAll(groupedEmbTabs.getLast());
+                    }
+                }
 
-                        outerLoop:
-                        while (compareTabIndex < tabPane.getTabs().size()) {
-                            String tabText = tabPane.getTabs().get(compareTabIndex).getText();
-                            while (!tabText.endsWith("dyt.emb")) {
-                                try {
-                                    compareTabIndex++;
-                                    tabText = tabPane.getTabs().get(compareTabIndex).getText();
-                                } catch (IndexOutOfBoundsException e) {
-                                    break outerLoop;
-                                }
-                            }
-
-                            int count = tabText.length() - tabText.replace("_", "").length();
-                            
-                            for (int i = compareTabIndex + 1; i < tabPane.getTabs().size(); i++) {
-
-                                String compareTabString = tabPane.getTabs().get(i).getText();
-                                
-                                if (count > 0) {
-                                    if (tabText.substring(0, Math.min(tabText.length(), 7)).equals(compareTabString.substring(0, Math.min(compareTabString.length(), 7)))) {
-                                        groupedEmbDytTabs.get(saveTabGroupIndex).add(tabPane.getTabs().get(i));
-
-                                        tabPane.getTabs().remove(i);
-                                        i -= 1;
-
-                                        hasUnderscoreFound = true;
-                                    }
-                                }
-                                else if (!tabText.endsWith("emb")) {
-                                    if (tabText.substring(0, tabText.indexOf(".")).equals(compareTabString.substring(0, compareTabString.indexOf("."))) ) {
-
-                                        groupedEmbDytTabs.get(saveTabGroupIndex).add(tabPane.getTabs().get(i));
-                                        
-                                        tabPane.getTabs().remove(i);
-                                        i -= 1;
-
-                                        hasdotFound = true;
-                                    }
-                                }
-                            }
-                            if (hasdotFound) {
-                                groupedEmbDytTabs.get(saveTabGroupIndex).add(0, tabPane.getTabs().get(compareTabIndex));
-
-                                tabPane.getTabs().remove(compareTabIndex);
-
-                                embDytComboBox.getItems().add(tabText.substring(0, tabText.indexOf(".")));
-
-                                groupedEmbDytTabs.add(new ArrayList<>());
-
-                                saveTabGroupIndex++;
-                                hasdotFound = false;
-                                compareTabIndex --;
-                            }
-                            else if (hasUnderscoreFound) {
-                                groupedEmbDytTabs.get(saveTabGroupIndex).add(0, tabPane.getTabs().get(compareTabIndex));
-
-                                tabPane.getTabs().remove(compareTabIndex);
-
-                                embDytComboBox.getItems().add(tabText.substring(0, tabText.lastIndexOf("_")));
-
-                                groupedEmbDytTabs.add(new ArrayList<>());
-
-                                saveTabGroupIndex++;
-                                hasUnderscoreFound = false;
-                                compareTabIndex--;
-                            }
-                            compareTabIndex++;
-                        }
-                        if (!embDytComboBox.getItems().isEmpty()) {
-                            embTabIndex = 1;
-                            embDytTabIndex = 0;
-
-                            tabPane.getTabs().add(0, new Tab());
-                            tabPane.getTabs().getFirst().setClosable(false);
-                            tabPane.getTabs().getFirst().setGraphic(embDytComboBox);
-                            tabPane.getTabs().getFirst().setText(".dyt.emb " + "Group" );
-                            tabPane.getSelectionModel().select(0);
-                        }
-                    });
-                });
-            }
-            else {
+                Tab embGroupTab = new Tab();
+                Tab embDytGroupTab = new Tab();
+                embGroupTab.setGraphic(embComboBox);
+                embDytGroupTab.setGraphic(embDytComboBox);
+                embGroupTab.setText(".emb");
+                embDytGroupTab.setText(".dyt.emb");
+                tabPane.getTabs().add(0, embGroupTab);
+                tabPane.getTabs().add(1, embDytGroupTab);
+            } else {
                 embComboBox.getItems().clear();
                 embDytComboBox.getItems().clear();
+
                 if (tabPane.getTabs().size() > 0) {
                     tabPane.getTabs().remove(0, 2);
                 }
-                for (int i = 0; i < groupedEmbTabs.size(); i++) {
-                    for (int j = 0; j < groupedEmbTabs.get(i).size(); j++) {
-                        tabPane.getTabs().add(groupedEmbTabs.get(i).get(j));
-                    }
-                }
-                for (int i = 0; i < groupedEmbDytTabs.size(); i++) {
-                    for (int j = 0; j < groupedEmbDytTabs.get(i).size(); j++) {
-                        tabPane.getTabs().add(groupedEmbDytTabs.get(i).get(j));
-                    }
-                }
-            }
 
-            groupedEmbDytTabs.clear();
-            groupedEmbTabs.clear();
+                for (ArrayList<Tab> tabs : groupedEmbTabs) {
+                    tabPane.getTabs().addAll(tabs);
+                }
+
+                for (ArrayList<Tab> tabs : groupedEmbDytTabs) {
+                    tabPane.getTabs().addAll(tabs);
+                }
+
+                groupedEmbDytTabs.clear();
+                groupedEmbTabs.clear();
+            }
+        });
+
+        toggleDarkMode.selectedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) scene.getStylesheets().add("darkTheme.css");
+            else scene.getStylesheets().remove(0);
         });
         
         embComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+            TabPane comboBoxTabPane = new TabPane();
             if (newValue.intValue() != -1) {
-                TabPane comboBoxTabPane = new TabPane();
                 comboBoxTabPane.getTabs().addAll(groupedEmbTabs.get(newValue.intValue()));
-                tabPane.getTabs().get(embTabIndex).setContent(comboBoxTabPane);  
-
+                tabPane.getTabs().get(0).setContent(comboBoxTabPane);  
             }
         });
 
         embDytComboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+            TabPane comboBoxTabPane = new TabPane();
             if (newValue.intValue() != -1) {
-                TabPane comboBoxTabPane = new TabPane();
                 comboBoxTabPane.getTabs().addAll(groupedEmbDytTabs.get(newValue.intValue()));
-                tabPane.getTabs().get(embDytTabIndex).setContent(comboBoxTabPane);  
+                tabPane.getTabs().get(1).setContent(comboBoxTabPane);  
             }
         });
 
@@ -402,7 +265,6 @@ public class Main extends Application {
         }
         
         if (selectedDirectory != null || hasDraggedAndDropped) {
-
             resetRoutine();
 
             File[] files;
@@ -423,17 +285,19 @@ public class Main extends Application {
 
                             tabPane.getTabs().add(tabAgd);
 
-                            Agd agd = new Agd();
-                            fileTypesContainer.put(xv2File.getAbsolutePath(),agd);
+                            AgdUi agd_UI = new AgdUi();
+                            
+                            fileTypesContainer.put(xv2File.getAbsolutePath(), agd_UI);
                             
                             executorService.submit(() -> {
                                 try {
-                                    agd.agdReader(xv2File.toPath());
-                                    Platform.runLater(()->{
-                                        tabAgd.setContent(agd.createVbox());
+                                    agd_UI.parseAgd(xv2File.toPath(), agd_UI);   
+     
+                                    Platform.runLater(() -> {
+                                        tabAgd.setContent(agd_UI.createVBox());
                                     });
-                                } catch (Exception er) {
-                                    er.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
                             });
                         }
@@ -443,14 +307,14 @@ public class Main extends Application {
 
                             tabPane.getTabs().add(tabAur);
 
-                            Aur aur = new Aur();
-                            fileTypesContainer.put(xv2File.getAbsolutePath(),aur);
+                            AurAuraUi aurAuraUi = new AurAuraUi();
+                            fileTypesContainer.put(xv2File.getAbsolutePath(), aurAuraUi);
 
                             executorService.submit(() -> {
                                 try {
-                                    aur.aurReader(xv2File.toPath());
+                                    aurAuraUi.parseAur(xv2File.toPath(), aurAuraUi);
                                     Platform.runLater(() -> {
-                                        tabAur.setContent(aur.createSplitPane());
+                                        tabAur.setContent(aurAuraUi.createSplitPane());
                                     });
                                     
                                 } catch (Exception er) {
@@ -601,7 +465,7 @@ public class Main extends Application {
                             tabPane.getTabs().add(tabEmb);
 
                             Emb emb = new Emb();
-                            fileTypesContainer.put(xv2File.getAbsolutePath(),emb);
+                            fileTypesContainer.put(xv2File.getAbsolutePath(), emb);
                             
                             executorService.submit(() -> {
                                 try {
@@ -649,99 +513,101 @@ public class Main extends Application {
         
         for (String originalPath : fileTypesContainer.keySet()) {
             File originalFile = new File(originalPath);
+
             switch (getFileExtension(originalFile.getName())) {
                 case "agd" -> {
-                    Agd agd = (Agd) fileTypesContainer.get(originalPath);
+                    AgdUi agd_UI = (AgdUi) fileTypesContainer.get(originalPath);
+                    AgdWriter agdWriter = new AgdWriter();
+                    agdWriter.agdEntries = agd_UI.agdEntries;
 
                     executorService.submit(() -> {
-                        agd.agdWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        try {
+                            agdWriter.writeAgd(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     });
 
                     hasSaved = true;
                 }
                 case "aur" -> {
-                    Aur aur = (Aur) fileTypesContainer.get(originalPath);
 
                     executorService.submit(() -> {
-                        aur.aurWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        //aur.aurWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
                     });
 
                     hasSaved = true;
                 }
                 case "bcm" -> {
-                    Bcm bcm = (Bcm) fileTypesContainer.get(originalPath);
+                    
 
                     executorService.submit(() -> {
-                        bcm.bcmWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        //bcm.bcmWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
                     });
 
                     hasSaved = true;
                 }
                 case "bcs" -> {
-                    Bcs bcs = (Bcs) fileTypesContainer.get(originalPath);
-
+                   
                     executorService.submit(() -> {
-                        bcs.bcsWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        //bcs.bcsWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
                     });
 
                     hasSaved = true;
                 }
                 case "bdm" -> {
-                    Bdm bdm = (Bdm) fileTypesContainer.get(originalPath);
-
+                   
                     executorService.submit(() -> {
-                        bdm.bdmWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        //bdm.bdmWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
                     });
 
                     hasSaved = true;
                 }
                 case "bsa" -> {
-                    Bsa bsa = (Bsa) fileTypesContainer.get(originalPath);
 
                     executorService.submit(() -> {
-                        bsa.bsaWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        //bsa.bsaWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
                     });
 
                     hasSaved = true;
                 }
                 case "cat" -> {
-                    Cat cat = (Cat) fileTypesContainer.get(originalPath);
-
+                
                     executorService.submit(() -> {
-                        cat.catWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        //cat.catWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
                     });
 
                     hasSaved = true;
                 }
                 case "ean" -> {
-                    Ean ean = (Ean) fileTypesContainer.get(originalPath);
+                    
 
                     executorService.submit(() -> {
-                        ean.eanWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        //ean.eanWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
                     });
 
                     hasSaved = true;
                 }
                 case "emb","EMB" -> {
-                    Emb emb = (Emb) fileTypesContainer.get(originalPath);
 
                     executorService.submit(() -> {
-                        emb.embWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        //emb.embWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
                     });
 
                     hasSaved = true;
                 }
                 case "esk" -> {
-                    Esk esk = (Esk) fileTypesContainer.get(originalPath);
+                    
 
                     executorService.submit(() -> {
-                        esk.eskWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
+                        //esk.eskWriter(selectedDirectory.toPath().resolve(originalFile.getName()));
                     });
 
                     hasSaved = true;
                 }
             }
         }
+
         if (hasSaved && selectedDirectory != null) {
             Popups.SuccessSave();
         }
