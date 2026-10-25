@@ -14,7 +14,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import xv2.Popups;
 
-public class AgdUi extends AgdParser implements LabelFactory, VBoxFactory, HBoxFactory, ScrollPaneFactory {
+public class AgdUi extends AgdWriter implements LabelFactory, VBoxFactory, HBoxFactory, ScrollPaneFactory {
     private VBox vBox = createVBox(10, new Insets(20, 0, 20, 60));
 
     private TextField levelTField(int i) {

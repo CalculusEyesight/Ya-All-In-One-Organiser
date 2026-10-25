@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import Writers.IntegerWriter;
 
-public class AgdWriter extends Agd {
+public class AgdWriter extends AgdParser {
     public void writeAgd(Path path) throws IOException {
         FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         IntegerWriter integerWriter = new IntegerWriter(channel);
