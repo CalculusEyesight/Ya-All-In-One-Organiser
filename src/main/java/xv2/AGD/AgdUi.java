@@ -58,7 +58,7 @@ public class AgdUi extends AgdParser implements LabelFactory, VBoxFactory, HBoxF
 
         insertEntry.setOnAction(event -> {
             agdEntries.add(new Agd());
-            addChildren(agdEntries.size());
+            addChildren(agdEntries.size() - 1);
         });
 
         return insertEntry;

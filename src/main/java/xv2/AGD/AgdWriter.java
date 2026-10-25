@@ -12,15 +12,9 @@ public class AgdWriter extends Agd {
         IntegerWriter integerWriter = new IntegerWriter(channel);
         int offset = 16;
         
-        channel.position(0);
         channel.write(ByteBuffer.wrap(new byte[]{0x23, 0x41, 0x47, 0x44}));
-        
-        channel.position(4);
         channel.write(ByteBuffer.wrap(new byte[]{(byte)0xFE, (byte)0xFF}));
-
-        channel.position(6);
         channel.write(ByteBuffer.wrap(new byte[]{0x10, 0x00}));
-        
         integerWriter.writeInt(8, agdEntries.size());
         integerWriter.writeInt(12, offset);
 
