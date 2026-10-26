@@ -49,6 +49,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
 
     public ListView<AurAura> createListView() {
         ListView<AurAura> listView = new ListView<>();
+        keysListener(listView);
 
         listView.setContextMenu(getDefaultContextMenu());
         listView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
