@@ -1,9 +1,6 @@
 package xv2.AUR;
-import java.util.ArrayList;
 
 public class AurAura extends AurChara {
-    public ArrayList<AurAura> aurAuraEntries;
-
     private int i04 = 0;
     private int boostStart = 0;
     private int boostLoop = 0;
@@ -12,6 +9,7 @@ public class AurAura extends AurChara {
     private int kiryokuMax = 0;
     private int henshinStart = 0;
     private int henshinEnd = 0;
+    private String auraId = "";
 
     public AurAura() {
     }
@@ -25,6 +23,11 @@ public class AurAura extends AurChara {
         this.kiryokuMax = other.kiryokuMax;
         this.henshinStart = other.henshinStart;
         this.henshinEnd = other.henshinEnd;
+        this.auraId = other.auraId;
+    }
+
+    public void setAuraId(String auraId) {
+        this.auraId = auraId;
     }
 
     public void setI04(int i04) {
@@ -59,6 +62,10 @@ public class AurAura extends AurChara {
         this.henshinEnd = henshinEnd;
     }
 
+    public String getAuraId() {
+        return this.auraId;
+    }
+
     public int getI04() {
         return this.i04;
     }
@@ -89,5 +96,10 @@ public class AurAura extends AurChara {
     
     public int getHenshinEnd() {
         return this.henshinEnd;
+    }
+
+    @Override
+    public String toString() {
+        return getAuraId().toString();
     }
 }

@@ -11,10 +11,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMenuFactory {
-    private int currentEntry = 0;
+    private AurAura currentEntry;
     private AurAura container;
 
-    protected ListView<String> listView = createListView();
+    protected ListView<AurAura> listView = createListView();
     private TextField i04TF = createI04TF();
     private TextField boostStartTF = createBoostStartTF();
     private TextField boostLoopTF = createBoostLoopTF();
@@ -47,14 +47,14 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
        return splitPane;
     }
 
-    public ListView<String> createListView() {
-        ListView<String> listView = new ListView<>();
+    public ListView<AurAura> createListView() {
+        ListView<AurAura> listView = new ListView<>();
 
         listView.setContextMenu(getDefaultContextMenu());
-        listView.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.intValue() == -1) return;
+        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue == null) return;
 
-            currentEntry = newValue.intValue();
+            currentEntry = newValue;
             updateItems();
         });
 
@@ -64,7 +64,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     private TextField createI04TF() throws NumberFormatException {
         TextField textField = new TextField();
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            aurAuraEntries.get(currentEntry).setI04(Integer.parseInt(newText));
+            currentEntry.setI04(Integer.parseInt(newText));
         });
 
         return textField;
@@ -73,7 +73,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     private TextField createBoostStartTF() throws NumberFormatException {
         TextField textField = new TextField();
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            aurAuraEntries.get(currentEntry).setBoostStart(Integer.parseInt(newText));
+            currentEntry.setBoostStart(Integer.parseInt(newText));
         });
 
         return textField;
@@ -82,7 +82,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     private TextField createBoostLoopTF() throws NumberFormatException {
         TextField textField = new TextField();
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            aurAuraEntries.get(currentEntry).setBoostLoop(Integer.parseInt(newText));
+           currentEntry.setBoostLoop(Integer.parseInt(newText));
         });
 
         return textField;
@@ -91,7 +91,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     private TextField createBoostEndTF() throws NumberFormatException {
         TextField textField = new TextField();
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            aurAuraEntries.get(currentEntry).setBoostEnd(Integer.parseInt(newText));
+            currentEntry.setBoostEnd(Integer.parseInt(newText));
         });
 
         return textField;
@@ -100,7 +100,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     private TextField createKiaiChargeTF() throws NumberFormatException {
         TextField textField = new TextField();
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            aurAuraEntries.get(currentEntry).setKiaiCharge(Integer.parseInt(newText));
+            currentEntry.setKiaiCharge(Integer.parseInt(newText));
         });
 
         return textField;
@@ -109,7 +109,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     private TextField createKiryokuMaxTF() throws NumberFormatException {
         TextField textField = new TextField();
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            aurAuraEntries.get(currentEntry).setKiryokuMax(Integer.parseInt(newText));
+            currentEntry.setKiryokuMax(Integer.parseInt(newText));
         });
 
         return textField;
@@ -118,7 +118,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     private TextField createHenshinStartTF() throws NumberFormatException {
         TextField textField = new TextField();
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            aurAuraEntries.get(currentEntry).setHenshinStart(Integer.parseInt(newText));
+            currentEntry.setHenshinStart(Integer.parseInt(newText));
         });
 
         return textField;
@@ -127,7 +127,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     private TextField createHenshinEndTF() throws NumberFormatException {
         TextField textField = new TextField();
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            aurAuraEntries.get(currentEntry).setHenshinEnd(Integer.parseInt(newText));
+            currentEntry.setHenshinEnd(Integer.parseInt(newText));
         });
 
         return textField;
@@ -136,52 +136,51 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     @Override
     public void copy() {
         listView.getContextMenu().getItems().get(1).setDisable(false);
-        container = new AurAura(aurAuraEntries.get(currentEntry));
+        container = new AurAura(currentEntry);
     }
 
     @Override
     public void paste() {
-        aurAuraEntries.set(currentEntry, container);
-        refreshList(currentEntry);
+        container.setAuraId(currentEntry.getAuraId());
+        listView.getItems().set(listView.getItems().indexOf(currentEntry), new AurAura(container));
+        listView.refresh();
     }
 
     @Override
     public void delete() {
-        aurAuraEntries.remove(currentEntry);
         listView.getItems().remove(currentEntry);
 
         for (int i = 0; i < listView.getItems().size(); i++) {
-            listView.getItems().set(i, "Aura ID " + i);
+            listView.getItems().get(i).setAuraId("Aura ID " + i);
         }
     }
 
     @Override
     public void append() {
-        aurAuraEntries.add(currentEntry + 1, new AurAura());
-        listView.getItems().add("Aura ID " + listView.getItems().size());
+        listView.getItems().add((listView.getItems().indexOf(currentEntry) + 1), new AurAura());
+        for (int i = 0; i < listView.getItems().size(); i++) {
+            listView.getItems().get(i).setAuraId("Aura ID " + i);
+        }
+        listView.refresh();
     }
 
     @Override
     public void insert() {
-        aurAuraEntries.add(currentEntry, new AurAura());
-        listView.getItems().add("Aura ID " + listView.getItems().size());
-        refreshList(currentEntry + 1);
-    }
-
-    private void refreshList(int index) {
-        int thisEntry = index;
-        listView.getSelectionModel().clearSelection();
-        listView.getSelectionModel().select(thisEntry);
+        listView.getItems().add(listView.getItems().indexOf(currentEntry), new AurAura());
+        for (int i = 0; i < listView.getItems().size(); i++) {
+            listView.getItems().get(i).setAuraId("Aura ID " + i);
+        }
+        listView.refresh();
     }
 
     private void updateItems() {
-        i04TF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getI04()));
-        boostStartTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getBoostStart()));
-        boostLoopTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getBoostLoop()));
-        boostEndTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getBoostEnd()));
-        kiaiChargeTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getKiaiCharge()));
-        kiryokuMaxTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getKiryokuMax()));
-        henshinStartTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getHenshinStart()));
-        henshinEndTF.setText(String.valueOf(aurAuraEntries.get(currentEntry).getHenshinEnd()));
+        i04TF.setText(String.valueOf(currentEntry.getI04()));
+        boostStartTF.setText(String.valueOf(currentEntry.getBoostStart()));
+        boostLoopTF.setText(String.valueOf(currentEntry.getBoostLoop()));
+        boostEndTF.setText(String.valueOf(currentEntry.getBoostEnd()));
+        kiaiChargeTF.setText(String.valueOf(currentEntry.getKiaiCharge()));
+        kiryokuMaxTF.setText(String.valueOf(currentEntry.getKiryokuMax()));
+        henshinStartTF.setText(String.valueOf(currentEntry.getHenshinStart()));
+        henshinEndTF.setText(String.valueOf(currentEntry.getHenshinEnd()));
     }
 }

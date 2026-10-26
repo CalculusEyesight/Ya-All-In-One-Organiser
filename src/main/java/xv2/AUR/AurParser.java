@@ -16,23 +16,23 @@ public class AurParser extends AurAura {
         int charaEntries = integerParser.parseInt32(24);
         int charaOffset = integerParser.parseInt32(28);
 
-        aurAuraEntries = new ArrayList<>(auraEntries);
         aurCharaEntries = new ArrayList<>(charaEntries);
 
         for (int i = 0; i < auraEntries; i++) {
-            aurAuraEntries.add(new AurAura());
+            AurAura aurAura = new AurAura();
+            aurAura.setAuraId("Aura ID " + String.valueOf(integerParser.parseInt32(auraOffset + i * 16)));
 
-            aurUi.listView.getItems().add("Aura ID " + integerParser.parseInt32(auraOffset + i * 16));
-            aurAuraEntries.get(i).setI04(integerParser.parseInt32(auraOffset + i * 16 + 4));
+            aurUi.listView.getItems().add(aurAura);
+            aurAura.setI04(integerParser.parseInt32(auraOffset + i * 16 + 4));
             int effectsOffset = integerParser.parseInt32(auraOffset + i * 16 + 12);
 
-            aurAuraEntries.get(i).setBoostStart(integerParser.parseInt32(effectsOffset + 4));
-            aurAuraEntries.get(i).setBoostLoop(integerParser.parseInt32(effectsOffset + 12));
-            aurAuraEntries.get(i).setBoostEnd(integerParser.parseInt32(effectsOffset + 20));
-            aurAuraEntries.get(i).setKiaiCharge(integerParser.parseInt32(effectsOffset + 28));
-            aurAuraEntries.get(i).setKiryokuMax(integerParser.parseInt32(effectsOffset + 36));
-            aurAuraEntries.get(i).setHenshinStart(integerParser.parseInt32(effectsOffset + 44));
-            aurAuraEntries.get(i).setHenshinEnd(integerParser.parseInt32(effectsOffset + 52));
+            aurAura.setBoostStart(integerParser.parseInt32(effectsOffset + 4));
+            aurAura.setBoostLoop(integerParser.parseInt32(effectsOffset + 12));
+            aurAura.setBoostEnd(integerParser.parseInt32(effectsOffset + 20));
+            aurAura.setKiaiCharge(integerParser.parseInt32(effectsOffset + 28));
+            aurAura.setKiryokuMax(integerParser.parseInt32(effectsOffset + 36));
+            aurAura.setHenshinStart(integerParser.parseInt32(effectsOffset + 44));
+            aurAura.setHenshinEnd(integerParser.parseInt32(effectsOffset + 52));
         }
 
         aurUi.listView.getSelectionModel().select(0);

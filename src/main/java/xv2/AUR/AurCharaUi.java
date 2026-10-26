@@ -37,7 +37,7 @@ public class AurCharaUi extends AurWriter implements LabelFactory, VBoxFactory, 
     }
 
     private TextField auraIdTField(int i) {
-        TextField textField = new TextField(String.valueOf(aurCharaEntries.get(i).getAuraID()));
+        TextField textField = new TextField(String.valueOf(aurCharaEntries.get(i).getCharaAuraId()));
         textField.textProperty().addListener((obs, oldText, newText) -> {
             aurCharaEntries.get(i).setAuraId(Integer.parseInt(newText));
         });

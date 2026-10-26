@@ -33,7 +33,7 @@ public class AurChara {
         return this.costume;
     }
 
-    public int getAuraID() {
+    public int getCharaAuraId() {
         return this.auraId;
     }
 

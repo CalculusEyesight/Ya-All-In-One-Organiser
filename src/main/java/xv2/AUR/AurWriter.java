@@ -9,13 +9,13 @@ import Parsers.Parser;
 import Writers.IntegerWriter;
 
 public class AurWriter extends AurParser {
-    public void writeAur(Path path) throws IOException {
+    public void writeAur(Path path, AurAuraUi aurAuraUi) throws IOException {
         FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         IntegerWriter integerWriter = new IntegerWriter(channel);
 
         int effectCount = 7;
         int auraOffset = 32;
-        int auraEntries = aurAuraEntries.size();
+        int auraEntries = aurAuraUi.listView.getItems().size();
         int charaEntries = aurCharaEntries.size();
         int thisAuraOffset = 16 * auraEntries + 32;
         int auraTypeOffset = 72 * auraEntries + 32;
@@ -49,29 +49,31 @@ public class AurWriter extends AurParser {
         channel.write(ByteBuffer.wrap(auraTypes.getBytes(StandardCharsets.ISO_8859_1)));
 
         for (int i = 0; i < auraEntries; i++) {
-            integerWriter.writeInt(auraOffset + i * 16, aurAuraEntries.indexOf(aurAuraEntries.get(i)));
-            integerWriter.writeInt(auraOffset + i * 16 + 4, aurAuraEntries.get(i).getI04());
+            AurAura aurAura = aurAuraUi.listView.getItems().get(i);
+
+            integerWriter.writeInt(auraOffset + i * 16, aurAuraUi.listView.getItems().indexOf(aurAura));
+            integerWriter.writeInt(auraOffset + i * 16 + 4, aurAura.getI04());
             integerWriter.writeInt(auraOffset + i * 16 + 8, effectCount);
             integerWriter.writeInt(auraOffset + i * 16 + 12, thisAuraOffset + i * 56);
-            integerWriter.writeInt(thisAuraOffset + i * 56 + 4, aurAuraEntries.get(i).getBoostStart());
+            integerWriter.writeInt(thisAuraOffset + i * 56 + 4, aurAura.getBoostStart());
             channel.write(ByteBuffer.wrap(new byte[]{0x01, 0x00, 0x00, 0x00}));
-            integerWriter.writeInt(thisAuraOffset + i * 56 + 12, aurAuraEntries.get(i).getBoostLoop());
+            integerWriter.writeInt(thisAuraOffset + i * 56 + 12, aurAura.getBoostLoop());
             channel.write(ByteBuffer.wrap(new byte[]{0x02, 0x00, 0x00, 0x00}));
-            integerWriter.writeInt(thisAuraOffset + i * 56 + 20, aurAuraEntries.get(i).getBoostEnd());
+            integerWriter.writeInt(thisAuraOffset + i * 56 + 20, aurAura.getBoostEnd());
             channel.write(ByteBuffer.wrap(new byte[]{0x03, 0x00, 0x00, 0x00}));
-            integerWriter.writeInt(thisAuraOffset + i * 56 + 28, aurAuraEntries.get(i).getKiaiCharge());
+            integerWriter.writeInt(thisAuraOffset + i * 56 + 28, aurAura.getKiaiCharge());
             channel.write(ByteBuffer.wrap(new byte[]{0x04, 0x00, 0x00, 0x00}));
-            integerWriter.writeInt(thisAuraOffset + i * 56 + 36, aurAuraEntries.get(i).getKiryokuMax());
+            integerWriter.writeInt(thisAuraOffset + i * 56 + 36, aurAura.getKiryokuMax());
             channel.write(ByteBuffer.wrap(new byte[]{0x05, 0x00, 0x00, 0x00}));
-            integerWriter.writeInt(thisAuraOffset + i * 56 + 44, aurAuraEntries.get(i).getHenshinStart());
+            integerWriter.writeInt(thisAuraOffset + i * 56 + 44, aurAura.getHenshinStart());
             channel.write(ByteBuffer.wrap(new byte[]{0x06, 0x00, 0x00, 0x00}));
-            integerWriter.writeInt(thisAuraOffset + i * 56 + 52, aurAuraEntries.get(i).getHenshinEnd());
+            integerWriter.writeInt(thisAuraOffset + i * 56 + 52, aurAura.getHenshinEnd());
         }
 
         for (int i = 0; i < charaEntries; i++) {
             integerWriter.writeInt(charaOffset + i * 16, aurCharaEntries.get(i).getCharaId());
             integerWriter.writeInt(charaOffset + i * 16 + 4, aurCharaEntries.get(i).getCostume());
-            integerWriter.writeInt(charaOffset + i * 16 + 8, aurCharaEntries.get(i).getAuraID());
+            integerWriter.writeInt(charaOffset + i * 16 + 8, aurCharaEntries.get(i).getCharaAuraId());
             integerWriter.writeInt(charaOffset + i * 16 + 12, aurCharaEntries.get(i).getGlare() ? 1 : 0);
         }
     }
