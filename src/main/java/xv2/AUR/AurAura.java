@@ -100,6 +100,6 @@ public class AurAura extends AurChara {
 
     @Override
     public String toString() {
-        return getAuraId().toString();
+        return getAuraId();
     }
 }
