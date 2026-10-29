@@ -14,7 +14,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import xv2.Popups;
 
-public class AgdUi extends AgdWriter implements LabelFactory, VBoxFactory, HBoxFactory, ScrollPaneFactory {
+public class AgdUi extends AgdWriter implements LabelFactory, VBoxFactory, HBoxFactory {
     private VBox vBox = createVBox(10, new Insets(20, 0, 20, 60));
 
     private TextField levelTField(int i) {
@@ -85,7 +85,7 @@ public class AgdUi extends AgdWriter implements LabelFactory, VBoxFactory, HBoxF
 
     @Override
     public VBox createVBox() {
-        ScrollPane scrollPane = createScrollPane(this.vBox);
+        ScrollPane scrollPane = new ScrollPane(this.vBox);
         
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
         scrollPane.getStyleClass().add("scroll-pane");

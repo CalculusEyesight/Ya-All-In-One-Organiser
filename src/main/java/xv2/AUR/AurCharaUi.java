@@ -15,7 +15,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import xv2.Popups;
 
-public class AurCharaUi extends AurWriter implements LabelFactory, VBoxFactory, HBoxFactory, ScrollPaneFactory {
+public class AurCharaUi extends AurWriter implements LabelFactory, VBoxFactory, HBoxFactory {
     protected VBox vBox = createVBox(10, new Insets(5));
 
     private TextField charaIdTField(int i) {
@@ -87,7 +87,7 @@ public class AurCharaUi extends AurWriter implements LabelFactory, VBoxFactory, 
 
     @Override
     public VBox createVBox() {
-        ScrollPane scrollPane = createScrollPane(this.vBox);
+        ScrollPane scrollPane = new ScrollPane(this.vBox);
         
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
         scrollPane.getStyleClass().add("scroll-pane");
