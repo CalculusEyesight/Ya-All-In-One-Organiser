@@ -2,7 +2,7 @@ package xv2.AGD;
 import java.util.ArrayList;
 
 public class Agd {
-    public ArrayList<Agd> agdEntries;
+    protected ArrayList<Agd> agdEntries;
     
     private int level = 0;
     private int xpToNextLevel = 0;
