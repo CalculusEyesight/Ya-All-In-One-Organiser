@@ -6,7 +6,13 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import Writers.IntegerWriter;
 
-public class AgdWriter extends AgdParser {
+public class AgdWriter {
+    private Agd agd;
+
+    public AgdWriter(Agd agd) {
+        this.agd = agd;
+    }
+
     public void writeAgd(Path path) throws IOException {
         FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         IntegerWriter integerWriter = new IntegerWriter(channel);
@@ -15,14 +21,14 @@ public class AgdWriter extends AgdParser {
         channel.write(ByteBuffer.wrap(new byte[]{0x23, 0x41, 0x47, 0x44}));
         channel.write(ByteBuffer.wrap(new byte[]{(byte)0xFE, (byte)0xFF}));
         channel.write(ByteBuffer.wrap(new byte[]{0x10, 0x00}));
-        integerWriter.writeInt(8, agdEntries.size());
+        integerWriter.writeInt(8, agd.agdEntries.size());
         integerWriter.writeInt(12, offset);
 
-        for (int i = 0; i < agdEntries.size(); i++) {
-            integerWriter.writeInt(offset * (i + 1), agdEntries.get(i).getLevel());
-            integerWriter.writeInt(offset * (i + 1) + 4, agdEntries.get(i).getXpToNextLevel());
-            integerWriter.writeInt(offset * (i + 1) + 8, agdEntries.get(i).getXpToThisLevel());
-            integerWriter.writeInt(offset * (i + 1) + 12, agdEntries.get(i).getAttributePointsGained());
+        for (int i = 0; i < agd.agdEntries.size(); i++) {
+            integerWriter.writeInt(offset * (i + 1), agd.agdEntries.get(i).getLevel());
+            integerWriter.writeInt(offset * (i + 1) + 4, agd.agdEntries.get(i).getXpToNextLevel());
+            integerWriter.writeInt(offset * (i + 1) + 8, agd.agdEntries.get(i).getXpToThisLevel());
+            integerWriter.writeInt(offset * (i + 1) + 12, agd.agdEntries.get(i).getAttributePointsGained());
         }
     }
 }

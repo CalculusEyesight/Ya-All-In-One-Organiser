@@ -8,15 +8,21 @@ import java.nio.file.StandardOpenOption;
 import Parsers.Parser;
 import Writers.IntegerWriter;
 
-public class AurWriter extends AurParser {
-    public void writeAur(Path path, AurAuraUi aurAuraUi) throws IOException {
+public class AurWriter {
+    private AurAuraUi aurAuraUi;
+    
+    public AurWriter(AurAuraUi aurAuraUi) {
+        this.aurAuraUi = aurAuraUi;
+    }
+    
+    public void writeAur(Path path) throws IOException {
         FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         IntegerWriter integerWriter = new IntegerWriter(channel);
 
         int effectCount = 7;
         int auraOffset = 32;
         int auraEntries = aurAuraUi.listView.getItems().size();
-        int charaEntries = aurCharaEntries.size();
+        int charaEntries = aurAuraUi.getAurChara().aurCharaEntries.size();
         int thisAuraOffset = 16 * auraEntries + 32;
         int auraTypeOffset = 72 * auraEntries + 32;
         int charaOffset = Parser.align16Bytes(auraTypeOffset + 104);
@@ -71,10 +77,10 @@ public class AurWriter extends AurParser {
         }
 
         for (int i = 0; i < charaEntries; i++) {
-            integerWriter.writeInt(charaOffset + i * 16, aurCharaEntries.get(i).getCharaId());
-            integerWriter.writeInt(charaOffset + i * 16 + 4, aurCharaEntries.get(i).getCostume());
-            integerWriter.writeInt(charaOffset + i * 16 + 8, aurCharaEntries.get(i).getCharaAuraId());
-            integerWriter.writeInt(charaOffset + i * 16 + 12, aurCharaEntries.get(i).getGlare() ? 1 : 0);
+            integerWriter.writeInt(charaOffset + i * 16, aurAuraUi.getAurChara().aurCharaEntries.get(i).getCharaId());
+            integerWriter.writeInt(charaOffset + i * 16 + 4, aurAuraUi.getAurChara().aurCharaEntries.get(i).getCostume());
+            integerWriter.writeInt(charaOffset + i * 16 + 8, aurAuraUi.getAurChara().aurCharaEntries.get(i).getCharaAuraId());
+            integerWriter.writeInt(charaOffset + i * 16 + 12, aurAuraUi.getAurChara().aurCharaEntries.get(i).getGlare() ? 1 : 0);
         }
     }
 }

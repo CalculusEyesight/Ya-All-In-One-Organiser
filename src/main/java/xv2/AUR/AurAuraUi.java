@@ -37,6 +37,10 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
 
     private VBox vBox = createVBox(70, new Insets(20, 0, 0, 0), this.hBoxs);
     private HBox hBox = createHBox(10, new Node[]{listView, this.vBox});
+
+    public AurAuraUi(AurChara aurChara) {
+        super(aurChara);
+    }
     
     @Override 
     public SplitPane createSplitPane() {
@@ -150,7 +154,6 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     @Override
     public void delete() {
         listView.getItems().remove(currentEntry);
-
         for (int i = 0; i < listView.getItems().size(); i++) {
             listView.getItems().get(i).setAuraId("Aura ID " + i);
         }

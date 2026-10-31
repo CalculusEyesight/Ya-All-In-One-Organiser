@@ -6,23 +6,25 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import Parsers.IntegerParser;
 
-public class AurParser extends AurAura {
-    public void parseAur(Path path, AurAuraUi aurUi) throws IOException {
+public class AurParser {
+    public AurAuraUi parseAur(Path path) throws IOException {
+        AurChara aurChara = new AurChara();
+        AurAuraUi aurAuraUi = new AurAuraUi(aurChara);
+
         FileChannel channel = FileChannel.open(path, StandardOpenOption.READ);
         IntegerParser integerParser = new IntegerParser(channel);
-
+       
         int auraEntries = integerParser.parseInt32(8);
         int auraOffset = integerParser.parseInt32(12);
         int charaEntries = integerParser.parseInt32(24);
         int charaOffset = integerParser.parseInt32(28);
 
-        aurCharaEntries = new ArrayList<>(charaEntries);
+        aurChara.aurCharaEntries = new ArrayList<>(charaEntries);
 
         for (int i = 0; i < auraEntries; i++) {
-            AurAura aurAura = new AurAura();
-            aurAura.setAuraId("Aura ID " + String.valueOf(integerParser.parseInt32(auraOffset + i * 16)));
+            AurAura aurAura = new AurAura("Aura ID " + String.valueOf(integerParser.parseInt32(auraOffset + i * 16)));
 
-            aurUi.listView.getItems().add(aurAura);
+            aurAuraUi.listView.getItems().add(aurAura);
             aurAura.setI04(integerParser.parseInt32(auraOffset + i * 16 + 4));
             int effectsOffset = integerParser.parseInt32(auraOffset + i * 16 + 12);
 
@@ -35,17 +37,17 @@ public class AurParser extends AurAura {
             aurAura.setHenshinEnd(integerParser.parseInt32(effectsOffset + 52));
         }
 
-        aurUi.listView.getSelectionModel().select(0);
-
         for (int i = 0; i < charaEntries; i++) {
-            aurCharaEntries.add(new AurChara());
+            aurChara.aurCharaEntries.add(new AurChara());
 
-            aurCharaEntries.get(i).setCharaId(integerParser.parseInt32(charaOffset + i * 16));
-            aurCharaEntries.get(i).setCostume(integerParser.parseInt32(charaOffset + i * 16 + 4));
-            aurCharaEntries.get(i).setAuraId(integerParser.parseInt32(charaOffset + i * 16 + 8));
-            aurCharaEntries.get(i).setGlare(integerParser.parseInt32(charaOffset + i * 16 + 12) == 1);
+            aurChara.aurCharaEntries.get(i).setCharaId(integerParser.parseInt32(charaOffset + i * 16));
+            aurChara.aurCharaEntries.get(i).setCostume(integerParser.parseInt32(charaOffset + i * 16 + 4));
+            aurChara.aurCharaEntries.get(i).setAuraId(integerParser.parseInt32(charaOffset + i * 16 + 8));
+            aurChara.aurCharaEntries.get(i).setGlare(integerParser.parseInt32(charaOffset + i * 16 + 12) == 1);
 
-            aurUi.addChildren(i);
+            aurAuraUi.addChildren(i);
         }
+
+        return aurAuraUi;
     }
 }

@@ -13,6 +13,10 @@ public class AurAura extends AurChara {
 
     public AurAura() {
     }
+    
+    public AurAura(String auraId) {
+        this.auraId = auraId;
+    }
 
     protected AurAura(AurAura other) {
         this.i04 = other.i04;

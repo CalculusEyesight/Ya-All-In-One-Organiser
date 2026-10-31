@@ -2,7 +2,6 @@ package xv2.AUR;
 import UiComponents.Boxes.HBoxFactory;
 import UiComponents.Boxes.VBoxFactory;
 import UiComponents.Labels.LabelFactory;
-import UiComponents.Panes.ScrollPaneFactory;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -15,31 +14,40 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import xv2.Popups;
 
-public class AurCharaUi extends AurWriter implements LabelFactory, VBoxFactory, HBoxFactory {
+public class AurCharaUi implements LabelFactory, VBoxFactory, HBoxFactory {
     protected VBox vBox = createVBox(10, new Insets(5));
+    private AurChara aurChara;
+
+    public AurCharaUi(AurChara aurChara) {
+        this.aurChara = aurChara;
+    }
+
+    public AurChara getAurChara() {
+        return this.aurChara;
+    }
 
     private TextField charaIdTField(int i) {
-        TextField textField = new TextField(String.valueOf(aurCharaEntries.get(i).getCharaId()));
+        TextField textField = new TextField(String.valueOf(aurChara.aurCharaEntries.get(i).getCharaId()));
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            aurCharaEntries.get(i).setCharaId(Integer.parseInt(newText));
+            aurChara.aurCharaEntries.get(i).setCharaId(Integer.parseInt(newText));
         });
 
         return textField;
     }
 
     private TextField costumeTField(int i) {
-        TextField textField = new TextField(String.valueOf(aurCharaEntries.get(i).getCostume()));
+        TextField textField = new TextField(String.valueOf(aurChara.aurCharaEntries.get(i).getCostume()));
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            aurCharaEntries.get(i).setCostume(Integer.parseInt(newText));
+            aurChara.aurCharaEntries.get(i).setCostume(Integer.parseInt(newText));
         });
 
         return textField;
     }
 
     private TextField auraIdTField(int i) {
-        TextField textField = new TextField(String.valueOf(aurCharaEntries.get(i).getCharaAuraId()));
+        TextField textField = new TextField(String.valueOf(aurChara.aurCharaEntries.get(i).getCharaAuraId()));
         textField.textProperty().addListener((obs, oldText, newText) -> {
-            aurCharaEntries.get(i).setAuraId(Integer.parseInt(newText));
+            aurChara.aurCharaEntries.get(i).setAuraId(Integer.parseInt(newText));
         });
 
         return textField;
@@ -47,9 +55,9 @@ public class AurCharaUi extends AurWriter implements LabelFactory, VBoxFactory, 
 
     private CheckBox glareCB(int i) {
         CheckBox checkBox = new CheckBox();
-        checkBox.setSelected(aurCharaEntries.get(i).getGlare());
+        checkBox.setSelected(aurChara.aurCharaEntries.get(i).getGlare());
         checkBox.selectedProperty().addListener((obs, oldValue, newValue) -> {
-            aurCharaEntries.get(i).setGlare(newValue);
+            aurChara.aurCharaEntries.get(i).setGlare(newValue);
         });
 
         return checkBox;
@@ -59,8 +67,8 @@ public class AurCharaUi extends AurWriter implements LabelFactory, VBoxFactory, 
         Button insertEntry = new Button("Insert Entry");
 
         insertEntry.setOnAction(event -> {
-            aurCharaEntries.add(new AurChara());
-            addChildren(aurCharaEntries.size() - 1);
+            aurChara.aurCharaEntries.add(new AurChara());
+            addChildren(aurChara.aurCharaEntries.size() - 1);
         });
 
         return insertEntry;
@@ -71,8 +79,8 @@ public class AurCharaUi extends AurWriter implements LabelFactory, VBoxFactory, 
 
         removeEntry.setOnAction(event -> {
             try {
-                this.vBox.getChildren().remove(aurCharaEntries.size() - 1);
-                aurCharaEntries.remove(aurCharaEntries.getLast());
+                this.vBox.getChildren().remove(aurChara.aurCharaEntries.size() - 1);
+                aurChara.aurCharaEntries.remove(aurChara.aurCharaEntries.getLast());
             } catch (IndexOutOfBoundsException e) {
                 Popups.ErrorOutOfBounds();
             }
