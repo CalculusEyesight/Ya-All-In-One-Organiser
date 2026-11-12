@@ -54,13 +54,17 @@ public class Miscellaneous implements VBoxFactory, HBoxFactory, LabelFactory, Ra
         ComboBox<String> comboBox = new ComboBox<>(FXCollections.observableArrayList(
             "None",
             "Combos",
-            "Supers",
-            "Unknown 3",
+            "Supers / Stamina Break",
+            "When Victim is Hit",
             "Ultimate / Awoken",
             "Grab",
             "Unknown 6",
             "Step-Vanish Move",
-            "Ki Blast / Evasive"
+            "Ki Blast / Evasive",
+            "Unknown 9",
+            "Unknown 10",
+            "Dual Ultimates-Skill",
+            "Dual Ultimates-Character"
         ));
 
         comboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
@@ -148,6 +152,7 @@ public class Miscellaneous implements VBoxFactory, HBoxFactory, LabelFactory, Ra
     private void updateItems() {
         kiCostSP.getValueFactory().setValue((double) bcm.getKiCost());
         movesCategoryCB.getSelectionModel().select((int) bcm.getMoveCategory());
+        IO.println(bcm.getMoveCategory());
         staminaCostSP.getValueFactory().setValue((double) bcm.getStaminaCost());
         kiRequiredSP.getValueFactory().setValue((double) bcm.getKiRequired());
         healthRequiredSP.getValueFactory().setValue((double) bcm.getHealthRequired());

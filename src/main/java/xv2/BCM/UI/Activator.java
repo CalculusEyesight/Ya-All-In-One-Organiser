@@ -167,8 +167,8 @@ public class Activator implements HBoxFactory, LabelFactory, VBoxFactory, RadioB
         ComboBox<String> comboBox = new ComboBox<>(FXCollections.observableArrayList(
             "All Sizes",
             "Unknown 1",
-            "Unknown 2",
             "Small Characters",
+            "Unknown 3",
             "Default Size",
             "Medium",
             "Medium Large",
