@@ -19,7 +19,6 @@ public class CatWriter {
     public void writeCat(Path path) throws IOException {
         FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         int offset = 12;
-        IO.println((short) catUi.listView.getItems().size());
         short entries = (short) catUi.listView.getItems().size();
 
         ByteWriter byteWriter = new ByteWriter(channel);
