@@ -55,16 +55,16 @@ public class Miscellaneous implements VBoxFactory, HBoxFactory, LabelFactory, Ra
             "None",
             "Combos",
             "Supers",
-            "Ultimate / Awoken / Evasive",
-            "Z-Vanish",
-            "Ki Blasts",
-            "Jump",
-            "Guard",
-            "Flying / Step Dash"
+            "Unknown 3",
+            "Ultimate / Awoken",
+            "Grab",
+            "Unknown 6",
+            "Step-Vanish Move",
+            "Ki Blast / Evasive"
         ));
 
         comboBox.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
-           bcm.setMoveCategory(newValue.intValue() == 0 ? 0 : 1 << (newValue.intValue() - 1));
+           bcm.setMoveCategory(newValue.longValue());
         });
 
         return comboBox;
@@ -147,7 +147,7 @@ public class Miscellaneous implements VBoxFactory, HBoxFactory, LabelFactory, Ra
 
     private void updateItems() {
         kiCostSP.getValueFactory().setValue((double) bcm.getKiCost());
-        movesCategoryCB.getSelectionModel().select((int) bcm.getMoveCategory() == 0 ? 0 : (Long.numberOfTrailingZeros(bcm.getMoveCategory()) + 1));
+        movesCategoryCB.getSelectionModel().select((int) bcm.getMoveCategory());
         staminaCostSP.getValueFactory().setValue((double) bcm.getStaminaCost());
         kiRequiredSP.getValueFactory().setValue((double) bcm.getKiRequired());
         healthRequiredSP.getValueFactory().setValue((double) bcm.getHealthRequired());

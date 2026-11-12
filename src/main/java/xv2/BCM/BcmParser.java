@@ -80,13 +80,16 @@ public class BcmParser {
                 childItem.getChildren().add(new TreeItem<>(bcm));
                 childItem = childItem.getChildren().get(0);
             } else if (siblingPointer != 0) {
+                bcm = siblingItem.getValue();
                 childItem = siblingItem;
             } else {
                 TreeItem<Bcm> thisItem = childItem;
                 while (thisItem.nextSibling() == null && (thisItem.getParent() != bcmUi.treeView.getRoot())) {
                     thisItem = thisItem.getParent();
                 }
-                childItem = thisItem.nextSibling();
+
+                if (thisItem.nextSibling() != null) childItem = thisItem.nextSibling();
+                bcm = childItem.getValue();
             }
         }
 
