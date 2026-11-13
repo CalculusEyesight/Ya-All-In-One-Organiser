@@ -39,11 +39,8 @@ public class CatUi implements ContextMenuFactory, LabelFactory, VBoxFactory, HBo
         createHBox(0, Pos.CENTER_LEFT, createLabel("I22", 120), this.i22TF)
     };
 
-    private VBox vBox = createVBox(50, new Insets(20, 0, 0, 0), this.hBoxs);
-    private HBox hBox = createHBox(10, new Node[]{listView, this.vBox});
-
-    public HBox getHBox() {
-        return this.hBox;
+    public HBox createHBox() {
+        return createHBox(10, new Node[]{listView, createVBox()});
     }
 
     private ListView<Cat> createListView() {
@@ -205,6 +202,6 @@ public class CatUi implements ContextMenuFactory, LabelFactory, VBoxFactory, HBo
 
     @Override
     public VBox createVBox() {
-        return new VBox();
+        return createVBox(50, new Insets(20, 0, 0, 0), this.hBoxs);
     }
 }

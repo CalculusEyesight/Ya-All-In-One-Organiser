@@ -55,7 +55,7 @@ public class Miscellaneous implements VBoxFactory, HBoxFactory, LabelFactory, Ra
             "None",
             "Combos",
             "Supers / Stamina Break",
-            "When Victim is Hit",
+            "Unknown 3",
             "Ultimate / Awoken",
             "Grab",
             "Unknown 6",
@@ -152,7 +152,6 @@ public class Miscellaneous implements VBoxFactory, HBoxFactory, LabelFactory, Ra
     private void updateItems() {
         kiCostSP.getValueFactory().setValue((double) bcm.getKiCost());
         movesCategoryCB.getSelectionModel().select((int) bcm.getMoveCategory());
-        IO.println(bcm.getMoveCategory());
         staminaCostSP.getValueFactory().setValue((double) bcm.getStaminaCost());
         kiRequiredSP.getValueFactory().setValue((double) bcm.getKiRequired());
         healthRequiredSP.getValueFactory().setValue((double) bcm.getHealthRequired());

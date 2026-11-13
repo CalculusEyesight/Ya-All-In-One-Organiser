@@ -1,4 +1,5 @@
 package xv2.AGD;
+import UiComponents.Bars.ToolBarFactory;
 import UiComponents.Boxes.HBoxFactory;
 import UiComponents.Boxes.VBoxFactory;
 import UiComponents.Labels.LabelFactory;
@@ -13,7 +14,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import xv2.Popups;
 
-public class AgdUi implements LabelFactory, VBoxFactory, HBoxFactory {
+public class AgdUi implements LabelFactory, VBoxFactory, HBoxFactory, ToolBarFactory {
     private VBox vBox = createVBox(10, new Insets(20, 0, 20, 60));
     private Agd agd;
 
@@ -87,7 +88,8 @@ public class AgdUi implements LabelFactory, VBoxFactory, HBoxFactory {
         return removeEntry;
     }
 
-    private ToolBar createToolBar() {
+    @Override 
+    public ToolBar createToolBar() {
         return new ToolBar(insertEntry(), removeEntry());
     }
 

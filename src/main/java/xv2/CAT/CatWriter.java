@@ -36,7 +36,7 @@ public class CatWriter {
             shortWriter.writeShort(offset + i * 24 + 2, (short) cat.getCostume());
             shortWriter.writeShort(offset + i * 24 + 4, (short) cat.getI04());
             shortWriter.writeShort(offset + i * 24 + 6, (short) cat.getSkillId2());
-            channel.write(ByteBuffer.wrap(cat.getCharaCode().getBytes(StandardCharsets.ISO_8859_1)));
+            byteWriter.writeStringToByteArray(offset + i * 24 + 8, cat.getCharaCode());
             integerWriter.writeInt(offset + i * 24 + 12, cat.getI12());
             integerWriter.writeInt(offset + i * 24 + 16, cat.getI16());
             byteWriter.writeByte(offset + i * 24 + 20, (byte) cat.getI20());

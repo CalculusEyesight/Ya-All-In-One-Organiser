@@ -1,4 +1,5 @@
 package xv2.AUR;
+import UiComponents.Bars.ToolBarFactory;
 import UiComponents.Boxes.HBoxFactory;
 import UiComponents.Boxes.VBoxFactory;
 import UiComponents.Labels.LabelFactory;
@@ -14,7 +15,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import xv2.Popups;
 
-public class AurCharaUi implements LabelFactory, VBoxFactory, HBoxFactory {
+public class AurCharaUi implements LabelFactory, VBoxFactory, HBoxFactory, ToolBarFactory {
     protected VBox vBox = createVBox(10, new Insets(5));
     private AurChara aurChara;
 
@@ -89,7 +90,8 @@ public class AurCharaUi implements LabelFactory, VBoxFactory, HBoxFactory {
         return removeEntry;
     }
 
-    private ToolBar createToolBar() {
+    @Override 
+    public ToolBar createToolBar() {
         return new ToolBar(insertEntry(), removeEntry());
     }
 
