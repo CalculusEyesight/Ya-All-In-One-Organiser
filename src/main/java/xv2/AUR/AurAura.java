@@ -30,76 +30,76 @@ public class AurAura extends AurChara {
         this.auraId = other.auraId;
     }
 
-    public void setAuraId(String auraId) {
-        this.auraId = auraId;
-    }
-
-    public void setI04(int i04) {
-        this.i04 = i04;
-    }
-
-    public void setBoostStart(int boostStart) {
-        this.boostStart = boostStart;
-    }
-
-    public void setBoostLoop(int boostLoop) {
-        this.boostLoop = boostLoop;
-    }
-
-    public void setBoostEnd(int boostEnd) {
-        this.boostEnd = boostEnd;
-    }
-
-    public void setKiaiCharge(int kiaiCharge) {
-        this.kiaiCharge = kiaiCharge;
-    }
-
-    public void setKiryokuMax(int kiryokuMax) {
-        this.kiryokuMax = kiryokuMax;
-    }
-
-    public void setHenshinStart(int henshinStart) {
-        this.henshinStart = henshinStart;
-    }
-
-    public void setHenshinEnd(int henshinEnd) {
-        this.henshinEnd = henshinEnd;
-    }
-
     public String getAuraId() {
         return this.auraId;
+    }
+
+    public void setAuraId(String auraId) {
+        this.auraId = auraId;
     }
 
     public int getI04() {
         return this.i04;
     }
 
+    public void setI04(int i04) {
+        this.i04 = i04;
+    }
+
     public int getBoostStart() {
         return this.boostStart;
+    }
+
+    public void setBoostStart(int boostStart) {
+        this.boostStart = boostStart;
     }
 
     public int getBoostLoop() {
         return this.boostLoop;
     }
 
+    public void setBoostLoop(int boostLoop) {
+        this.boostLoop = boostLoop;
+    }
+
     public int getBoostEnd() {
         return this.boostEnd;
+    }
+
+    public void setBoostEnd(int boostEnd) {
+        this.boostEnd = boostEnd;
     }
     
     public int getKiaiCharge() {
         return this.kiaiCharge;
     }
 
+    public void setKiaiCharge(int kiaiCharge) {
+        this.kiaiCharge = kiaiCharge;
+    }
+
     public int getKiryokuMax() {
         return this.kiryokuMax;
+    }
+
+    public void setKiryokuMax(int kiryokuMax) {
+        this.kiryokuMax = kiryokuMax;
     }
 
     public int getHenshinStart() {
         return this.henshinStart;
     }
+
+    public void setHenshinStart(int henshinStart) {
+        this.henshinStart = henshinStart;
+    }
     
     public int getHenshinEnd() {
         return this.henshinEnd;
+    }
+
+    public void setHenshinEnd(int henshinEnd) {
+        this.henshinEnd = henshinEnd;
     }
 
     @Override
