@@ -36,6 +36,7 @@ public class EmbUi implements ContextMenuFactory, VBoxFactory, ToolBarFactory, H
     private Emb.Image currentEntry;
     public ListView<Emb.Image> listView = createListView();
     private Emb emb;
+    private int currentIndex;
     private ImageView imageView = createImageView();
 
     public EmbUi(Emb emb) {
@@ -73,6 +74,7 @@ public class EmbUi implements ContextMenuFactory, VBoxFactory, ToolBarFactory, H
             if (newValue == null) return;
 
             currentEntry = newValue;
+            currentIndex = listView.getItems().indexOf(currentEntry);
             updateItems(currentEntry);
         });
 
@@ -186,7 +188,7 @@ public class EmbUi implements ContextMenuFactory, VBoxFactory, ToolBarFactory, H
             try {
                 Emb.Image embImage = new Emb.Image(selectedFile.getName().replace(".dds", ""));
                 embImage.setImage(Files.readAllBytes(selectedFile.toPath()));
-                listView.getItems().set(listView.getSelectionModel().getSelectedIndex(), embImage);
+                listView.getItems().set(currentIndex, embImage);
             } catch (IOException e) {
             }
         }
@@ -194,6 +196,7 @@ public class EmbUi implements ContextMenuFactory, VBoxFactory, ToolBarFactory, H
 
     @Override
     public void delete() {
+        if (listView.getItems().size() == 1) return;
         listView.getItems().remove(currentEntry);
     }
 
@@ -207,7 +210,7 @@ public class EmbUi implements ContextMenuFactory, VBoxFactory, ToolBarFactory, H
             try {
                 Emb.Image embImage = new Emb.Image(selectedFile.getName().replace(".dds", ""));
                 embImage.setImage(Files.readAllBytes(selectedFile.toPath()));
-                listView.getItems().add((listView.getSelectionModel().getSelectedIndex() + 1), embImage);
+                listView.getItems().add((currentIndex + 1), embImage);
             } catch (IOException e) {
             }
         }
@@ -223,7 +226,7 @@ public class EmbUi implements ContextMenuFactory, VBoxFactory, ToolBarFactory, H
             try {
                 Emb.Image embImage = new Emb.Image(selectedFile.getName().replace(".dds", ""));
                 embImage.setImage(Files.readAllBytes(selectedFile.toPath()));
-                listView.getItems().add(listView.getSelectionModel().getSelectedIndex(), embImage);
+                listView.getItems().add(currentIndex, embImage);
             } catch (IOException e) {
             }
         }

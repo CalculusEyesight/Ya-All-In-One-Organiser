@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 public class CatUi implements ContextMenuFactory, LabelFactory, VBoxFactory, HBoxFactory {
     private Cat currentEntry;
     private Cat container;
+    private int currentIndex;
     private TextField charaIdTF = createCharaIdTF();
     private TextField costumeTF = createCostumeTF();
     private TextField i04TF = createI04TF();
@@ -52,6 +53,7 @@ public class CatUi implements ContextMenuFactory, LabelFactory, VBoxFactory, HBo
             if (newValue == null) return;
 
             currentEntry = newValue;
+            currentIndex = listView.getItems().indexOf(currentEntry);
             updateItems();
         });
 
@@ -157,12 +159,14 @@ public class CatUi implements ContextMenuFactory, LabelFactory, VBoxFactory, HBo
     @Override
     public void paste() {
         container.setEntry(currentEntry.getEntry());
-        listView.getItems().set(listView.getItems().indexOf(currentEntry), new Cat(container));
+        listView.getItems().set(currentIndex, new Cat(container));
         listView.refresh();
     }
 
     @Override
     public void delete() {
+        if (listView.getItems().size() == 1) return;
+        
         listView.getItems().remove(currentEntry);
         for (int i = 0; i < listView.getItems().size(); i++) {
             listView.getItems().get(i).setEntry("Entry " + i);
@@ -171,7 +175,7 @@ public class CatUi implements ContextMenuFactory, LabelFactory, VBoxFactory, HBo
 
     @Override
     public void append() {
-        listView.getItems().add((listView.getItems().indexOf(currentEntry) + 1), new Cat());
+        listView.getItems().add((currentIndex + 1), new Cat());
         for (int i = 0; i < listView.getItems().size(); i++) {
             listView.getItems().get(i).setEntry("Entry " + i);
         }
@@ -180,7 +184,7 @@ public class CatUi implements ContextMenuFactory, LabelFactory, VBoxFactory, HBo
 
     @Override
     public void insert() {
-        listView.getItems().add(listView.getItems().indexOf(currentEntry), new Cat());
+        listView.getItems().add(currentIndex, new Cat());
         for (int i = 0; i < listView.getItems().size(); i++) {
             listView.getItems().get(i).setEntry("Entry " + i);
         }

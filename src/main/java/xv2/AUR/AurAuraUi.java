@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMenuFactory {
     private AurAura currentEntry;
     private AurAura container;
-
+    private int currentIndex;
     protected ListView<AurAura> listView = createListView();
     private TextField i04TF = createI04TF();
     private TextField boostStartTF = createBoostStartTF();
@@ -60,6 +60,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
             if (newValue == null) return;
 
             currentEntry = newValue;
+            currentIndex = listView.getItems().indexOf(currentEntry);
             updateItems();
         });
 
@@ -147,12 +148,14 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     @Override
     public void paste() {
         container.setAuraId(currentEntry.getAuraId());
-        listView.getItems().set(listView.getItems().indexOf(currentEntry), new AurAura(container));
+        listView.getItems().set(currentIndex, new AurAura(container));
         listView.refresh();
     }
 
     @Override
     public void delete() {
+        if (listView.getItems().size() == 1) return;
+        
         listView.getItems().remove(currentEntry);
         for (int i = 0; i < listView.getItems().size(); i++) {
             listView.getItems().get(i).setAuraId("Aura ID " + i);
@@ -161,7 +164,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
 
     @Override
     public void append() {
-        listView.getItems().add((listView.getItems().indexOf(currentEntry) + 1), new AurAura());
+        listView.getItems().add(currentIndex + 1, new AurAura());
         for (int i = 0; i < listView.getItems().size(); i++) {
             listView.getItems().get(i).setAuraId("Aura ID " + i);
         }
@@ -170,7 +173,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
 
     @Override
     public void insert() {
-        listView.getItems().add(listView.getItems().indexOf(currentEntry), new AurAura());
+        listView.getItems().add(currentIndex, new AurAura());
         for (int i = 0; i < listView.getItems().size(); i++) {
             listView.getItems().get(i).setAuraId("Aura ID " + i);
         }

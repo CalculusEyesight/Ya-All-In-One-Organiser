@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
-
 import Parsers.Parser;
 
 public class ByteWriter extends Parser {
