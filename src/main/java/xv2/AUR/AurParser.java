@@ -1,10 +1,11 @@
-package xv2.AUR;
+package xv2.aur;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import Parsers.IntegerParser;
+
+import parsers.IntegerParser;
 
 public class AurParser {
     public AurAuraUi parseAur(Path path) throws IOException {

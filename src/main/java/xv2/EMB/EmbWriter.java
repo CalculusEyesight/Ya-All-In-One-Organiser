@@ -1,12 +1,13 @@
-package xv2.EMB;
+package xv2.emb;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import Parsers.Parser;
-import Writers.ByteWriter;
-import Writers.IntegerWriter;
+
+import parsers.Parser;
+import writers.ByteWriter;
+import writers.IntegerWriter;
 
 public class EmbWriter {
     private EmbUi embUi;

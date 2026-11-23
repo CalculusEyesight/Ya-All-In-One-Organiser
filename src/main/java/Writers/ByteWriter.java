@@ -1,9 +1,10 @@
-package Writers;
+package writers;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
-import Parsers.Parser;
+
+import parsers.Parser;
 
 public class ByteWriter extends Parser {
     public ByteWriter(FileChannel channel) {

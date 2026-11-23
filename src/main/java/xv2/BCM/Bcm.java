@@ -1,4 +1,4 @@
-package xv2.BCM;
+package xv2.bcm;
 
 public class Bcm {
     private long skillConditions;

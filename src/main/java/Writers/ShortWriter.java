@@ -1,7 +1,8 @@
-package Writers;
+package writers;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import Parsers.Parser;
+
+import parsers.Parser;
 
 public class ShortWriter extends Parser {
     public ShortWriter(FileChannel channel) {

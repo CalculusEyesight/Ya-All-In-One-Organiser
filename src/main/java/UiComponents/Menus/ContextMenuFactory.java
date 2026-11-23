@@ -1,4 +1,4 @@
-package UiComponents.Menus;
+package uicomponents.menus;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;

@@ -1,19 +1,19 @@
-package xv2.BDM;
-import UiComponents.Boxes.HBoxFactory;
-import UiComponents.Menus.ContextMenuFactory;
+package xv2.bdm;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import xv2.BDM.UI.Animation;
-import xv2.BDM.UI.Camera;
-import xv2.BDM.UI.Effects;
-import xv2.BDM.UI.Main;
-import xv2.BDM.UI.Miscellaneous;
-import xv2.BDM.UI.Pushback;
-import xv2.BDM.UI.Sound;
-import xv2.BDM.UI.Unknown;
+import uicomponents.boxes.HBoxFactory;
+import uicomponents.menus.ContextMenuFactory;
+import xv2.bdm.ui.Animation;
+import xv2.bdm.ui.Camera;
+import xv2.bdm.ui.Effects;
+import xv2.bdm.ui.Main;
+import xv2.bdm.ui.Miscellaneous;
+import xv2.bdm.ui.Pushback;
+import xv2.bdm.ui.Sound;
+import xv2.bdm.ui.Unknown;
 
 public class BdmUi implements ContextMenuFactory, HBoxFactory  {
     public ListView<Bdm> listView = createListView();

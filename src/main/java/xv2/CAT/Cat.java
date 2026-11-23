@@ -1,4 +1,4 @@
-package xv2.CAT;
+package xv2.cat;
 
 public class Cat {
     private int charaId;

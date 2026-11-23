@@ -1,4 +1,4 @@
-package xv2.EMB;
+package xv2.emb;
 
 public class Emb {
     private int i08;

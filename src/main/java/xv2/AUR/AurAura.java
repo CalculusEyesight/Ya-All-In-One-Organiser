@@ -1,4 +1,4 @@
-package xv2.AUR;
+package xv2.aur;
 
 public class AurAura extends AurChara {
     private int i04 = 0;

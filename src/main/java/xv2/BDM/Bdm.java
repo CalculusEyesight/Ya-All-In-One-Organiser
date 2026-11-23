@@ -1,4 +1,4 @@
-package xv2.BDM;
+package xv2.bdm;
 
 public class Bdm {
     private String entry;

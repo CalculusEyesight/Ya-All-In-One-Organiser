@@ -1,14 +1,15 @@
-package xv2.BCM;
+package xv2.bcm;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.atomic.AtomicInteger;
-import Writers.ByteWriter;
-import Writers.IntegerWriter;
-import Writers.ShortWriter;
+
 import javafx.scene.control.TreeItem;
+import writers.ByteWriter;
+import writers.IntegerWriter;
+import writers.ShortWriter;
 
 public class BcmWriter {
     private BcmUi bcmUi;

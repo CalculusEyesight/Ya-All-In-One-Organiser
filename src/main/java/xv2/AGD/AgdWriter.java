@@ -1,10 +1,11 @@
-package xv2.AGD;
+package xv2.agd;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import Writers.IntegerWriter;
+
+import writers.IntegerWriter;
 
 public class AgdWriter {
     private Agd agd;

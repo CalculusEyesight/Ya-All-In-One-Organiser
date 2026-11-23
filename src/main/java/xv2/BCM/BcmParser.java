@@ -1,12 +1,13 @@
-package xv2.BCM;
+package xv2.bcm;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import Parsers.ByteParser;
-import Parsers.IntegerParser;
-import Parsers.ShortParser;
+
 import javafx.scene.control.TreeItem;
+import parsers.ByteParser;
+import parsers.IntegerParser;
+import parsers.ShortParser;
 
 public class BcmParser {
     public BcmUi parseBcm(Path path) throws IOException {

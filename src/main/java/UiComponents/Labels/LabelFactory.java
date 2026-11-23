@@ -1,4 +1,4 @@
-package UiComponents.Labels;
+package uicomponents.labels;
 import javafx.scene.control.Label;
 
 public interface LabelFactory {

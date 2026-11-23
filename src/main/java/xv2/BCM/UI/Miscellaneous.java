@@ -1,9 +1,4 @@
-package xv2.BCM.UI;
-import UiComponents.Boxes.HBoxFactory;
-import UiComponents.Boxes.VBoxFactory;
-import UiComponents.Buttons.RadioButtonFactory;
-import UiComponents.Labels.LabelFactory;
-import UiComponents.Panes.GridPaneFactory;
+package xv2.bcm.ui;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,7 +8,12 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import xv2.BCM.Bcm;
+import uicomponents.boxes.HBoxFactory;
+import uicomponents.boxes.VBoxFactory;
+import uicomponents.buttons.RadioButtonFactory;
+import uicomponents.labels.LabelFactory;
+import uicomponents.panes.GridPaneFactory;
+import xv2.bcm.Bcm;
 
 public class Miscellaneous implements VBoxFactory, HBoxFactory, LabelFactory, RadioButtonFactory, GridPaneFactory {
     private Bcm bcm;

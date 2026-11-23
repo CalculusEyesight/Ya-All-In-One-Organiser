@@ -1,12 +1,13 @@
-package xv2.AUR;
+package xv2.aur;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import Parsers.Parser;
-import Writers.IntegerWriter;
+
+import parsers.Parser;
+import writers.IntegerWriter;
 
 public class AurWriter {
     private AurAuraUi aurAuraUi;

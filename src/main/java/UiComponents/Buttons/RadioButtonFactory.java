@@ -1,4 +1,4 @@
-package UiComponents.Buttons;
+package uicomponents.buttons;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 

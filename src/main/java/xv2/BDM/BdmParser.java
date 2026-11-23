@@ -1,11 +1,12 @@
-package xv2.BDM;
+package xv2.bdm;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import Parsers.IntegerParser;
-import Parsers.ShortParser;
+
 import javafx.application.Platform;
+import parsers.IntegerParser;
+import parsers.ShortParser;
 import xv2.Popups;
 
 public class BdmParser {

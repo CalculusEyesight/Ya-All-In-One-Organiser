@@ -1,4 +1,4 @@
-package Parsers;
+package parsers;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;

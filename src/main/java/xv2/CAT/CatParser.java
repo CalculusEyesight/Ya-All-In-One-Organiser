@@ -1,15 +1,16 @@
-package xv2.CAT;
+package xv2.cat;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import Parsers.ByteParser;
-import Parsers.IntegerParser;
-import Parsers.ShortParser;
-import Parsers.StringParser;
+
+import parsers.ByteParser;
+import parsers.IntegerParser;
+import parsers.ShortParser;
+import parsers.StringParser;
 
 public class CatParser {
-    public CatUi parseAur(Path path) throws IOException {
+    public CatUi parseCat(Path path) throws IOException {
         CatUi catUi = new CatUi();
 
         FileChannel channel = FileChannel.open(path, StandardOpenOption.READ);

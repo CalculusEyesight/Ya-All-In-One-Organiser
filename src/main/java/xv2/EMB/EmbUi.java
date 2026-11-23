@@ -1,4 +1,4 @@
-package xv2.EMB;
+package xv2.emb;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -8,11 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import javax.imageio.ImageIO;
-import UiComponents.Bars.ToolBarFactory;
-import UiComponents.Boxes.HBoxFactory;
-import UiComponents.Boxes.VBoxFactory;
-import UiComponents.Menus.ContextMenuFactory;
-import Writers.ByteWriter;
+
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
@@ -30,6 +26,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import uicomponents.bars.ToolBarFactory;
+import uicomponents.boxes.HBoxFactory;
+import uicomponents.boxes.VBoxFactory;
+import uicomponents.menus.ContextMenuFactory;
+import writers.ByteWriter;
 import xv2.Popups;
 
 public class EmbUi implements ContextMenuFactory, VBoxFactory, ToolBarFactory, HBoxFactory {

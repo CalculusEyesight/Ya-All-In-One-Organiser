@@ -1,4 +1,4 @@
-package UiComponents.Panes;
+package uicomponents.panes;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 

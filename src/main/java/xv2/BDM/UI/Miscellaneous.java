@@ -1,8 +1,4 @@
-package xv2.BDM.UI;
-import UiComponents.Boxes.HBoxFactory;
-import UiComponents.Boxes.VBoxFactory;
-import UiComponents.Labels.LabelFactory;
-import UiComponents.Panes.StackPaneFactory;
+package xv2.bdm.ui;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,7 +9,11 @@ import javafx.scene.control.Spinner;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import xv2.BDM.Bdm.BdmSubEntry;
+import uicomponents.boxes.HBoxFactory;
+import uicomponents.boxes.VBoxFactory;
+import uicomponents.labels.LabelFactory;
+import uicomponents.panes.StackPaneFactory;
+import xv2.bdm.Bdm.BdmSubEntry;
 
 public class Miscellaneous implements HBoxFactory, LabelFactory, VBoxFactory, StackPaneFactory {
     BdmSubEntry bdmSubEntry;

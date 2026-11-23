@@ -1,4 +1,4 @@
-package UiComponents.Bars;
+package uicomponents.bars;
 import javafx.scene.control.ToolBar;
 
 public interface ToolBarFactory {

@@ -1,12 +1,13 @@
-package xv2.BDM;
+package xv2.bdm;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import Writers.IntegerWriter;
-import Writers.ShortWriter;
-import xv2.BDM.Bdm.BdmSubEntry;
+
+import writers.IntegerWriter;
+import writers.ShortWriter;
+import xv2.bdm.Bdm.BdmSubEntry;
 
 public class BdmWriter {
     private BdmUi bdmUi;

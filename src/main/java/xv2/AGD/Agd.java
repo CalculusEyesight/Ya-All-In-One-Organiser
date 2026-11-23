@@ -1,4 +1,4 @@
-package xv2.AGD;
+package xv2.agd;
 import java.util.ArrayList;
 
 public class Agd {

@@ -1,8 +1,4 @@
-package xv2.CAT;
-import UiComponents.Boxes.HBoxFactory;
-import UiComponents.Boxes.VBoxFactory;
-import UiComponents.Labels.LabelFactory;
-import UiComponents.Menus.ContextMenuFactory;
+package xv2.cat;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -10,6 +6,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import uicomponents.boxes.HBoxFactory;
+import uicomponents.boxes.VBoxFactory;
+import uicomponents.labels.LabelFactory;
+import uicomponents.menus.ContextMenuFactory;
 
 public class CatUi implements ContextMenuFactory, LabelFactory, VBoxFactory, HBoxFactory {
     private Cat currentEntry;

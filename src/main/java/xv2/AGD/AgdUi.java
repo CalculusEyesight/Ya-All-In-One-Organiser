@@ -1,8 +1,4 @@
-package xv2.AGD;
-import UiComponents.Bars.ToolBarFactory;
-import UiComponents.Boxes.HBoxFactory;
-import UiComponents.Boxes.VBoxFactory;
-import UiComponents.Labels.LabelFactory;
+package xv2.agd;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -12,6 +8,10 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import uicomponents.bars.ToolBarFactory;
+import uicomponents.boxes.HBoxFactory;
+import uicomponents.boxes.VBoxFactory;
+import uicomponents.labels.LabelFactory;
 import xv2.Popups;
 
 public class AgdUi implements LabelFactory, VBoxFactory, HBoxFactory, ToolBarFactory {

@@ -1,10 +1,4 @@
-package xv2.BDM.UI;
-import UiComponents.Boxes.HBoxFactory;
-import UiComponents.Boxes.VBoxFactory;
-import UiComponents.Buttons.RadioButtonFactory;
-import UiComponents.Labels.LabelFactory;
-import UiComponents.Panes.GridPaneFactory;
-import UiComponents.Panes.StackPaneFactory;
+package xv2.bdm.ui;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
@@ -14,7 +8,13 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import xv2.BDM.Bdm.BdmSubEntry;
+import uicomponents.boxes.HBoxFactory;
+import uicomponents.boxes.VBoxFactory;
+import uicomponents.buttons.RadioButtonFactory;
+import uicomponents.labels.LabelFactory;
+import uicomponents.panes.GridPaneFactory;
+import uicomponents.panes.StackPaneFactory;
+import xv2.bdm.Bdm.BdmSubEntry;
 
 public class Main implements VBoxFactory, StackPaneFactory, RadioButtonFactory, GridPaneFactory, LabelFactory, HBoxFactory {
     BdmSubEntry bdmSubEntry;

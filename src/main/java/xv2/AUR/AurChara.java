@@ -1,4 +1,4 @@
-package xv2.AUR;
+package xv2.aur;
 import java.util.ArrayList;
 
 public class AurChara {

@@ -1,4 +1,4 @@
-package UiComponents.Boxes;
+package uicomponents.boxes;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;

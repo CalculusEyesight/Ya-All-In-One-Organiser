@@ -1,4 +1,4 @@
-package UiComponents.Views;
+package uicomponents.views;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 

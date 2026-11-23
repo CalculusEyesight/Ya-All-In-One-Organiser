@@ -1,22 +1,23 @@
-package xv2.BCM;
+package xv2.bcm;
 import java.util.concurrent.atomic.AtomicInteger;
-import UiComponents.Boxes.HBoxFactory;
-import UiComponents.Boxes.VBoxFactory;
-import UiComponents.Labels.LabelFactory;
-import UiComponents.Menus.ContextMenuFactory;
-import UiComponents.Panes.SplitPaneFactory;
-import UiComponents.Views.TreeViewFactory;
+
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.VBox;
-import xv2.BCM.UI.Activator;
-import xv2.BCM.UI.BAC;
-import xv2.BCM.UI.Inputs;
-import xv2.BCM.UI.Miscellaneous;
-import xv2.BCM.UI.Unknown;
+import uicomponents.boxes.HBoxFactory;
+import uicomponents.boxes.VBoxFactory;
+import uicomponents.labels.LabelFactory;
+import uicomponents.menus.ContextMenuFactory;
+import uicomponents.panes.SplitPaneFactory;
+import uicomponents.views.TreeViewFactory;
+import xv2.bcm.ui.Activator;
+import xv2.bcm.ui.BAC;
+import xv2.bcm.ui.Inputs;
+import xv2.bcm.ui.Miscellaneous;
+import xv2.bcm.ui.Unknown;
 
 public class BcmUi implements SplitPaneFactory, ContextMenuFactory, VBoxFactory, HBoxFactory, LabelFactory, TreeViewFactory {
     private TreeItem<Bcm> currentEntry;

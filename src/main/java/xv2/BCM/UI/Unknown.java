@@ -1,13 +1,13 @@
-package xv2.BCM.UI;
-import UiComponents.Boxes.HBoxFactory;
-import UiComponents.Boxes.VBoxFactory;
-import UiComponents.Labels.LabelFactory;
+package xv2.bcm.ui;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import xv2.BCM.Bcm;
+import uicomponents.boxes.HBoxFactory;
+import uicomponents.boxes.VBoxFactory;
+import uicomponents.labels.LabelFactory;
+import xv2.bcm.Bcm;
 
 public class Unknown implements HBoxFactory, LabelFactory, VBoxFactory {
     private Bcm bcm;

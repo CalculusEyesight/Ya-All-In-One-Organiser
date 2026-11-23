@@ -1,4 +1,4 @@
-package UiComponents.Panes;
+package uicomponents.panes;
 import javafx.scene.control.SplitPane;
 
 public interface SplitPaneFactory {

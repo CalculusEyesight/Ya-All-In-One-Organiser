@@ -1,6 +1,4 @@
-package xv2.AUR;
-import UiComponents.Menus.ContextMenuFactory;
-import UiComponents.Panes.SplitPaneFactory;
+package xv2.aur;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,6 +7,8 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import uicomponents.menus.ContextMenuFactory;
+import uicomponents.panes.SplitPaneFactory;
 
 public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMenuFactory {
     private AurAura currentEntry;
