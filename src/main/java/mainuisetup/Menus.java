@@ -14,8 +14,8 @@ public class Menus {
     protected static final Menu helpMenu = new Menu("Help");
     protected static final Menu performanceMenu = new Menu("Performance");
     protected static final ToggleGroup performanceGroup = new ToggleGroup();
-    protected static final MenuItem loadFolder = new MenuItem("Load Folder   Ctrl+O");
-    protected static final MenuItem saveFolder = new MenuItem("Save Folder   Ctrl+S");
+    protected static final MenuItem loadFolder = new MenuItem("Load Folder");
+    protected static final MenuItem saveFolder = new MenuItem("Save Folder");
     protected static final RadioMenuItem efficiencyMode = new RadioMenuItem("Efficiency Mode");
     protected static final RadioMenuItem defaultMode = new RadioMenuItem("Default");
     protected static final RadioMenuItem performanceMode = new RadioMenuItem("High Performance Mode");

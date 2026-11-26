@@ -2,6 +2,7 @@ package mainuisetup;
 import xv2.Popups;
 import xv2.Xv2File;
 import java.io.File;
+import java.util.prefs.Preferences;
 import javafx.application.Application;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
@@ -21,6 +22,7 @@ public class Main extends Application {
     private final BorderPane borderPane = new BorderPane();
     private final TabPane tabPane = new TabPane();
     private final Scene scene = new Scene(borderPane, 1280, 800);
+    private static final String DARK_MODE = "isDarkMode";
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -56,12 +58,23 @@ public class Main extends Application {
     }
 
     private void setupDarkMode() {
+        Preferences prefs = Preferences.userNodeForPackage(Main.class);
+        boolean isDarkMode = prefs.getBoolean(DARK_MODE, false);
+        Menus.toggleDarkMode.setSelected(isDarkMode);
+        if (isDarkMode) {
+            scene.getStylesheets().set(0, "darkTheme.css");
+        } else {
+            scene.getStylesheets().set(0, "style.css");
+        }
+
         Menus.toggleDarkMode.selectedProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue) {
                 scene.getStylesheets().set(0, "darkTheme.css");
             } else {
                 scene.getStylesheets().set(0, "style.css");
             }
+
+            prefs.putBoolean(DARK_MODE, newValue);
         });
     }
 
