@@ -17,16 +17,16 @@ public abstract class Xv2File extends File {
     public abstract void loadFile(File file, Tab tab);
     public abstract void saveFile(File selectedDirectory, Tab tab);
     public static Xv2File getXv2File(File file) {
-        switch (getFileExtension(file.getName())) {
-            case "agd" -> {return new AgdFile(file);}
-            case "aur" -> {return new AurFile(file);}
-            case "bcm" -> {return new BcmFile(file);}
-            case "bdm" -> {return new BdmFile(file);}
-            case "bsa" -> {return new BsaFile(file);}
-            case "cat" -> {return new CatFile(file);}
-            case "emb" -> {return new EmbFile(file);}
-            default -> {return new UnknownXv2File(file);}
-        }
+        return switch (getFileExtension(file.getName())) {
+            case "agd" -> new AgdFile(file);
+            case "aur" -> new AurFile(file);
+            case "bcm" -> new BcmFile(file);
+            case "bdm" -> new BdmFile(file);
+            case "bsa" -> new BsaFile(file);
+            case "cat" -> new CatFile(file);
+            case "emb" -> new EmbFile(file);
+            default -> new UnknownXv2File(file);
+        };
     }
 
     public String getFileName() {
@@ -34,16 +34,10 @@ public abstract class Xv2File extends File {
     }
 
     public boolean isXv2File() {
-        switch (getFileExtension(this.getName())) {
-            case "agd" -> {return true;}
-            case "aur" -> {return true;}
-            case "bcm" -> {return true;}
-            case "bdm" -> {return true;}
-            case "bsa" -> {return true;}
-            case "cat" -> {return true;}
-            case "emb" -> {return true;}
-            default -> {return false;}
-        }
+        return switch (getFileExtension(this.getName())) {
+            case "agd", "aur", "bcm", "bdm", "bsa", "cat", "emb" -> true;
+            default -> false;
+        };
     }
 
     public static String getFileExtension(String filename) {
