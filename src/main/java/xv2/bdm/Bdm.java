@@ -1,31 +1,27 @@
 package xv2.bdm;
 
 public class Bdm {
-    private String entry;
+    private long entry;
     public final BdmSubEntry[] subEntries = new BdmSubEntry[10];
 
-    public Bdm(String entry) {
+    public Bdm(long entry) {
         this.entry = entry;
         for (int i = 0; i < 10; i++) {
             this.subEntries[i] = new BdmSubEntry();
         }
     }
 
-    public String getEntry() {
+    public long getEntry() {
         return entry;
     }
 
-    public void setEntry(String entry) {
+    public void setEntry(long entry) {
         this.entry = entry;
     }
 
     @Override
     public String toString() {
-        return getEntry();
-    }
-
-    public int getEntryIndex() {
-        return Integer.parseInt(getEntry().replaceAll("\\D+", ""));
+        return "Entry " + getEntry();
     }
 
     public Bdm() {
@@ -42,61 +38,61 @@ public class Bdm {
     }
 
     public class BdmSubEntry {
-        private int damageType = 0;
-        private int i02 = 0;
-        private int damageAmount = 0;
-        private int i06 = 0;
-        private float f08 = 0.0f;
-        private int acbType = 0;
-        private short cueId = 0;
-        private short effect1Id = 0;
-        private int effect1SkillId = 0;
-        private int effect1EepkType = 0;
-        private int i22 = 0;
-        private short effect2Id = 0;
-        private int effect2SkillId = 0;
-        private int effect2EepkType = 0;
-        private int i30 = 0;
-        private short effect3Id = 0;
-        private int effect3SkillId = 0;
-        private int effect3EepkType = 0;
-        private int i38 = 0;
-        private float pushbackStrength = 0.0f;
-        private float pushbackAcceleration = 0.0f;
-        private int userStunt = 0;
-        private int knockbackDuration = 0;
-        private int knockbackRecoveryAfterImpactTime = 0;
-        private int knockbackGroundImpactTime = 0;
-        private int i58 = 0;
-        private int victimStunt = 0;
-        private float knockbackStrengthX = 0.0f;
-        private float knockbackStrengthY = 0.0f;
-        private float knockbackStrengthZ = 0.0f;
-        private float knockbackDragY = 0.0f;
-        private int i76 = 0;
-        private int knockbackGravityTime = 0;
-        private short victimInvincibilityTime = 0;
-        private int i82 = 0;
-        private int transformationType = 0;
-        private short ailmentType = 0;
-        private int i88 = 0;
-        private int i90 = 0;
-        private int i92 = 0;
-        private int damageSpecial = 0;
-        private int damageSpecial2 = 0;
-        private int damageSpecial3 = 0;
-        private int stumbleType = 0;
-        private int secondaryType = 0;
-        private short cameraShakeType = 0;
-        private int cameraShakeTime = 0;
-        private short userBpeId = 0;
-        private short victimBpeId = 0;
-        private short staminaBrokenOverrideBdmId = 0;
-        private int zVanishEnableTime = 0;
-        private int userAnimationTime = 0;
-        private int victimAnimationTime = 0;
-        private float userAnimationSpeed = 0.0f;
-        private float victimAnimationSpeed = 0.0f;
+        private int damageType;
+        private int i02;
+        private int damageAmount;
+        private int i06;
+        private float f08;
+        private int acbType;
+        private short cueId;
+        private short effect1Id;
+        private int effect1SkillId;
+        private int effect1EepkType;
+        private int i22;
+        private short effect2Id;
+        private int effect2SkillId;
+        private int effect2EepkType;
+        private int i30;
+        private short effect3Id;
+        private int effect3SkillId;
+        private int effect3EepkType;
+        private int i38;
+        private float pushbackStrength;
+        private float pushbackAcceleration;
+        private int userStunt;
+        private int knockbackDuration;
+        private int knockbackRecoveryAfterImpactTime;
+        private int knockbackGroundImpactTime;
+        private int i58;
+        private int victimStunt;
+        private float knockbackStrengthX;
+        private float knockbackStrengthY;
+        private float knockbackStrengthZ;
+        private float knockbackDragY;
+        private int i76;
+        private int knockbackGravityTime;
+        private short victimInvincibilityTime;
+        private int i82;
+        private int transformationType;
+        private short ailmentType;
+        private int i88;
+        private int i90;
+        private int i92;
+        private int damageSpecial;
+        private int damageSpecial2;
+        private int damageSpecial3;
+        private int stumbleType;
+        private int secondaryType;
+        private short cameraShakeType;
+        private int cameraShakeTime;
+        private short userBpeId;
+        private short victimBpeId;
+        private short staminaBrokenOverrideBdmId;
+        private int zVanishEnableTime;
+        private int userAnimationTime;
+        private int victimAnimationTime;
+        private float userAnimationSpeed;
+        private float victimAnimationSpeed;
 
         public BdmSubEntry() {}
         public BdmSubEntry(BdmSubEntry other) {

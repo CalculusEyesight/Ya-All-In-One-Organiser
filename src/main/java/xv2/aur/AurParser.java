@@ -23,7 +23,7 @@ public class AurParser {
         aurChara.aurCharaEntries = new ArrayList<>(charaEntries);
 
         for (int i = 0; i < auraEntries; i++) {
-            AurAura aurAura = new AurAura("Aura ID " + String.valueOf(integerParser.parseInt32(auraOffset + i * 16)));
+            AurAura aurAura = new AurAura(integerParser.parseInt32(auraOffset + i * 16));
 
             aurAuraUi.listView.getItems().add(aurAura);
             aurAura.setI04(integerParser.parseInt32(auraOffset + i * 16 + 4));

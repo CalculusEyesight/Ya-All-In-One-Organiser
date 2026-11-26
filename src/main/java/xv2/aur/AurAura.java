@@ -1,20 +1,20 @@
 package xv2.aur;
 
 public class AurAura extends AurChara {
-    private int i04 = 0;
-    private int boostStart = 0;
-    private int boostLoop = 0;
-    private int boostEnd = 0;
-    private int kiaiCharge = 0;
-    private int kiryokuMax = 0;
-    private int henshinStart = 0;
-    private int henshinEnd = 0;
-    private String auraId = "";
+    private int i04;
+    private int boostStart;
+    private int boostLoop;
+    private int boostEnd;
+    private int kiaiCharge;
+    private int kiryokuMax;
+    private int henshinStart;
+    private int henshinEnd;
+    private int auraId;
 
     public AurAura() {
     }
     
-    public AurAura(String auraId) {
+    public AurAura(int auraId) {
         this.auraId = auraId;
     }
 
@@ -30,11 +30,11 @@ public class AurAura extends AurChara {
         this.auraId = other.auraId;
     }
 
-    public String getAuraId() {
+    public int getAuraId() {
         return this.auraId;
     }
 
-    public void setAuraId(String auraId) {
+    public void setAuraId(int auraId) {
         this.auraId = auraId;
     }
 
@@ -104,6 +104,6 @@ public class AurAura extends AurChara {
 
     @Override
     public String toString() {
-        return getAuraId();
+        return "Aura ID " + getAuraId();
     }
 }

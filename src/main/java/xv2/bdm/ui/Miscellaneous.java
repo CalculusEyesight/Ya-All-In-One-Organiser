@@ -71,7 +71,7 @@ public class Miscellaneous implements HBoxFactory, LabelFactory, VBoxFactory, St
 
     StackPane[] stumbleTypes = new StackPane[] {
         createStackPane("Stumble Group 1", createStumbleTypeGroup(stumbleGroup1, 1)),
-        createStackPane("Stumble Group 2", createStumbleTypeGroup(stumbleGroup2, 6)),
+        createStackPane("Stumble Group 2", createStumbleTypeGroup(stumbleGroup2, 16)),
         createStackPane("Stumble Group 3", createStumbleTypeGroup(stumbleGroup3, 256)),
         createStackPane("Stumble Group 4", createStumbleTypeGroup(stumbleGroup4, 4096)),
     };
@@ -183,6 +183,7 @@ public class Miscellaneous implements HBoxFactory, LabelFactory, VBoxFactory, St
         staminaBrokenOverrideBdmIdSP.getValueFactory().setValue((int) bdmSubEntry.getStaminaBrokenOverrideBdmId());
         zVanishEnableTimeSP.getValueFactory().setValue(bdmSubEntry.getZVanishEnableTime());
         transformationTypeSP.getValueFactory().setValue(bdmSubEntry.getTransformationType());
+        IO.println(bdmSubEntry.getStumbleType());
 
         for (int i = 0; i < ailmentGroup1.length; i++) {
             ailmentGroup1[i].setSelected((bdmSubEntry.getAilmentType() & (1 << i)) != 0);

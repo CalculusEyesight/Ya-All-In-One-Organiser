@@ -169,7 +169,7 @@ public class CatUi implements ContextMenuFactory, LabelFactory, VBoxFactory, HBo
         
         listView.getItems().remove(currentEntry);
         for (int i = 0; i < listView.getItems().size(); i++) {
-            listView.getItems().get(i).setEntry("Entry " + i);
+            listView.getItems().get(i).setEntry(i);
         }
     }
 
@@ -177,7 +177,7 @@ public class CatUi implements ContextMenuFactory, LabelFactory, VBoxFactory, HBo
     public void append() {
         listView.getItems().add((currentIndex + 1), new Cat());
         for (int i = 0; i < listView.getItems().size(); i++) {
-            listView.getItems().get(i).setEntry("Entry " + i);
+            listView.getItems().get(i).setEntry(i);
         }
         listView.refresh();
     }
@@ -186,7 +186,7 @@ public class CatUi implements ContextMenuFactory, LabelFactory, VBoxFactory, HBo
     public void insert() {
         listView.getItems().add(currentIndex, new Cat());
         for (int i = 0; i < listView.getItems().size(); i++) {
-            listView.getItems().get(i).setEntry("Entry " + i);
+            listView.getItems().get(i).setEntry(i);
         }
         listView.refresh();
     }

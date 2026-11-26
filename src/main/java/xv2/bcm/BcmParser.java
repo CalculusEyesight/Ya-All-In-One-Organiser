@@ -26,7 +26,7 @@ public class BcmParser {
 
             if (i == 0) {
                 bcm = new Bcm();
-                bcm.setEntry("Entry " + i);
+                bcm.setEntry(i);
                 bcmUi.treeView.setRoot(new TreeItem<>(bcm));
                 childItem = bcmUi.treeView.getRoot();
             }
@@ -68,7 +68,7 @@ public class BcmParser {
 
             if (siblingPointer != 0) {
                 bcm = new Bcm();
-                bcm.setEntry("Entry " + ((siblingPointer - 16) / 112));
+                bcm.setEntry((siblingPointer - 16) / 112);
                 childItem.getParent().getChildren().add(new TreeItem<>(bcm));
                 siblingItem = childItem.nextSibling();
             } 
@@ -77,7 +77,7 @@ public class BcmParser {
 
             if (childPointer != 0) {
                 bcm = new Bcm();
-                bcm.setEntry("Entry " + ((childPointer - 16) / 112));
+                bcm.setEntry((childPointer - 16) / 112);
                 childItem.getChildren().add(new TreeItem<>(bcm));
                 childItem = childItem.getChildren().get(0);
             } else if (siblingPointer != 0) {

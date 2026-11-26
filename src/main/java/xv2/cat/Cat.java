@@ -11,10 +11,9 @@ public class Cat {
     private int i20;
     private int transformationEntry;
     private int i22;
-    private String entry = "";
+    private int entry;
 
-    public Cat() {
-    }
+    public Cat() {}
 
     protected Cat(Cat other) {
         this.charaId = other.charaId;
@@ -30,7 +29,7 @@ public class Cat {
         this.entry = other.entry;
     }
 
-    public Cat(String entry) {
+    public Cat(int entry) {
         this.entry = entry;
     }
 
@@ -114,16 +113,16 @@ public class Cat {
         this.i22 = i22;
     }
 
-    public String getEntry() {
+    public int getEntry() {
         return this.entry;
     }
 
-    public void setEntry(String entry) {
+    public void setEntry(int entry) {
         this.entry = entry;
     }
 
     @Override
     public String toString() {
-        return getEntry();
+        return "Entry " + getEntry();
     }
 }

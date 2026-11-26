@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-
 import writers.IntegerWriter;
 import writers.ShortWriter;
 import xv2.bdm.Bdm.BdmSubEntry;
@@ -30,7 +29,7 @@ public class BdmWriter {
 
         for (int i = 0; i < entries; i++) {
             Bdm bdm = bdmUi.listView.getItems().get(i);
-            integerWriter.writeInt(entryOffset + i * 1284, bdmUi.listView.getItems().get(i).getEntryIndex());
+            integerWriter.writeInt(entryOffset + i * 1284, (int) bdmUi.listView.getItems().get(i).getEntry());
             
             for (int j = 0; j < 10; j++) {
                 BdmSubEntry bdmSubEntry = bdm.subEntries[j];

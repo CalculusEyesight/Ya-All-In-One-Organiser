@@ -23,7 +23,7 @@ public class BdmParser {
         switch ((int)(path.toFile().length() - 16) / entries) {
             case 1284 -> {
                 for (int i = 0; i < entries; i++) {
-                    Bdm bdm = new Bdm("Entry " + integerParser.parseUInt32(entryOffset + i * 1284));
+                    Bdm bdm = new Bdm(integerParser.parseUInt32(entryOffset + i * 1284));
                     bdmUi.listView.getItems().add(bdm);
 
                     for (int j = 0; j < 10; j++) {

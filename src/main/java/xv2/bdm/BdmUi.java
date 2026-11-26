@@ -143,7 +143,7 @@ public class BdmUi implements ContextMenuFactory, HBoxFactory  {
         listView.getItems().remove(currentEntry);
         int startIndex = currentIndex == 0 ? currentIndex : currentIndex + 1;
         for (int i = startIndex; i < listView.getItems().size(); i++) {
-            listView.getItems().get(i).setEntry("Entry " + (listView.getItems().get(i).getEntryIndex() - 1));
+            listView.getItems().get(i).setEntry(listView.getItems().get(i).getEntry() - 1);
         }
 
         listView.refresh();
@@ -151,9 +151,9 @@ public class BdmUi implements ContextMenuFactory, HBoxFactory  {
 
     @Override
     public void append() {
-        listView.getItems().add(currentIndex + 1, new Bdm("Entry " + (currentEntry.getEntryIndex() + 1)));
+        listView.getItems().add(currentIndex + 1, new Bdm(currentEntry.getEntry() + 1));
         for (int i = currentIndex + 2; i < listView.getItems().size(); i++) {
-            listView.getItems().get(i).setEntry("Entry " + (listView.getItems().get(i).getEntryIndex() + 1));
+            listView.getItems().get(i).setEntry(listView.getItems().get(i).getEntry() + 1);
         }
 
         listView.refresh();
@@ -161,10 +161,10 @@ public class BdmUi implements ContextMenuFactory, HBoxFactory  {
 
     @Override
     public void insert() {
-        listView.getItems().add(currentIndex, new Bdm("Entry " + (currentEntry.getEntryIndex())));
+        listView.getItems().add(currentIndex, new Bdm(currentEntry.getEntry()));
         IO.println(currentIndex);
         for (int i = currentIndex + 1; i < listView.getItems().size(); i++) {
-            listView.getItems().get(i).setEntry("Entry " + (listView.getItems().get(i).getEntryIndex() + 1));
+            listView.getItems().get(i).setEntry(listView.getItems().get(i).getEntry() + 1);
         }
 
         listView.refresh();

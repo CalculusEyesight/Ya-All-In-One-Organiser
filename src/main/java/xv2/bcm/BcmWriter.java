@@ -5,7 +5,6 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javafx.scene.control.TreeItem;
 import writers.ByteWriter;
 import writers.IntegerWriter;
@@ -37,14 +36,14 @@ public class BcmWriter {
 
     private int loopThrough(TreeItem<Bcm> item, ByteWriter byteWriter, ShortWriter shortWriter, IntegerWriter integerWriter, AtomicInteger entries, int offset) throws IOException {
         offset = 16 + (112 * entries.get());
-        int siblingPointer = item.nextSibling() != null ? item.nextSibling().getValue().getEntryIndex() * 112 + 16 : 0;
-        int childPointer = !item.getChildren().isEmpty() ?  item.getChildren().get(0).getValue().getEntryIndex() * 112 + 16 : 0;
+        int siblingPointer = item.nextSibling() != null ? item.nextSibling().getValue().getEntry() * 112 + 16 : 0;
+        int childPointer = !item.getChildren().isEmpty() ?  item.getChildren().get(0).getValue().getEntry() * 112 + 16 : 0;
         int parentPointer;
         int rootParentPointer;
 
         if (item.getParent() != null) {
-            parentPointer = item.getParent() == bcmUi.treeView.getRoot() ? 0 : item.getParent().getValue().getEntryIndex() * 112 + 16;
-            rootParentPointer =  bcmUi.getRootChild(bcmUi.treeView, item).getValue().getEntryIndex() * 112 + 16;
+            parentPointer = item.getParent() == bcmUi.treeView.getRoot() ? 0 : item.getParent().getValue().getEntry() * 112 + 16;
+            rootParentPointer =  bcmUi.getRootChild(bcmUi.treeView, item).getValue().getEntry() * 112 + 16;
         } else {
             parentPointer = 0;
             rootParentPointer = 0;

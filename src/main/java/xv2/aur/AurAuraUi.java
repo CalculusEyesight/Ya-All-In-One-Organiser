@@ -158,7 +158,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
         
         listView.getItems().remove(currentEntry);
         for (int i = 0; i < listView.getItems().size(); i++) {
-            listView.getItems().get(i).setAuraId("Aura ID " + i);
+            listView.getItems().get(i).setAuraId(i);
         }
     }
 
@@ -166,7 +166,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     public void append() {
         listView.getItems().add(currentIndex + 1, new AurAura());
         for (int i = 0; i < listView.getItems().size(); i++) {
-            listView.getItems().get(i).setAuraId("Aura ID " + i);
+            listView.getItems().get(i).setAuraId(i);
         }
         listView.refresh();
     }
@@ -175,7 +175,7 @@ public class AurAuraUi extends AurCharaUi implements SplitPaneFactory, ContextMe
     public void insert() {
         listView.getItems().add(currentIndex, new AurAura());
         for (int i = 0; i < listView.getItems().size(); i++) {
-            listView.getItems().get(i).setAuraId("Aura ID " + i);
+            listView.getItems().get(i).setAuraId(i);
         }
         listView.refresh();
     }

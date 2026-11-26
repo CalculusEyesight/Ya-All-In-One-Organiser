@@ -137,7 +137,7 @@ public class BcmUi implements SplitPaneFactory, ContextMenuFactory, VBoxFactory,
     public void renameTreeItems(TreeItem<Bcm> item, AtomicInteger index) {
         if (item == null) return;
 
-        item.getValue().setEntry("Entry " + index.get());
+        item.getValue().setEntry(index.get());
         index.set(index.get() + 1);
         
         for (TreeItem<Bcm> child : item.getChildren()) {

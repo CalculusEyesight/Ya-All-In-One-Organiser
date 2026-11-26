@@ -33,7 +33,7 @@ public class Bcm {
     private short cusAura;
     private long i104;
     private long characterCondition;
-    private String entry = "";
+    private int entry;
     
     public Bcm() {}
     public Bcm(Bcm other) {
@@ -328,20 +328,16 @@ public class Bcm {
         this.characterCondition = characterCondition;
     }
 
-    public String getEntry() {
+    public int getEntry() {
         return this.entry;
     }
 
-    public void setEntry(String entry) {
+    public void setEntry(int entry) {
         this.entry = entry;
-    }
-
-    public int getEntryIndex() {
-        return Integer.parseInt(getEntry().replaceAll("\\D+", ""));
     }
 
     @Override
     public String toString() {
-        return getEntry();
+        return "Entry " + getEntry();
     }
 }

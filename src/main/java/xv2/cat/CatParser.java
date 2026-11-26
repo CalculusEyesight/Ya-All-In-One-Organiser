@@ -23,7 +23,7 @@ public class CatParser {
         int offset = integerParser.parseInt32(8);
 
         for (int i = 0; i < catEntries; i++) {
-            Cat cat = new Cat("Entry " + i);
+            Cat cat = new Cat(i);
             catUi.listView.getItems().add(cat);
             cat.setCharaId(shortParser.parseUShort(offset + i * 24));
             cat.setCostume(shortParser.parseUShort(offset + i * 24 + 2));
